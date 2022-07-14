@@ -12,8 +12,8 @@ public class MemberDTO {
 
 
         public MemberOneDTO(Member member) {
-            id = member.getId();
-            email = member.getEmail();
+            this.id = member.getId();
+            this.email = member.getEmail();
 
         }
     }

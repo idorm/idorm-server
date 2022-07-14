@@ -1,5 +1,5 @@
 package idorm.idormServer.domain;
 
-public enum GenderType { // 성별
+public enum Gender { // 성별
     FEMALE, MALE;
 }
