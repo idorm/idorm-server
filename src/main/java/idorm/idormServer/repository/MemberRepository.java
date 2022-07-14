@@ -33,6 +33,14 @@ public class MemberRepository {
                 .getResultList();
     }
 
+//    public List<Member> findById(Long id) {
+//
+//        return em.createQuery("select m from Member m where m.id = :id",
+//                Member.class)
+//                .setParameter("id", id)
+//                .getResultList();
+//    }
+
     public List<Member> findByEmail(String email) {
         return em.createQuery("select m from Member m where m.email=:email",
                 Member.class)
