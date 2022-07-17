@@ -38,6 +38,7 @@ public class MyInfoDTO {
 
         public MyInfoOneDTO(MyInfo myInfo) {
 
+            // TODO: 넘겨줘야 할 값만 설정, 나머지는 빼기
             this.id = myInfo.getId();
             this.dormNum = myInfo.getDormNum();
             this.joinPeriod = myInfo.getJoinPeriod();

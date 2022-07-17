@@ -3,7 +3,6 @@ package idorm.idormServer.service;
 import idorm.idormServer.domain.Member;
 import idorm.idormServer.repository.MemberRepository;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
