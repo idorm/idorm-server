@@ -1,13 +1,15 @@
 package idorm.idormServer.service;
 
-import idorm.idormServer.domain.MyInfo;
-import idorm.idormServer.dto.MyInfoDTO.MyInfoOneDTO;
+import idorm.idormServer.domain.*;
+import idorm.idormServer.dto.MyInfoDTO;
 import idorm.idormServer.repository.MyInfoRepository;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,28 +21,38 @@ public class MyInfoService {
     /**
      * 회원 정보 저장
      */
-    @Transactional(readOnly = false)
-    public Long save(MyInfo myInfo) {
-        // 의문점: 저장할 때도 엔티티 자체를 넘기지 않고, dto로 변환 혹은 파라미터로 받아야할까
+    @Transactional
+    public Long save(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender,
+                     Integer age, Boolean isSnoring, Boolean isSmoking,
+                     Boolean isGrinding, Boolean isWearEarphones, Boolean isAllowedFood,
+                     String wakeUpTime, String cleanUpStatus, String showerTime,
+                     String MBTI, String wishText) {
+        MyInfo myInfo = new MyInfo(dormNum, joinPeriod, gender,
+                age, isSnoring, isSmoking,
+                isGrinding, isWearEarphones, isAllowedFood,
+                wakeUpTime, cleanUpStatus, showerTime,
+                MBTI, wishText);
 
-        myInfoRepository.saveMyInfo(myInfo);
         return myInfo.getId();
     }
 
     /**
      * 회원 정보 조회
      */
-    public MyInfoOneDTO findMyInfoById(Long myInfoId) {
-        return myInfoRepository.findOne(myInfoId);
+    public MyInfo findMyInfoById(Long myInfoId) {
+        return myInfoRepository.findById(myInfoId).get();
     }
 
     public List<MyInfo> findMyInfoAll() {
         return myInfoRepository.findAll();
     }
 
-//    @Transactional
-//    public void deleteMyInfo(Long myInfoId) {
-//        myInfoRepository.delete(myInfoId);
-//    }
+    public List<MyInfo> findAll() {
+        return myInfoRepository.findAll();
+    }
 
+    @Transactional
+    public void deleteMyInfo(Long myInfoId) {
+        myInfoRepository.delete(findMyInfoById(myInfoId));
+    }
 }

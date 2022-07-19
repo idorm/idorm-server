@@ -4,7 +4,6 @@ import idorm.idormServer.domain.Member;
 import idorm.idormServer.dto.MemberDTO;
 import idorm.idormServer.dto.MemberDTO.CreateMemberResponse;
 import idorm.idormServer.dto.MemberDTO.DeleteMember;
-import idorm.idormServer.dto.MemberDTO.MemberOneDTO;
 import idorm.idormServer.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@RequestMapping("/")
 @RequiredArgsConstructor
 class MemberController {
 
@@ -26,9 +26,9 @@ class MemberController {
     public Result memberOne(
             @PathVariable("id") Long id
     ) {
-        Member member = memberService.findOne(id);
-        MemberOneDTO memberOneDTO = new MemberOneDTO(member);
-        return new Result(memberOneDTO);
+        Member member = memberService.findById(id);
+        MemberDTO memberDTO = new MemberDTO(member);
+        return new Result(memberDTO);
     }
 
     /**
@@ -43,13 +43,17 @@ class MemberController {
     /**
      * 멤버 삭제
      */
-//    @DeleteMapping("/member/{id}")
-//    public DeleteMember deleteMember(
-//            @PathVariable("id") Long id
-//    ) {
-//
-//
-//    }
+    @DeleteMapping("/member/{id}")
+    public DeleteMember deleteMember(
+            @PathVariable("id") Long id
+    ) {
+        memberService.deleteMember(id);
+        return new DeleteMember(id);
+    }
+
+    /**
+     * 비밀번호 변경
+     */
 
     @Data
     @AllArgsConstructor

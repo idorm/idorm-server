@@ -2,23 +2,21 @@ package idorm.idormServer.service;
 
 import idorm.idormServer.domain.Member;
 import idorm.idormServer.repository.MemberRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    /**
-     * 회원 가입
-     */
-    @Transactional(readOnly = false)
+    @Transactional
     public Long join(String email, String password) {
         validateDuplicateMember(email); // 중복 회원 검증
         Member member = new Member(email, password);
@@ -27,39 +25,33 @@ public class MemberService {
     }
 
     private void validateDuplicateMember(String email) {
-        List<Member> findMembers = memberRepository.findByEmail(email);
+        Optional<Member> findMembers = memberRepository.findByEmail(email);
         if (!findMembers.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
 
-    /**
-     * 회원 조회
-     */
-    // 전체 조회
-    public List<Member> findMembers() {
+    public Member findById(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() -> new NullPointerException("id가 존재하지 않습니다."));
+    }
+
+    @Transactional
+    public void deleteMember(Long memberId) {
+        memberRepository.delete(findById(memberId));
+    }
+
+    public List<Member> findAll() {
         return memberRepository.findAll();
     }
 
-    // 단건 조회
-    public Member findOne(Long memberId) {
-        return memberRepository.findOne(memberId);
+    public Optional<Member> findByEmail(String email) {
+        return memberRepository.findByEmail(email);
     }
 
-    /**
-     * 회원 정보 수정(비멀번호 변경)
-     */
     @Transactional
-    public void updatePassword(Long id, String password) {
-        Member member = memberRepository.findOne(id);
-        member.setPassword(password);
+    public void updateMember(Long memberId, String password) {
+        Member member = memberRepository.findById(memberId).get();
+        member.updatePassword(password);
     }
-
-    /**
-     * 회원 삭제
-     */
-//    public Long deleteMember(Long id) {
-//
-//    }
 
 }
