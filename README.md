@@ -122,3 +122,9 @@
 |  | 대댓글 내용 | content | String | NOT NULL |
 | 1:N mapping | 멤버(대댓글 작성자용) | member | Member |  |
 | 1:N mapping | 댓글 (부모 엔티티) | comment | Comment |  |
+
+---
+
+# API
+
+### 진행중
