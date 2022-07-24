@@ -27,11 +27,11 @@ public class MyInfo {
 
     private Integer age;
 
-    private Boolean isSnoring; // 코골이 여부
-    private Boolean isSmoking; // 흡연 여부
-    private Boolean isGrinding; // 이갈이 여부
-    private Boolean isWearEarphones; // 이어폰 착용 의사 여부
-    private Boolean isAllowedFood; // 음식 허용 여부
+    private boolean snoring;// 코골이 여부
+    private boolean smoking; // 흡연 여부
+    private boolean grinding; // 이갈이 여부
+    private boolean wearEarphones; // 이어폰 착용 의사 여부
+    private boolean allowedFood; // 음식 허용 여부
 
     private String wakeUpTime; // 기상 시간
     private String cleanUpStatus; // 정리정돈 상태
@@ -39,6 +39,7 @@ public class MyInfo {
 
     private String MBTI;
     private String wishText; // 하고 싶은 말
+    private String chatLink; // 오픈채팅 링크
 
 
     @OneToOne(mappedBy = "myInfo")
@@ -49,18 +50,18 @@ public class MyInfo {
     // 생성 메서드
 
     public MyInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
-                  Boolean isSnoring, Boolean isSmoking, Boolean isGrinding, Boolean isWearEarphones,
-                  Boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
+                  boolean isSnoring, boolean isSmoking, boolean isGrinding, boolean isWearEarphones,
+                  boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
                   String MBTI, String wishText) {
         this.dormNum = dormNum;
         this.joinPeriod = joinPeriod;
         this.gender = gender;
         this.age = age;
-        this.isSnoring = isSnoring;
-        this.isSmoking = isSmoking;
-        this.isGrinding = isGrinding;
-        this.isWearEarphones = isWearEarphones;
-        this.isAllowedFood = isAllowedFood;
+        this.snoring = isSnoring;
+        this.smoking = isSmoking;
+        this.grinding = isGrinding;
+        this.wearEarphones = isWearEarphones;
+        this.allowedFood = isAllowedFood;
         this.wakeUpTime = wakeUpTime;
         this.cleanUpStatus = cleanUpStatus;
         this.showerTime = showerTime;
@@ -71,11 +72,13 @@ public class MyInfo {
     public MyInfo updateMyInfo(MyInfoDTO myInfoDTO) {
         this.dormNum = myInfoDTO.getDormNum();
         this.joinPeriod = myInfoDTO.getJoinPeriod();
-        this.isSnoring = myInfoDTO.getIsSnoring();
-        this.isSmoking = myInfoDTO.getIsSmoking();
-        this.isGrinding = myInfoDTO.getIsGrinding();
-        this.isWearEarphones = myInfoDTO.getIsWearEarphones();
-        this.isAllowedFood = myInfoDTO.getIsAllowedFood();
+        this.gender = gender;
+        this.age = age;
+        this.snoring = myInfoDTO.isSnoring();
+        this.smoking = myInfoDTO.isSmoking();
+        this.grinding = myInfoDTO.isGrinding();
+        this.wearEarphones = myInfoDTO.isWearEarphones();
+        this.allowedFood = myInfoDTO.isAllowedFood();
         this.wakeUpTime = myInfoDTO.getWakeUpTime();
         this.cleanUpStatus = myInfoDTO.getCleanUpStatus();
         this.showerTime = myInfoDTO.getShowerTime();

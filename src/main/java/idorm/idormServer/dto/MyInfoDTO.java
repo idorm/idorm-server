@@ -18,11 +18,11 @@ public class MyInfoDTO {
     private Gender gender;
     private Integer age;
 
-    private Boolean isSnoring; // 코골이 여부
-    private Boolean isSmoking; // 흡연 여부
-    private Boolean isGrinding; // 이갈이 여부
-    private Boolean isWearEarphones;
-    private Boolean isAllowedFood;
+    private boolean snoring; // 코골이 여부
+    private boolean smoking; // 흡연 여부
+    private boolean grinding; // 이갈이 여부
+    private boolean wearEarphones;
+    private boolean allowedFood;
 
     private String wakeUpTime; // 기상 시간
     private String cleanUpStatus; // 정리정돈 상태
@@ -43,11 +43,11 @@ public class MyInfoDTO {
         this.joinPeriod = myInfo.getJoinPeriod();
         this.gender = myInfo.getGender();
         this.age = myInfo.getAge();
-        this.isSnoring = myInfo.getIsSnoring();
-        this.isSmoking = myInfo.getIsSmoking();
-        this.isGrinding = myInfo.getIsGrinding();
-        this.isWearEarphones = myInfo.getIsWearEarphones();
-        this.isAllowedFood = myInfo.getIsAllowedFood();
+        this.snoring = myInfo.isSnoring();
+        this.smoking = myInfo.isSmoking();
+        this.grinding = myInfo.isGrinding();
+        this.wearEarphones = myInfo.isWearEarphones();
+        this.allowedFood = myInfo.isAllowedFood();
         this.wakeUpTime = myInfo.getWakeUpTime();
         this.cleanUpStatus = myInfo.getCleanUpStatus();
         this.showerTime = myInfo.getShowerTime();
@@ -73,11 +73,11 @@ public class MyInfoDTO {
         private Gender gender;
         private Integer age;
 
-        private boolean isSnoring; // 코골이 여부
-        private boolean isSmoking; // 흡연 여부
-        private boolean isGrinding; // 이갈이 여부
-        private Boolean isWearEarphones;
-        private Boolean isAllowedFood;
+        private boolean snoring; // 코골이 여부
+        private boolean smoking; // 흡연 여부
+        private boolean grinding; // 이갈이 여부
+        private boolean wearEarphones;
+        private boolean allowedFood;
 
         private String wakeUpTime; // 기상 시간
         private String cleanUpStatus; // 정리정돈 상태
