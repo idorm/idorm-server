@@ -11,13 +11,13 @@
 |  | 닉네임 | nickname | String |  |
 | @OneToOne | 프로필 이미지 | profileImage | Photo |  |
 | @OneToMany | 좋아요한 룸메 | likedMem | List<Member> |  |
-| @OneToOne | 온보딩 유저정보 | myInfo | MyInfo |  |
+| @OneToOne | 온보딩 유저정보 | matchingInfo | MatchingInfo |  |
 | @OneToOne | 매칭(로그인한 멤버용) | matching | Matching |  |
 | @ManyToOne | 매칭(매칭될 멤버들용) | matchings | Matching |  |
 | @OneToOne | 멤버 (댓글 작성자용) | comment | Comment |  |
 | @OneToOne | 멤버 (대댓글 작성자용) | subComment | SubComment |  |
 
-### MyInfo
+### MatchingInfo
 
 | PK,FK | 속성 | 변수명 | 타입 | 널값 허용 여부  |
 | --- | --- | --- | --- | --- |

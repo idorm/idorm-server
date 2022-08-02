@@ -33,13 +33,13 @@ public class Member implements UserDetails {
     @JoinColumn(name="photo_id")
     private Photo profileImage; // 프로필 이미지
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id")
-    private List<Member> likedMem; // 좋아요한 룸메
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name="member_id")
+//    private List<Member> likedMem; // 좋아요한 룸메
 
     @OneToOne(mappedBy = "member")
-    @JoinColumn(name="myinfo_id")
-    private MyInfo myInfo;
+    @JoinColumn(name="matchingInfo_id")
+    private MatchingInfo matchingInfo;
 
     @OneToOne(mappedBy = "member")
     @JoinColumn(name = "matching_id")
@@ -49,11 +49,11 @@ public class Member implements UserDetails {
     @JoinColumn(name = "matching_id")
     private Matching matchings; // 매칭되는 멤버들을 불러오기 위한
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "commentCreator")
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "subCommentCreator")
     @JoinColumn(name = "subComment_id")
     private SubComment subComment;
 

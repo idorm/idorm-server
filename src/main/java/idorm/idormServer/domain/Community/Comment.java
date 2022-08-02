@@ -33,4 +33,5 @@ public class Comment {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "subComment_id")
     private List<SubComment> subComments;
+
 }

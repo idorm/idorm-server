@@ -3,14 +3,12 @@ package idorm.idormServer.dto;
 import idorm.idormServer.domain.Dormitory;
 import idorm.idormServer.domain.Gender;
 import idorm.idormServer.domain.JoinPeriod;
-import idorm.idormServer.domain.MyInfo;
+import idorm.idormServer.domain.MatchingInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-
 @Data
-public class MyInfoDTO {
+public class MatchingInfoDTO {
 
     private Long id;
     private Dormitory dormNum;
@@ -35,7 +33,7 @@ public class MyInfoDTO {
     private String memberEmail;
 
 
-    public MyInfoDTO(MyInfo myInfo) {
+    public MatchingInfoDTO(MatchingInfo myInfo) {
 
         // TODO: 넘겨줘야 할 값만 설정, 나머지는 빼기
         this.id = myInfo.getId();
@@ -58,15 +56,15 @@ public class MyInfoDTO {
         this.memberEmail = myInfo.getMember().getEmail();
     }
 
-    public static class CreateMyInfoResponse {
+    public static class CreateMatchingInfoResponse {
         private Long id;
 
-        public CreateMyInfoResponse(Long id) {
+        public CreateMatchingInfoResponse(Long id) {
             this.id = id;
         }
     }
 
-    public static class createMyInfoRequest {
+    public static class createMatchingInfoRequest {
 
         private Dormitory dormNum;
         private JoinPeriod joinPeriod;
@@ -88,7 +86,7 @@ public class MyInfoDTO {
     }
 
     @AllArgsConstructor
-    public static class DeleteMyInfo{
+    public static class DeleteMatchingInfo{
         private Long id;
     }
 

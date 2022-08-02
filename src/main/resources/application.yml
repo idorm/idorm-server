@@ -1,24 +1,29 @@
 spring:
+#  security:
+#    user:
+#      name: nahyeon
+#      password: nahyeonpw
+
   datasource:
-    url: ${dburl}
-    username: ${dbusername}
-    password: ${dbpassword}
-    driver-class-name: org.h2.Driver
+    driver-class-name: ${driver-class-name}
+    url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create #none
     properties:
       hibernate:
         #        show_sql: true
         default_batch_fetch_size: 10
         format_sql: true
 
-logging.level:
-  org.hibernate.SQL: debug
+#logging.level:
+#  org.hibernate.SQL: debug
 #  org.hibernate.type: trace
 springdoc:
   api-docs:
-    enabled: false
+    enabled: true
 
     

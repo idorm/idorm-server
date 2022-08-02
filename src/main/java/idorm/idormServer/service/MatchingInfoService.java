@@ -1,22 +1,19 @@
 package idorm.idormServer.service;
 
 import idorm.idormServer.domain.*;
-import idorm.idormServer.dto.MyInfoDTO;
-import idorm.idormServer.repository.MyInfoRepository;
-import lombok.Data;
+import idorm.idormServer.repository.MatchingInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class MyInfoService {
+public class MatchingInfoService {
 
-    private final MyInfoRepository myInfoRepository;
+    private final MatchingInfoRepository matchingInfoRepository;
 
     /**
      * 회원 정보 저장
@@ -27,7 +24,7 @@ public class MyInfoService {
                      Boolean isGrinding, Boolean isWearEarphones, Boolean isAllowedFood,
                      String wakeUpTime, String cleanUpStatus, String showerTime,
                      String MBTI, String wishText) {
-        MyInfo myInfo = new MyInfo(dormNum, joinPeriod, gender,
+        MatchingInfo myInfo = new MatchingInfo(dormNum, joinPeriod, gender,
                 age, isSnoring, isSmoking,
                 isGrinding, isWearEarphones, isAllowedFood,
                 wakeUpTime, cleanUpStatus, showerTime,
@@ -39,20 +36,20 @@ public class MyInfoService {
     /**
      * 회원 정보 조회
      */
-    public MyInfo findMyInfoById(Long myInfoId) {
-        return myInfoRepository.findById(myInfoId).get();
+    public MatchingInfo findMyInfoById(Long myInfoId) {
+        return matchingInfoRepository.findById(myInfoId).get();
     }
 
-    public List<MyInfo> findMyInfoAll() {
-        return myInfoRepository.findAll();
+    public List<MatchingInfo> findMyInfoAll() {
+        return matchingInfoRepository.findAll();
     }
 
-    public List<MyInfo> findAll() {
-        return myInfoRepository.findAll();
+    public List<MatchingInfo> findAll() {
+        return matchingInfoRepository.findAll();
     }
 
     @Transactional
     public void deleteMyInfo(Long myInfoId) {
-        myInfoRepository.delete(findMyInfoById(myInfoId));
+        matchingInfoRepository.delete(findMyInfoById(myInfoId));
     }
 }

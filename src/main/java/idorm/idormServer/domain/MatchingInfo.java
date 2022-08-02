@@ -1,21 +1,20 @@
 package idorm.idormServer.domain;
 
-import idorm.idormServer.dto.MyInfoDTO;
+import idorm.idormServer.dto.MatchingInfoDTO;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MyInfo {
+public class MatchingInfo {
 
     @Id @GeneratedValue
-    @Column(name="myinfo_id")
+    @Column(name="matchingInfo_id")
     private Long id;
 
     private Dormitory dormNum; // 기숙사 선택 [1기숙사, 2기숙사, 3기숙사]
@@ -42,17 +41,17 @@ public class MyInfo {
     private String chatLink; // 오픈채팅 링크
 
 
-    @OneToOne(mappedBy = "myInfo")
+    @OneToOne
     @JoinColumn(name="member_id")
     private Member member;
 
 
     // 생성 메서드
 
-    public MyInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
-                  boolean isSnoring, boolean isSmoking, boolean isGrinding, boolean isWearEarphones,
-                  boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
-                  String MBTI, String wishText) {
+    public MatchingInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
+                        boolean isSnoring, boolean isSmoking, boolean isGrinding, boolean isWearEarphones,
+                        boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
+                        String MBTI, String wishText) {
         this.dormNum = dormNum;
         this.joinPeriod = joinPeriod;
         this.gender = gender;
@@ -69,21 +68,21 @@ public class MyInfo {
         this.wishText = wishText;
     }
 
-    public MyInfo updateMyInfo(MyInfoDTO myInfoDTO) {
-        this.dormNum = myInfoDTO.getDormNum();
-        this.joinPeriod = myInfoDTO.getJoinPeriod();
-        this.gender = gender;
-        this.age = age;
-        this.snoring = myInfoDTO.isSnoring();
-        this.smoking = myInfoDTO.isSmoking();
-        this.grinding = myInfoDTO.isGrinding();
-        this.wearEarphones = myInfoDTO.isWearEarphones();
-        this.allowedFood = myInfoDTO.isAllowedFood();
-        this.wakeUpTime = myInfoDTO.getWakeUpTime();
-        this.cleanUpStatus = myInfoDTO.getCleanUpStatus();
-        this.showerTime = myInfoDTO.getShowerTime();
-        this.MBTI = myInfoDTO.getMBTI();
-        this.wishText = myInfoDTO.getWishText();
+    public MatchingInfo updateMatchingInfo(MatchingInfoDTO matchingInfoDTO) {
+        this.dormNum = matchingInfoDTO.getDormNum();
+        this.joinPeriod = matchingInfoDTO.getJoinPeriod();
+        this.gender = matchingInfoDTO.getGender();
+        this.age = matchingInfoDTO.getAge();
+        this.snoring = matchingInfoDTO.isSnoring();
+        this.smoking = matchingInfoDTO.isSmoking();
+        this.grinding = matchingInfoDTO.isGrinding();
+        this.wearEarphones = matchingInfoDTO.isWearEarphones();
+        this.allowedFood = matchingInfoDTO.isAllowedFood();
+        this.wakeUpTime = matchingInfoDTO.getWakeUpTime();
+        this.cleanUpStatus = matchingInfoDTO.getCleanUpStatus();
+        this.showerTime = matchingInfoDTO.getShowerTime();
+        this.MBTI = matchingInfoDTO.getMBTI();
+        this.wishText = matchingInfoDTO.getWishText();
 
         return this;
     }
