@@ -124,9 +124,3 @@
 |  | 글을 보여주는지 여부 | visible | boolean | NOT NULL |
 | @OneToOne | 멤버(대댓글 작성자용) | member | Member |  |
 | @ManyToOne | 댓글 (부모 엔티티) | comment | Comment |  |
-
----
-
-# API
-
-### 진행 중

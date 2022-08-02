@@ -25,5 +25,4 @@ spring:
 springdoc:
   api-docs:
     enabled: true
-
     
