@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,6 +33,6 @@ public class Comment {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "subComment_id")
-    private List<SubComment> subComments;
+    private List<SubComment> subComments = new ArrayList<>();
 
 }

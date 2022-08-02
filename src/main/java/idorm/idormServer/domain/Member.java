@@ -8,26 +8,26 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member implements UserDetails {
 
     @Id
     @GeneratedValue
     @Column(name="member_id")
     private Long id;
 
-    @NotEmpty
+    @NotBlank
     private String email;
 
-    @NotEmpty
+    @NotBlank
     private String password;
-    private String nickname;
+    private String nickname; // 커뮤니티 게시글에선 익명/닉네임 여부 선택 가능, 댓글에선 전부 익명1,2,3
 
     @OneToOne(mappedBy = "member")
     @JoinColumn(name="photo_id")
@@ -35,7 +35,7 @@ public class Member {
 
 //    @OneToMany(fetch = FetchType.LAZY)
 //    @JoinColumn(name="member_id")
-//    private List<Member> likedMem; // 좋아요한 룸메
+//    private List<Member> likedMem = new ArrayList<>(); // 좋아요한 룸메
 
     @OneToOne(mappedBy = "member")
     @JoinColumn(name="matchingInfo_id")
@@ -58,47 +58,57 @@ public class Member {
     private SubComment subComment;
 
     /**
-     * security
+     * security code
      */
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    private Set<String> roles = new HashSet<>();
-//
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return this.roles.stream()
-//                .map(SimpleGrantedAuthority::new)
-//                .collect(Collectors.toList());
-//    }
+    // 해당 USER의 권한을 return 하는 곳
 
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return true;
-//    }
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
 
-//    @Override
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return email;
-//    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return getId().toString();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+
+        // 우리 사이트에서 1년동안 회원이 로그인을 안하면 휴면계정으로 하기로 했다면
+        // return true;
+    }
+
+    /**
+     * security code end
+     */
+
 
     public Member(String email, String password) {
         this.email = email;
@@ -110,6 +120,10 @@ public class Member {
      */
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 
 }

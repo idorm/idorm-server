@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,11 +39,11 @@ public class Post {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "photo_id")
-    private List<Photo> photos; // 업로드 사진들
+    private List<Photo> photos = new ArrayList<>(); // 업로드 사진들
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
 
 

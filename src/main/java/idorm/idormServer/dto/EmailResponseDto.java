@@ -3,10 +3,10 @@ package idorm.idormServer.dto;
 import lombok.Data;
 
 @Data
-public class EmailResponseDTO {
+public class EmailResponseDto {
 
     private String response;
-    public EmailResponseDTO(String email){
+    public EmailResponseDto(String email){
         this.response =email;
     }
 }

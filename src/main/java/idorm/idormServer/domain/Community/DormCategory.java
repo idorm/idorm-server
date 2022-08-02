@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,10 +23,10 @@ public class DormCategory {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private List<Post> posts; // 기숙사별 전체 게시글
+    private List<Post> posts = new ArrayList<>(); // 기숙사별 전체 게시글
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private List<Post> topPosts; // 기숙사별 인기 게시글
+    private List<Post> topPosts = new ArrayList<>(); // 기숙사별 인기 게시글
 
 }
