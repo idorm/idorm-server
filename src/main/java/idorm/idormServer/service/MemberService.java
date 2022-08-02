@@ -16,6 +16,9 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    /**
+     * 회원 생성
+     */
     @Transactional
     public Long join(String email, String password) {
         validateDuplicateMember(email); // 중복 회원 검증
@@ -31,13 +34,11 @@ public class MemberService {
         }
     }
 
+    /**
+     * 회원 조회
+     */
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new NullPointerException("id가 존재하지 않습니다."));
-    }
-
-    @Transactional
-    public void deleteMember(Long memberId) {
-        memberRepository.delete(findById(memberId));
     }
 
     public List<Member> findAll() {
@@ -48,6 +49,17 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
+    /**
+     * 회원 삭제
+     */
+    @Transactional
+    public void deleteMember(Long memberId) {
+        memberRepository.delete(findById(memberId));
+    }
+
+    /**
+     * 회원 수정
+     */
     @Transactional
     public void updateMember(Long memberId, String password) {
         Member member = memberRepository.findById(memberId).get();
