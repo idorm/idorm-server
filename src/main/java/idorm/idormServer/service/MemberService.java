@@ -49,6 +49,10 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
+    public Optional<Member> findByNickname(String name) {
+        return memberRepository.findByNickname(name);
+    }
+
     /**
      * 회원 삭제
      */

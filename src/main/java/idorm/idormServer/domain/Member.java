@@ -22,10 +22,7 @@ public class Member implements UserDetails {
     @Column(name="member_id")
     private Long id;
 
-    @NotBlank
     private String email;
-
-    @NotBlank
     private String password;
     private String nickname; // 커뮤니티 게시글에선 익명/닉네임 여부 선택 가능, 댓글에선 전부 익명1,2,3
 
@@ -33,9 +30,8 @@ public class Member implements UserDetails {
     @JoinColumn(name="photo_id")
     private Photo profileImage; // 프로필 이미지
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name="member_id")
-//    private List<Member> likedMem = new ArrayList<>(); // 좋아요한 룸메
+    @OneToMany
+    private List<Member> likedMem = new ArrayList<>(); // 좋아요한 룸메
 
     @OneToOne(mappedBy = "member")
     @JoinColumn(name="matchingInfo_id")
@@ -113,6 +109,7 @@ public class Member implements UserDetails {
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
+        this.roles.add("ROLE_USER");
     }
 
     /**
