@@ -1,14 +1,15 @@
 package idorm.idormServer.domain;
 
-import idorm.idormServer.domain.Community.Comment;
-import idorm.idormServer.domain.Community.SubComment;
+//import idorm.idormServer.domain.Community.Comment;
+//import idorm.idormServer.domain.Community.SubComment;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+//import javax.validation.constraints.Email;
+//import javax.validation.constraints.NotBlank;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,35 +24,36 @@ public class Member implements UserDetails {
     private Long id;
 
     private String email;
+
     private String password;
     private String nickname; // 커뮤니티 게시글에선 익명/닉네임 여부 선택 가능, 댓글에선 전부 익명1,2,3
 
-    @OneToOne(mappedBy = "member")
-    @JoinColumn(name="photo_id")
-    private Photo profileImage; // 프로필 이미지
-
-    @OneToMany
-    private List<Member> likedMem = new ArrayList<>(); // 좋아요한 룸메
-
-    @OneToOne(mappedBy = "member")
-    @JoinColumn(name="matchingInfo_id")
-    private MatchingInfo matchingInfo;
-
-    @OneToOne(mappedBy = "member")
-    @JoinColumn(name = "matching_id")
-    private Matching matching; // 로그인한 멤버를 불러오기 위한
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "matching_id")
-    private Matching matchings; // 매칭되는 멤버들을 불러오기 위한
-
-    @OneToOne(mappedBy = "commentCreator")
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
-
-    @OneToOne(mappedBy = "subCommentCreator")
-    @JoinColumn(name = "subComment_id")
-    private SubComment subComment;
+//    @OneToOne(mappedBy = "member")
+//    @JoinColumn(name="photo_id")
+//    private Photo profileImage; // 프로필 이미지
+//
+//    @OneToMany
+//    private List<Member> likedMem = new ArrayList<>(); // 좋아요한 룸메
+//
+//    @OneToOne(mappedBy = "member")
+//    @JoinColumn(name="matchingInfo_id")
+//    private MatchingInfo matchingInfo;
+//
+//    @OneToOne(mappedBy = "member")
+//    @JoinColumn(name = "matching_id")
+//    private Matching matching; // 로그인한 멤버를 불러오기 위한
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "matching_id")
+//    private Matching matchings; // 매칭되는 멤버들을 불러오기 위한
+//
+//    @OneToOne(mappedBy = "commentCreator")
+//    @JoinColumn(name = "comment_id")
+//    private Comment comment;
+//
+//    @OneToOne(mappedBy = "subCommentCreator")
+//    @JoinColumn(name = "subComment_id")
+//    private SubComment subComment;
 
     /**
      * security code

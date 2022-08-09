@@ -68,7 +68,7 @@ public class MemberController {
         } else {
             emailService.findByEmail(request.getEmail()).isJoined();
             return new ReturnMemberIdResponse(
-                    memberService.join(passwordEncoder.encode(request.getPassword()), request.getEmail()));
+                    memberService.join(request.getEmail(), passwordEncoder.encode(request.getPassword())));
         }
     }
 

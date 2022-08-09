@@ -33,10 +33,10 @@ public class Email {
 
     public void isChecked() {
         this.isCheck = true;
-    }
+    } // 인증 여부
     public void isJoined() {
         this.isJoin = true;
-    }
+    } // 가입 여부
 
     public boolean getJoined() {
         return this.isJoin;

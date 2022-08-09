@@ -39,7 +39,7 @@ public class EmailService {
         return emailRepository.findByEmail(email);
     }
     public Email findByEmail(String email){
-        return emailRepository.findByEmail(email).orElseThrow(()->new NullPointerException("없는값입니다"));
+        return emailRepository.findByEmail(email).orElseThrow(()->new NullPointerException("없는 값 입니다"));
     }
     @Transactional
     public void deleteById(Long id){

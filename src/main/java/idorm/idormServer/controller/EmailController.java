@@ -54,7 +54,7 @@ public class EmailController {
             return new EmailResponseDto(email.getEmail());
         }
         else {
-            throw new IllegalArgumentException("형식에 맞지않는 이메일입니다.");
+            throw new IllegalArgumentException("형식에 맞지 않는 이메일입니다.");
         }
     }
     @PostMapping("/email/password") // 이메일 인증 코드 보내기
@@ -64,7 +64,7 @@ public class EmailController {
             sendSimpleMessage(email.getEmail());
         }
         else {
-            throw new IllegalArgumentException("가입하지않은 이메일입니다.");
+            throw new IllegalArgumentException("가입하지 않은 이메일입니다.");
         }
         return new EmailResponseDto(email.getEmail());
     }
