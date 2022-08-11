@@ -102,16 +102,16 @@ public class MemberController {
     public ReturnMemberIdResponse updateMember(
             HttpServletRequest request2, @RequestBody @Valid UpdateMemberRequest request) {
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
-        if(memberService.findByNickname(request.getNickname()).isEmpty()) {
+        if(memberService.findByNickname(request.getNickname()).isEmpty()) { // 저장된 닉네임이 없다면
             memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()));
             return new ReturnMemberIdResponse(userPk);
         }
-        else {
-            if(memberService.findById(userPk).getNickname().equals(request.getNickname())) {
+        else { // 닉네임이 존재하면
+            if(memberService.findById(userPk).getNickname().equals(request.getNickname())) { // 유저 본인의 닉네임가 그대로 일치할 시
                 memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()));
                 return new ReturnMemberIdResponse(userPk);
             }
-            else {
+            else { // 유저 본인의 닉네임과 같지 않은데 존재하는 경우
                 throw new IllegalArgumentException("이미 존재하는 닉네임입니다");
             }
         }
