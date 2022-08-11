@@ -75,6 +75,7 @@ public class MemberController {
         }
         else { // 입력한 닉네임을 가진 멤버가 db에 있다면
             if(memberService.findById(userPk).getNickname().equals(request.getNickname())) { // 저장된 멤버의 닉네임과 입력받은 닉네임이 같다면
+
                 memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()), request.getNickname()); // 비밀번호 업데이트
                 return new ReturnMemberIdResponse(userPk);
             }
