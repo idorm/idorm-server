@@ -49,6 +49,8 @@ public class InitDB {
             Member admin = createMember(id, passwordEncoder.encode(password));
             em.persist(admin);
 
+            admin.getRoles().clear();
+
             admin.getRoles().add("ROLE_ADMIN");
             admin.updateNickname("root");
 

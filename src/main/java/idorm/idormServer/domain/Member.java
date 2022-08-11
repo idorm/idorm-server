@@ -28,6 +28,10 @@ public class Member implements UserDetails {
     private String password;
     private String nickname; // 커뮤니티 게시글에선 익명/닉네임 여부 선택 가능, 댓글에선 전부 익명1,2,3
 
+    @OneToOne
+    @JoinColumn(name="matchingInfo_id")
+    private MatchingInfo matchingInfo;
+
 //    @OneToOne(mappedBy = "member")
 //    @JoinColumn(name="photo_id")
 //    private Photo profileImage; // 프로필 이미지
@@ -35,9 +39,6 @@ public class Member implements UserDetails {
 //    @OneToMany
 //    private List<Member> likedMem = new ArrayList<>(); // 좋아요한 룸메
 //
-//    @OneToOne(mappedBy = "member")
-//    @JoinColumn(name="matchingInfo_id")
-//    private MatchingInfo matchingInfo;
 //
 //    @OneToOne(mappedBy = "member")
 //    @JoinColumn(name = "matching_id")
