@@ -65,9 +65,10 @@ public class MemberService {
      * 회원 수정
      */
     @Transactional
-    public void updateMember(Long memberId, String password) {
+    public void updateMember(Long memberId, String password, String nickname) {
         Member member = memberRepository.findById(memberId).get();
         member.updatePassword(password);
+        member.updateNickname(nickname);
     }
 
 }

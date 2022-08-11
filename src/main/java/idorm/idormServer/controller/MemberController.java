@@ -78,7 +78,7 @@ public class MemberController {
     @PatchMapping("/admin/member/{id}")
     public ReturnMemberIdResponse updateMemberRoot(
             @PathVariable("id") Long id, @RequestBody @Valid UpdateMemberRequest request) {
-        memberService.updateMember(id,passwordEncoder.encode(request.getPassword()));
+        memberService.updateMember(id,passwordEncoder.encode(request.getPassword()), request.getNickname());
         return new ReturnMemberIdResponse(id);
     }
 
@@ -96,22 +96,23 @@ public class MemberController {
     }
 
     /**
-     * 맴버업데이트(비밀번호변경)
+     * 맴버업데이트(비밀번호, 닉네임변경)
      */
     @PatchMapping("/member")
     public ReturnMemberIdResponse updateMember(
             HttpServletRequest request2, @RequestBody @Valid UpdateMemberRequest request) {
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
-        if(memberService.findByNickname(request.getNickname()).isEmpty()) { // 저장된 닉네임이 없다면
-            memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()));
+
+        if(memberService.findByNickname(request.getNickname()).isEmpty()) { // 입력한 닉네임을 가진 멤버가 db에 없다면
+            memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()), request.getNickname()); // 비밀번호, 닉네임 업데이트
             return new ReturnMemberIdResponse(userPk);
         }
-        else { // 닉네임이 존재하면
-            if(memberService.findById(userPk).getNickname().equals(request.getNickname())) { // 유저 본인의 닉네임가 그대로 일치할 시
-                memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()));
+        else { // 입력한 닉네임을 가진 멤버가 db에 있다면
+            if(memberService.findById(userPk).getNickname().equals(request.getNickname())) { // 저장된 멤버의 닉네임과 입력받은 닉네임이 같다면
+                memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()), request.getNickname()); // 비밀번호 업데이트
                 return new ReturnMemberIdResponse(userPk);
             }
-            else { // 유저 본인의 닉네임과 같지 않은데 존재하는 경우
+            else { // 저장된 멤버의 닉네임과 입력받은 닉네임이 다르다면
                 throw new IllegalArgumentException("이미 존재하는 닉네임입니다");
             }
         }
