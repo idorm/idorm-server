@@ -23,8 +23,8 @@ public class InitDB {
     public void init() {
         // 여기에 InitService를 넣어줘도 되지만 굳이 transaction을 따로 먹여서 호출하는 이유는
         // spring life cycle이 있어서 transaction 등이 잘 작동이 안됨. 그래서 별도의 bean으로 등록하고 호출하는 방식으로 사용하는 것을 권장
-//        initService.dbIni1();
-//        initService.dbInit2();
+        initService.dbInit1();
+        initService.dbIni2();
     }
 
     @Component
@@ -43,7 +43,15 @@ public class InitDB {
         @Value("${password}")
         private String password;
 
-        public void dbIni1() {
+        public void dbInit1() {
+            Member admin = createMember(id, passwordEncoder.encode(password));
+            admin.getRoles().add("ROLE_ADMIN");
+            admin.updateNickname("root");
+
+            em.persist(admin);
+        }
+
+        public void dbIni2() {
             Member member1 = createMember("aaa@inu.ac.kr", passwordEncoder.encode("aaa"));
             Member member2 = createMember("bbb@inu.ac.kr", passwordEncoder.encode("bbb"));
             Member member3 = createMember("ccc@inu.ac.kr", passwordEncoder.encode("ccc"));
@@ -52,13 +60,6 @@ public class InitDB {
             em.persist(member2);
             em.persist(member3);
 
-        }
-
-        public void dbInit2() {
-            Member admin = createMember(id, passwordEncoder.encode(password));
-            admin.getRoles().add("ROLE_ADMIN");
-
-            em.persist(admin);
         }
 
         private Member createMember(String email, String password) {

@@ -47,17 +47,6 @@ public class MemberController {
     }
 
     /**
-     * 전체 멤버 조회(관리자)
-     */
-    @GetMapping("/admin/members")
-    public Result members() {
-        List<Member> members = memberService.findAll();
-        List<MemberOneDto> collect = members.stream()
-                .map(o -> new MemberOneDto(o)).collect(Collectors.toList());
-        return new Result(collect);
-    }
-
-    /**
      * 멤버 등록
      */
     @PostMapping("/register")
@@ -70,29 +59,6 @@ public class MemberController {
             return new ReturnMemberIdResponse(
                     memberService.join(request.getEmail(), passwordEncoder.encode(request.getPassword())));
         }
-    }
-
-    /**
-     * 멤버업데이트(비밀번호변경) (관리자)
-     */
-    @PatchMapping("/admin/member/{id}")
-    public ReturnMemberIdResponse updateMemberRoot(
-            @PathVariable("id") Long id, @RequestBody @Valid UpdateMemberRequest request) {
-        memberService.updateMember(id,passwordEncoder.encode(request.getPassword()), request.getNickname());
-        return new ReturnMemberIdResponse(id);
-    }
-
-    /**
-     * 멤버 삭제(관리자)
-     */
-    @DeleteMapping("/admin/member/{id}")
-    public DeleteMember deleteMemberRoot(
-            @PathVariable("id") Long id
-    ) {
-        String email = memberService.findById(id).getEmail();
-        emailService.deleteById(emailService.findByEmail(email).getId());
-        memberService.deleteMember(id);
-        return new DeleteMember(id);
     }
 
     /**
@@ -131,6 +97,7 @@ public class MemberController {
         memberService.deleteMember(userPk);
         return new DeleteMember(userPk);
     }
+
     /**
      * 로그인
      */
@@ -148,13 +115,47 @@ public class MemberController {
         return jwtTokenProvider.createToken(mem.getUsername(), roles);
     }
 
+    /**
+     * admin role
+     */
+
+    /**
+     * 전체 멤버 조회(관리자)
+     */
+    @GetMapping("/admin/members")
+    public Result members() {
+        List<Member> members = memberService.findAll();
+        List<MemberOneDto> collect = members.stream()
+                .map(o -> new MemberOneDto(o)).collect(Collectors.toList());
+        return new Result(collect);
+    }
+
+    /**
+     * 멤버 업데이트(관리자)
+     */
+    @PatchMapping("/admin/member/{id}")
+    public ReturnMemberIdResponse updateMemberRoot(
+            @PathVariable("id") Long id, @RequestBody @Valid UpdateMemberRequest request) {
+        memberService.updateMember(id,passwordEncoder.encode(request.getPassword()), request.getNickname());
+        return new ReturnMemberIdResponse(id);
+    }
+
+    /**
+     * 멤버 삭제(관리자)
+     */
+    @DeleteMapping("/admin/member/{id}")
+    public DeleteMember deleteMemberRoot(
+            @PathVariable("id") Long id
+    ) {
+        String email = memberService.findById(id).getEmail();
+        emailService.deleteById(emailService.findByEmail(email).getId());
+        memberService.deleteMember(id);
+        return new DeleteMember(id);
+    }
 
     @Data
     @AllArgsConstructor
     static class Result<T> {
         private T data;
     }
-
-
-
 }

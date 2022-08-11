@@ -1,7 +1,7 @@
 package idorm.idormServer.dto;
 
-//import idorm.idormServer.domain.MatchingInfo;
 import idorm.idormServer.domain.Member;
+//import idorm.idormServer.domain.MatchingInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,6 +14,7 @@ public class MemberDTO {
 
     @Data
     public static class MemberOneDto {
+
         private Long id;
         private String nickname;
         private String email;
@@ -33,6 +34,7 @@ public class MemberDTO {
 
     @Data
     public static class ReturnMemberIdResponse {
+
         private Long id;
         public ReturnMemberIdResponse(Long id) {
             this.id = id;
@@ -41,20 +43,24 @@ public class MemberDTO {
 
     @Data
     public static class UpdateMemberRequest {
+
+        @NotBlank
         private String password;
         private String nickname;
     }
 
     @Data
     public static class LoginMemberRequest {
+
+        @NotBlank
         private String email;
+        @NotBlank
         private String password;
     }
 
     @Data
     public static class CreateMemberRequest {
-//        @NotBlank
-//        private String nickname;
+
         @NotBlank
         private String password;
         @NotBlank @Email
@@ -64,6 +70,7 @@ public class MemberDTO {
     @Data
     @AllArgsConstructor
     public static class DeleteMember {
+
         private Long id;
     }
 
