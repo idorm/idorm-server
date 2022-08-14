@@ -1,6 +1,5 @@
 package idorm.idormServer.domain;
 
-//import idorm.idormServer.dto.MatchingInfoDTO;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -79,7 +78,7 @@ public class MatchingInfo {
     /**
      * 핵심 비지니스 로직
      */
-    public void updateMatchingInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
+    public void updateAllMatchingInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
                                    Boolean isSnoring, Boolean isSmoking, Boolean isGrinding, Boolean isWearEarphones,
                                    Boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
                                    String mbti, String wishText, String openKakaoLink) {
@@ -97,6 +96,61 @@ public class MatchingInfo {
         this.showerTime = showerTime;
         this.mbti = mbti;
         this.wishText = wishText;
+        this.openKakaoLink = openKakaoLink;
+    }
+
+    public void updateDormNum(Dormitory dormNum) {
+        this.dormNum = dormNum;
+    }
+
+    public void updateJoinPeriod(JoinPeriod joinPeriod) {
+        this.joinPeriod = joinPeriod;
+    }
+
+    public void updateGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void updateAge(Integer age) {
+        this.age = age;
+    }
+
+    public void updateIsSnoring(Boolean isSnoring) {
+        this.isSnoring = isSnoring;
+    }
+
+    public void updateIsSmoking(Boolean isSmoking) {
+        this.isSmoking = isSmoking;
+    }
+    public void updateIsGrinding(Boolean isGrinding) {
+        this.isGrinding = isGrinding;
+    }
+    public void updateIsWearEarphones(Boolean isWearEarphones) {
+        this.isWearEarphones = isWearEarphones;
+    }
+    public void updateIsAllowedFood(Boolean isAllowedFood) {
+        this.isAllowedFood = isAllowedFood;
+    }
+    public void updateWakeupTime(String wakeUpTime) {
+        this.wakeUpTime = wakeUpTime;
+    }
+    public void updateCleanUpStatus(String cleanUpStatus) {
+        this.cleanUpStatus = cleanUpStatus;
+    }
+
+    public void updateShowerTime(String showerTime) {
+        this.showerTime = showerTime;
+    }
+
+    public void updateMbti(String mbti) {
+        this.mbti = mbti;
+    }
+
+    public void updateWishtext(String wishText) {
+        this.wishText = wishText;
+    }
+
+    public void updateOpenKakaoLink(String openKakaoLink) {
         this.openKakaoLink = openKakaoLink;
     }
 
