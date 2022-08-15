@@ -22,7 +22,14 @@ public class MemberService {
     @Transactional
     public Long join(String email, String password) {
         validateDuplicateMember(email); // 중복 회원 검증
-        Member member = new Member(email, password);
+//        Member member = new Member(email, password);
+        Member member = Member.builder()
+                .email(email)
+                .password(password)
+                .build();
+
+        member.getCreatedAt();
+        member.getUpdatedAt();
         memberRepository.save(member);
         return member.getId();
     }

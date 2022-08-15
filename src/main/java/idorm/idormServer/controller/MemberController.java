@@ -4,6 +4,7 @@ import idorm.idormServer.domain.Member;
 import idorm.idormServer.jwt.JwtTokenProvider;
 import idorm.idormServer.service.EmailService;
 import idorm.idormServer.service.MemberService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class MemberController {
     /**
      * 멤버조회
      */
+    @ApiOperation(value = "로그인된 멤버의 데이터 조회", notes = "로그인이 되어있어야 합니다. 멤버의 id, nickname, email을 조회 가능합니다.")
     @GetMapping("/member")
     public Result memberOne(
             HttpServletRequest request
@@ -49,6 +51,7 @@ public class MemberController {
     /**
      * 멤버 등록
      */
+    @ApiOperation(value = "멤버 회원가입", notes = "회원가입은 이메일 인증이 완료된 후가능합니다.")
     @PostMapping("/register")
     public ReturnMemberIdResponse saveMember(@RequestBody @Valid CreateMemberRequest request) {
 
@@ -64,6 +67,7 @@ public class MemberController {
     /**
      * 맴버업데이트(비밀번호, 닉네임변경)
      */
+    @ApiOperation(value = "멤버의 (비밀번호, 닉네임) 변경", notes = "비밀번호 업데이트 혹은 닉네임 업데이트 혹은 (비밀번호,닉네임) 업데이트에 사용합니다. 닉네임은 null 값을 허용하기 때문에 아직 입력되지 않았다면 request에는 password에 대해서만 적어야 합니다. 또한 비밀번호를 업데이트하지 않는 경우에도 기존의 비밀번호를 입력해주어야 합니다.")
     @PatchMapping("/member")
     public ReturnMemberIdResponse updateMember(
             HttpServletRequest request2, @RequestBody @Valid UpdateMemberRequest request) {
@@ -88,6 +92,7 @@ public class MemberController {
     /**
      * 맴버삭제
      */
+    @ApiOperation(value = "멤버 삭제", notes = "멤버를 삭제하면 가입된 이메일도 삭제합니다.")
     @DeleteMapping("/member")
     public DeleteMember deleteMember(
             HttpServletRequest request
@@ -102,6 +107,7 @@ public class MemberController {
     /**
      * 로그인
      */
+    @ApiOperation(value = "로그인", notes = "로그인 후 토큰을 던져줍니다.")
     @PostMapping("/login")
     public String login(@RequestBody LoginMemberRequest member) {
         Member mem = memberService.findByEmail(member.getEmail())
@@ -123,6 +129,7 @@ public class MemberController {
     /**
      * 전체 멤버 조회(관리자)
      */
+    @ApiOperation(value = "관리자용 - 전체 멤버 조회", notes = "가입된 전체 멤버에 대한 데이터를 조회할 수 있습니다.")
     @GetMapping("/admin/members")
     public Result members() {
         List<Member> members = memberService.findAll();
@@ -134,6 +141,7 @@ public class MemberController {
     /**
      * 멤버 업데이트(관리자)
      */
+    @ApiOperation(value = "관리자용 - 특정 멤버 정보 수정(비밀번호, 닉네임)")
     @PatchMapping("/admin/member/{id}")
     public ReturnMemberIdResponse updateMemberRoot(
             @PathVariable("id") Long id, @RequestBody @Valid UpdateMemberRequest request) {
@@ -144,6 +152,7 @@ public class MemberController {
     /**
      * 멤버 삭제(관리자)
      */
+    @ApiOperation(value = "관리자용 - 특정 멤버 삭제")
     @DeleteMapping("/admin/member/{id}")
     public DeleteMember deleteMemberRoot(
             @PathVariable("id") Long id

@@ -22,9 +22,9 @@ public class MatchingInfoController {
     /**
      * 온보딩(매칭)정보 저장
      */
-    @PostMapping("/matchinginfo")
-    public ReturnMemberIdResponse saveMatchingInfo(@RequestBody @Valid MatchingInfoDTO.CreateMatchingInfoRequest request, HttpServletRequest request2) {
-
-    }
+//    @PostMapping("/matchinginfo")
+//    public ReturnMemberIdResponse saveMatchingInfo(@RequestBody @Valid MatchingInfoDTO.CreateMatchingInfoRequest request, HttpServletRequest request2) {
+//
+//    }
 
 }

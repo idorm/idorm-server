@@ -11,12 +11,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 //import javax.validation.constraints.Email;
 //import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Data
 @Entity
 @Getter
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity implements UserDetails{
 
@@ -32,6 +33,7 @@ public class Member extends BaseEntity implements UserDetails{
     @OneToOne
     @JoinColumn(name="matchingInfo_id")
     private MatchingInfo matchingInfo;
+
 
 //    @OneToOne(mappedBy = "member")
 //    @JoinColumn(name="photo_id")

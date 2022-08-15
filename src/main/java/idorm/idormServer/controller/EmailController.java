@@ -7,6 +7,7 @@ import idorm.idormServer.dto.VerifyRequest;
 import idorm.idormServer.jwt.JwtTokenProvider;
 import idorm.idormServer.service.EmailService;
 import idorm.idormServer.service.MemberService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +38,20 @@ public class EmailController {
 
 
 
+    @ApiOperation(value = "이메일 인증", notes = "학교 이메일 형식(@inu.ac.kr)으로 이메일을 받아서 해당 이메일로 인증코드를 발송합니다.")
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "이메일이 전송되었습니다."),
+//            @ApiResponse(code = 400, message = "형식에 맞지 않는 이메일입니다.")
+//    })
     @PostMapping("/email") // 이메일 인증 코드 보내기
     public EmailResponseDto emailAuth(@RequestBody @Valid EmailRequest email) throws Exception {
+
         String[] mailSplit=email.getEmail().split("@");
-        if(!(mailSplit.length==2)) {throw new IllegalArgumentException("형식에 맞지않는 이메일입니다.");}
+
+        if(!(mailSplit.length==2)) {
+            throw new IllegalArgumentException("형식에 맞지않는 이메일입니다.");
+        }
+
         if(mailSplit[1].equals("inu.ac.kr")) {
             if (emailService.findByEmailOp(email.getEmail()).isEmpty()) {
                 sendSimpleMessage(email.getEmail());
@@ -57,7 +68,9 @@ public class EmailController {
             throw new IllegalArgumentException("형식에 맞지 않는 이메일입니다.");
         }
     }
-    @PostMapping("/email/password") // 이메일 인증 코드 보내기
+
+    @ApiOperation(value = "비밀번호 재설정을 위한 이메일 발송", notes = "가입된 이메일의 경우이며 비밀번호를 잊었을 때 사용합니다. 학교 이메일 형식(@inu.ac.kr)으로 이메일을 받아서 해당 이메일로 인증코드를 발송합니다.")
+    @PostMapping("/email/password")
     public EmailResponseDto findPassword(@RequestBody @Valid EmailRequest email) throws Exception {
 
         if(emailService.findByEmail(email.getEmail()).getJoined()==true) {
@@ -68,7 +81,9 @@ public class EmailController {
         }
         return new EmailResponseDto(email.getEmail());
     }
-    @PostMapping("/verifyCode/password/{email}") // 이메일 인증 코드 검증
+
+    @ApiOperation(value = "비밀번호 재설정을 위한 이메일 인증 코드 검증", notes = "/email/password 에서 발송한 인증코드를 확인할 때 사용합니다.")
+    @PostMapping("/verifyCode/password/{email}")
     public String verifyCodePassword(@PathVariable("email")String email, @RequestBody VerifyRequest code) {
         if(emailService.findByEmail(email).getCode().equals(code.getCode())) {
             Member mem = memberService.findByEmail(email)
@@ -84,7 +99,9 @@ public class EmailController {
             throw new IllegalArgumentException("잘못된 인증번호입니다.");
         }
     }
-    @PostMapping("/verifyCode/{email}") // 이메일 인증 코드 검증
+
+    @ApiOperation(value = "이메일 인증 코드 검증", notes = "/email에서 발송한 인증코드를 확인할 때 사용합니다.")
+    @PostMapping("/verifyCode/{email}")
     public EmailResponseDto verifyCode(@PathVariable("email")String email, @RequestBody VerifyRequest code) {
         if(emailService.findByEmail(email).getCode().equals(code.getCode())) {
             emailService.isChecked(email);
@@ -97,7 +114,6 @@ public class EmailController {
 
 
     /**
-     *
      *함수
      */
 
@@ -158,7 +174,7 @@ public class EmailController {
             emailSender.send(message);
         }catch(MailException es){
             es.printStackTrace();
-            throw new IllegalArgumentException("없는 이메일주소입니다");
+            throw new IllegalArgumentException("없는 이메일 주소 입니다");
         }
     }
 
