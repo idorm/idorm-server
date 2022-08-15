@@ -1,5 +1,6 @@
 package idorm.idormServer.domain;
 
+import idorm.idormServer.domain.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MatchingInfo {
+public class MatchingInfo extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name="matchingInfo_id")

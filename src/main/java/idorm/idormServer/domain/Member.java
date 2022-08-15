@@ -2,6 +2,7 @@ package idorm.idormServer.domain;
 
 //import idorm.idormServer.domain.Community.Comment;
 //import idorm.idormServer.domain.Community.SubComment;
+import idorm.idormServer.domain.common.BaseEntity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,13 +11,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 //import javax.validation.constraints.Email;
 //import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member implements UserDetails {
+public class Member extends BaseEntity implements UserDetails{
 
     @Id
     @GeneratedValue
@@ -24,7 +26,6 @@ public class Member implements UserDetails {
     private Long id;
 
     private String email;
-
     private String password;
     private String nickname; // 커뮤니티 게시글에선 익명/닉네임 여부 선택 가능, 댓글에선 전부 익명1,2,3
 
@@ -108,7 +109,7 @@ public class Member implements UserDetails {
      * security code end
      */
 
-
+    @Builder
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
