@@ -1,0 +1,29 @@
+name: Docker CD
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  # 서버 이미지를 생성합니다.
+  Build-Upload-Image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # "latest" 태그로 빌드하여 GitHub registry에 올립니다.
+      - name: Build bootBuildImage with latest
+        run: ./gradlew bootBuildImage -PdockerImageName=ghcr.io/inu-appcenter/idorm-server -PdockerUrl=https://ghcr.io -PdockerUsername=${{ secrets.DOCKER_USER }} -PdockerPassword=${{ secrets.DOCKER_PASSWORD }} -PdockerTag=latest
