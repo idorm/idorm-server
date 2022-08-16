@@ -67,13 +67,14 @@ public class MemberController {
     /**
      * 맴버업데이트(비밀번호, 닉네임변경)
      */
-    @ApiOperation(value = "멤버의 (비밀번호, 닉네임) 변경", notes = "비밀번호 업데이트 혹은 닉네임 업데이트 혹은 (비밀번호,닉네임) 업데이트에 사용합니다. 닉네임은 null 값을 허용하기 때문에 아직 입력되지 않았다면 request에는 password에 대해서만 적어야 합니다. 또한 비밀번호를 업데이트하지 않는 경우에도 기존의 비밀번호를 입력해주어야 합니다.")
+    @ApiOperation(value = "멤버의 (비밀번호, 닉네임) 변경", notes = "'비밀번호와 닉네임' 둘 다 업데이트할 때 사용합니다.")
     @PatchMapping("/member")
     public ReturnMemberIdResponse updateMember(
             HttpServletRequest request2, @RequestBody @Valid UpdateMemberRequest request) {
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
 
         if(memberService.findByNickname(request.getNickname()).isEmpty()) { // 입력한 닉네임을 가진 멤버가 db에 없다면
+
             memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()), request.getNickname()); // 비밀번호, 닉네임 업데이트
             return new ReturnMemberIdResponse(userPk);
         }
@@ -88,6 +89,51 @@ public class MemberController {
             }
         }
     }
+
+    /**
+     * 멤버 업데이트(비밀번호)
+     */
+    @ApiOperation(value = "멤버의 (비밀번호) 변경", notes = "멤버의 비밀번호만 입력하고싶을 때 사용합니다.")
+    @PatchMapping("/member/password")
+    public ReturnMemberIdResponse updateMemberPassword(
+            HttpServletRequest request2, @RequestBody @Valid UpdateMemberPasswordRequest request) {
+
+        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+
+        memberService.updatePassword(userPk, passwordEncoder.encode(request.getPassword()));
+        return new ReturnMemberIdResponse(userPk);
+    }
+
+    /**
+     * 멤버 업데이트(닉네임)
+     */
+    @ApiOperation(value = "멤버의 (닉네임) 변경", notes = "멤버의 닉네임만 변경하고 싶을 때 사용합니다.")
+    @PatchMapping("/member/nickname")
+    public ReturnMemberIdResponse updateMemberNickname(
+            HttpServletRequest request2, @RequestBody @Valid UpdateMemberNicknameRequest request) {
+
+        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+
+        if(!(request.getNickname().isEmpty())) { // 입력받은 닉네임이 있다면
+
+            if(memberService.findByNickname(request.getNickname()).isEmpty()) { // 입력한 닉네임을 가진 멤버가 db에 없다면
+
+                memberService.updateNickname(userPk, request.getNickname()); // 닉네임 업데이트
+                return new ReturnMemberIdResponse(userPk);
+            } else { // 입력한 닉네임을 가진 멤버가 db에 있다면
+                if(memberService.findById(userPk).getNickname().equals(request.getNickname())) { // 저장된 멤버의 닉네임과 입력받은 닉네임이 같다면
+
+                    throw new IllegalArgumentException("변경할 닉네임을 입력해주세요.");
+                }
+                else { // 저장된 멤버의 닉네임과 입력받은 닉네임이 다르다면
+                    throw new IllegalArgumentException("이미 존재하는 닉네임입니다");
+                }
+            }
+        } else { // 입력받은 닉네임이 없다면
+            throw new IllegalArgumentException("닉네임 입력은 필수입니다.");
+        }
+    }
+
 
     /**
      * 맴버삭제

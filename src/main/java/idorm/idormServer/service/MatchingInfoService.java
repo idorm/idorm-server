@@ -61,8 +61,11 @@ public class MatchingInfoService {
 
         MatchingInfo matchingInfo = matchingInfoRepository.findById(matchingInfoId).get();
 
-        matchingInfo.updateAllMatchingInfo(dormNum, joinPeriod, gender, age, isSnoring, isSmoking, isGrinding, isWearEarphones,
-                isAllowedFood, wakeUpTime, cleanUpStatus, showerTime, mbti, wishText, openKakaoLink);
+        if(dormNum != null) matchingInfo.updateDormNum(dormNum);
+
+
+//        matchingInfo.updateAllMatchingInfo(dormNum, joinPeriod, gender, age, isSnoring, isSmoking, isGrinding, isWearEarphones,
+//                isAllowedFood, wakeUpTime, cleanUpStatus, showerTime, mbti, wishText, openKakaoLink);
 
     }
 

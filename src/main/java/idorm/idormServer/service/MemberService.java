@@ -1,6 +1,7 @@
 package idorm.idormServer.service;
 
 import idorm.idormServer.domain.Member;
+import idorm.idormServer.repository.MatchingInfoRepository;
 import idorm.idormServer.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MatchingInfoRepository matchingInfoRepository;
 
     /**
      * 회원 생성
@@ -65,6 +67,7 @@ public class MemberService {
      */
     @Transactional
     public void deleteMember(Long memberId) {
+
         memberRepository.delete(findById(memberId));
     }
 
@@ -75,6 +78,16 @@ public class MemberService {
     public void updateMember(Long memberId, String password, String nickname) {
         Member member = memberRepository.findById(memberId).get();
         member.updatePassword(password);
+        member.updateNickname(nickname);
+    }
+    @Transactional
+    public void updatePassword(Long memberId, String password) {
+        Member member = memberRepository.findById(memberId).get();
+        member.updatePassword(password);
+    }
+    @Transactional
+    public void updateNickname(Long memberId, String nickname) {
+        Member member = memberRepository.findById(memberId).get();
         member.updateNickname(nickname);
     }
 

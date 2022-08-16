@@ -1,16 +1,14 @@
 package idorm.idormServer.domain;
 
 import idorm.idormServer.domain.common.BaseEntity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
+@Data
 @Entity
-@Getter @Setter
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchingInfo extends BaseEntity {
 
@@ -51,14 +49,15 @@ public class MatchingInfo extends BaseEntity {
     @OneToOne(mappedBy = "matchingInfo")
     private Member member;
 
-
     /**
      * 생성 메서드
      */
+    @Builder
     public MatchingInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
                         Boolean isSnoring, Boolean isSmoking, Boolean isGrinding, Boolean isWearEarphones,
                         Boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
                         String mbti, String wishText, String openKakaoLink) {
+
         this.dormNum = dormNum;
         this.joinPeriod = joinPeriod;
         this.gender = gender;
@@ -79,6 +78,7 @@ public class MatchingInfo extends BaseEntity {
     /**
      * 핵심 비지니스 로직
      */
+    @Builder
     public void updateAllMatchingInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
                                    Boolean isSnoring, Boolean isSmoking, Boolean isGrinding, Boolean isWearEarphones,
                                    Boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
