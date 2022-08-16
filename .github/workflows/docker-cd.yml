@@ -26,4 +26,4 @@ jobs:
 
       # "latest" 태그로 빌드하여 GitHub registry에 올립니다.
       - name: Build bootBuildImage with latest
-        run: ./gradlew bootBuildImage -PdockerImageName=ghcr.io/inu-appcenter/idorm-server -PdockerUrl=https://ghcr.io -PdockerUsername=${{ secrets.DOCKER_USER }} -PdockerPassword=${{ secrets.DOCKER_PASSWORD }} -PdockerTag=latest
+        run: ./gradlew bootBuildImage -PdockerImageName=ghcr.io/idorm/idorm-server -PdockerUrl=https://ghcr.io -PdockerUsername=${{ secrets.DOCKER_USER }} -PdockerPassword=${{ secrets.DOCKER_PASSWORD }} -PdockerTag=latest
