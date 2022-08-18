@@ -27,23 +27,33 @@ import java.util.List;
 @Configuration
 public class SwaggerConfiguration {
 
+    /**
+     * swagger 문서 api 설정
+     */
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.OAS_30)
 
                 .alternateTypeRules(AlternateTypeRules
                         .newRule(Pageable.class, Page.class))
-                .useDefaultResponseMessages(false)
+                .useDefaultResponseMessages(false) // Swagger에서 제공해주는 기본 응답 코드 (200, 401, 403, 404). false로 설정하면 기본 응답 코드를 노출하지 않습니다.
                 .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("com.baeldung.swaggerconf.controller")) // Basic error controller 를 없애기 위한 코드
+                .apis(RequestHandlerSelectors.any()) // Swagger를 적용할 패키지 설정
+                .paths(PathSelectors.any()) // Swagger를 적용할 주소 패턴을 세팅
                 .build()
-                .apiInfo(apiInfo()).securityContexts(Arrays.asList(securityContext()))
+                .apiInfo(apiInfo()).securityContexts(Arrays.asList(securityContext())) // Swagger UI로 노출할 정보
                 .securitySchemes(Arrays.asList(apiKey()));
     }
+
+    /**
+     * jwt를 통해서 인증/인가 설정을 했을 시, swagger에서도 해당 설정을 잡아주는 부분
+     */
     private ApiKey apiKey() {
+
         return new ApiKey("X-AUTH-TOKEN", "X-AUTH-TOKEN", "header");
     }
+
     private SecurityContext securityContext() {
         return springfox
                 .documentation
@@ -60,6 +70,14 @@ public class SwaggerConfiguration {
         authorizationScopes[0] = authorizationScope;
         return Arrays.asList(new SecurityReference("X-AUTH-TOKEN", authorizationScopes));
     }
+
+    /**
+     * jwt 인증을 위한 swagger 코드 end
+     */
+
+    /**
+     * api 정보 설정 부분
+     */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("idorm API")
@@ -67,6 +85,9 @@ public class SwaggerConfiguration {
                 .build();
     }
 
+    /**
+     * Page 파라미터를 위한 Page Class
+     */
     @Data
     @ApiModel
     static class Page{

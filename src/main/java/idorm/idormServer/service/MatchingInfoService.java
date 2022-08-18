@@ -28,6 +28,7 @@ public class MatchingInfoService {
                 showerTime, mbti, wishText, openKakaoLink);
 
         matchingInfoRepository.save(matchingInfo);
+
         return matchingInfo.getId();
     }
 

@@ -10,7 +10,6 @@ import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Data
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

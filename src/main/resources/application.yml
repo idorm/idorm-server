@@ -1,28 +1,30 @@
 spring:
-#  security:
-#    user:ㅁ
-#      name: nahyeon
-#      password: nahyeonpw
-
   datasource:
-    driver-class-name: ${driver-class-name}
-    url: ${spring.datasource.url}
-    username: ${spring.datasource.username}
-    password: ${spring.datasource.password}
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?seSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      pool-name: HikariCP
+      connection-timeout: 30000
+      maximum-pool-size: 10
+      max-lifetime: 1800000
+      read-only: false
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: none # DDL 기능 사용 여부(create/update/create-drop/validate/none)
     properties:
       hibernate:
-        #        show_sql: true
+        show_sql: true # 콘솔에 SQL 출력 여부
+        format_sql: true # SQL 가독성 높여주는 formatting 여부
         default_batch_fetch_size: 10
-        format_sql: true
 
-#logging.level:
-#  org.hibernate.SQL: debug
-#  org.hibernate.type: trace
-springdoc:
-  api-docs:
-    enabled: true
-    
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+
+#springdoc:
+#  api-docs:
+#    enabled: true
