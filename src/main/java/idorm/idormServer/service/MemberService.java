@@ -16,7 +16,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final MatchingInfoRepository matchingInfoRepository;
+    private final MatchingInfoService matchingInfoService;
 
     /**
      * 회원 생성
