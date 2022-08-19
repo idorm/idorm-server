@@ -1,15 +1,22 @@
 spring:
   datasource:
     driver-class-name: ${DB_DRIVER_CLASS_NAME}
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?seSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?serverTimezone=UTC&characterEncoding=UTF-8
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
     hikari:
-      pool-name: HikariCP
-      connection-timeout: 30000
-      maximum-pool-size: 10
-      max-lifetime: 1800000
-      read-only: false
+      max-lifetime: 600000
+      minimumIdle: 2
+      maximumPoolSize: 10
+      idleTimeout: 120000
+      connectionTimeout: 300000
+      leakDetectionThreshold: 300000
+
+    dbcp2:
+      validation-query: select 1 from dual
+      test-while-idle: true
+      time-between-eviction-runs-millis: 600000
 
   jpa:
     hibernate:
@@ -23,6 +30,11 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari: TRACE
 
 
 #springdoc:

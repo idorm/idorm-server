@@ -18,11 +18,11 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 @PropertySource("classpath:login.properties")
 public class JwtTokenProvider {
-    @Value("${jwt.secretkey}")
+    @Value("${JWTSECRET}")
     private String secretKey;
 
 
