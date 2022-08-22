@@ -2,8 +2,6 @@ package idorm.idormServer.controller;
 
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.domain.Member;
-import idorm.idormServer.exceptions.http.ConflictException;
-import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.jwt.JwtTokenProvider;
 import idorm.idormServer.service.EmailService;
 import idorm.idormServer.service.MemberService;
@@ -47,7 +45,6 @@ public class MemberController {
             @ApiResponse(code = 200, message = "로그인된 Member 단건 조회 성공"),
             @ApiResponse(code = 401, message = "권한 없음, 로그인 필요"),
     })
-    @ExceptionHandler
     @GetMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> memberOne(
             HttpServletRequest request
@@ -75,7 +72,7 @@ public class MemberController {
     }
     )
     @PostMapping("/register")
-    public ResponseEntity<DefaultResponseDto<Object>> saveMember(@RequestBody @Valid CreateMemberRequest request) throws Exception {
+    public ResponseEntity<DefaultResponseDto<Object>> saveMember(@RequestBody @Valid CreateMemberRequest request) {
 
         if(emailService.findByEmailOp(request.getEmail()).isEmpty()) {
             throw new IllegalStateException("등록되지 않은 이메일입니다.");
@@ -223,10 +220,10 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<DefaultResponseDto<Object>> login(@RequestBody LoginMemberRequest member) {
         Member mem = memberService.findByEmail(member.getEmail())
-                .orElseThrow(() -> new ConflictException("가입되지 않은 이메일입니다."));
+                .orElseThrow(() -> new IllegalStateException("가입되지 않은 이메일입니다."));
 
         if (!passwordEncoder.matches(member.getPassword(), mem.getPassword())) {
-            throw new ConflictException("잘못된 비밀번호입니다.");}
+            throw new IllegalStateException("잘못된 비밀번호입니다.");}
 
         Iterator<String> iter = mem.getRoles().iterator();
         List<String> roles=new ArrayList<>();

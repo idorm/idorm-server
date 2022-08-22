@@ -1,7 +1,6 @@
 package idorm.idormServer.service;
 
 import idorm.idormServer.domain.Member;
-import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final MatchingInfoService matchingInfoService;
 
     /**
      * 회원 저장
@@ -44,7 +42,7 @@ public class MemberService {
         log.info("IN PROGRESS | Member 중복 확인 At " + LocalDateTime.now() + " | " + email);
         Optional<Member> findMembers = memberRepository.findByEmail(email);
         if (!findMembers.isEmpty()) {
-            throw new ConflictException("이미 존재하는 회원입니다.");
+            throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
         log.info("COMPLETE | Member 중복 없음 확인 At " + LocalDateTime.now() + " | " + email);
     }

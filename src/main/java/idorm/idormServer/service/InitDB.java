@@ -40,10 +40,10 @@ public class InitDB {
         @Autowired
         private PasswordEncoder passwordEncoder;
 
-        @Value("nahyeon")
+        @Value("${DB_USERNAME}")
         private String id;
 
-        @Value("lsmi81")
+        @Value("${DB_PASSWORD}")
         private String password;
 
         public void dbInit1() {
