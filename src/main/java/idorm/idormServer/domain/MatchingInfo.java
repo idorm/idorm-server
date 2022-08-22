@@ -29,7 +29,7 @@ public class MatchingInfo extends BaseEntity {
     private Boolean isSnoring;// 코골이 여부
     private Boolean isGrinding; // 이갈이 여부
     private Boolean isSmoking; // 흡연 여부
-    private Boolean isAllowedFood; // 음식 허용 여부
+    private Boolean isAllowedFood; // 실내 음식 허용 여부
     private Boolean isWearEarphones; // 이어폰 착용 의사 여부
 
     private String wakeUpTime; // 기상 시간
@@ -72,33 +72,12 @@ public class MatchingInfo extends BaseEntity {
         this.mbti = mbti;
         this.wishText = wishText;
         this.openKakaoLink = openKakaoLink;
+
     }
 
     /**
      * 핵심 비지니스 로직
      */
-    @Builder
-    public void updateAllMatchingInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
-                                   Boolean isSnoring, Boolean isSmoking, Boolean isGrinding, Boolean isWearEarphones,
-                                   Boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
-                                   String mbti, String wishText, String openKakaoLink) {
-        this.dormNum = dormNum;
-        this.joinPeriod = joinPeriod;
-        this.gender = gender;
-        this.age = age;
-        this.isSnoring = isSnoring;
-        this.isSmoking = isSmoking;
-        this.isGrinding = isGrinding;
-        this.isWearEarphones = isWearEarphones;
-        this.isAllowedFood = isAllowedFood;
-        this.wakeUpTime = wakeUpTime;
-        this.cleanUpStatus = cleanUpStatus;
-        this.showerTime = showerTime;
-        this.mbti = mbti;
-        this.wishText = wishText;
-        this.openKakaoLink = openKakaoLink;
-    }
-
     public void updateDormNum(Dormitory dormNum) {
         this.dormNum = dormNum;
     }
