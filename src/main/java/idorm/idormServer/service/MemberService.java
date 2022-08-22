@@ -1,15 +1,18 @@
 package idorm.idormServer.service;
 
 import idorm.idormServer.domain.Member;
-import idorm.idormServer.repository.MatchingInfoRepository;
+import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -19,28 +22,31 @@ public class MemberService {
     private final MatchingInfoService matchingInfoService;
 
     /**
-     * 회원 생성
+     * 회원 저장
      */
     @Transactional
     public Long join(String email, String password) {
+        log.info("IN PROGRESS | Member 저장 At " + LocalDateTime.now() + " | " + email);
         validateDuplicateMember(email); // 중복 회원 검증
-//        Member member = new Member(email, password);
         Member member = Member.builder()
                 .email(email)
                 .password(password)
                 .build();
 
-        member.getCreatedAt();
-        member.getUpdatedAt();
+
+
         memberRepository.save(member);
+        log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
         return member.getId();
     }
 
     private void validateDuplicateMember(String email) {
+        log.info("IN PROGRESS | Member 중복 확인 At " + LocalDateTime.now() + " | " + email);
         Optional<Member> findMembers = memberRepository.findByEmail(email);
         if (!findMembers.isEmpty()) {
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+            throw new ConflictException("이미 존재하는 회원입니다.");
         }
+        log.info("COMPLETE | Member 중복 없음 확인 At " + LocalDateTime.now() + " | " + email);
     }
 
     /**
@@ -68,7 +74,11 @@ public class MemberService {
     @Transactional
     public void deleteMember(Long memberId) {
 
-        memberRepository.delete(findById(memberId));
+        try {
+            memberRepository.findById(memberId).get().updateIsLeft(); // 회원 정보 업데이트
+        } catch(Exception e) {
+            new NullPointerException("id가 존재하지 않습니다.");
+        }
     }
 
     /**
@@ -89,6 +99,12 @@ public class MemberService {
     public void updateNickname(Long memberId, String nickname) {
         Member member = memberRepository.findById(memberId).get();
         member.updateNickname(nickname);
+    }
+
+    @Transactional
+    public void updateIsLeft(Long memberId) {
+        Member member = memberRepository.findById(memberId).get();
+        member.updateIsLeft();
     }
 
 }

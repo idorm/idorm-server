@@ -1,6 +1,6 @@
 package idorm.idormServer.domain;
 
-import idorm.idormServer.domain.common.BaseEntity;
+import idorm.idormServer.common.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;

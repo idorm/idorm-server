@@ -21,10 +21,6 @@ public class Email {
     private boolean isCheck; // 인증 여부
     private boolean isJoin; // 가입 여부
 
-//    @JsonIgnore // JPA 순환참조 해결
-//    @OneToOne(mappedBy = "email")
-//    private Member member;
-
     public Email(String email, String code) {
         this.email = email;
         this.code = code;

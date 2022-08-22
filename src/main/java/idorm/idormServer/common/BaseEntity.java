@@ -1,6 +1,5 @@
-package idorm.idormServer.domain.common;
+package idorm.idormServer.common;
 
-import lombok.Data;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

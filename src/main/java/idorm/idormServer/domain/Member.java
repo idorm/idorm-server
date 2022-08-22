@@ -1,6 +1,6 @@
 package idorm.idormServer.domain;
 
-import idorm.idormServer.domain.common.BaseEntity;
+import idorm.idormServer.common.BaseEntity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,9 +24,15 @@ public class Member extends BaseEntity implements UserDetails{
     private String password;
     private String nickname; // 커뮤니티 게시글에선 익명/닉네임 여부 선택 가능, 댓글에선 전부 익명1,2,3
 
+    private Boolean isLeft; // default는 false, 회원 탈퇴 시 true
+
     @OneToOne
     @JoinColumn(name="matchingInfo_id")
     private MatchingInfo matchingInfo;
+
+    @OneToOne
+    @JoinColumn(name="photo_id")
+    private Photo photo; // 멤버의 프로필 사진
 
     /**
      * security code
@@ -84,6 +90,7 @@ public class Member extends BaseEntity implements UserDetails{
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
+        this.isLeft = false;
         this.roles.add("ROLE_USER");
     }
 
@@ -98,4 +105,7 @@ public class Member extends BaseEntity implements UserDetails{
         this.nickname = nickname;
     }
 
+    public void updateIsLeft() {
+        this.isLeft = (isLeft == false) ? true : false;
+    }
 }

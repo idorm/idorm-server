@@ -40,10 +40,10 @@ public class InitDB {
         @Autowired
         private PasswordEncoder passwordEncoder;
 
-        @Value("${id}")
+        @Value("nahyeon")
         private String id;
 
-        @Value("${password}")
+        @Value("lsmi81")
         private String password;
 
         public void dbInit1() {
@@ -54,7 +54,6 @@ public class InitDB {
 
             admin.getRoles().add("ROLE_ADMIN");
             admin.updateNickname("root");
-
         }
 
         public void dbInit2() {
