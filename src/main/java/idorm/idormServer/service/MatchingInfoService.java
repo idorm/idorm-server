@@ -21,21 +21,53 @@ import static idorm.idormServer.dto.MatchingInfoDTO.*;
 public class MatchingInfoService {
 
     private final MatchingInfoRepository matchingInfoRepository;
+    private final MemberService memberService;
+
 
     /**
      * 온보딩(매창)정보 생성
      */
+//    @Transactional
+//    public Long save(MatchingInfoSaveRequestDTO matchingInfoSaveRequestDTO) {
+//        log.info("START | MatchingInfo Service 저장 At " + LocalDateTime.now());
+//        try {
+//            MatchingInfo matchingInfo = matchingInfoSaveRequestDTO.toEntity();
+//            matchingInfoRepository.save(matchingInfo);
+//            log.info("COMPLETE | MatchingInfo 저장 At " + LocalDateTime.now() + " | email: " + matchingInfo.getMember().getEmail());
+//            return matchingInfo.getId();
+//        } catch(Exception e) {
+//            throw new IllegalStateException("MatchingInfo 등록 실패");
+//        }
+//    }
+
     @Transactional
-    public Long save(MatchingInfoSaveRequestDTO matchingInfoSaveRequestDTO) {
+    public Long save(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age, Boolean isSnoring,
+                     Boolean isGrinding, Boolean isSmoking, Boolean isAllowedFood, Boolean isWearEarphones, String wakeUpTime, String cleanUpStatus, String showerTime, String openKakaoLink, String mbti, String wishText) {
         log.info("START | MatchingInfo Service 저장 At " + LocalDateTime.now());
         try {
-            MatchingInfo matchingInfo = matchingInfoSaveRequestDTO.toEntity();
+            MatchingInfo matchingInfo = MatchingInfo.builder()
+                    .dormNum(dormNum)
+                    .joinPeriod(joinPeriod)
+                    .gender(gender)
+                    .age(age)
+                    .isSnoring(isSnoring)
+                    .isGrinding(isGrinding)
+                    .isSmoking(isSmoking)
+                    .isAllowedFood(isAllowedFood)
+                    .isWearEarphones(isWearEarphones)
+                    .wakeUpTime(wakeUpTime)
+                    .cleanUpStatus(cleanUpStatus)
+                    .showerTime(showerTime)
+                    .openKakaoLink(openKakaoLink)
+                    .mbti(mbti)
+                    .wishText(wishText)
+                    .build();
+
             matchingInfoRepository.save(matchingInfo);
             log.info("COMPLETE | MatchingInfo 저장 At " + LocalDateTime.now() + " | email: " + matchingInfo.getMember().getEmail());
-
             return matchingInfo.getId();
         } catch(Exception e) {
-            throw new IllegalStateException("MatchingInfo 등록 실패");
+            throw new IllegalStateException("MatchingInfo 등록 실패" + e);
         }
     }
 
@@ -51,6 +83,11 @@ public class MatchingInfoService {
         return matchingInfoRepository.findAll();
     }
 
+    public MatchingInfo findByMemberIdOp(Long memberId) {
+        MatchingInfo matchingInfo = memberService.findById(memberId).getMatchingInfo();
+        return matchingInfo;
+    }
+
     /**
      * 온보딩(매칭)정보 삭제
      */
@@ -63,31 +100,31 @@ public class MatchingInfoService {
     /**
      * 온보딩(매칭)정보 수정
      */
-    @Transactional
-    public void updateMatchingInfo(Long matchingInfoId, MatchingInfoUpdateRequestDTO MatchingInfoUpdateRequestDTO) {
-
-        MatchingInfo matchingInfo = matchingInfoRepository.findById(matchingInfoId).get();
-
-        MatchingInfo matchingInfoDto = MatchingInfoUpdateRequestDTO.toEntity();
-
-        matchingInfo.updateDormNum(matchingInfoDto.getDormNum());
-        matchingInfo.updateJoinPeriod(matchingInfoDto.getJoinPeriod());
-        matchingInfo.updateGender(matchingInfoDto.getGender());
-        matchingInfo.updateAge(matchingInfoDto.getAge());
-        matchingInfo.updateIsSnoring(matchingInfoDto.getIsSnoring());
-        matchingInfo.updateIsSmoking(matchingInfoDto.getIsSmoking());
-        matchingInfo.updateIsGrinding(matchingInfoDto.getIsGrinding());
-        matchingInfo.updateIsWearEarphones(matchingInfoDto.getIsWearEarphones());
-        matchingInfo.updateIsAllowedFood(matchingInfoDto.getIsAllowedFood());
-        matchingInfo.updateWakeupTime(matchingInfoDto.getWakeUpTime());
-        matchingInfo.updateCleanUpStatus(matchingInfoDto.getCleanUpStatus());
-        matchingInfo.updateShowerTime(matchingInfoDto.getShowerTime());
-        matchingInfo.updateMbti(matchingInfoDto.getMbti());
-        matchingInfo.updateWishtext(matchingInfoDto.getWishText());
-        matchingInfo.updateOpenKakaoLink(matchingInfoDto.getOpenKakaoLink());
-
-        matchingInfoRepository.save(matchingInfo);
-    }
+//    @Transactional
+//    public void updateMatchingInfo(Long matchingInfoId, MatchingInfoUpdateRequestDTO MatchingInfoUpdateRequestDTO) {
+//
+//        MatchingInfo matchingInfo = matchingInfoRepository.findById(matchingInfoId).get();
+//
+//        MatchingInfo matchingInfoDto = MatchingInfoUpdateRequestDTO.toEntity();
+//
+//        matchingInfo.updateDormNum(matchingInfoDto.getDormNum());
+//        matchingInfo.updateJoinPeriod(matchingInfoDto.getJoinPeriod());
+//        matchingInfo.updateGender(matchingInfoDto.getGender());
+//        matchingInfo.updateAge(matchingInfoDto.getAge());
+//        matchingInfo.updateIsSnoring(matchingInfoDto.getIsSnoring());
+//        matchingInfo.updateIsSmoking(matchingInfoDto.getIsSmoking());
+//        matchingInfo.updateIsGrinding(matchingInfoDto.getIsGrinding());
+//        matchingInfo.updateIsWearEarphones(matchingInfoDto.getIsWearEarphones());
+//        matchingInfo.updateIsAllowedFood(matchingInfoDto.getIsAllowedFood());
+//        matchingInfo.updateWakeupTime(matchingInfoDto.getWakeUpTime());
+//        matchingInfo.updateCleanUpStatus(matchingInfoDto.getCleanUpStatus());
+//        matchingInfo.updateShowerTime(matchingInfoDto.getShowerTime());
+//        matchingInfo.updateMbti(matchingInfoDto.getMbti());
+//        matchingInfo.updateWishtext(matchingInfoDto.getWishText());
+//        matchingInfo.updateOpenKakaoLink(matchingInfoDto.getOpenKakaoLink());
+//
+//        matchingInfoRepository.save(matchingInfo);
+//    }
 
     @Transactional
     public void updateMatchingInfoAddMember(Long matchingInfoId, Member member) {

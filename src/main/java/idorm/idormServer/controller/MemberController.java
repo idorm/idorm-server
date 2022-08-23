@@ -12,9 +12,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -75,7 +77,8 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> saveMember(@RequestBody @Valid CreateMemberRequest request) {
 
         if(emailService.findByEmailOp(request.getEmail()).isEmpty()) {
-            throw new IllegalStateException("등록되지 않은 이메일입니다.");
+//            throw new IllegalStateException("등록되지 않은 이메일입니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "등록되지 않은 이메일입니다.");
         }
 
         if(request.getPassword().isEmpty()) {

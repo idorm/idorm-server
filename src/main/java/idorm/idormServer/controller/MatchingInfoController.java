@@ -13,9 +13,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -26,7 +28,6 @@ import static idorm.idormServer.dto.MatchingInfoDTO.*;
 import static idorm.idormServer.dto.MemberDTO.*;
 
 @Slf4j
-@Tag(name = "matchingInfo", description = "온보딩 정보 API")
 @RestController
 @RequiredArgsConstructor
 public class MatchingInfoController {
@@ -43,27 +44,21 @@ public class MatchingInfoController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "온보딩 정보 저장 성공")
     })
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "dormNum", value = "기숙사1,기숙사2,기숙사3", required = true),
-            @ApiImplicitParam(name = "joinPeriod", value = "WEEK16,WEEK24", required = true),
-            @ApiImplicitParam(name = "gender", value = "MALE, FEMALE", required = true),
-            @ApiImplicitParam(name = "age", value = "나이", required = true),
-            @ApiImplicitParam(name = "isSnoring", value = "코골이 여부", required = true),
-            @ApiImplicitParam(name = "isGrinding", value = "이갈이 여부", required = true),
-            @ApiImplicitParam(name = "isSmoking", value = "흡연 여부", required = true),
-            @ApiImplicitParam(name = "isAllowedFood", value = "실내 음식 섭취 허용 여부", required = true),
-            @ApiImplicitParam(name = "isWearEarphones", value = "이어폰 착용 여부", required = true),
-            @ApiImplicitParam(name = "wakeUpTime", value = "기상 시간", required = true),
-            @ApiImplicitParam(name = "cleanUpStatus", value = "청소 상태", required = true),
-            @ApiImplicitParam(name = "showerTime", value = "샤워 시간", required = true),
-            @ApiImplicitParam(name = "openKakaoLink", value = "오픈채팅 링크", required = false),
-            @ApiImplicitParam(name = "mbti", value = "mbti", required = false),
-            @ApiImplicitParam(name = "wishText", value = "하고싶은 말", required = false)
-    })
-    public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(@RequestBody @Valid MatchingInfoSaveRequestDTO request, HttpServletRequest request2) throws Exception {
-        log.info("START | MatchingInfo Controller 저장 At " + LocalDateTime.now());
+    public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(HttpServletRequest request2, @RequestBody @Valid CreateMatchingInfoRequest request) throws ResponseStatusException {
+
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(userPk);
+
+        Long matchingInfoId = matchingInfoService.save(request.getDormNum(), request.getJoinPeriod(), request.getGender(), request.getAge(), request.getIsSnoring(), request.getIsGrinding(), request.getIsSmoking(), request.getIsAllowedFood(), request.getIsWearEarphones(), request.getWakeUpTime(), request.getCleanUpStatus(), request.getShowerTime(), request.getOpenKakaoLink(), request.getMbti(), request.getWishText());
+        matchingInfoService.updateMatchingInfoAddMember(matchingInfoId, member);
+
+        return ResponseEntity.status(200)
+        .body(DefaultResponseDto.builder()
+                .responseCode("OK")
+                .responseMessage("온보딩 정보 저장 완료")
+                .data(matchingInfoId)
+                .build()
+        );
 
 //        if(member == null) {
 //            return ResponseEntity.status(400)
@@ -73,21 +68,34 @@ public class MatchingInfoController {
 //                    .build());
 //        }
 
-        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
-
-            Long matchingInfoId = matchingInfoService.save(request);
-            matchingInfoService.updateMatchingInfoAddMember(matchingInfoId, member);
-
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("온보딩 정보 저장 완료")
-                            .data(matchingInfoId)
-                            .build()
-                    );
-        } else {
-            throw new IllegalArgumentException("이미 등록된 매칭정보가 있습니다.");
-        }
+//        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
+//
+//            Long matchingInfoId = matchingInfoService.save(request);
+//            matchingInfoService.updateMatchingInfoAddMember(matchingInfoId, member);
+//
+//            return ResponseEntity.status(200)
+//                    .body(DefaultResponseDto.builder()
+//                            .responseCode("OK")
+//                            .responseMessage("온보딩 정보 저장 완료")
+//                            .data(matchingInfoId)
+//                            .build()
+//                    );
+//        } else {
+//            throw new IllegalArgumentException("이미 등록된 매칭정보가 있습니다.");
+//        }
     }
+
+    /**
+     * 온보딩(매칭) 정보 수정
+     */
+
+    /**
+     * 온보딩(매칭) 정보 조회
+     */
+
+    /**
+     * 온보딩(매칭) 정보 삭제
+     */
+    // TODO: Member 탈퇴 시 삭제 처리
 
 }

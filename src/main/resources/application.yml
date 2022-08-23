@@ -20,3 +20,9 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+  server:
+    error:
+      include-exception: true
+      include-message: always
+      include-stacktrace: always
