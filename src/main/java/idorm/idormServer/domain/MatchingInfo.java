@@ -1,6 +1,8 @@
 package idorm.idormServer.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import idorm.idormServer.common.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,6 +29,7 @@ public class MatchingInfo extends BaseEntity {
     private Integer age;
 
     private Boolean isSnoring;// 코골이 여부
+
     private Boolean isGrinding; // 이갈이 여부
     private Boolean isSmoking; // 흡연 여부
     private Boolean isAllowedFood; // 실내 음식 허용 여부
@@ -41,6 +44,8 @@ public class MatchingInfo extends BaseEntity {
 
     @Size(max=100)
     private String wishText; // 하고 싶은 말
+
+    private Boolean isVisible; // default는 true, 탈퇴 시 false
 
     /**
      * 연관관계 매핑
@@ -72,8 +77,13 @@ public class MatchingInfo extends BaseEntity {
         this.mbti = mbti;
         this.wishText = wishText;
         this.openKakaoLink = openKakaoLink;
-
+        this.isVisible = true;
     }
+
+    public void addMember(Member member) {
+        this.member = member;
+    }
+
 
     /**
      * 핵심 비지니스 로직
@@ -131,6 +141,10 @@ public class MatchingInfo extends BaseEntity {
 
     public void updateOpenKakaoLink(String openKakaoLink) {
         this.openKakaoLink = openKakaoLink;
+    }
+
+    public void updateIsVisible() {
+        this.isVisible = (isVisible == true) ? false : true;
     }
 
 }
