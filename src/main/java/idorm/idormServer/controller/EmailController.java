@@ -156,7 +156,7 @@ public class EmailController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "이메일 인증코드를 검증에 성공했습니다."),
             @ApiResponse(code = 400, message = "잘못된 인증번호입니다."),
-            @ApiResponse(code = 500, message = "이메일 인증코드를 검증 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "이메일 인증코드를 검증 중에 서버 에러가 발생했습니다.")
     }
     )
     @PostMapping("/verifyCode/{email}")

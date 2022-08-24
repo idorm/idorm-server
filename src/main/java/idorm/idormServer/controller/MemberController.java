@@ -54,20 +54,16 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> memberOne(
             HttpServletRequest request
     ) {
-        try {
-            long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
-            Member member = memberService.findById(userPk);
-            MemberOneDto memberOneDTO = new MemberOneDto(member);
+        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(userPk);
+        MemberOneDto memberOneDTO = new MemberOneDto(member);
 
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("Member 단건 조회 완료")
-                            .data(new Result(memberOneDTO))
-                            .build());
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "멤버 단건 조회 중에 서버 에러가 발생했습니다.");
-        }
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Member 단건 조회 완료")
+                        .data(new Result(memberOneDTO))
+                        .build());
     }
 
     /**
@@ -117,44 +113,39 @@ public class MemberController {
             @ApiResponse(code = 200, message = "Member 비밀번호 업데이트 완료"),
             @ApiResponse(code = 400, message = "이미 존재하는 닉네임입니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 500, message = "비밀번호, 닉네임 변경 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "비밀번호, 닉네임 변경 중에 서버 에러가 발생했습니다.")
     }
     )
     @PatchMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> updateMember(
             HttpServletRequest request2, @RequestBody @Valid UpdateMemberRequest request) {
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        if(memberService.findByNickname(request.getNickname()).isEmpty()) { // 입력한 닉네임을 가진 멤버가 db에 없다면
 
-        try {
-            if(memberService.findByNickname(request.getNickname()).isEmpty()) { // 입력한 닉네임을 가진 멤버가 db에 없다면
+            memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()), request.getNickname()); // 비밀번호, 닉네임 업데이트
 
-                memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()), request.getNickname()); // 비밀번호, 닉네임 업데이트
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("OK")
+                            .responseMessage("Member 비밀번호, 닉네임 업데이트 완료")
+                            .data(new ReturnMemberIdResponse(userPk))
+                            .build());
+        }
+        else { // 입력한 닉네임을 가진 멤버가 db에 있다면
+            if(memberService.findById(userPk).getNickname().equals(request.getNickname())) { // 저장된 멤버의 닉네임과 입력받은 닉네임이 같다면
+
+                memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()), request.getNickname()); // 비밀번호 업데이트
 
                 return ResponseEntity.status(200)
                         .body(DefaultResponseDto.builder()
                                 .responseCode("OK")
-                                .responseMessage("Member 비밀번호, 닉네임 업데이트 완료")
+                                .responseMessage("Member 비밀번호 업데이트 완료")
                                 .data(new ReturnMemberIdResponse(userPk))
                                 .build());
             }
-            else { // 입력한 닉네임을 가진 멤버가 db에 있다면
-                if(memberService.findById(userPk).getNickname().equals(request.getNickname())) { // 저장된 멤버의 닉네임과 입력받은 닉네임이 같다면
-
-                    memberService.updateMember(userPk,passwordEncoder.encode(request.getPassword()), request.getNickname()); // 비밀번호 업데이트
-
-                    return ResponseEntity.status(200)
-                            .body(DefaultResponseDto.builder()
-                                    .responseCode("OK")
-                                    .responseMessage("Member 비밀번호 업데이트 완료")
-                                    .data(new ReturnMemberIdResponse(userPk))
-                                    .build());
-                }
-                else { // 저장된 멤버의 닉네임과 입력받은 닉네임이 다르다면
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.");
-                }
+            else { // 저장된 멤버의 닉네임과 입력받은 닉네임이 다르다면
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.");
             }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "비밀번호, 닉네임 변경 중에 서버 에러가 발생했습니다.");
         }
     }
 
@@ -165,27 +156,22 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 비밀번호 업데이트 완료"),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 500, message = "비밀번호 변경 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "비밀번호 변경 중에 서버 에러가 발생했습니다.")
     }
     )
     @PatchMapping("/member/password")
     public ResponseEntity<DefaultResponseDto<Object>> updateMemberPassword(
             HttpServletRequest request2, @RequestBody @Valid UpdateMemberPasswordRequest request) {
+        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
 
-        try {
-            long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        memberService.updatePassword(userPk, passwordEncoder.encode(request.getPassword()));
 
-            memberService.updatePassword(userPk, passwordEncoder.encode(request.getPassword()));
-
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("Member 비밀번호 업데이트 완료")
-                            .data(new ReturnMemberIdResponse(userPk))
-                            .build());
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "비밀번호 변경 중에 서버 에러가 발생했습니다.");
-        }
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Member 비밀번호 업데이트 완료")
+                        .data(new ReturnMemberIdResponse(userPk))
+                        .build());
     }
 
     /**
@@ -197,7 +183,7 @@ public class MemberController {
             @ApiResponse(code = 400, message = "변경할 닉네임을 입력해주세요."),
             @ApiResponse(code = 400, message = "이미 존재하는 닉네임입니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 500, message = "비밀번호 변경 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "비밀번호 변경 중에 서버 에러가 발생했습니다.")
     }
     )
     @PatchMapping("/member/nickname")
@@ -246,29 +232,25 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 탈퇴유저로 설정 완료"),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 500, message = "멤버를 탈퇴 유저로 설정 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "멤버를 탈퇴 유저로 설정 중에 서버 에러가 발생했습니다.")
     }
     )
     @DeleteMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMember(
             HttpServletRequest request
     ) {
-        try {
-            long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
-            String email = memberService.findById(userPk).getEmail();
+        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        String email = memberService.findById(userPk).getEmail();
 
-            emailService.deleteById(emailService.findByEmail(email).getId());
-            memberService.deleteMember(userPk);
+        emailService.deleteById(emailService.findByEmail(email).getId());
+        memberService.deleteMember(userPk);
 
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("Member 탈퇴유저로 설정 완료")
-                            .data(new DeleteMember(userPk))
-                            .build());
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "멤버를 탈퇴 유저로 설정 중에 서버 에러가 발생했습니다.");
-        }
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Member 탈퇴유저로 설정 완료")
+                        .data(new DeleteMember(userPk))
+                        .build());
     }
 
     /**
@@ -279,34 +261,30 @@ public class MemberController {
             @ApiResponse(code = 200, message = "로그인 완료, 토큰을 반환합니다."),
             @ApiResponse(code = 400, message = "가입되지 않은 이메일입니다."),
             @ApiResponse(code = 400, message = "잘못된 비밀번호입니다."),
-            @ApiResponse(code = 500, message = "로그인 중에 서버 에러가 발생했습니다")
+//            @ApiResponse(code = 500, message = "로그인 중에 서버 에러가 발생했습니다")
     }
     )
     @PostMapping("/login")
     public ResponseEntity<DefaultResponseDto<Object>> login(@RequestBody LoginMemberRequest member) {
-        try {
-            Member mem = memberService.findByEmail(member.getEmail())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입되지 않은 이메일입니다."));
+        Member mem = memberService.findByEmail(member.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입되지 않은 이메일입니다."));
 
-            if (!passwordEncoder.matches(member.getPassword(), mem.getPassword())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 비밀번호입니다.");}
+        if (!passwordEncoder.matches(member.getPassword(), mem.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 비밀번호입니다.");}
 
 
-            Iterator<String> iter = mem.getRoles().iterator();
-            List<String> roles=new ArrayList<>();
-            while (iter.hasNext()) {
-                roles.add(iter.next());
-            }
-
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("로그인 완료, 토큰을 반환합니다.")
-                            .data(jwtTokenProvider.createToken(mem.getUsername(), roles))
-                            .build());
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "로그인 중에 서버 에러가 발생했습니다.");
+        Iterator<String> iter = mem.getRoles().iterator();
+        List<String> roles=new ArrayList<>();
+        while (iter.hasNext()) {
+            roles.add(iter.next());
         }
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("로그인 완료, 토큰을 반환합니다.")
+                        .data(jwtTokenProvider.createToken(mem.getUsername(), roles))
+                        .build());
     }
 
     /**
@@ -321,26 +299,23 @@ public class MemberController {
             @ApiResponse(code = 200, message = "전체 Member를 조회합니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
             @ApiResponse(code = 403, message = "Forbidden"), // TODO : 에러 확인
-            @ApiResponse(code = 500, message = "관리자용으로 전체 Member를 조회하는 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "관리자용으로 전체 Member를 조회하는 중에 서버 에러가 발생했습니다.")
     }
     )
     @GetMapping("/admin/members")
     public ResponseEntity<DefaultResponseDto<Object>> members() {
-        try {
-            List<Member> members = memberService.findAll();
-            List<MemberOneDto> collect = members.stream()
-                    .map(o -> new MemberOneDto(o)).collect(Collectors.toList());
+
+        List<Member> members = memberService.findAll();
+        List<MemberOneDto> collect = members.stream()
+                .map(o -> new MemberOneDto(o)).collect(Collectors.toList());
 
 
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("전체 Member를 조회합니다.")
-                            .data(new Result(collect))
-                            .build());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "관리자용으로 전체 Member를 조회하는 중에 서버 에러가 발생했습니다.");
-        }
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("전체 Member를 조회합니다.")
+                        .data(new Result(collect))
+                        .build());
     }
 
     /**
@@ -351,25 +326,21 @@ public class MemberController {
             @ApiResponse(code = 200, message = "관리자용으로 Member의 비밀번호 혹은 닉네임을 수정합니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
             @ApiResponse(code = 403, message = "Forbidden"), // TODO : 에러 확인
-            @ApiResponse(code = 500, message = "관리자용으로 Member의 비밀번호 혹은 닉네임을 수정 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "관리자용으로 Member의 비밀번호 혹은 닉네임을 수정 중에 서버 에러가 발생했습니다.")
     }
     )
     @PatchMapping("/admin/member/{id}")
     public ResponseEntity<DefaultResponseDto<Object>> updateMemberRoot(
             @PathVariable("id") Long id, @RequestBody @Valid UpdateMemberRequest request) {
-        try {
 
-            memberService.updateMember(id,passwordEncoder.encode(request.getPassword()), request.getNickname());
+        memberService.updateMember(id,passwordEncoder.encode(request.getPassword()), request.getNickname());
 
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("관리자용으로 Member의 비밀번호 혹은 닉네임을 수정합니다.")
-                            .data("id: " + id + " | " + "닉네임: " + memberService.findById(id).getNickname())
-                            .build());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "관리자용으로 Member의 비밀번호 혹은 닉네임을 수정 중에 서버 에러가 발생했습니다.");
-        }
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("관리자용으로 Member의 비밀번호 혹은 닉네임을 수정합니다.")
+                        .data("id: " + id + " | " + "닉네임: " + memberService.findById(id).getNickname())
+                        .build());
     }
 
     /**
@@ -380,27 +351,24 @@ public class MemberController {
             @ApiResponse(code = 200, message = "관리자용으로 Member를 탈퇴유저로 설정합니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
             @ApiResponse(code = 403, message = "Forbidden"), // TODO : 에러 확인
-            @ApiResponse(code = 500, message = "관리자용으로 Member를 탈퇴유저로 설정 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "관리자용으로 Member를 탈퇴유저로 설정 중에 서버 에러가 발생했습니다.")
     }
     )
     @DeleteMapping("/admin/member/{id}")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMemberRoot(
             @PathVariable("id") Long id
     ) {
-        try {
-            String email = memberService.findById(id).getEmail();
-            emailService.deleteById(emailService.findByEmail(email).getId());
-            memberService.deleteMember(id);
 
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("관리자용으로 Member를 탈퇴유저로 설정합니다.")
-                            .data(new DeleteMember(id))
-                            .build());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "관리자용으로 Member를 탈퇴유저로 설정 중에 서버 에러가 발생했습니다.");
-        }
+        String email = memberService.findById(id).getEmail();
+        emailService.deleteById(emailService.findByEmail(email).getId());
+        memberService.deleteMember(id);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("관리자용으로 Member를 탈퇴유저로 설정합니다.")
+                        .data(new DeleteMember(id))
+                        .build());
     }
 
     @Data
