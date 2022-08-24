@@ -12,7 +12,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,7 +73,7 @@ public class MemberController {
             @ApiResponse(code = 200, message = "회원 가입 완료"),
             @ApiResponse(code = 400, message = "등록되지 않은 이메일입니다."),
             @ApiResponse(code = 400, message = "비밀번호 입력은 필수입니다."),
-            @ApiResponse(code = 500, message = "회원가입 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "회원가입 중에 서버 에러가 발생했습니다.")
     }
     )
     @PostMapping("/register")
