@@ -20,11 +20,13 @@ public class Email {
     private String code;
     private boolean isCheck; // 인증 여부
     private boolean isJoin; // 가입 여부
+    private boolean isLeft; // 탈퇴 여부, default는 false
 
     public Email(String email, String code) {
         this.email = email;
         this.code = code;
         this.isCheck = false;
+        this.isLeft = false;
     }
 
     public void isChecked() {
@@ -33,6 +35,7 @@ public class Email {
     public void isJoined() {
         this.isJoin = true;
     } // 가입 여부
+    public void isLeft() { this.isLeft = (isLeft == false) ? true : false; } // 탈퇴 여부
 
     public boolean getJoined() {
         return this.isJoin;

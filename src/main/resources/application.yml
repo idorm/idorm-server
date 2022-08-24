@@ -21,8 +21,9 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-  server:
-    error:
-      include-exception: true
-      include-message: always
-      include-stacktrace: always
+server:
+  error:
+    include-exception: true # Response에 Exception을 표시할지
+    include-message: always # Response 에 Exception Message를 표시할지
+    include-stacktrace: always # Response에 Stack Trace 를 표시할지, 운영 서버에는 X
+

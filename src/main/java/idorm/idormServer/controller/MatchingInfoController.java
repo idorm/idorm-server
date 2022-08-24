@@ -27,9 +27,9 @@ import java.time.LocalDateTime;
 import static idorm.idormServer.dto.MatchingInfoDTO.*;
 import static idorm.idormServer.dto.MemberDTO.*;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "온보딩 정보 API")
 public class MatchingInfoController {
 
     private final MatchingInfoService matchingInfoService;

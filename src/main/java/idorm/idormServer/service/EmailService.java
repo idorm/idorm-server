@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -39,11 +41,14 @@ public class EmailService {
         return emailRepository.findByEmail(email);
     }
     public Email findByEmail(String email){
-        return emailRepository.findByEmail(email).orElseThrow(()->new NullPointerException("없는 값 입니다"));
+        return emailRepository.findByEmail(email).orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST, "이메일이 존재하지 않습니다."));
+
     }
     @Transactional
     public void deleteById(Long id){
-        emailRepository.deleteById(id);
+
+        Email email = emailRepository.findById(id).get();
+        email.isLeft();
     }
     @Transactional
     public void isChecked(String email){

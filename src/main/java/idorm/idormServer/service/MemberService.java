@@ -4,8 +4,10 @@ import idorm.idormServer.domain.Member;
 import idorm.idormServer.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +44,7 @@ public class MemberService {
         log.info("IN PROGRESS | Member 중복 확인 At " + LocalDateTime.now() + " | " + email);
         Optional<Member> findMembers = memberRepository.findByEmail(email);
         if (!findMembers.isEmpty()) {
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다.");
         }
         log.info("COMPLETE | Member 중복 없음 확인 At " + LocalDateTime.now() + " | " + email);
     }
@@ -51,7 +53,8 @@ public class MemberService {
      * 회원 조회
      */
     public Member findById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new NullPointerException("id가 존재하지 않습니다."));
+        return memberRepository.findById(memberId).orElseThrow(() ->
+        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "id가 존재하지 않습니다."));
     }
 
     public List<Member> findAll() {
@@ -72,11 +75,8 @@ public class MemberService {
     @Transactional
     public void deleteMember(Long memberId) {
 
-        try {
-            memberRepository.findById(memberId).get().updateIsLeft(); // 회원 정보 업데이트
-        } catch(Exception e) {
-            new NullPointerException("id가 존재하지 않습니다.");
-        }
+        memberRepository.findById(memberId).get().updateIsLeft(); // 회원 정보 업데이트
+
     }
 
     /**
