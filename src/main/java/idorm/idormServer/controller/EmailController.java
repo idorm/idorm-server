@@ -51,37 +51,21 @@ public class EmailController {
             @ApiResponse(code = 200, message = "인증코드를 전송합니다."),
             @ApiResponse(code = 400, message = "형식에 맞지 않는 이메일입니다."),
             @ApiResponse(code = 400, message = "이미 존재하는 회원입니다."),
-            @ApiResponse(code = 500, message = "이메일 인증코드를 전송 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "이메일 인증코드를 전송 중에 서버 에러가 발생했습니다.")
     }
     )
     @PostMapping("/email") // 이메일 인증 코드 보내기
     public ResponseEntity<DefaultResponseDto<Object>> emailAuth(@RequestBody @Valid EmailRequest email) throws Exception {
 
-        try {
-            String[] mailSplit=email.getEmail().split("@");
+        String[] mailSplit=email.getEmail().split("@");
 
-            if(!(mailSplit.length==2)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "형식에 맞지 않는 이메일입니다.");
-            }
+        if(!(mailSplit.length==2)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "형식에 맞지 않는 이메일입니다.");
+        }
 
-            if(mailSplit[1].equals("inu.ac.kr")) {
-                if (emailService.findByEmailOp(email.getEmail()).isEmpty()) {
-                    sendSimpleMessage(email.getEmail());
-
-                    return ResponseEntity.status(200)
-                            .body(DefaultResponseDto.builder()
-                                    .responseCode("OK")
-                                    .responseMessage("인증코드를 전송합니다.")
-                                    .data(new EmailResponseDto(email.getEmail()))
-                                    .build());
-
-                }
-
-                if (emailService.findByEmail(email.getEmail()).getJoined() == true) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다.");
-                }
+        if(mailSplit[1].equals("inu.ac.kr")) {
+            if (emailService.findByEmailOp(email.getEmail()).isEmpty()) {
                 sendSimpleMessage(email.getEmail());
-
 
                 return ResponseEntity.status(200)
                         .body(DefaultResponseDto.builder()
@@ -89,12 +73,24 @@ public class EmailController {
                                 .responseMessage("인증코드를 전송합니다.")
                                 .data(new EmailResponseDto(email.getEmail()))
                                 .build());
+
             }
-            else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "형식에 맞지 않는 이메일입니다.");
+
+            if (emailService.findByEmail(email.getEmail()).getJoined() == true) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다.");
             }
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 인증코드를 전송 중에 서버 에러가 발생했습니다.");
+            sendSimpleMessage(email.getEmail());
+
+
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("OK")
+                            .responseMessage("인증코드를 전송합니다.")
+                            .data(new EmailResponseDto(email.getEmail()))
+                            .build());
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "형식에 맞지 않는 이메일입니다.");
         }
     }
 
@@ -102,29 +98,26 @@ public class EmailController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "비밀번호 재설정을 위한 인증코드를 전송합니다."),
             @ApiResponse(code = 400, message = "가입하지 않은 이메일입니다."),
-            @ApiResponse(code = 500, message = "비밀번호를 재설정하기 위해 이메일 인증코드를 전송하는 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "비밀번호를 재설정하기 위해 이메일 인증코드를 전송하는 중에 서버 에러가 발생했습니다.")
     }
     )
     @PostMapping("/email/password")
     public ResponseEntity<DefaultResponseDto<Object>> findPassword(@RequestBody @Valid EmailRequest email) throws Exception {
 
-        try {
-            if(emailService.findByEmail(email.getEmail()).getJoined()==true) {
-                sendSimpleMessage(email.getEmail());
-            }
-            else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입하지 않은 이메일입니다.");
-            }
-
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("비밀번호 재설정을 위한 인증코드를 전송합니다.")
-                            .data(new EmailResponseDto(email.getEmail()))
-                            .build());
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "비밀번호를 재설정하기 위해 이메일 인증코드를 전송하는 중에 서버 에러가 발생했습니다.");
+        if(emailService.findByEmail(email.getEmail()).getJoined()==true) {
+            sendSimpleMessage(email.getEmail());
         }
+        else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입하지 않은 이메일입니다.");
+        }
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("비밀번호 재설정을 위한 인증코드를 전송합니다.")
+                        .data(new EmailResponseDto(email.getEmail()))
+                        .build());
+
     }
 
     @ApiOperation(value = "비밀번호 재설정을 위한 이메일 인증 코드 검증", notes = "/email/password 에서 발송한 인증코드를 확인할 때 사용합니다.")
@@ -132,35 +125,30 @@ public class EmailController {
             @ApiResponse(code = 200, message = "비밀번호 재설정을 위한 이메일 인증코드 검증에 성공했습니다."),
             @ApiResponse(code = 400, message = "가입하지 않은 이메일입니다."),
             @ApiResponse(code = 400, message = "잘못된 인증번호입니다."),
-            @ApiResponse(code = 500, message = "비밀번호 재설정을 위한 이메일 인증코드 검증 중에 서버 에러가 발생했습니다.")
+//            @ApiResponse(code = 500, message = "비밀번호 재설정을 위한 이메일 인증코드 검증 중에 서버 에러가 발생했습니다.")
     }
     )
     @PostMapping("/verifyCode/password/{email}")
     public ResponseEntity<DefaultResponseDto<Object>> verifyCodePassword(@PathVariable("email")String email, @RequestBody VerifyRequest code) {
 
-        try {
-            if(emailService.findByEmail(email).getCode().equals(code.getCode())) {
-                Member mem = memberService.findByEmail(email)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입하지 않은 이메일입니다."));
-                Iterator<String> iter =mem.getRoles().iterator();
-                List<String> roles=new ArrayList<>();
-                while (iter.hasNext()) {
-                    roles.add(iter.next());
-                }
+        if(emailService.findByEmail(email).getCode().equals(code.getCode())) {
+            Member mem = memberService.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입하지 않은 이메일입니다."));
+            Iterator<String> iter =mem.getRoles().iterator();
+            List<String> roles=new ArrayList<>();
+            while (iter.hasNext()) {
+                roles.add(iter.next());
+            }
 
-                return ResponseEntity.status(200)
-                        .body(DefaultResponseDto.builder()
-                                .responseCode("OK")
-                                .responseMessage("비밀번호 재설정을 위한 이메일 인증코드 검증에 성공했습니다.")
-                                .data(jwtTokenProvider.createToken(mem.getUsername(), roles))
-                                .build());
-            }
-            else{
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 인증번호입니다.");
-            }
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("OK")
+                            .responseMessage("비밀번호 재설정을 위한 이메일 인증코드 검증에 성공했습니다.")
+                            .data(jwtTokenProvider.createToken(mem.getUsername(), roles))
+                            .build());
         }
-        catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "비밀번호 재설정을 위한 이메일 인증코드 검증 중에 서버 에러가 발생했습니다.");
+        else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 인증번호입니다.");
         }
     }
 
@@ -173,22 +161,18 @@ public class EmailController {
     )
     @PostMapping("/verifyCode/{email}")
     public ResponseEntity<DefaultResponseDto<Object>> verifyCode(@PathVariable("email")String email, @RequestBody VerifyRequest code) {
-        try {
-            if(emailService.findByEmail(email).getCode().equals(code.getCode())) {
-                emailService.isChecked(email);
+        if(emailService.findByEmail(email).getCode().equals(code.getCode())) {
+            emailService.isChecked(email);
 
-                return ResponseEntity.status(200)
-                        .body(DefaultResponseDto.builder()
-                                .responseCode("OK")
-                                .responseMessage("이메일 인증코드를 검증에 성공했습니다.")
-                                .data(new EmailResponseDto(code.getCode()))
-                                .build());
-            }
-            else{
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 인증번호입니다.");
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 인증코드를 검증 중에 서버 에러가 발생했습니다.");
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("OK")
+                            .responseMessage("이메일 인증코드를 검증에 성공했습니다.")
+                            .data(new EmailResponseDto(code.getCode()))
+                            .build());
+        }
+        else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 인증번호입니다.");
         }
     }
 
