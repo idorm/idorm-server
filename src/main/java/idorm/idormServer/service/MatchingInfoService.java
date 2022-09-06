@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -51,18 +52,18 @@ public class MatchingInfoService {
         return matchingInfoRepository.findAll();
     }
 
-    public MatchingInfo findByMemberIdOp(Long memberId) {
-        MatchingInfo matchingInfo = memberService.findById(memberId).getMatchingInfo();
+    public Optional<MatchingInfo> findByMemberIdOp(Long memberId) {
+        Optional<MatchingInfo> matchingInfo = Optional.ofNullable(memberService.findById(memberId).getMatchingInfo());
         return matchingInfo;
     }
 
     /**
      * 온보딩(매칭)정보 삭제
      */
-    public void deleteMatchingInfo(Long matchingInfoId) {
+    public void deleteMatchingInfo(MatchingInfo matchingInfo) {
 
-        MatchingInfo matchingInfo = matchingInfoRepository.findById(matchingInfoId).get();
-        matchingInfo.updateIsVisible();
+        matchingInfoRepository.delete(matchingInfo);
+        matchingInfoRepository.save(matchingInfo);
     }
 
     /**

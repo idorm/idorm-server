@@ -107,10 +107,11 @@ public class Member extends BaseEntity implements UserDetails{
     }
 
     public void updateIsLeft() {
-        this.isLeft = (isLeft == false) ? true : false;
+        this.isLeft = true; // 탈퇴 처리
     }
 
   public void updateMatchingInfo(MatchingInfo matchingInfo) {
       this.matchingInfo = matchingInfo;
   }
+
 }

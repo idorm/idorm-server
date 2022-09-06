@@ -76,7 +76,6 @@ public class MemberService {
      */
     @Transactional
     public void deleteMember(Long memberId) {
-
         memberRepository.findById(memberId).get().updateIsLeft(); // 회원 정보 업데이트
     }
 

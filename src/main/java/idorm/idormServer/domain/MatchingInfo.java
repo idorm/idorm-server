@@ -45,7 +45,7 @@ public class MatchingInfo extends BaseEntity {
     @Size(max=100)
     private String wishText; // 하고 싶은 말
 
-    private Boolean isVisible; // default는 true, 탈퇴 시 false
+//    private Boolean isVisible; // default는 true, 탈퇴 시 false
 
     /**
      * 연관관계 매핑
@@ -78,8 +78,8 @@ public class MatchingInfo extends BaseEntity {
         this.mbti = mbti;
         this.wishText = wishText;
         this.openKakaoLink = openKakaoLink;
-        this.isVisible = true;
         this.member = member;
+//        this.isVisible = true;
     }
 
     /**
@@ -140,8 +140,12 @@ public class MatchingInfo extends BaseEntity {
         this.openKakaoLink = openKakaoLink;
     }
 
-    public void updateIsVisible() {
-        this.isVisible = (isVisible == true) ? false : true;
-    }
+//    public void killIsVisible() {
+//        this.isVisible = false;
+//    }
+//
+//    public void restoreIsVisible() {
+//        this.isVisible = true;
+//    }
 
 }

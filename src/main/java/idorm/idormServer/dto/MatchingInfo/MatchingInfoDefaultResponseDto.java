@@ -63,6 +63,11 @@ public class MatchingInfoDefaultResponseDto {
     @ApiModelProperty(position = 16, required = false, value = "룸메에게 보내는 한마디")
     private String wishText;
 
+    private String memberEmail;
+
+//    private Boolean isVisible; // false: 온보딩 삭제
+
+
     public MatchingInfoDefaultResponseDto(MatchingInfo matchingInfo) {
         this.id = matchingInfo.getId();
         this.dormNum = matchingInfo.getDormNum();
@@ -80,6 +85,8 @@ public class MatchingInfoDefaultResponseDto {
         this.openKakaoLink = matchingInfo.getOpenKakaoLink();
         this.mbti = matchingInfo.getMbti();
         this.wishText = matchingInfo.getWishText();
+        this.memberEmail = matchingInfo.getMember().getEmail();
+//        this.isVisible = matchingInfo.getIsVisible();
     }
 
 }
