@@ -33,7 +33,8 @@ public class MatchingInfoController {
     @ApiOperation(value = "온보딩 정보 저장", notes = "최초로 온보딩 정보를 저장할 경우만 사용 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "온보딩 정보 저장 성공"),
-            @ApiResponse(code = 401, message = "UnAuthorized")
+            @ApiResponse(code = 400, message = "JWT String argument cannot be null or empty (로그인 안 되어있을 경우)"),
+            @ApiResponse(code = 400, message = "이미 등록된 매칭정보가 있습니다.")
     })
     public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(HttpServletRequest request2, @RequestBody @Valid MatchingInfoSaveRequestDto request) {
 
