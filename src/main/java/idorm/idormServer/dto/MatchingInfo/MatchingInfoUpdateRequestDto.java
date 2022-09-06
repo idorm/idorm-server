@@ -1,4 +1,4 @@
-package idorm.idormServer.dto;
+package idorm.idormServer.dto.MatchingInfo;
 
 import idorm.idormServer.domain.*;
 import io.swagger.annotations.ApiModel;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ApiModel(value = "온보딩정보 생성 요청")
-public class MatchingInfoSaveRequestDto {
+@ApiModel(value = "온보딩정보 수정 요청")
+public class MatchingInfoUpdateRequestDto {
 
     @ApiModelProperty(position = 1, required = true, dataType = "String", value = "{\"기숙사1\", \"기숙사2\", \"기숙사3\"}", example = "기숙사1")
     private Dormitory dormNum;
@@ -57,24 +57,4 @@ public class MatchingInfoSaveRequestDto {
     @ApiModelProperty(position = 15, required = false, dataType = "String", example = "적당한 선을 지키면서 친해질 수 있는 룸메이트 구해요 :)")
     private String wishText;
 
-    public MatchingInfo toEntity(Member member) {
-        return MatchingInfo.builder()
-                .dormNum(dormNum)
-                .joinPeriod(joinPeriod)
-                .gender(gender)
-                .age(age)
-                .isSnoring(isSnoring)
-                .isSmoking(isSmoking)
-                .isAllowedFood(isAllowedFood)
-                .isWearEarphones(isWearEarphones)
-                .isGrinding(isGrinding)
-                .wakeUpTime(wakeUpTime)
-                .cleanUpStatus(cleanUpStatus)
-                .showerTime(showerTime)
-                .openKakaoLink(openKakaoLink)
-                .mbti(mbti)
-                .wishText(wishText)
-                .member(member)
-                .build();
-    }
 }

@@ -2,9 +2,9 @@ package idorm.idormServer.controller;
 
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.domain.Member;
-import idorm.idormServer.dto.EmailRequest;
-import idorm.idormServer.dto.EmailResponseDto;
-import idorm.idormServer.dto.VerifyRequest;
+import idorm.idormServer.dto.Email.EmailRequest;
+import idorm.idormServer.dto.Email.EmailResponseDto;
+import idorm.idormServer.dto.Email.VerifyRequest;
 import idorm.idormServer.jwt.JwtTokenProvider;
 import idorm.idormServer.service.EmailService;
 import idorm.idormServer.service.MemberService;

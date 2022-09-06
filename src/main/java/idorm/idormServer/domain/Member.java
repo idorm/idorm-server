@@ -26,12 +26,13 @@ public class Member extends BaseEntity implements UserDetails{
 
     private Boolean isLeft; // default는 false, 회원 탈퇴 시 true
 
-    @OneToOne
-    @JoinColumn(name="matching_info_id")
+    /**
+     * 연관관계 매핑
+     */
+    @OneToOne(mappedBy = "member")
     private MatchingInfo matchingInfo;
 
-    @OneToOne
-    @JoinColumn(name="photo_id")
+    @OneToOne(mappedBy = "member")
     private Photo photo; // 멤버의 프로필 사진
 
     /**

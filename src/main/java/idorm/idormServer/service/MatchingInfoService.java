@@ -1,7 +1,8 @@
 package idorm.idormServer.service;
 
 import idorm.idormServer.domain.*;
-import idorm.idormServer.dto.MatchingInfoSaveRequestDto;
+import idorm.idormServer.dto.MatchingInfo.MatchingInfoSaveRequestDto;
+import idorm.idormServer.dto.MatchingInfo.MatchingInfoUpdateRequestDto;
 import idorm.idormServer.repository.MatchingInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,30 +68,26 @@ public class MatchingInfoService {
     /**
      * 온보딩(매칭)정보 수정
      */
-//    @Transactional
-//    public void updateMatchingInfo(Long matchingInfoId, MatchingInfoUpdateRequestDTO MatchingInfoUpdateRequestDTO) {
-//
-//        MatchingInfo matchingInfo = matchingInfoRepository.findById(matchingInfoId).get();
-//
-//        MatchingInfo matchingInfoDto = MatchingInfoUpdateRequestDTO.toEntity();
-//
-//        matchingInfo.updateDormNum(matchingInfoDto.getDormNum());
-//        matchingInfo.updateJoinPeriod(matchingInfoDto.getJoinPeriod());
-//        matchingInfo.updateGender(matchingInfoDto.getGender());
-//        matchingInfo.updateAge(matchingInfoDto.getAge());
-//        matchingInfo.updateIsSnoring(matchingInfoDto.getIsSnoring());
-//        matchingInfo.updateIsSmoking(matchingInfoDto.getIsSmoking());
-//        matchingInfo.updateIsGrinding(matchingInfoDto.getIsGrinding());
-//        matchingInfo.updateIsWearEarphones(matchingInfoDto.getIsWearEarphones());
-//        matchingInfo.updateIsAllowedFood(matchingInfoDto.getIsAllowedFood());
-//        matchingInfo.updateWakeupTime(matchingInfoDto.getWakeUpTime());
-//        matchingInfo.updateCleanUpStatus(matchingInfoDto.getCleanUpStatus());
-//        matchingInfo.updateShowerTime(matchingInfoDto.getShowerTime());
-//        matchingInfo.updateMbti(matchingInfoDto.getMbti());
-//        matchingInfo.updateWishtext(matchingInfoDto.getWishText());
-//        matchingInfo.updateOpenKakaoLink(matchingInfoDto.getOpenKakaoLink());
-//
-//        matchingInfoRepository.save(matchingInfo);
-//    }
+    @Transactional
+    public void updateMatchingInfo(MatchingInfo matchingInfo, MatchingInfoUpdateRequestDto request) {
+
+        matchingInfo.updateDormNum(request.getDormNum());
+        matchingInfo.updateJoinPeriod(request.getJoinPeriod());
+        matchingInfo.updateGender(request.getGender());
+        matchingInfo.updateAge(request.getAge());
+        matchingInfo.updateIsSnoring(request.getIsSnoring());
+        matchingInfo.updateIsSmoking(request.getIsSmoking());
+        matchingInfo.updateIsGrinding(request.getIsGrinding());
+        matchingInfo.updateIsWearEarphones(request.getIsWearEarphones());
+        matchingInfo.updateIsAllowedFood(request.getIsAllowedFood());
+        matchingInfo.updateWakeupTime(request.getWakeUpTime());
+        matchingInfo.updateCleanUpStatus(request.getCleanUpStatus());
+        matchingInfo.updateShowerTime(request.getShowerTime());
+        matchingInfo.updateMbti(request.getMbti());
+        matchingInfo.updateWishtext(request.getWishText());
+        matchingInfo.updateOpenKakaoLink(request.getOpenKakaoLink());
+
+        matchingInfoRepository.save(matchingInfo);
+    }
 
 }

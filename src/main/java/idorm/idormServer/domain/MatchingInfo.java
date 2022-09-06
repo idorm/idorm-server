@@ -50,7 +50,8 @@ public class MatchingInfo extends BaseEntity {
     /**
      * 연관관계 매핑
      */
-    @OneToOne(mappedBy = "matchingInfo")
+    @OneToOne
+    @JoinColumn(name="member_id")
     private Member member;
 
     /**
