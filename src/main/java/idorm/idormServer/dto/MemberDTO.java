@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 public class MemberDTO {
@@ -46,39 +47,44 @@ public class MemberDTO {
     @Data
     public static class UpdateMemberRequest {
 
-        @NotBlank
+        @NotBlank(message = "비밀번호 입력은 필수입니다.")
         private String password;
-        @NotBlank
+        @NotBlank(message = "닉네임 입력은 필수입니다.")
         private String nickname;
     }
 
     @Data
     public static class UpdateMemberPasswordRequest {
-        @NotBlank
+
+        @NotBlank(message = "비밀번호 입력은 필수입니다.")
         private String password;
     }
 
     @Data
     public static class UpdateMemberNicknameRequest {
-        @NotBlank
+
+        @NotBlank(message = "닉네임 입력은 필수입니다.")
         private String nickname;
     }
 
     @Data
     public static class LoginMemberRequest {
 
-        @NotBlank
+        @NotBlank(message = "이메일 입력은 필수입니다.")
         private String email;
-        @NotBlank
+
+        @NotBlank(message = "비밀번호 입력은 필수입니다.")
         private String password;
     }
 
     @Data
     public static class CreateMemberRequest {
 
-        @NotBlank
+        @NotBlank(message = "비밀번호 입력은 필수입니다.")
         private String password;
-        @NotBlank @Email
+
+        @Email
+        @NotBlank(message = "이메일 입력은 필수입니다.")
         private String email;
     }
 

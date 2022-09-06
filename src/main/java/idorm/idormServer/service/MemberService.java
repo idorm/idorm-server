@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -54,7 +55,7 @@ public class MemberService {
      */
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() ->
-        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "id가 존재하지 않습니다."));
+                new IllegalArgumentException("id가 존재하지 않습니다."));
     }
 
     public List<Member> findAll() {
@@ -76,7 +77,6 @@ public class MemberService {
     public void deleteMember(Long memberId) {
 
         memberRepository.findById(memberId).get().updateIsLeft(); // 회원 정보 업데이트
-
     }
 
     /**
@@ -87,12 +87,14 @@ public class MemberService {
         Member member = memberRepository.findById(memberId).get();
         member.updatePassword(password);
         member.updateNickname(nickname);
+        memberRepository.save(member);
     }
     @Transactional
     public void updatePassword(Long memberId, String password) {
         Member member = memberRepository.findById(memberId).get();
         member.updatePassword(password);
     }
+
     @Transactional
     public void updateNickname(Long memberId, String nickname) {
         Member member = memberRepository.findById(memberId).get();

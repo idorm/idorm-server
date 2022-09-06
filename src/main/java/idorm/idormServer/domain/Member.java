@@ -27,7 +27,7 @@ public class Member extends BaseEntity implements UserDetails{
     private Boolean isLeft; // default는 false, 회원 탈퇴 시 true
 
     @OneToOne
-    @JoinColumn(name="matchingInfo_id")
+    @JoinColumn(name="matching_info_id")
     private MatchingInfo matchingInfo;
 
     @OneToOne

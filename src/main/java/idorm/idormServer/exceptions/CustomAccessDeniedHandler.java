@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 @Component
-
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private static ExceptionResponse exceptionResponse =

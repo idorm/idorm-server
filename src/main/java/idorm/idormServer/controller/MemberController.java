@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,7 +54,9 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> memberOne(
             HttpServletRequest request
     ) {
+
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+
         Member member = memberService.findById(userPk);
         MemberOneDto memberOneDTO = new MemberOneDto(member);
 
@@ -71,28 +74,28 @@ public class MemberController {
     @ApiOperation(value = "멤버 회원가입", notes = "회원가입은 이메일 인증이 완료된 후가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "회원 가입 완료"),
+            @ApiResponse(code = 400, message = "이메일 입력은 필수입니다."),
             @ApiResponse(code = 400, message = "등록되지 않은 이메일입니다."),
             @ApiResponse(code = 400, message = "비밀번호 입력은 필수입니다."),
-//            @ApiResponse(code = 500, message = "회원가입 중에 서버 에러가 발생했습니다.")
     }
     )
     @PostMapping("/register")
     public ResponseEntity<DefaultResponseDto<Object>> saveMember(@RequestBody @Valid CreateMemberRequest request) {
 
+        if(request.equals(null)) {
+            throw new NullPointerException("이메일 입력은 필수입니다.");
+        }
+
         if(emailService.findByEmailOp(request.getEmail()).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "등록되지 않은 이메일입니다.");
+            throw new IllegalArgumentException("등록되지 않은 이메일입니다.");
         }
 
         if(request.getPassword().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호 입력은 필수입니다.");
+            throw new IllegalArgumentException("비밀번호 입력은 필수입니다.");
         }
 
-        try {
-            emailService.findByEmail(request.getEmail()).isJoined();
-            memberService.join(request.getEmail(), passwordEncoder.encode(request.getPassword()));
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "회원가입 중에 서버 에러가 발생했습니다.");
-        }
+        emailService.findByEmail(request.getEmail()).isJoined();
+        memberService.join(request.getEmail(), passwordEncoder.encode(request.getPassword()));
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -111,13 +114,15 @@ public class MemberController {
             @ApiResponse(code = 200, message = "Member 비밀번호, 닉네임 업데이트 완료"),
             @ApiResponse(code = 200, message = "Member 비밀번호 업데이트 완료"),
             @ApiResponse(code = 400, message = "이미 존재하는 닉네임입니다."),
+            @ApiResponse(code = 400, message = "비밀번호 입력은 필수입니다."),
+            @ApiResponse(code = 400, message = "닉네임 입력은 필수입니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-//            @ApiResponse(code = 500, message = "비밀번호, 닉네임 변경 중에 서버 에러가 발생했습니다.")
     }
     )
     @PatchMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> updateMember(
             HttpServletRequest request2, @RequestBody @Valid UpdateMemberRequest request) {
+
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         if(memberService.findByNickname(request.getNickname()).isEmpty()) { // 입력한 닉네임을 가진 멤버가 db에 없다면
 
@@ -143,23 +148,23 @@ public class MemberController {
                                 .build());
             }
             else { // 저장된 멤버의 닉네임과 입력받은 닉네임이 다르다면
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.");
+                throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
             }
         }
     }
 
     /**
-     * 멤버 업데이트(비밀번호)
+     * 멤버 비밀번호 업데이트 - 로그인 가능 시
      */
-    @ApiOperation(value = "멤버의 (비밀번호) 변경", notes = "멤버의 비밀번호만 입력하고싶을 때 사용합니다.")
+    @ApiOperation(value = "로그인 상태에서 멤버의 (비밀번호) 변경", notes = "로그인 도중에 비밀번호를 변경하는 경우입니다. 즉 비밀번호를 잊지 않았을 때.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 비밀번호 업데이트 완료"),
+            @ApiResponse(code = 400, message = "비밀번호 입력은 필수입니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-//            @ApiResponse(code = 500, message = "비밀번호 변경 중에 서버 에러가 발생했습니다.")
     }
     )
     @PatchMapping("/member/password")
-    public ResponseEntity<DefaultResponseDto<Object>> updateMemberPassword(
+    public ResponseEntity<DefaultResponseDto<Object>> updateMemberPasswordLogin(
             HttpServletRequest request2, @RequestBody @Valid UpdateMemberPasswordRequest request) {
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
 
@@ -174,15 +179,53 @@ public class MemberController {
     }
 
     /**
+     * 멤버 비밀번호 업데이트 - 로그인 불가 시
+     */
+    @ApiOperation(value = "로그아웃 상태에서 멤버의 (비밀번호) 변경", notes = "비밀번호를 잊어서 이메일 인증 후 비밀번호를 변경하는 경우에 사용합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Member 비밀번호 업데이트 완료"),
+            @ApiResponse(code = 400, message = "비밀번호 입력은 필수입니다."),
+            @ApiResponse(code = 401, message = "UnAuthorized"),
+    }
+    )
+    @PatchMapping("/changepassword")
+    public ResponseEntity<DefaultResponseDto<Object>> updateMemberPasswordLogout(
+            @RequestBody @Valid CreateMemberRequest request) {
+
+        if(request.equals(null)) {
+            throw new NullPointerException("이메일 입력은 필수입니다.");
+        }
+
+        if(emailService.findByEmailOp(request.getEmail()).isEmpty()) {
+            throw new IllegalArgumentException("등록되지 않은 이메일입니다.");
+        }
+
+        if(request.getPassword().isEmpty()) {
+            throw new NullPointerException("비밀번호 입력은 필수입니다.");
+        }
+
+        Member member = memberService.findByEmail(request.getEmail()).get();
+        memberService.updatePassword(member.getId(), passwordEncoder.encode(request.getPassword()));
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("로그아웃 상태로 비밀번호 변경완료")
+                        .data(new ReturnMemberIdResponse(member.getId()))
+                        .build());
+
+    }
+
+    /**
      * 멤버 업데이트(닉네임)
      */
     @ApiOperation(value = "멤버의 (닉네임) 변경", notes = "멤버의 닉네임만 변경하고 싶을 때 사용합니다.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 닉네임 업데이트 완료"),
-            @ApiResponse(code = 400, message = "변경할 닉네임을 입력해주세요."),
+            @ApiResponse(code = 400, message = "기존의 닉네임과 같습니다."),
             @ApiResponse(code = 400, message = "이미 존재하는 닉네임입니다."),
+            @ApiResponse(code = 400, message = "닉네임 입력은 필수입니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-//            @ApiResponse(code = 500, message = "비밀번호 변경 중에 서버 에러가 발생했습니다.")
     }
     )
     @PatchMapping("/member/nickname")
@@ -191,14 +234,6 @@ public class MemberController {
 
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         System.out.println(userPk);
-
-//        if(memberService.findById(userPk) == null) {
-//            new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
-//        }
-
-//        if(request.getNickname().isEmpty() || request.getNickname().isBlank()) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임 입력은 필수입니다.");
-//        }
 
         if(memberService.findByNickname(request.getNickname()).isEmpty()) { // 입력한 닉네임을 가진 멤버가 db에 없다면
 
@@ -214,11 +249,10 @@ public class MemberController {
 
         } else { // 입력한 닉네임을 가진 멤버가 db에 있다면
             if(memberService.findById(userPk).getNickname().equals(request.getNickname())) { // 저장된 멤버의 닉네임과 입력받은 닉네임이 같다면
-
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "변경할 닉네임을 입력해주세요.");
+                throw new IllegalArgumentException("기존의 닉네임과 같습니다.");
             }
             else { // 저장된 멤버의 닉네임과 입력받은 닉네임이 다르다면
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.");
+                throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
             }
         }
     }
@@ -229,9 +263,8 @@ public class MemberController {
      */
     @ApiOperation(value = "멤버 삭제", notes = "멤버를 삭제하면 가입된 이메일도 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 탈퇴유저로 설정 완료"),
-            @ApiResponse(code = 401, message = "UnAuthorized"),
-//            @ApiResponse(code = 500, message = "멤버를 탈퇴 유저로 설정 중에 서버 에러가 발생했습니다.")
+            @ApiResponse(code = 200, message = "Member, Email 탈퇴유저로 설정 완료"),
+            @ApiResponse(code = 401, message = "UnAuthorized")
     }
     )
     @DeleteMapping("/member")
@@ -259,21 +292,29 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "로그인 완료, 토큰을 반환합니다."),
             @ApiResponse(code = 400, message = "가입되지 않은 이메일입니다."),
-            @ApiResponse(code = 400, message = "잘못된 비밀번호입니다."),
-//            @ApiResponse(code = 500, message = "로그인 중에 서버 에러가 발생했습니다")
+            @ApiResponse(code = 400, message = "이메일 입력은 필수입니다."),
+            @ApiResponse(code = 400, message = "비밀번호 입력은 필수입니다."),
+            @ApiResponse(code = 400, message = "잘못된 비밀번호입니다.")
     }
     )
     @PostMapping("/login")
     public ResponseEntity<DefaultResponseDto<Object>> login(@RequestBody LoginMemberRequest member) {
+
+        if(member.getPassword().equals(null)) {
+            throw new NullPointerException("비밀번호 입력은 필수입니다.");
+        }
+
         Member mem = memberService.findByEmail(member.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입되지 않은 이메일입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
+
 
         if (!passwordEncoder.matches(member.getPassword(), mem.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 비밀번호입니다.");}
-
+            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+        }
 
         Iterator<String> iter = mem.getRoles().iterator();
-        List<String> roles=new ArrayList<>();
+        List<String> roles = new ArrayList<>();
+
         while (iter.hasNext()) {
             roles.add(iter.next());
         }
@@ -289,7 +330,6 @@ public class MemberController {
     /**
      * admin role
      */
-
     /**
      * 전체 멤버 조회(관리자)
      */
@@ -297,8 +337,7 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "전체 Member를 조회합니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 403, message = "Forbidden"), // TODO : 에러 확인
-//            @ApiResponse(code = 500, message = "관리자용으로 전체 Member를 조회하는 중에 서버 에러가 발생했습니다.")
+            @ApiResponse(code = 403, message = "Forbidden")
     }
     )
     @GetMapping("/admin/members")
@@ -324,8 +363,7 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "관리자용으로 Member의 비밀번호 혹은 닉네임을 수정합니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 403, message = "Forbidden"), // TODO : 에러 확인
-//            @ApiResponse(code = 500, message = "관리자용으로 Member의 비밀번호 혹은 닉네임을 수정 중에 서버 에러가 발생했습니다.")
+            @ApiResponse(code = 403, message = "Forbidden")
     }
     )
     @PatchMapping("/admin/member/{id}")
@@ -349,8 +387,7 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "관리자용으로 Member를 탈퇴유저로 설정합니다."),
             @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 403, message = "Forbidden"), // TODO : 에러 확인
-//            @ApiResponse(code = 500, message = "관리자용으로 Member를 탈퇴유저로 설정 중에 서버 에러가 발생했습니다.")
+            @ApiResponse(code = 403, message = "Forbidden")
     }
     )
     @DeleteMapping("/admin/member/{id}")

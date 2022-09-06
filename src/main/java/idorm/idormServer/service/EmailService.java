@@ -41,7 +41,7 @@ public class EmailService {
         return emailRepository.findByEmail(email);
     }
     public Email findByEmail(String email){
-        return emailRepository.findByEmail(email).orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST, "이메일이 존재하지 않습니다."));
+        return emailRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("이메일이 존재하지 않습니다."));
 
     }
     @Transactional
