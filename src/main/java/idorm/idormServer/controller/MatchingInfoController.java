@@ -56,21 +56,6 @@ public class MatchingInfoController {
                     .data(matchingInfoId)
                     .build()
             );
-
-//        if(member.getMatchingInfo().equals(null)) { // 등록된 매칭정보가 없다면
-//            Long matchingInfoId = matchingInfoService.save(request.getDormNum(), request.getJoinPeriod(), request.getGender(), request.getAge(), request.getIsSnoring(), request.getIsGrinding(), request.getIsSmoking(), request.getIsAllowedFood(), request.getIsWearEarphones(), request.getWakeUpTime(), request.getCleanUpStatus(), request.getShowerTime(), request.getOpenKakaoLink(), request.getMbti(), request.getWishText(), member);
-////            matchingInfoService.updateMatchingInfoAddMember(matchingInfoId, member);
-//
-//            return ResponseEntity.status(200)
-//            .body(DefaultResponseDto.builder()
-//                    .responseCode("OK")
-//                    .responseMessage("온보딩 정보 저장 완료")
-//                    .data(matchingInfoId)
-//                    .build()
-//            );
-//        } else { // 등록된 매칭정보가 있다면
-//            throw new IllegalArgumentException("이미 등록된 매칭정보가 있습니다.");
-//        }
     }
 
     /**
