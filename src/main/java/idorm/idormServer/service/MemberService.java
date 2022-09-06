@@ -1,5 +1,6 @@
 package idorm.idormServer.service;
 
+import idorm.idormServer.domain.MatchingInfo;
 import idorm.idormServer.domain.Member;
 import idorm.idormServer.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -93,18 +94,30 @@ public class MemberService {
     public void updatePassword(Long memberId, String password) {
         Member member = memberRepository.findById(memberId).get();
         member.updatePassword(password);
+        memberRepository.save(member);
     }
 
     @Transactional
     public void updateNickname(Long memberId, String nickname) {
         Member member = memberRepository.findById(memberId).get();
         member.updateNickname(nickname);
+        memberRepository.save(member);
     }
 
     @Transactional
     public void updateIsLeft(Long memberId) {
         Member member = memberRepository.findById(memberId).get();
         member.updateIsLeft();
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void updateMatchingInfo(Member member, MatchingInfo matchingInfo) {
+        log.info("START | Member Service updateMatchingInfo 저장 At " + LocalDateTime.now());
+        member.updateMatchingInfo(matchingInfo);
+        memberRepository.save(member);
+
+        log.info("COMPLETE | Member Service updateMatchingInfo 저장 At " + LocalDateTime.now());
     }
 
 }

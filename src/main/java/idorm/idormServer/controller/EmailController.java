@@ -51,7 +51,6 @@ public class EmailController {
             @ApiResponse(code = 200, message = "인증코드를 전송합니다."),
             @ApiResponse(code = 400, message = "형식에 맞지 않는 이메일입니다."),
             @ApiResponse(code = 400, message = "이미 존재하는 회원입니다."),
-//            @ApiResponse(code = 500, message = "이메일 인증코드를 전송 중에 서버 에러가 발생했습니다.")
     }
     )
     @PostMapping("/email") // 이메일 인증 코드 보내기

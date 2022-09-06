@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 public class MatchingInfo extends BaseEntity {
 
     @Id @GeneratedValue
-    @Column(name="matchingInfo_id")
+    @Column(name="matching_info_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -60,7 +60,7 @@ public class MatchingInfo extends BaseEntity {
     public MatchingInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
                         Boolean isSnoring, Boolean isSmoking, Boolean isGrinding, Boolean isWearEarphones,
                         Boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
-                        String mbti, String wishText, String openKakaoLink) {
+                        String mbti, String wishText, String openKakaoLink, Member member) {
 
         this.dormNum = dormNum;
         this.joinPeriod = joinPeriod;
@@ -78,12 +78,8 @@ public class MatchingInfo extends BaseEntity {
         this.wishText = wishText;
         this.openKakaoLink = openKakaoLink;
         this.isVisible = true;
-    }
-
-    public void addMember(Member member) {
         this.member = member;
     }
-
 
     /**
      * 핵심 비지니스 로직

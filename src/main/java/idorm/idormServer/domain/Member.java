@@ -108,4 +108,8 @@ public class Member extends BaseEntity implements UserDetails{
     public void updateIsLeft() {
         this.isLeft = (isLeft == false) ? true : false;
     }
+
+  public void updateMatchingInfo(MatchingInfo matchingInfo) {
+      this.matchingInfo = matchingInfo;
+  }
 }

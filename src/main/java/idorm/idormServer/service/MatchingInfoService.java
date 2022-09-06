@@ -1,7 +1,7 @@
 package idorm.idormServer.service;
 
 import idorm.idormServer.domain.*;
-import idorm.idormServer.dto.MatchingInfoDTO;
+import idorm.idormServer.dto.MatchingInfoSaveRequestDto;
 import idorm.idormServer.repository.MatchingInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-
-import static idorm.idormServer.dto.MatchingInfoDTO.*;
 
 @Slf4j
 @Service
@@ -27,47 +24,17 @@ public class MatchingInfoService {
     /**
      * 온보딩(매창)정보 생성
      */
-//    @Transactional
-//    public Long save(MatchingInfoSaveRequestDTO matchingInfoSaveRequestDTO) {
-//        log.info("START | MatchingInfo Service 저장 At " + LocalDateTime.now());
-//        try {
-//            MatchingInfo matchingInfo = matchingInfoSaveRequestDTO.toEntity();
-//            matchingInfoRepository.save(matchingInfo);
-//            log.info("COMPLETE | MatchingInfo 저장 At " + LocalDateTime.now() + " | email: " + matchingInfo.getMember().getEmail());
-//            return matchingInfo.getId();
-//        } catch(Exception e) {
-//            throw new IllegalStateException("MatchingInfo 등록 실패");
-//        }
-//    }
-
     @Transactional
-    public Long save(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age, Boolean isSnoring,
-                     Boolean isGrinding, Boolean isSmoking, Boolean isAllowedFood, Boolean isWearEarphones, String wakeUpTime, String cleanUpStatus, String showerTime, String openKakaoLink, String mbti, String wishText) {
+    public Long save(MatchingInfoSaveRequestDto request, Member member) {
         log.info("START | MatchingInfo Service 저장 At " + LocalDateTime.now());
         try {
-            MatchingInfo matchingInfo = MatchingInfo.builder()
-                    .dormNum(dormNum)
-                    .joinPeriod(joinPeriod)
-                    .gender(gender)
-                    .age(age)
-                    .isSnoring(isSnoring)
-                    .isGrinding(isGrinding)
-                    .isSmoking(isSmoking)
-                    .isAllowedFood(isAllowedFood)
-                    .isWearEarphones(isWearEarphones)
-                    .wakeUpTime(wakeUpTime)
-                    .cleanUpStatus(cleanUpStatus)
-                    .showerTime(showerTime)
-                    .openKakaoLink(openKakaoLink)
-                    .mbti(mbti)
-                    .wishText(wishText)
-                    .build();
-
+            MatchingInfo matchingInfo = request.toEntity(member);
             matchingInfoRepository.save(matchingInfo);
+            memberService.updateMatchingInfo(member, matchingInfo);
             log.info("COMPLETE | MatchingInfo 저장 At " + LocalDateTime.now() + " | email: " + matchingInfo.getMember().getEmail());
             return matchingInfo.getId();
         } catch(Exception e) {
-            throw new IllegalStateException("MatchingInfo 등록 실패" + e);
+            throw new IllegalStateException("MatchingInfo 등록 실패 | err message: " + e);
         }
     }
 
@@ -125,12 +92,5 @@ public class MatchingInfoService {
 //
 //        matchingInfoRepository.save(matchingInfo);
 //    }
-
-    @Transactional
-    public void updateMatchingInfoAddMember(Long matchingInfoId, Member member) {
-        MatchingInfo matchingInfo = matchingInfoRepository.findById(matchingInfoId).get();
-        matchingInfo.addMember(member);
-        matchingInfoRepository.save(matchingInfo);
-    }
 
 }
