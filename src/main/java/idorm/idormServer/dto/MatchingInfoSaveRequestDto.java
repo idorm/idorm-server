@@ -7,8 +7,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ApiModel(value = "온보딩정보 생성 요청")

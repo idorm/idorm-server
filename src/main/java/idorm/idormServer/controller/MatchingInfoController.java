@@ -10,6 +10,7 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,10 +39,6 @@ public class MatchingInfoController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(HttpServletRequest request2, @RequestBody @Valid MatchingInfoSaveRequestDto request) {
 
-        if(request2 == null) {
-            throw new AccessDeniedException("UnAuthorized");
-        }
-
         long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(userPk);
 
@@ -62,6 +59,31 @@ public class MatchingInfoController {
     /**
      * 온보딩(매칭) 정보 수정
      */
+    @PatchMapping("/matchinginfo")
+    @ApiOperation(value = "온보딩 정보 수정", notes = "")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "온보딩 정보 수정 성공"),
+            @ApiResponse(code = 400, message = "JWT String argument cannot be null or empty (로그인 안 되어있을 경우)"),
+            @ApiResponse(code = 400, message = "등록된 매칭정보가 없습니다.")
+    })
+    public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(HttpServletRequest request2, @RequestBody @Valid MatchingInfoSaveRequestDto request) {
+
+        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(userPk);
+
+        if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
+            throw new IllegalArgumentException("등록된 매칭정보가 없습니다.");
+
+        Long matchingInfoId = matchingInfoService.save(request, member);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("온보딩 정보 수정 성공")
+                        .data(matchingInfoId)
+                        .build()
+                );
+    }
 
     /**
      * 온보딩(매칭) 정보 조회
