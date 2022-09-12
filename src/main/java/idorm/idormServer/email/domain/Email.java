@@ -1,6 +1,6 @@
 package idorm.idormServer.email.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import idorm.idormServer.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,36 +10,43 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Email {
+public class Email extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id
     @Column(name="email_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String email;
     private String code;
     private boolean isCheck; // 인증 여부
     private boolean isJoin; // 가입 여부
-    private boolean isLeft; // 탈퇴 여부, default는 false
 
     public Email(String email, String code) {
         this.email = email;
         this.code = code;
         this.isCheck = false;
-        this.isLeft = false;
+        this.isJoin = false;
     }
 
+    /**
+     * 인증 여부
+     */
     public void isChecked() {
         this.isCheck = true;
-    } // 인증 여부
+    }
+
+    /**
+     * 가입 여부
+     */
     public void isJoined() {
         this.isJoin = true;
-    } // 가입 여부
-    public void isLeft() { this.isLeft = (isLeft == false) ? true : false; } // 탈퇴 여부
+    }
 
     public boolean getJoined() {
         return this.isJoin;
     }
+
     public void setCode(String code) {
         this.code = code;
     }

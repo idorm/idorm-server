@@ -15,8 +15,9 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchingInfo extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id
     @Column(name="matching_info_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -26,7 +27,7 @@ public class MatchingInfo extends BaseEntity {
     private JoinPeriod joinPeriod; // 입사기간 [WEEK16,WEEK24]
 
     @Enumerated(EnumType.STRING)
-    private Gender gender; // 본인의 성별 [FEMALE, MALE]
+    private Gender gender; // 성별 [FEMALE, MALE]
 
     private Integer age;
 
@@ -46,8 +47,6 @@ public class MatchingInfo extends BaseEntity {
 
     @Size(max=100)
     private String wishText; // 하고 싶은 말
-
-//    private Boolean isVisible; // default는 true, 탈퇴 시 false
 
     /**
      * 연관관계 매핑
@@ -81,12 +80,12 @@ public class MatchingInfo extends BaseEntity {
         this.wishText = wishText;
         this.openKakaoLink = openKakaoLink;
         this.member = member;
-//        this.isVisible = true;
     }
 
     /**
      * 핵심 비지니스 로직
      */
+    // TODO: update 한 메소드에서 처리
     public void updateDormNum(Dormitory dormNum) {
         this.dormNum = dormNum;
     }
@@ -141,13 +140,5 @@ public class MatchingInfo extends BaseEntity {
     public void updateOpenKakaoLink(String openKakaoLink) {
         this.openKakaoLink = openKakaoLink;
     }
-
-//    public void killIsVisible() {
-//        this.isVisible = false;
-//    }
-//
-//    public void restoreIsVisible() {
-//        this.isVisible = true;
-//    }
 
 }

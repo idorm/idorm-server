@@ -22,9 +22,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @PropertySource("classpath:login.properties")
 public class JwtTokenProvider {
+
     @Value("${JWTSECRET}")
     private String secretKey;
-
 
     // 토큰 유효시간 1440분
     private long tokenValidTime = 1440 * 60 * 1000L;

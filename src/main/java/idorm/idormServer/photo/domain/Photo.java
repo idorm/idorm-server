@@ -1,5 +1,6 @@
 package idorm.idormServer.photo.domain;
 
+import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,11 +11,11 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Photo {
+public class Photo extends BaseEntity {
 
     @Id
-    @GeneratedValue
     @Column(name="photo_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String uploadFileName; // 업로드 파일명

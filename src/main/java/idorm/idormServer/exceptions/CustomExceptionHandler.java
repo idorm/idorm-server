@@ -36,12 +36,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (Objects.requireNonNull(responseMessage).contains("입력")) {
             responseCode = "FIELD_REQUIRED";
+        } else if (responseMessage.contains("~")) {
+            responseCode = exception.getFieldError().getField().toUpperCase().concat("_LENGTH_INVALID");
+        } else if (responseMessage.contains("형식")) {
+            responseCode = exception.getFieldError().getField().toUpperCase().concat("_FORMAT_INVALID");
         } else {
             responseCode = exception.getFieldError().getField().toUpperCase();
         }
 
         log.error("ERROR | " + responseMessage + " At " + timestamp + " | "
-                + exception.getFieldError().getField() + " = " + exception.getFieldError().getRejectedValue());
+                + exception.getFieldError().getField() + " = " +
+                ((Objects.requireNonNull(exception.getFieldError().getRejectedValue()).toString() == null) ?
+                        "null" : exception.getFieldError().getRejectedValue().toString()));
 
         return ResponseEntity.status(status).body(
                 DefaultExceptionResponseDto.builder()
@@ -152,6 +158,28 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 + exception.getMessage() + " = " + exception.getCause());
 
         return ResponseEntity.status(406).body(
+                DefaultExceptionResponseDto.builder()
+                        .responseCode(responseCode)
+                        .responseMessage(responseMessage)
+                        .build()
+        );
+    }
+
+    /**
+     * 409 Conflict |
+     * 요청이 현재 서버의 상태와 충돌됩니다.
+     */
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public ResponseEntity<Object> handleConflictException(ConflictException exception) {
+        String responseMessage = exception.getMessage();
+        String responseCode = "CONFLICT";
+        LocalDateTime timestamp = LocalDateTime.now();
+
+        log.error("ERROR | " + responseMessage + " At " + timestamp + " | "
+                + exception.getMessage() + " = " + exception.getCause());
+
+        return ResponseEntity.status(409).body(
                 DefaultExceptionResponseDto.builder()
                         .responseCode(responseCode)
                         .responseMessage(responseMessage)

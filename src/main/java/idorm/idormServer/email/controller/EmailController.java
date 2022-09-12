@@ -1,11 +1,14 @@
 package idorm.idormServer.email.controller;
 
 import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.email.dto.EmailRequest;
-import idorm.idormServer.email.dto.EmailResponseDto;
-import idorm.idormServer.email.dto.VerifyRequest;
+import idorm.idormServer.email.domain.Email;
+import idorm.idormServer.email.dto.EmailAuthRequestDto;
+import idorm.idormServer.email.dto.EmailDefaultResponseDto;
+import idorm.idormServer.email.dto.EmailVerifyRequestDto;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.service.EmailService;
+import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
@@ -15,7 +18,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,155 +25,170 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RestController
-@Api(tags = "이메일 API")
+@Api(tags = "Email API")
 public class EmailController {
 
     private final EmailService emailService;
-    private final JavaMailSender emailSender;
     private final MemberService memberService;
+
+    private final JavaMailSender emailSender;
     private final JwtTokenProvider jwtTokenProvider;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-
-    @ApiOperation(value = "이메일 인증", notes = "학교 이메일 형식(@inu.ac.kr)으로 이메일을 받아서 해당 이메일로 인증코드를 발송합니다.")
+    @ApiOperation(value = "Email 인증", notes = "개발용 인증: 이미 인증된 이메일 한에서 인증코드 포함 응답을 줍니다. 배포용 응답: data가 null 입니다. / 개발용 테스트 이메일: {aaa,bbb,ccc}@inu.ac.kr(인증완료, 회원가입완료/비밀번호 각각 aaa,bbb,ccc), {ddd,eee,fff}@inu.ac.kr(인증완료, 가입여부만 true(실제론 멤버등록 X)_)")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "인증코드를 전송합니다."),
-            @ApiResponse(code = 400, message = "형식에 맞지 않는 이메일입니다."),
-            @ApiResponse(code = 400, message = "이미 존재하는 회원입니다."),
+            @ApiResponse(code = 200, message = "Email 인증코드 전송 완료"),
+            @ApiResponse(code = 400, message = "올바른 이메일 형식이 아닙니다."),
+            @ApiResponse(code = 400, message = "이메일을 입력해 주세요."),
+            @ApiResponse(code = 409, message = "이미 가입된 이메일입니다.")
     }
     )
-    @PostMapping("/email") // 이메일 인증 코드 보내기
-    public ResponseEntity<DefaultResponseDto<Object>> emailAuth(@RequestBody @Valid EmailRequest email) throws Exception {
+    @PostMapping("/email")
+    public ResponseEntity<DefaultResponseDto<Object>> emailAuth(
+            @RequestBody @Valid EmailAuthRequestDto request) throws Exception {
 
-        String[] mailSplit=email.getEmail().split("@");
+        String requestEmail = request.getEmail();
+        Optional<Email> email = emailService.findByEmailOp(request.getEmail());
 
-        if(!(mailSplit.length==2)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "형식에 맞지 않는 이메일입니다.");
-        }
-
-        if(mailSplit[1].equals("inu.ac.kr")) {
-            if (emailService.findByEmailOp(email.getEmail()).isEmpty()) {
-                sendSimpleMessage(email.getEmail());
-
-                return ResponseEntity.status(200)
-                        .body(DefaultResponseDto.builder()
-                                .responseCode("OK")
-                                .responseMessage("인증코드를 전송합니다.")
-                                .data(new EmailResponseDto(email.getEmail()))
-                                .build());
-
+        if(!email.isEmpty()) {
+            if (email.get().getJoined() == true) {
+                throw new ConflictException("이미 가입된 이메일입니다.");
             }
-
-            if (emailService.findByEmail(email.getEmail()).getJoined() == true) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다.");
-            }
-            sendSimpleMessage(email.getEmail());
-
-
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("인증코드를 전송합니다.")
-                            .data(new EmailResponseDto(email.getEmail()))
-                            .build());
         }
-        else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "형식에 맞지 않는 이메일입니다.");
-        }
-    }
 
-    @ApiOperation(value = "비밀번호 재설정을 위한 이메일 발송", notes = "가입된 이메일의 경우이며 비밀번호를 잊었을 때 사용합니다. 학교 이메일 형식(@inu.ac.kr)으로 이메일을 받아서 해당 이메일로 인증코드를 발송합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "비밀번호 재설정을 위한 인증코드를 전송합니다."),
-            @ApiResponse(code = 400, message = "가입하지 않은 이메일입니다."),
-//            @ApiResponse(code = 500, message = "비밀번호를 재설정하기 위해 이메일 인증코드를 전송하는 중에 서버 에러가 발생했습니다.")
-    }
-    )
-    @PostMapping("/email/password")
-    public ResponseEntity<DefaultResponseDto<Object>> findPassword(@RequestBody @Valid EmailRequest email) throws Exception {
+        String[] mailSplit = requestEmail.split("@");
 
-        if(emailService.findByEmail(email.getEmail()).getJoined()==true) {
-            sendSimpleMessage(email.getEmail());
+        if(!(mailSplit.length == 2) || !mailSplit[1].equals("inu.ac.kr")) {
+            throw new UnauthorizedException("올바른 이메일 형식이 아닙니다.");
         }
-        else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입하지 않은 이메일입니다.");
+
+        sendSimpleMessage(requestEmail);
+
+        EmailDefaultResponseDto response = null;
+        if(!email.isEmpty()) {
+            response = new EmailDefaultResponseDto(email.get());
         }
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("OK")
-                        .responseMessage("비밀번호 재설정을 위한 인증코드를 전송합니다.")
-                        .data(new EmailResponseDto(email.getEmail()))
+                        .responseMessage("Email 인증코드 전송 완료")
+                        .data(response)
                         .build());
 
     }
 
-    @ApiOperation(value = "비밀번호 재설정을 위한 이메일 인증 코드 검증", notes = "/email/password 에서 발송한 인증코드를 확인할 때 사용합니다.")
+    @ApiOperation(value = "비밀번호 수정용 Email 인증")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "비밀번호 재설정을 위한 이메일 인증코드 검증에 성공했습니다."),
-            @ApiResponse(code = 400, message = "가입하지 않은 이메일입니다."),
+            @ApiResponse(code = 200, message = "Email 인증코드 전송 완료"),
+            @ApiResponse(code = 401, message = "이메일을 찾을 수 없습니다."),
+            @ApiResponse(code = 409, message = "가입되지 않은 이메일입니다.")
+    }
+    )
+    @PostMapping("/email/password")
+    public ResponseEntity<DefaultResponseDto<Object>> findPassword(
+            @RequestBody @Valid EmailAuthRequestDto request) {
+
+        String requestEmail = request.getEmail();
+
+        Email email = emailService.findByEmail(requestEmail);
+
+        if(email.getJoined() == false) {
+            throw new ConflictException("가입되지 않은 이메일입니다.");
+        }
+
+        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Email 인증코드 전송 완료")
+                        .data(response)
+                        .build());
+
+    }
+
+    @ApiOperation(value = "비밀번호 수정용 Email 인증코드 검증", notes = "/email/password 인증코드 확인 용도")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Email 인증코드 검증 완료"),
             @ApiResponse(code = 400, message = "잘못된 인증번호입니다."),
-//            @ApiResponse(code = 500, message = "비밀번호 재설정을 위한 이메일 인증코드 검증 중에 서버 에러가 발생했습니다.")
+            @ApiResponse(code = 401, message = "가입되지 않은 이메일입니다."),
     }
     )
     @PostMapping("/verifyCode/password/{email}")
-    public ResponseEntity<DefaultResponseDto<Object>> verifyCodePassword(@PathVariable("email")String email, @RequestBody VerifyRequest code) {
+    public ResponseEntity<DefaultResponseDto<Object>> verifyCodePassword(
+            @PathVariable("email") String requestEmail, @RequestBody EmailVerifyRequestDto code) {
 
-        if(emailService.findByEmail(email).getCode().equals(code.getCode())) {
-            Member mem = memberService.findByEmail(email)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입하지 않은 이메일입니다."));
-            Iterator<String> iter =mem.getRoles().iterator();
-            List<String> roles=new ArrayList<>();
-            while (iter.hasNext()) {
-                roles.add(iter.next());
-            }
+        Optional<Email> email = emailService.findByEmailOp(requestEmail);
+        Optional<Member> member = memberService.findByEmail(requestEmail);
 
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("비밀번호 재설정을 위한 이메일 인증코드 검증에 성공했습니다.")
-                            .data(jwtTokenProvider.createToken(mem.getUsername(), roles))
-                            .build());
+        if(email.isEmpty() || member.isEmpty()) {
+            throw new UnauthorizedException("가입되지 않은 이메일입니다.");
         }
-        else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 인증번호입니다.");
+
+        if(!(email.get().getCode().equals(code.getCode()))) {
+            throw new UnauthorizedException("잘못된 인증번호입니다.");
         }
+
+        Iterator<String> iter = member.get().getRoles().iterator();
+
+        List<String> roles = new ArrayList<>();
+
+        while (iter.hasNext()) {
+            roles.add(iter.next());
+        }
+
+        jwtTokenProvider.createToken(member.get().getUsername(), roles);
+
+        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email.get());
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Email 인증코드 검증 완료")
+                        .data(response)
+                        .build());
+
     }
 
-    @ApiOperation(value = "이메일 인증 코드 검증", notes = "/email에서 발송한 인증코드를 확인할 때 사용합니다.")
+    @ApiOperation(value = "Email 인증코드 검증", notes = "/email 인증코드 확인 용도")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "이메일 인증코드를 검증에 성공했습니다."),
+            @ApiResponse(code = 200, message = "Email 인증코드 검증 완료"),
             @ApiResponse(code = 400, message = "잘못된 인증번호입니다."),
-//            @ApiResponse(code = 500, message = "이메일 인증코드를 검증 중에 서버 에러가 발생했습니다.")
+            @ApiResponse(code = 401, message = "등록되지 않은 이메일입니다.")
     }
     )
     @PostMapping("/verifyCode/{email}")
-    public ResponseEntity<DefaultResponseDto<Object>> verifyCode(@PathVariable("email")String email, @RequestBody VerifyRequest code) {
-        if(emailService.findByEmail(email).getCode().equals(code.getCode())) {
-            emailService.isChecked(email);
+    public ResponseEntity<DefaultResponseDto<Object>> verifyCode(
+            @PathVariable("email") String requestEmail, @RequestBody EmailVerifyRequestDto code) {
+
+        Email email = emailService.findByEmail(requestEmail);
+
+        if(email.getCode().equals(code.getCode())) {
+
+            emailService.isChecked(requestEmail);
+
+            EmailDefaultResponseDto response = new EmailDefaultResponseDto(email);
 
             return ResponseEntity.status(200)
                     .body(DefaultResponseDto.builder()
                             .responseCode("OK")
-                            .responseMessage("이메일 인증코드를 검증에 성공했습니다.")
-                            .data(new EmailResponseDto(code.getCode()))
+                            .responseMessage("Email 인증코드 검증 완료")
+                            .data(response)
                             .build());
         }
         else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 인증번호입니다.");
+            throw new UnauthorizedException("잘못된 인증번호입니다.");
         }
     }
 
@@ -180,7 +197,7 @@ public class EmailController {
      */
 
     //이메일,인증번호로그/DB 저장
-    private MimeMessage createMessage(String to)throws Exception{
+    private MimeMessage createMessage(String to) throws Exception{
         logger.info("보내는 대상 : "+ to);
 
         MimeMessage  message = emailSender.createMimeMessage();
@@ -213,7 +230,6 @@ public class EmailController {
     }
 
     // 인증코드 만들기
-
     public static String createKey() {
         StringBuffer key = new StringBuffer();
         Random rnd = new Random();
@@ -225,18 +241,21 @@ public class EmailController {
         }
         return key.toString();
     }
+
     public String createCode(String ePw){
         return ePw.substring(0, 3) + "-" + ePw.substring(3, 6);
     }
+
     //전송
     public void sendSimpleMessage(String to) throws Exception {
+
         MimeMessage message = createMessage(to);
 
-        try{//예외처리
+        try{
             emailSender.send(message);
-        }catch(MailException es){
+        } catch(MailException es){
             es.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가입하지 않은 이메일입니다.");
+            throw new ConflictException("가입되지 않은 이메일입니다.");
         }
     }
 }

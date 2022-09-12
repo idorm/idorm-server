@@ -20,18 +20,16 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntity implements UserDetails{
+public class Member extends BaseEntity implements UserDetails {
 
     @Id
-    @GeneratedValue
-    @Column(name="member_id")
+    @Column(name = "member_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String email;
     private String password;
-    private String nickname; // 커뮤니티 게시글에선 익명/닉네임 여부 선택 가능, 댓글에선 전부 익명1,2,3
-
-    private Boolean isLeft; // default는 false, 회원 탈퇴 시 true
+    private String nickname;
 
     /**
      * 연관관계 매핑
@@ -45,7 +43,6 @@ public class Member extends BaseEntity implements UserDetails{
     /**
      * security code
      */
-    // 해당 USER의 권한을 return 하는 곳
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
@@ -85,9 +82,6 @@ public class Member extends BaseEntity implements UserDetails{
     @Override
     public boolean isEnabled() {
         return false;
-
-        // 우리 사이트에서 1년동안 회원이 로그인을 안하면 휴면계정으로 하기로 했다면
-        // return true;
     }
 
     /**
@@ -98,7 +92,6 @@ public class Member extends BaseEntity implements UserDetails{
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
-        this.isLeft = false;
         this.roles.add("ROLE_USER");
     }
 
@@ -113,16 +106,16 @@ public class Member extends BaseEntity implements UserDetails{
         this.nickname = nickname;
     }
 
-    public void updateIsLeft() {
-        this.isLeft = true; // 탈퇴 처리
+    public void updateMatchingInfo(MatchingInfo matchingInfo) {
+        this.matchingInfo = matchingInfo;
     }
 
-  public void updateMatchingInfo(MatchingInfo matchingInfo) {
-      this.matchingInfo = matchingInfo;
-  }
-
-  public void deleteMatchingInfo() {
+    public void deleteMatchingInfo() {
         this.matchingInfo = null;
-  }
+    }
+
+    public void updatePhoto(Photo photo) {
+        this.photo = photo;
+    }
 
 }

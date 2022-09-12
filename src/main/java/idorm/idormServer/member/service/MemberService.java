@@ -34,8 +34,6 @@ public class MemberService {
                 .password(password)
                 .build();
 
-
-
         memberRepository.save(member);
         log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
         return member.getId();
@@ -75,7 +73,8 @@ public class MemberService {
      */
     @Transactional
     public void deleteMember(Long memberId) {
-        memberRepository.findById(memberId).get().updateIsLeft(); // 회원 정보 업데이트
+
+        memberRepository.delete(findById(memberId));
     }
 
     /**
@@ -99,13 +98,6 @@ public class MemberService {
     public void updateNickname(Long memberId, String nickname) {
         Member member = memberRepository.findById(memberId).get();
         member.updateNickname(nickname);
-        memberRepository.save(member);
-    }
-
-    @Transactional
-    public void updateIsLeft(Long memberId) {
-        Member member = memberRepository.findById(memberId).get();
-        member.updateIsLeft();
         memberRepository.save(member);
     }
 

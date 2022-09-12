@@ -27,7 +27,6 @@ public class InitDB {
          initService.dbInit1();
          initService.dbInit2();
         initService.dbInit3();
-        initService.dbInit4();
     }
 
     @Component
@@ -68,18 +67,18 @@ public class InitDB {
 
         public void dbInit3() {
             Email email1 = createEmail("aaa@inu.ac.kr", "111-111");
-            Email email2 = createEmail("bbb@inu.ac.kr", "222-222");
-            Email email3 = createEmail("ccc@inu.ac.kr", "333-333");
+            Email email2 = createEmail("bbb@inu.ac.kr", "111-111");
+            Email email3 = createEmail("ccc@inu.ac.kr", "111-111");
+            Email email4 = createEmail("ddd@inu.ac.kr", "111-111");
+            Email email5 = createEmail("eee@inu.ac.kr", "111-111");
+            Email email6 = createEmail("fff@inu.ac.kr", "111-111");
 
             em.persist(email1);
             em.persist(email2);
             em.persist(email3);
-        }
-
-        public void dbInit4() {
-            Email email = new Email("knh709@inu.ac.kr", "777-777");
-            email.isChecked();
-            em.persist(email);
+            em.persist(email4);
+            em.persist(email5);
+            em.persist(email6);
         }
 
         private Member createMember(String email, String password) {
