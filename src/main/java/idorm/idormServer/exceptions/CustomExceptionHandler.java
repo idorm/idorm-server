@@ -36,18 +36,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (Objects.requireNonNull(responseMessage).contains("입력")) {
             responseCode = "FIELD_REQUIRED";
-        } else if (responseMessage.contains("~")) {
-            responseCode = exception.getFieldError().getField().toUpperCase().concat("_LENGTH_INVALID");
-        } else if (responseMessage.contains("형식")) {
-            responseCode = exception.getFieldError().getField().toUpperCase().concat("_FORMAT_INVALID");
         } else {
             responseCode = exception.getFieldError().getField().toUpperCase();
         }
 
         log.error("ERROR | " + responseMessage + " At " + timestamp + " | "
-                + exception.getFieldError().getField() + " = " +
-                ((Objects.requireNonNull(exception.getFieldError().getRejectedValue()).toString() == null) ?
-                        "null" : exception.getFieldError().getRejectedValue().toString()));
+                + exception.getFieldError().getField() + " = " + exception.getFieldError().getRejectedValue());
 
         return ResponseEntity.status(status).body(
                 DefaultExceptionResponseDto.builder()
