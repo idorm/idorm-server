@@ -16,8 +16,8 @@ import java.io.OutputStream;
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    private static ExceptionResponse exceptionResponse =
-            new ExceptionResponse(HttpStatus.FORBIDDEN.value(), "Forbidden", null);
+    private static DefaultExceptionResponseDto exceptionResponse =
+            new DefaultExceptionResponseDto("FORBIDDEN", null);
 
     @Override
     public void handle(HttpServletRequest httpServletRequest,

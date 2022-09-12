@@ -33,12 +33,8 @@ public class SwaggerConfiguration {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.OAS_30)
-
-                .alternateTypeRules(AlternateTypeRules
-                        .newRule(Pageable.class, Page.class))
                 .useDefaultResponseMessages(false) // Swagger에서 제공해주는 기본 응답 코드 (200, 401, 403, 404). false로 설정하면 기본 응답 코드를 노출하지 않습니다.
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("idorm.idormServer.controller")) // Basic error controller 를 없애기 위한 코드
                 .apis(RequestHandlerSelectors.any()) // Swagger를 적용할 패키지 설정
                 .paths(PathSelectors.any()) // Swagger를 적용할 주소 패턴을 세팅
                 .build()
@@ -83,15 +79,5 @@ public class SwaggerConfiguration {
                 .title("idorm API")
                 .version("1.0")
                 .build();
-    }
-
-    /**
-     * Page 파라미터를 위한 Page Class
-     */
-    @Data
-    @ApiModel
-    static class Page{
-        @ApiModelProperty(value = "페이지번호")
-        private Integer page;
     }
 }
