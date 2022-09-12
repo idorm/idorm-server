@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 @RequiredArgsConstructor
