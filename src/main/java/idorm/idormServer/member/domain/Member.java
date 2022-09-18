@@ -35,10 +35,10 @@ public class Member extends BaseEntity implements UserDetails {
      * 연관관계 매핑
      */
     @OneToOne(mappedBy = "member")
-    private MatchingInfo matchingInfo;
+    private MatchingInfo matchingInfo; // 매칭 정보
 
     @OneToOne(mappedBy = "member")
-    private Photo photo; // 멤버의 프로필 사진
+    private Photo photo; // 프로필 사진
 
     /**
      * security code

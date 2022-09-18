@@ -133,9 +133,9 @@ public class EmailController {
             @PathVariable("email") String requestEmail, @RequestBody EmailVerifyRequestDto code) {
 
         Optional<Email> email = emailService.findByEmailOp(requestEmail);
-        Optional<Member> member = memberService.findByEmail(requestEmail);
+        Member member = memberService.findByEmail(requestEmail);
 
-        if(email.isEmpty() || member.isEmpty()) {
+        if(email.isEmpty()) {
             throw new UnauthorizedException("가입되지 않은 이메일입니다.");
         }
 
@@ -143,7 +143,7 @@ public class EmailController {
             throw new UnauthorizedException("잘못된 인증번호입니다.");
         }
 
-        Iterator<String> iter = member.get().getRoles().iterator();
+        Iterator<String> iter = member.getRoles().iterator();
 
         List<String> roles = new ArrayList<>();
 
@@ -151,7 +151,7 @@ public class EmailController {
             roles.add(iter.next());
         }
 
-        jwtTokenProvider.createToken(member.get().getUsername(), roles);
+        jwtTokenProvider.createToken(member.getUsername(), roles);
 
         EmailDefaultResponseDto response = new EmailDefaultResponseDto(email.get());
 

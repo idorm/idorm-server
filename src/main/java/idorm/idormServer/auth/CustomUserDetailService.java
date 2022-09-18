@@ -1,20 +1,34 @@
 package idorm.idormServer.auth;
 
+import idorm.idormServer.exceptions.http.NotFoundException;
+import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
+import java.util.Optional;
+
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws IllegalArgumentException {
-        return memberRepository.findById(Long.parseLong(username))
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+
+        Optional<Member> foundMember = memberRepository.findById(Long.parseLong(username));
+
+        if(foundMember.isEmpty()) {
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
+        }
+
+        return foundMember.get();
     }
 }

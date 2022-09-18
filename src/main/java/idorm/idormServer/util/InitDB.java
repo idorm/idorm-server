@@ -46,7 +46,8 @@ public class InitDB {
         private String password;
 
         public void dbInit1() {
-            Member admin = createMember(id, passwordEncoder.encode(password));
+            String adminEmail = id;
+            Member admin = createMember(adminEmail, passwordEncoder.encode(password));
             em.persist(admin);
 
             admin.getRoles().clear();

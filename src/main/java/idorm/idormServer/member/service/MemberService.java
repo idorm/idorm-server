@@ -1,14 +1,16 @@
 package idorm.idormServer.member.service;
 
+import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.http.InternalServerErrorException;
+import idorm.idormServer.exceptions.http.NotFoundException;
+import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,96 +25,233 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     /**
-     * 회원 저장
+     * Member 저장 |
+     * 멤버를 저장한다. 중복여부를 확인하고 중복 시 409(Conflict)를 던진다.
+     * 멤버를 저장 중에 문제가 발생하면 500(Internal Server Error)을 던진다.
      */
     @Transactional
-    public Long join(String email, String password) {
+    public Long save(String email, String password) {
+
         log.info("IN PROGRESS | Member 저장 At " + LocalDateTime.now() + " | " + email);
-        validateDuplicateMember(email); // 중복 회원 검증
-        Member member = Member.builder()
-                .email(email)
-                .password(password)
-                .build();
 
-        memberRepository.save(member);
-        log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
-        return member.getId();
-    }
+        isExistingEmail(email);
 
-    private void validateDuplicateMember(String email) {
-        log.info("IN PROGRESS | Member 중복 확인 At " + LocalDateTime.now() + " | " + email);
-        Optional<Member> findMembers = memberRepository.findByEmail(email);
-        if (!findMembers.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다.");
+        try {
+            Member member = Member.builder()
+                    .email(email)
+                    .password(password)
+                    .build();
+            memberRepository.save(member);
+
+            log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
+            return member.getId();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member save 중 서버 에러 발생", e);
         }
-        log.info("COMPLETE | Member 중복 없음 확인 At " + LocalDateTime.now() + " | " + email);
     }
 
     /**
-     * 회원 조회
+     * 중복 멤버메일 존재 여부 확인 |
+     * 멤버메일의 존재 여부를 확인하고, 이미 사용 중인 멤버메일이라면 409(Conflict)를 던진다. 만약 조회 중에 에러가 발생하면
+     * 500(Internal Server Error)을 던진다.
+     */
+    private void isExistingEmail(String email) {
+
+        log.info("IN PROGRESS | Member 중복 여부 확인 At " + LocalDateTime.now() + " | " + email);
+
+        Optional<Member> findMembers = memberRepository.findByEmail(email);
+        try {
+            if (findMembers.isPresent()) {
+                throw new ConflictException("이미 존재하는 회원입니다.");
+            }
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 중복 여부 체크 중 서버 에러 발생", e);
+        }
+
+        log.info("COMPLETE | Member 중복 여부 확인 At " + LocalDateTime.now() + " | " + email);
+    }
+
+    /**
+     * Member 단건 조회 |
+     * 식별자로 멤버를 조회합니다. 찾을 수 없는 식별자라면 404(Not Found)를 던진다.
      */
     public Member findById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() ->
-                new IllegalArgumentException("id가 존재하지 않습니다."));
-    }
 
-    public List<Member> findAll() {
-        return memberRepository.findAll();
-    }
+        log.info("START | Member 단건 조회 At " + LocalDateTime.now() + " | " + memberId);
 
-    public Optional<Member> findByEmail(String email) {
-        return memberRepository.findByEmail(email);
-    }
+        try {
+            Optional<Member> member = memberRepository.findById(memberId);
 
-    public Optional<Member> findByNickname(String name) {
-        return memberRepository.findByNickname(name);
+            if(member.isEmpty()) {
+                throw new UnauthorizedException("해당 id의 멤버가 존재하지 않습니다.");
+            }
+
+            log.info("COMPLETE | Member 단건 조회 At " + LocalDateTime.now() + " | " + member.get().getEmail());
+            return member.get();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 단건 조회 중 서버 에러 발생", e);
+        }
     }
 
     /**
-     * 회원 삭제
+     * Member 전체 조회 |
+     * 관리자 계정에서 사용한다. 조회되는 멤버가 없다면 404(Not Found)를 던진다.
+     */
+    public List<Member> findAll() {
+
+        log.info("START | Member 전체 조회 At " + LocalDateTime.now());
+        try {
+            List<Member> foundAllMembers = memberRepository.findAll();
+
+            if(foundAllMembers.isEmpty()) {
+                throw new NotFoundException("조회할 멤버가 존재하지 않습니다.");
+            }
+
+            log.info("COMPLETE | Member 전체 조회 At " + LocalDateTime.now() + " | Member 수: " + foundAllMembers.size());
+            return foundAllMembers;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 전체 조회 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
+     * Member 이메일로 조회 |
+     */
+    public Member findByEmail(String email) {
+
+        log.info("START | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
+
+        try {
+            Optional<Member> foundMember = memberRepository.findByEmail(email);
+
+            if(foundMember.isEmpty()) {
+                throw new UnauthorizedException("가입되지 않은 이메일입니다.");
+            }
+
+            log.info("COMPLETE | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + foundMember.get().getEmail());
+            return foundMember.get();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 이메일로 조회 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
+     * Member 닉네임으로 조회 |
+     */
+    public Optional<Member> findByNickname(String nickname) {
+
+        log.info("START | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + nickname);
+
+        try {
+            Optional<Member> foundMember = memberRepository.findByNickname(nickname);
+            log.info("COMPLETE | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + foundMember);
+            return foundMember;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 닉네임으로 조회 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
+     * Member 삭제 |
+     * 식별자로 삭제할 멤버를 조회한다. 멤버를 찾지 못하면 404(Not Found)를 던진다.
+     * 멤버 삭제 중 에러가 발생하면 500(Internal Server Error)을 던진다.
      */
     @Transactional
     public void deleteMember(Long memberId) {
 
-        memberRepository.delete(findById(memberId));
+        log.info("START | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
+        Optional<Member> foundMember = memberRepository.findById(memberId);
+
+        if (foundMember.isEmpty()) {
+            throw new NotFoundException("삭제할 멤버를 찾을 수 없습니다.");
+        }
+
+        try {
+            memberRepository.delete(findById(memberId));
+            log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 삭제 중 서버 에러 발생", e);
+        }
     }
 
     /**
-     * 회원 수정
+     * Member 비밀번호 수정 |
      */
     @Transactional
-    public void updateMember(Long memberId, String password, String nickname) {
-        Member member = memberRepository.findById(memberId).get();
-        member.updatePassword(password);
-        member.updateNickname(nickname);
-        memberRepository.save(member);
-    }
-    @Transactional
     public void updatePassword(Long memberId, String password) {
-        Member member = memberRepository.findById(memberId).get();
-        member.updatePassword(password);
-        memberRepository.save(member);
+
+        log.info("START | Member 비밀번호 변경 At " + LocalDateTime.now() + " | " + memberId);
+
+        Optional<Member> foundMember = memberRepository.findById(memberId);
+
+        if(foundMember.isEmpty()) {
+            throw new UnauthorizedException("비밀번호를 변경할 멤버를 찾을 수 없습니다.");
+        }
+
+        try {
+            foundMember.get().updatePassword(password);
+            memberRepository.save(foundMember.get());
+            log.info("COMPLETE | Member 비밀번호 변경 At " + LocalDateTime.now() + " | " + memberId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 비밀번호 변경 중 서버 에러 발생", e);
+        }
     }
 
+    /**
+     * Member 닉네임 수정 |
+     */
     @Transactional
     public void updateNickname(Long memberId, String nickname) {
-        Member member = memberRepository.findById(memberId).get();
-        member.updateNickname(nickname);
-        memberRepository.save(member);
+
+        log.info("START | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
+
+        Optional<Member> foundMember = memberRepository.findById(memberId);
+
+        if(foundMember.isEmpty()) {
+            throw new UnauthorizedException("닉네임을 변경할 멤버를 찾을 수 없습니다.");
+        }
+
+        try {
+            foundMember.get().updateNickname(nickname);
+            memberRepository.save(foundMember.get());
+
+            log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 닉네임 변경 중 서버 에러 발생", e);
+        }
     }
 
+    /**
+     * Member 매칭정보 수정 |
+     */
     @Transactional
     public void updateMatchingInfo(Member member, MatchingInfo matchingInfo) {
-        log.info("START | Member Service updateMatchingInfo 저장 At " + LocalDateTime.now());
-        member.updateMatchingInfo(matchingInfo);
-        memberRepository.save(member);
+        log.info("START | Member 매칭정보 수정 At " + LocalDateTime.now());
 
-        log.info("COMPLETE | Member Service updateMatchingInfo 저장 At " + LocalDateTime.now());
+        try {
+            member.updateMatchingInfo(matchingInfo);
+            memberRepository.save(member);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 매칭정보 수정 중 서버 에러 발생", e);
+        }
+
+        log.info("COMPLETE | Member 매칭정보 수정 At " + LocalDateTime.now());
     }
 
+    /**
+     * Member 매칭정보 삭제 |
+     */
     @Transactional
     public void deleteMatchingInfo(Member member) {
-        member.deleteMatchingInfo();
-        memberRepository.save(member);
+
+        log.info("START | Member 매칭정보 삭제 At " + LocalDateTime.now() + " | " + member.getEmail());
+
+        try {
+            member.deleteMatchingInfo();
+            memberRepository.save(member);
+            log.info("COMPLETE | Member 매칭정보 삭제 At " + LocalDateTime.now() + " | " + member.getEmail());
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 매칭정보 삭제 중 서버 에러 발생", e);
+        }
     }
 }

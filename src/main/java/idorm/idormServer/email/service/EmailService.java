@@ -29,14 +29,14 @@ public class EmailService {
     @Transactional
     public Long save(String email, String code){
 
-        log.info("IN PROGRESS | Email 저장 At " + LocalDateTime.now() + " | " + email);
+        log.info("START | Email 저장 At " + LocalDateTime.now() + " | " + email);
 
         Email certifiedEmail = new Email(email, code);
 
         try {
             emailRepository.save(certifiedEmail);
         } catch (Exception e) {
-            throw new InternalServerErrorException("Email save 중 에러 발생", e);
+            throw new InternalServerErrorException("Email save 중 서버 에러 발생", e);
         }
 
         log.info("COMPLETE | Email 저장 At " + LocalDateTime.now() + " | " + certifiedEmail.toString());
@@ -50,7 +50,7 @@ public class EmailService {
     @Transactional
     public void setCode(String email, String code){
 
-        log.info("IN PROGRESS | Email 인증코드 저장 At " + LocalDateTime.now() + " | " + email);
+        log.info("START | Email 인증코드 저장 At " + LocalDateTime.now() + " | " + email);
 
         Optional<Email> nonCertifiedEmail = emailRepository.findByEmail(email);
 
@@ -78,7 +78,7 @@ public class EmailService {
      */
     public Email findByEmail(String email){
 
-        log.info("IN PROGRESS | Email 조회 At " + LocalDateTime.now() + " | " + email);
+        log.info("START | Email 조회 At " + LocalDateTime.now() + " | " + email);
 
         Optional<Email> foundEmail = emailRepository.findByEmail(email);
 
@@ -91,14 +91,14 @@ public class EmailService {
     }
 
     /**
-     * Eamil 삭제 |
+     * Email 삭제 |
      * 이메일 식별자를 통해 이메일을 삭제한다. 식별자로 이메일 조회에 실패하면 404(Not Found)를 던진다.
      * 삭제 중에 에러가 발생하면 500(Internal Server Error)를 던진다.
      */
     @Transactional
     public void deleteById(Long emailId){
 
-        log.info("IN PROGRESS | Email 삭제 At " + LocalDateTime.now() + " | " + emailId);
+        log.info("START | Email 삭제 At " + LocalDateTime.now() + " | " + emailId);
 
         Optional<Email> email = emailRepository.findById(emailId);
 
@@ -109,7 +109,7 @@ public class EmailService {
         try {
             emailRepository.delete(email.get());
         } catch (Exception e) {
-            throw new InternalServerErrorException("Email 삭제 중 에러 발생", e);
+            throw new InternalServerErrorException("Email 삭제 중 서버 에러 발생", e);
         }
 
         log.info("COMPLETE | Email 삭제 At " + LocalDateTime.now() + " | " + email.get().getEmail());
@@ -122,7 +122,7 @@ public class EmailService {
     @Transactional
     public void isChecked(String email){
 
-        log.info("IN PROGRESS | Email 인증여부 체크 At " + LocalDateTime.now() + " | " + email);
+        log.info("START | Email 인증여부 체크 At " + LocalDateTime.now() + " | " + email);
 
         Optional<Email> foundEmail = emailRepository.findByEmail(email);
 
