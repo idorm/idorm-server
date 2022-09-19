@@ -1,16 +1,16 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-#    username: ${DB_USERNAME}
-#    password: ${DB_PASSWORD}
-    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-    username: nahyeon
-    password: lsmi81
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+#    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+#    username: nahyeon
+#    password: lsmi81
 
   jpa:
     hibernate:
-      ddl-auto: create-drop # DDL 기능 사용 여부(create/update/create-drop/validate/none) / 운영DB에서는 사용 금지
+      ddl-auto: create # DDL 기능 사용 여부(create/update/create-drop/validate/none) / 운영DB에서는 사용 금지
       use-new-id-generator-mappings: false
     properties:
       hibernate:
