@@ -77,7 +77,7 @@ public class MemberService {
      */
     public Member findById(Long memberId) {
 
-        log.info("START | Member 단건 조회 At " + LocalDateTime.now() + " | " + memberId);
+        log.info("IN PROGRESS | Member 단건 조회 At " + LocalDateTime.now() + " | " + memberId);
 
         try {
             Optional<Member> member = memberRepository.findById(memberId);
@@ -99,7 +99,7 @@ public class MemberService {
      */
     public List<Member> findAll() {
 
-        log.info("START | Member 전체 조회 At " + LocalDateTime.now());
+        log.info("IN PROGRESS | Member 전체 조회 At " + LocalDateTime.now());
         try {
             List<Member> foundAllMembers = memberRepository.findAll();
 
@@ -119,7 +119,7 @@ public class MemberService {
      */
     public Member findByEmail(String email) {
 
-        log.info("START | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
+        log.info("IN PROGRESS | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
 
         try {
             Optional<Member> foundMember = memberRepository.findByEmail(email);
@@ -140,7 +140,7 @@ public class MemberService {
      */
     public Optional<Member> findByNickname(String nickname) {
 
-        log.info("START | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + nickname);
+        log.info("IN PROGRESS | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + nickname);
 
         try {
             Optional<Member> foundMember = memberRepository.findByNickname(nickname);
@@ -159,7 +159,7 @@ public class MemberService {
     @Transactional
     public void deleteMember(Long memberId) {
 
-        log.info("START | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
+        log.info("IN PROGRESS | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
         Optional<Member> foundMember = memberRepository.findById(memberId);
 
         if (foundMember.isEmpty()) {
@@ -180,7 +180,7 @@ public class MemberService {
     @Transactional
     public void updatePassword(Long memberId, String password) {
 
-        log.info("START | Member 비밀번호 변경 At " + LocalDateTime.now() + " | " + memberId);
+        log.info("IN PROGRESS | Member 비밀번호 변경 At " + LocalDateTime.now() + " | " + memberId);
 
         Optional<Member> foundMember = memberRepository.findById(memberId);
 
@@ -203,7 +203,7 @@ public class MemberService {
     @Transactional
     public void updateNickname(Long memberId, String nickname) {
 
-        log.info("START | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
+        log.info("IN PROGRESS | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
 
         Optional<Member> foundMember = memberRepository.findById(memberId);
 
@@ -226,7 +226,7 @@ public class MemberService {
      */
     @Transactional
     public void updateMatchingInfo(Member member, MatchingInfo matchingInfo) {
-        log.info("START | Member 매칭정보 수정 At " + LocalDateTime.now());
+        log.info("IN PROGRESS | Member 매칭정보 수정 At " + LocalDateTime.now());
 
         try {
             member.updateMatchingInfo(matchingInfo);
@@ -244,7 +244,7 @@ public class MemberService {
     @Transactional
     public void deleteMatchingInfo(Member member) {
 
-        log.info("START | Member 매칭정보 삭제 At " + LocalDateTime.now() + " | " + member.getEmail());
+        log.info("IN PROGRESS | Member 매칭정보 삭제 At " + LocalDateTime.now() + " | " + member.getEmail());
 
         try {
             member.deleteMatchingInfo();

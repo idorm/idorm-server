@@ -1,8 +1,9 @@
 package idorm.idormServer.matchingInfo.service;
 
+import idorm.idormServer.exceptions.http.InternalServerErrorException;
+import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
-import idorm.idormServer.matchingInfo.dto.MatchingInfoSaveRequestDto;
-import idorm.idormServer.matchingInfo.dto.MatchingInfoUpdateRequestDto;
+import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
@@ -26,72 +27,131 @@ public class MatchingInfoService {
 
 
     /**
-     * 온보딩(매창)정보 생성
+     * MatchingInfo 저장 |
+     * 매칭정보를 저장한다. 멤버 연관관계를 매칭해야한다.
      */
     @Transactional
-    public Long save(MatchingInfoSaveRequestDto request, Member member) {
-        log.info("START | MatchingInfo Service 저장 At " + LocalDateTime.now());
+    public MatchingInfo save(MatchingInfoDefaultRequestDto requestDto, Member member) {
+
+        log.info("IN PROGRESS | MatchingInfo 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
+
         try {
-            MatchingInfo matchingInfo = request.toEntity(member);
+            MatchingInfo matchingInfo = requestDto.toEntity(member);
+
             matchingInfoRepository.save(matchingInfo);
             memberService.updateMatchingInfo(member, matchingInfo);
-            log.info("COMPLETE | MatchingInfo 저장 At " + LocalDateTime.now() + " | email: " + matchingInfo.getMember().getEmail());
-            return matchingInfo.getId();
+
+            log.info("COMPLETE | MatchingInfo 저장 At " + LocalDateTime.now() + " | " + matchingInfo.getMember().getEmail());
+
+            return matchingInfo;
         } catch(Exception e) {
-            throw new IllegalStateException("MatchingInfo 등록 실패 | err message: " + e);
+            throw new InternalServerErrorException("MatchingInfo save 중 서버 에러 발생", e);
         }
     }
 
     /**
-     * 온보딩(매칭)정보 조회
+     * MatchingInfo 단건 조회 |
      */
     public MatchingInfo findById(Long matchingInfoId) {
 
-        return matchingInfoRepository.findById(matchingInfoId).orElseThrow(() -> new NullPointerException(("MatchingInfo id가 존재하지 않습니다.")));
-    }
+        log.info("IN PROGRESS | MatchingInfo 단건 조회 At " + LocalDateTime.now());
 
-    public List<MatchingInfo> findAll() {
-        return matchingInfoRepository.findAll();
-    }
+        Optional<MatchingInfo> foundMatchingInfo = matchingInfoRepository.findById(matchingInfoId);
 
-    public Optional<MatchingInfo> findByMemberIdOp(Long memberId) {
-        Optional<MatchingInfo> matchingInfo = Optional.ofNullable(memberService.findById(memberId).getMatchingInfo());
-        return matchingInfo;
+        try {
+            if(foundMatchingInfo.isEmpty()) {
+                throw new NotFoundException("조회할 매칭정보가 존재하지 않습니다.");
+            }
+
+            log.info("COMPLETE | MatchingInfo 단건 조회 At " + LocalDateTime.now());
+            return foundMatchingInfo.get();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("MatchingInfo 단건 조회 중 서버 에러 발생", e);
+        }
     }
 
     /**
-     * 온보딩(매칭)정보 삭제
+     * MatchingInfo 전체 조회 |
      */
-    public void deleteMatchingInfo(Member member, MatchingInfo matchingInfo) {
+    public List<MatchingInfo> findAll() {
 
-        matchingInfoRepository.delete(matchingInfo);
-        matchingInfoRepository.save(matchingInfo);
-        memberService.deleteMatchingInfo(member);
+        log.info("IN PROGRESS | MatchingInfo 전체 조회 At " + LocalDateTime.now());
+
+        try {
+            List<MatchingInfo> foundAllMatchingInfos = matchingInfoRepository.findAll();
+
+            if(foundAllMatchingInfos.isEmpty()) {
+                throw new NotFoundException("조회할 매칭정보가 존재하지 않습니다.");
+            }
+
+            log.info("COMPLETE | MatchingInfo 전체 조회 At " + LocalDateTime.now() + " | MatchingInfo 수: " + foundAllMatchingInfos.size());
+            return foundAllMatchingInfos;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("MatchingInfo 전체 조회 중 서버 에러 발생", e);
+        }
     }
 
     /**
-     * 온보딩(매칭)정보 수정
+     * MatchingInfo 삭제 |
      */
     @Transactional
-    public void updateMatchingInfo(MatchingInfo matchingInfo, MatchingInfoUpdateRequestDto request) {
+    public void deleteMatchingInfo(Long matchingInfoId) {
 
-        matchingInfo.updateDormNum(request.getDormNum());
-        matchingInfo.updateJoinPeriod(request.getJoinPeriod());
-        matchingInfo.updateGender(request.getGender());
-        matchingInfo.updateAge(request.getAge());
-        matchingInfo.updateIsSnoring(request.getIsSnoring());
-        matchingInfo.updateIsSmoking(request.getIsSmoking());
-        matchingInfo.updateIsGrinding(request.getIsGrinding());
-        matchingInfo.updateIsWearEarphones(request.getIsWearEarphones());
-        matchingInfo.updateIsAllowedFood(request.getIsAllowedFood());
-        matchingInfo.updateWakeupTime(request.getWakeUpTime());
-        matchingInfo.updateCleanUpStatus(request.getCleanUpStatus());
-        matchingInfo.updateShowerTime(request.getShowerTime());
-        matchingInfo.updateMbti(request.getMbti());
-        matchingInfo.updateWishtext(request.getWishText());
-        matchingInfo.updateOpenKakaoLink(request.getOpenKakaoLink());
+        log.info("IN PROGRESS | MatchingInfo 삭제 At " + LocalDateTime.now());
 
-        matchingInfoRepository.save(matchingInfo);
+        Optional<MatchingInfo> foundMatchingInfo = matchingInfoRepository.findById(matchingInfoId);
+        Member member = foundMatchingInfo.get().getMember();
+
+        if(foundMatchingInfo.isEmpty()) {
+            throw new NotFoundException("삭제할 매칭정보가 존재하지 않습니다.");
+        }
+
+        try {
+            matchingInfoRepository.delete(foundMatchingInfo.get());
+            memberService.deleteMatchingInfo(member);
+        } catch(Exception e) {
+            throw new InternalServerErrorException("MatchingInfo 삭제 중 서버 에러 발생", e);
+        }
+        log.info("COMPLETE | MatchingInfo 삭제 At " + LocalDateTime.now());
+    }
+
+    /**
+     * MatchingInfo 수정 |
+     */
+    @Transactional
+    public void updateMatchingInfo(Long matchingInfoId, MatchingInfoDefaultRequestDto requestDto) {
+
+        log.info("IN PROGRESS | MatchingInfo 수정 At " + LocalDateTime.now());
+
+        Optional<MatchingInfo> updateMatchingInfo = matchingInfoRepository.findById(matchingInfoId);
+
+        if(updateMatchingInfo.isEmpty()) {
+            throw new NotFoundException("등록된 매칭정보가 존재하지 않습니다.");
+        }
+
+        try {
+            updateMatchingInfo.get().updateMatchingInfo(requestDto);
+            matchingInfoRepository.save(updateMatchingInfo.get());
+        } catch (Exception e) {
+            throw new InternalServerErrorException("MatchingInfo 수정 중 서버 에러 발생", e);
+        }
+
+        log.info("COMPLETE | MatchingInfo 수정 At " + LocalDateTime.now());
+    }
+
+    /**
+     * MatchingInfo 매칭 이미지 공개여부 수정 |
+     */
+    @Transactional
+    public void updateMatchingInfoIsPublic(long matchingInfoId) {
+
+        log.info("IN PROGRESS | MatchingInfo 매칭 이미지 공개여부 수정 At " + LocalDateTime.now());
+
+        Optional<MatchingInfo> matchingInfo = matchingInfoRepository.findById(matchingInfoId);
+
+
+
+        log.info("COMPLETE | MatchingInfo 매칭 이미지 공개여부 수정 At " + LocalDateTime.now());
     }
 
 }

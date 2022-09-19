@@ -15,60 +15,63 @@ import lombok.NoArgsConstructor;
 @ApiModel(value = "온보딩 정보 응답")
 public class MatchingInfoDefaultResponseDto {
 
-    @ApiModelProperty(position = 1, required = true, value="id")
+    @ApiModelProperty(position = 1, value="식별자")
     private Long id;
 
-    @ApiModelProperty(position = 2, required = true, dataType = "String", value = "{\"기숙사1\", \"기숙사2\", \"기숙사3\"}")
+    @ApiModelProperty(position = 2, example = "기숙사1, 기숙사2, 기숙사3")
     private Dormitory dormNum;
 
-    @ApiModelProperty(position = 3, required = true, dataType = "String", value = "{\"WEEK16\", \"WEEK24\"}")
+    @ApiModelProperty(position = 3, example = "WEEK16, WEEK24")
     private JoinPeriod joinPeriod;
 
-    @ApiModelProperty(position = 4, required = true, dataType = "String", value = "{\"FEMALE\", \"MALE\"}")
+    @ApiModelProperty(position = 4, example = "FEMALE, MALE")
     private Gender gender;
 
-    @ApiModelProperty(position = 5, required = true, dataType = "Integer", value = "나이")
+    @ApiModelProperty(position = 5, value = "나이")
     private Integer age;
 
-    @ApiModelProperty(position = 6, required = true, dataType = "Boolean", value = "코골이 여부")
+    @ApiModelProperty(position = 6, value = "코골이 여부")
     private Boolean isSnoring;
 
-    @ApiModelProperty(position = 7, required = true, dataType = "Boolean", value = "이갈이 여부")
+    @ApiModelProperty(position = 7, value = "이갈이 여부")
     private Boolean isGrinding;
 
-    @ApiModelProperty(position = 8, required = true, dataType = "Boolean", value = "흡연 여부")
+    @ApiModelProperty(position = 8, value = "흡연 여부")
     private Boolean isSmoking;
 
-    @ApiModelProperty(position = 9, required = true, dataType = "Boolean", value = "실내 음식 여부")
+    @ApiModelProperty(position = 9, value = "실내 음식 허용 여부")
     private Boolean isAllowedFood;
 
-    @ApiModelProperty(position = 10, required = true, dataType = "Boolean", value = "이어폰 착용 여부")
+    @ApiModelProperty(position = 10, value = "이어폰 착용 여부")
     private Boolean isWearEarphones;
 
-    @ApiModelProperty(position = 11, required = true, dataType = "String", value = "기상시간")
+    @ApiModelProperty(position = 11, value = "기상 시간")
     private String wakeUpTime;
 
-    @ApiModelProperty(position = 12, required = true, dataType = "String", value = "정리정돈")
+    @ApiModelProperty(position = 12, value = "정리 정돈 상태")
     private String cleanUpStatus;
 
-    @ApiModelProperty(position = 13, required = true, dataType = "String", value = "샤워시간")
+    @ApiModelProperty(position = 13, value = "샤워 시간")
     private String showerTime;
 
-    @ApiModelProperty(position = 14, required = false, dataType = "String", value = "오픈채팅 링크")
+    @ApiModelProperty(position = 14, value = "오픈 채팅 링크")
     private String openKakaoLink;
 
-    @ApiModelProperty(position = 15, required = false, dataType = "String")
+    @ApiModelProperty(position = 15, value = "ISTP")
     private String mbti;
 
-    @ApiModelProperty(position = 16, required = false, value = "룸메에게 보내는 한마디")
+    @ApiModelProperty(position = 16, value = "룸메에게 하고싶은 말")
     private String wishText;
 
-    private String memberEmail;
+    @ApiModelProperty(position = 17, value = "매칭이미지 공개 여부")
+    private Boolean isMatchingInfoPublic;
 
-//    private Boolean isVisible; // false: 온보딩 삭제
+    @ApiModelProperty(position = 18, value = "aaa@inu.ac.kr")
+    private String memberEmail;
 
 
     public MatchingInfoDefaultResponseDto(MatchingInfo matchingInfo) {
+
         this.id = matchingInfo.getId();
         this.dormNum = matchingInfo.getDormNum();
         this.joinPeriod = matchingInfo.getJoinPeriod();
@@ -85,8 +88,8 @@ public class MatchingInfoDefaultResponseDto {
         this.openKakaoLink = matchingInfo.getOpenKakaoLink();
         this.mbti = matchingInfo.getMbti();
         this.wishText = matchingInfo.getWishText();
+        this.isMatchingInfoPublic = matchingInfo.getIsMatchingInfoPublic();
         this.memberEmail = matchingInfo.getMember().getEmail();
-//        this.isVisible = matchingInfo.getIsVisible();
     }
 
 }

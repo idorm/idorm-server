@@ -1,10 +1,10 @@
 package idorm.idormServer.matchingInfo.controller;
 
 import idorm.idormServer.common.DefaultResponseDto;
+import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultResponseDto;
-import idorm.idormServer.matchingInfo.dto.MatchingInfoSaveRequestDto;
-import idorm.idormServer.matchingInfo.dto.MatchingInfoUpdateRequestDto;
+import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
@@ -19,139 +19,158 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "온보딩 정보 API")
+@Api(tags = "MatchingInfo(온보딩) API")
 public class MatchingInfoController {
 
     private final MatchingInfoService matchingInfoService;
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    /**
-     * 온보딩(매칭)정보 저장
-     */
-    @PostMapping("/matchinginfo")
-    @ApiOperation(value = "온보딩 정보 저장", notes = "최초로 온보딩 정보를 저장할 경우만 사용 가능합니다.")
+    @PostMapping("/member/matchinginfo")
+    @ApiOperation(value = "MatchingInfo 저장", notes = "최초로 온보딩 정보를 저장할 경우만 사용 가능합니다.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "온보딩 정보 저장 성공"),
-            @ApiResponse(code = 400, message = "이미 등록된 매칭정보가 있습니다."),
-            @ApiResponse(code = 400, message = "JWT String argument cannot be null or empty (로그인 안 되어있을 경우)")
+            @ApiResponse(code = 200, message = "MatchingInfo 저장 완료"),
+            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 404, message = "멤버를 찾을 수 없습니다."),
+            @ApiResponse(code = 409, message = "이미 등록된 매칭정보가 있습니다."),
+            @ApiResponse(code = 500, message = "MatchingInfo save 중 서버 에러 발생"),
     })
-    public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(HttpServletRequest request2, @RequestBody @Valid MatchingInfoSaveRequestDto request) {
+    public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(
+            HttpServletRequest request2, @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 
-        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(userPk);
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() != null) // 등록된 매칭정보가 있다면
-            throw new IllegalArgumentException("이미 등록된 매칭정보가 있습니다.");
+            throw new ConflictException("이미 등록된 매칭정보가 있습니다.");
 
-        Long matchingInfoId = matchingInfoService.save(request, member);
-
-        MatchingInfo matchingInfo = matchingInfoService.findById(matchingInfoId);
-        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(matchingInfo);
+        MatchingInfo createdMatchingInfo = matchingInfoService.save(request, member);
+        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(createdMatchingInfo);
 
         return ResponseEntity.status(200)
             .body(DefaultResponseDto.builder()
                     .responseCode("OK")
-                    .responseMessage("온보딩 정보 저장 완료")
+                    .responseMessage("MatchingInfo 저장 완료")
                     .data(response)
                     .build()
             );
     }
 
-    /**
-     * 온보딩(매칭) 정보 수정
-     */
-    @PatchMapping("/matchinginfo")
-    @ApiOperation(value = "온보딩 정보 수정")
+    @PutMapping("/member/matchinginfo")
+    @ApiOperation(value = "MatchingInfo 수정")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "온보딩 정보 수정 성공"),
+            @ApiResponse(code = 200, message = "MatchingInfo 수정 완료"),
             @ApiResponse(code = 400, message = "등록된 매칭정보가 없습니다."),
-            @ApiResponse(code = 400, message = "JWT String argument cannot be null or empty (로그인 안 되어있을 경우)")
+            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 500, message = "MatchingInfo 수정 중 서버 에러 발생")
     })
-    public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(HttpServletRequest request2, @RequestBody @Valid MatchingInfoUpdateRequestDto request) {
+    public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(HttpServletRequest request2, @RequestBody @Valid MatchingInfoDefaultRequestDto updateRequestDto) {
 
-        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(userPk);
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
-            throw new IllegalArgumentException("등록된 매칭정보가 없습니다.");
+            throw new ConflictException("등록된 매칭정보가 없습니다.");
 
-        MatchingInfo matchingInfo = member.getMatchingInfo();
+        MatchingInfo updateMatchingInfo = updateRequestDto.toEntity(member);
 
-        matchingInfoService.updateMatchingInfo(matchingInfo, request);
+        matchingInfoService.updateMatchingInfo(member.getMatchingInfo().getId(), updateRequestDto);
 
-        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(matchingInfo);
+        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(updateMatchingInfo);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("OK")
-                        .responseMessage("온보딩 정보 수정 성공")
+                        .responseMessage("MatchingInfo 수정 완료")
                         .data(response)
                         .build()
                 );
     }
 
-    /**
-     * 온보딩(매칭) 정보 조회
-     */
-    @GetMapping("/matchinginfo")
-    @ApiOperation(value = "온보딩 정보 단건 조회")
+    @PatchMapping("/member/matchinginfoispublic")
+    @ApiOperation(value = "MatchingInfo 공개여부 수정")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "온보딩 정보 단건 조회 성공"),
-            @ApiResponse(code = 400, message = "등록된 매칭정보가 없습니다."),
-            @ApiResponse(code = 400, message = "JWT String argument cannot be null or empty (로그인 안 되어있을 경우)")
+            @ApiResponse(code = 200, message = "MatchingInfo 공개여부 수정 완료"),
+            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 409, message = "등록된 매칭정보가 존재하지 않습니다."),
+            @ApiResponse(code = 500, message = "MatchingInfo 수정 중 서버 에러 발생")
+    })
+    public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfoIsPublic(HttpServletRequest request2) {
+
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(loginMemberId);
+
+        if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
+            throw new ConflictException("등록된 매칭정보가 없습니다.");
+
+        MatchingInfo updateMatchingInfo = member.getMatchingInfo();
+        updateMatchingInfo.updateIsMatchingInfoPublic();
+
+        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(updateMatchingInfo);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("MatchingInfo 공개여부 수정 완료")
+                        .data(response)
+                        .build()
+                );
+    }
+
+    @GetMapping("/member/matchinginfo")
+    @ApiOperation(value = "MatchingInfo 단건 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "MatchingInfo 단건 조회"),
+            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 409, message = "등록된 매칭정보가 없습니다."),
     })
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingInfo(HttpServletRequest request2) {
 
-        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(userPk);
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
-            throw new IllegalArgumentException("등록된 매칭정보가 없습니다.");
+            throw new ConflictException("등록된 매칭정보가 없습니다.");
 
-        MatchingInfo matchingInfo = member.getMatchingInfo();
+        Long matchingInfoId = member.getMatchingInfo().getId();
+        MatchingInfo foundMatchingInfo = matchingInfoService.findById(matchingInfoId);
 
-        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(matchingInfo);
+        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(foundMatchingInfo);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("OK")
-                        .responseMessage("온보딩 정보 단건 조회 성공")
+                        .responseMessage("MatchingInfo 단건 조회")
                         .data(response)
                         .build()
                 );
     }
 
-    /**
-     * 온보딩(매칭) 정보 삭제
-     */
-    @DeleteMapping("/matchinginfo")
-    @ApiOperation(value = "온보딩 정보 삭제")
+    @DeleteMapping("/member/matchinginfo")
+    @ApiOperation(value = "MatchingInfo 삭제")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "온보딩 정보 삭제 성공"),
-            @ApiResponse(code = 400, message = "등록된 매칭정보가 없습니다."),
-            @ApiResponse(code = 400, message = "JWT String argument cannot be null or empty (로그인 안 되어있을 경우)")
+            @ApiResponse(code = 200, message = "MatchingInfo 삭제 완료"),
+            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 404, message = "삭제할 매칭정보가 존재하지 않습니다."),
+            @ApiResponse(code = 409, message = "등록된 매칭정보가 없습니다."),
+            @ApiResponse(code = 500, message = "MatchingInfo 삭제 중 서버 에러 발생")
     })
     public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingInfo(HttpServletRequest request2) {
 
-        long userPk = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(userPk);
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없는 경우
-            throw new IllegalArgumentException("등록된 매칭정보가 없습니다.");
-
+            throw new ConflictException("등록된 매칭정보가 없습니다.");
 
         Long matchingInfoId = member.getMatchingInfo().getId();
-        matchingInfoService.deleteMatchingInfo(member, matchingInfoService.findById(matchingInfoId));
+        matchingInfoService.deleteMatchingInfo(matchingInfoId);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("OK")
-                        .responseMessage("온보딩 정보 삭제 성공")
-                        .data(member.getEmail())
+                        .responseMessage("MatchingInfo 삭제 완료")
                         .build()
                 );
     }
-
-
 }

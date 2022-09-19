@@ -1,6 +1,7 @@
 package idorm.idormServer.matchingInfo.domain;
 
 import idorm.idormServer.common.BaseEntity;
+import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
 import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,6 +20,8 @@ public class MatchingInfo extends BaseEntity {
     @Column(name="matching_info_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Boolean isMatchingInfoPublic; // 매칭이미지 공개 여부
 
     @Enumerated(EnumType.STRING)
     private Dormitory dormNum; // 기숙사 선택 [기숙사1,기숙사2,기숙사3]
@@ -59,11 +62,24 @@ public class MatchingInfo extends BaseEntity {
      * 생성 메서드
      */
     @Builder
-    public MatchingInfo(Dormitory dormNum, JoinPeriod joinPeriod, Gender gender, Integer age,
-                        Boolean isSnoring, Boolean isSmoking, Boolean isGrinding, Boolean isWearEarphones,
-                        Boolean isAllowedFood, String wakeUpTime, String cleanUpStatus, String showerTime,
-                        String mbti, String wishText, String openKakaoLink, Member member) {
+    public MatchingInfo(Dormitory dormNum,
+                        JoinPeriod joinPeriod,
+                        Gender gender,
+                        Integer age,
+                        Boolean isSnoring,
+                        Boolean isSmoking,
+                        Boolean isGrinding,
+                        Boolean isWearEarphones,
+                        Boolean isAllowedFood,
+                        String wakeUpTime,
+                        String cleanUpStatus,
+                        String showerTime,
+                        String mbti,
+                        String wishText,
+                        String openKakaoLink,
+                        Member member) {
 
+        this.isMatchingInfoPublic = false;
         this.dormNum = dormNum;
         this.joinPeriod = joinPeriod;
         this.gender = gender;
@@ -85,60 +101,27 @@ public class MatchingInfo extends BaseEntity {
     /**
      * 핵심 비지니스 로직
      */
-    // TODO: update 한 메소드에서 처리
-    public void updateDormNum(Dormitory dormNum) {
-        this.dormNum = dormNum;
+    public void updateIsMatchingInfoPublic() {
+        this.isMatchingInfoPublic = (isMatchingInfoPublic == false) ? true : false;
     }
 
-    public void updateJoinPeriod(JoinPeriod joinPeriod) {
-        this.joinPeriod = joinPeriod;
-    }
+    public void updateMatchingInfo(MatchingInfoDefaultRequestDto requestDto) {
 
-    public void updateGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public void updateAge(Integer age) {
-        this.age = age;
-    }
-
-    public void updateIsSnoring(Boolean isSnoring) {
-        this.isSnoring = isSnoring;
-    }
-
-    public void updateIsSmoking(Boolean isSmoking) {
-        this.isSmoking = isSmoking;
-    }
-    public void updateIsGrinding(Boolean isGrinding) {
-        this.isGrinding = isGrinding;
-    }
-    public void updateIsWearEarphones(Boolean isWearEarphones) {
-        this.isWearEarphones = isWearEarphones;
-    }
-    public void updateIsAllowedFood(Boolean isAllowedFood) {
-        this.isAllowedFood = isAllowedFood;
-    }
-    public void updateWakeupTime(String wakeUpTime) {
-        this.wakeUpTime = wakeUpTime;
-    }
-    public void updateCleanUpStatus(String cleanUpStatus) {
-        this.cleanUpStatus = cleanUpStatus;
-    }
-
-    public void updateShowerTime(String showerTime) {
-        this.showerTime = showerTime;
-    }
-
-    public void updateMbti(String mbti) {
-        this.mbti = mbti;
-    }
-
-    public void updateWishtext(String wishText) {
-        this.wishText = wishText;
-    }
-
-    public void updateOpenKakaoLink(String openKakaoLink) {
-        this.openKakaoLink = openKakaoLink;
+        this.dormNum = requestDto.getDormNum();
+        this.joinPeriod = requestDto.getJoinPeriod();
+        this.gender = requestDto.getGender();
+        this.age = requestDto.getAge();
+        this.isSnoring = requestDto.getIsSnoring();
+        this.isSmoking = requestDto.getIsSmoking();
+        this.isGrinding = requestDto.getIsGrinding();
+        this.isWearEarphones = requestDto.getIsWearEarphones();
+        this.isAllowedFood = requestDto.getIsAllowedFood();
+        this.wakeUpTime = requestDto.getWakeupTime();
+        this.cleanUpStatus = requestDto.getCleanUpStatus();
+        this.showerTime = requestDto.getShowerTime();
+        this.mbti = requestDto.getMbti();
+        this.wishText = requestDto.getWishText();
+        this.openKakaoLink = requestDto.getOpenKakaoLink();
     }
 
 }
