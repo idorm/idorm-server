@@ -12,9 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -37,8 +35,22 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToOne(mappedBy = "member")
     private MatchingInfo matchingInfo; // 매칭 정보
 
+
     @OneToOne(mappedBy = "member")
     private Photo photo; // 프로필 사진
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id")
+//    private Member loginMember;
+//
+//    @OneToMany(mappedBy = "loginMember")
+//    private List<Member> matchingMembers = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "member")
+//    private List<Member> likedMembers = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "member")
+//    private List<Member> dislikedMembers = new ArrayList<>();
 
     /**
      * security code
@@ -113,6 +125,14 @@ public class Member extends BaseEntity implements UserDetails {
     public void deleteMatchingInfo() {
         this.matchingInfo = null;
     }
+
+//    public void addLikedMember(Member member) {
+//        this.likedMembers.add(member);
+//    }
+//
+//    public void addDislikedMember(Member member) {
+//        this.dislikedMembers.add(member);
+//    }
 
     public void updatePhoto(Photo photo) {
         this.photo = photo;

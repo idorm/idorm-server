@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -62,6 +63,8 @@ public class EmailController {
 
         String requestEmail = request.getEmail();
         Optional<Email> email = emailService.findByEmailOp(request.getEmail());
+
+
 
         if(!email.isEmpty()) {
             if (email.get().getJoined() == true) {
@@ -126,6 +129,7 @@ public class EmailController {
             @ApiResponse(code = 200, message = "Email 인증코드 검증 완료"),
             @ApiResponse(code = 400, message = "잘못된 인증번호입니다."),
             @ApiResponse(code = 401, message = "가입되지 않은 이메일입니다."),
+            @ApiResponse(code = 404, message = "인증기간이 만료되었습니다."),
     }
     )
     @PostMapping("/verifyCode/password/{email}")
@@ -137,6 +141,13 @@ public class EmailController {
 
         if(email.isEmpty()) {
             throw new UnauthorizedException("가입되지 않은 이메일입니다.");
+        }
+
+        LocalDateTime updateDateTime = email.get().getUpdatedAt();
+        LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
+
+        if(LocalDateTime.now().isAfter(expiredDateTime)) {
+            throw new UnauthorizedException("인증기간이 만료되었습니다.");
         }
 
         if(!(email.get().getCode().equals(code.getCode()))) {
@@ -168,7 +179,8 @@ public class EmailController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Email 인증코드 검증 완료"),
             @ApiResponse(code = 400, message = "잘못된 인증번호입니다."),
-            @ApiResponse(code = 401, message = "등록되지 않은 이메일입니다.")
+            @ApiResponse(code = 401, message = "등록되지 않은 이메일입니다."),
+            @ApiResponse(code = 404, message = "인증기간이 만료되었습니다.")
     }
     )
     @PostMapping("/verifyCode/{email}")
@@ -176,6 +188,13 @@ public class EmailController {
             @PathVariable("email") String requestEmail, @RequestBody EmailVerifyRequestDto code) {
 
         Email email = emailService.findByEmail(requestEmail);
+
+        LocalDateTime updateDateTime = email.getUpdatedAt();
+        LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
+
+        if(LocalDateTime.now().isAfter(expiredDateTime)) {
+            throw new UnauthorizedException("인증기간이 만료되었습니다.");
+        }
 
         if(email.getCode().equals(code.getCode())) {
 
