@@ -9,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -28,10 +26,8 @@ public class CalendarService {
     }
 
     public Page<Calendar> searchList(Pageable pageable, DateFilterDto dateFilterDto) {
-        LocalDateTime startDateTime = dateFilterDto.getStartDate().atStartOfDay();
-        LocalDateTime endDateTime = dateFilterDto.getEndDate().plusDays(1).atStartOfDay();
 
-        return calendarRepository.search(pageable, startDateTime, endDateTime);
+        return calendarRepository.search(pageable, dateFilterDto.getStartDateTime(), dateFilterDto.getEndDateTime());
     }
 
     @Transactional

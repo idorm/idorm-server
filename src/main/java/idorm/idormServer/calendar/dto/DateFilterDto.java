@@ -1,10 +1,12 @@
 package idorm.idormServer.calendar.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
-import org.springframework.web.bind.annotation.RequestParam;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -20,4 +22,16 @@ public class DateFilterDto {
             example = "2022-09-30"
     )
     LocalDate endDate;
+
+    public LocalDateTime getStartDateTime() {
+        if (startDate == null) return null;
+
+        return startDate.atStartOfDay();
+    }
+
+    public LocalDateTime getEndDateTime() {
+        if (endDate == null) return null;
+
+        return endDate.plusDays(1).atStartOfDay();
+    }
 }
