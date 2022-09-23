@@ -1,9 +1,11 @@
 package idorm.idormServer.calendar.dto;
 
 import idorm.idormServer.calendar.domain.Calendar;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class CalendarRequest {
     private Long memberId;
     private String url;

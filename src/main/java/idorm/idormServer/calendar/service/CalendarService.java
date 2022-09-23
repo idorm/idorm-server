@@ -27,7 +27,7 @@ public class CalendarService {
 
     public Page<Calendar> searchList(Pageable pageable, DateFilterDto dateFilterDto) {
 
-        return calendarRepository.search(pageable, dateFilterDto.getStartDateTime(), dateFilterDto.getEndDateTime());
+        return calendarRepository.search(pageable, dateFilterDto._getStartDateTime(), dateFilterDto._getEndDateTime());
     }
 
     @Transactional

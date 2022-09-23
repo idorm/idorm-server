@@ -1,5 +1,6 @@
 package idorm.idormServer.calendar.domain;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -7,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class Calendar {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
