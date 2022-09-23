@@ -15,6 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Api(tags = "05. 캘린더")
 public class CalendarController {
+    // TODO : Authentication 추가
+
     private final CalendarService calendarService;
 
     @PostMapping("")
