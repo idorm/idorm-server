@@ -3,6 +3,7 @@ package idorm.idormServer.calendar.controller;
 import idorm.idormServer.calendar.domain.Calendar;
 import idorm.idormServer.calendar.dto.CalendarRequest;
 import idorm.idormServer.calendar.dto.DateFilterDto;
+import idorm.idormServer.calendar.dto.PageableDto;
 import idorm.idormServer.calendar.service.CalendarService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,9 +35,9 @@ public class CalendarController {
 
     @GetMapping("list")
     @ApiOperation("일정 목록 조회")
-    Page<Calendar> searchList(@RequestParam Pageable pageable, DateFilterDto dateFilterDto) {
+    Page<Calendar> searchList(PageableDto pageableDto, DateFilterDto dateFilterDto) {
 
-        return calendarService.searchList(pageable, dateFilterDto);
+        return calendarService.searchList(pageableDto.toPageable(), dateFilterDto);
     }
 
     @PutMapping("{id}")
