@@ -2,13 +2,14 @@ package idorm.idormServer.calendar.controller;
 
 import idorm.idormServer.calendar.domain.Calendar;
 import idorm.idormServer.calendar.dto.CalendarRequest;
+import idorm.idormServer.calendar.dto.DateFilterDto;
 import idorm.idormServer.calendar.service.CalendarService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("calendar")
@@ -33,8 +34,9 @@ public class CalendarController {
 
     @GetMapping("list")
     @ApiOperation("일정 목록 조회")
-    List<Calendar> searchList() {
-        return calendarService.searchList();
+    Page<Calendar> searchList(@RequestParam Pageable pageable, DateFilterDto dateFilterDto) {
+
+        return calendarService.searchList(pageable, dateFilterDto);
     }
 
     @PutMapping("{id}")
