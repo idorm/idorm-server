@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ApiModel(value = "온보딩 정보 응답")
+@ApiModel(value = "MatchingInfo 응답")
 public class MatchingInfoDefaultResponseDto {
 
     @ApiModelProperty(position = 1, value="식별자")
