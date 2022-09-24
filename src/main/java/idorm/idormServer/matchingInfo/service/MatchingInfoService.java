@@ -25,7 +25,6 @@ public class MatchingInfoService {
     private final MatchingInfoRepository matchingInfoRepository;
     private final MemberService memberService;
 
-
     /**
      * MatchingInfo 저장 |
      * 매칭정보를 저장한다. 멤버 연관관계를 매칭해야한다.
@@ -42,7 +41,6 @@ public class MatchingInfoService {
             memberService.updateMatchingInfo(member, matchingInfo);
 
             log.info("COMPLETE | MatchingInfo 저장 At " + LocalDateTime.now() + " | " + matchingInfo.getMember().getEmail());
-
             return matchingInfo;
         } catch(Exception e) {
             throw new InternalServerErrorException("MatchingInfo save 중 서버 에러 발생", e);

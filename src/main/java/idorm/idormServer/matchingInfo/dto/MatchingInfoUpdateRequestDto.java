@@ -1,8 +1,5 @@
 package idorm.idormServer.matchingInfo.dto;
 
-import idorm.idormServer.matchingInfo.domain.Dormitory;
-import idorm.idormServer.matchingInfo.domain.Gender;
-import idorm.idormServer.matchingInfo.domain.JoinPeriod;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -14,14 +11,14 @@ import lombok.NoArgsConstructor;
 @ApiModel(value = "온보딩정보 수정 요청")
 public class MatchingInfoUpdateRequestDto {
 
-    @ApiModelProperty(position = 1, required = true, dataType = "String", value = "{\"기숙사1\", \"기숙사2\", \"기숙사3\"}", example = "기숙사1")
-    private Dormitory dormNum;
+    @ApiModelProperty(position = 1, required = true, dataType = "String", value = "{\"DORM1\", \"DORM2\", \"DORM3\"}", example = "DORM1")
+    private String dormNum;
 
     @ApiModelProperty(position = 2, required = true, dataType = "String", value = "{\"WEEK16\", \"WEEK24\"}", example = "WEEK16")
-    private JoinPeriod joinPeriod;
+    private String joinPeriod;
 
     @ApiModelProperty(position = 3, required = true, dataType = "String", value = "{\"FEMALE\", \"MALE\"}", example = "FEMALE")
-    private Gender gender;
+    private String gender;
 
     @ApiModelProperty(position = 4, required = true, dataType = "Integer", example = "20")
     private Integer age;

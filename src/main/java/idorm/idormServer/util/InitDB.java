@@ -1,6 +1,7 @@
 package idorm.idormServer.util;
 
 import idorm.idormServer.email.domain.Email;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,22 @@ public class InitDB {
             em.persist(email6);
         }
 
+        public void dbInit4() {
+            Email email1 = createEmail("aaa@inu.ac.kr", "111-111");
+            Email email2 = createEmail("bbb@inu.ac.kr", "111-111");
+            Email email3 = createEmail("ccc@inu.ac.kr", "111-111");
+            Email email4 = createEmail("ddd@inu.ac.kr", "111-111");
+            Email email5 = createEmail("eee@inu.ac.kr", "111-111");
+            Email email6 = createEmail("fff@inu.ac.kr", "111-111");
+
+            em.persist(email1);
+            em.persist(email2);
+            em.persist(email3);
+            em.persist(email4);
+            em.persist(email5);
+            em.persist(email6);
+        }
+
         private Member createMember(String email, String password) {
             Member member = new Member(email, password);
             return member;
@@ -93,6 +110,5 @@ public class InitDB {
             mail.isChecked();
             return mail;
         }
-
     }
 }

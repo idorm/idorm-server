@@ -1,15 +1,11 @@
 package idorm.idormServer.matchingInfo.dto;
 
-import idorm.idormServer.matchingInfo.domain.Dormitory;
-import idorm.idormServer.matchingInfo.domain.Gender;
-import idorm.idormServer.matchingInfo.domain.JoinPeriod;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.member.domain.Member;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -19,14 +15,14 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class MatchingInfoDefaultRequestDto {
 
-    @ApiModelProperty(position = 1, required = true, dataType = "Dormitory", value = "이메일", example = "기숙사1")
-    private Dormitory dormNum;
+    @ApiModelProperty(position = 1, required = true, dataType = "String", value = "기숙사 분류", example = "DORM1")
+    private String dormNum;
 
-    @ApiModelProperty(position = 2, required = true, dataType = "JoinPeriod", value = "입사기간", example = "WEEK16")
-    private JoinPeriod joinPeriod;
+    @ApiModelProperty(position = 2, required = true, dataType = "String", value = "입사기간", example = "WEEK16")
+    private String joinPeriod;
 
-    @ApiModelProperty(position = 3, required = true, dataType = "Gender", value = "성별", example = "FEMALE")
-    private Gender gender;
+    @ApiModelProperty(position = 3, required = true, dataType = "String", value = "성별", example = "FEMALE")
+    private String gender;
 
     @NotNull(message = "나이 입력은 필수입니다.")
     @ApiModelProperty(position = 4, required = true, dataType = "Integer", value = "나이", example = "20")

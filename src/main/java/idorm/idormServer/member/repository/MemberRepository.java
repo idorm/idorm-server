@@ -1,8 +1,5 @@
 package idorm.idormServer.member.repository;
 
-import idorm.idormServer.matchingInfo.domain.Dormitory;
-import idorm.idormServer.matchingInfo.domain.Gender;
-import idorm.idormServer.matchingInfo.domain.JoinPeriod;
 import idorm.idormServer.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,22 +14,18 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByNickname(String nickname);
 
-    //    @Query(value = "SELECT * " +
-//            "FROM member m " +
-//            "JOIN m.matchinginfo i " +
-//            "WHERE m.id != :memberId AND " +
-//            "i.dormNum = :dormNum AND " +
-//            "i.joinPeriod = :joinPeriod AND " +
-//            "i.gender = :gender", nativeQuery = true)
-    @Query(value = "SELECT * " +
-            "FROM member m " +
-            "JOIN m.matching_info mi " +
-            "WHERE m.id != :memberId AND " +
-            "m.dorm_num = :dormNum AND " +
-            "m.join_period = :joinPeriod AND " +
-            "m.gender = :gender", nativeQuery = true)
-    List<Member> findMatchingMembers(@Param("memberId") Long memberId,
-                                     @Param("dormNum") Dormitory dormNum,
-                                     @Param("joinPeriod") JoinPeriod joinPeriod,
-                                     @Param("gender") Gender gender);
+    @Query(value = "SELECT matching_info_id " +
+            "FROM matching_info mi " +
+            "JOIN member m " +
+            "ON mi.member_id=m.member_id " +
+            "WHERE mi.member_id != :memberId AND " +
+            "mi.dorm_num = :dormNum AND " +
+            "mi.join_period = :joinPeriod AND " +
+            "mi.gender = :gender AND " +
+            "mi.is_matching_info_public = :isMatchingInfoPublic", nativeQuery = true)
+    List<Long> findMatchingMembers(@Param("memberId") Long memberId,
+                                           @Param("dormNum") String dormNum,
+                                           @Param("joinPeriod") String joinPeriod,
+                                           @Param("gender") String gender,
+                                           @Param("isMatchingInfoPublic") Boolean isMatchingInfoPublic);
 }

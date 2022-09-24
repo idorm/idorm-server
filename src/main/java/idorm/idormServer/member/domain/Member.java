@@ -39,19 +39,6 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToOne(mappedBy = "member")
     private Photo photo; // 프로필 사진
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id")
-//    private Member loginMember;
-//
-//    @OneToMany(mappedBy = "loginMember")
-//    private List<Member> matchingMembers = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "member")
-//    private List<Member> likedMembers = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "member")
-//    private List<Member> dislikedMembers = new ArrayList<>();
-
     /**
      * security code
      */
