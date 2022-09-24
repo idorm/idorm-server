@@ -93,7 +93,7 @@ public class MatchingInfoController {
             @ApiResponse(code = 200, message = "MatchingInfo 공개여부 수정 완료"),
             @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 409, message = "등록된 매칭정보가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "MatchingInfo 수정 중 서버 에러 발생")
+            @ApiResponse(code = 500, message = "MatchingInfo 매칭이미지 공개 여부 변경 중 서버 에러 발생")
     })
     public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfoIsPublic(HttpServletRequest request2) {
 
@@ -103,10 +103,9 @@ public class MatchingInfoController {
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
             throw new ConflictException("등록된 매칭정보가 없습니다.");
 
-        MatchingInfo updateMatchingInfo = member.getMatchingInfo();
-        updateMatchingInfo.updateIsMatchingInfoPublic();
+        MatchingInfo updatedMatchingInfo = matchingInfoService.updateMatchingInfoIsPublic(member);
 
-        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(updateMatchingInfo);
+        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(updatedMatchingInfo);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

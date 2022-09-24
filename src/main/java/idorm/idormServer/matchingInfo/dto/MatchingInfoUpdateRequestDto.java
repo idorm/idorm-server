@@ -6,19 +6,25 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ApiModel(value = "온보딩정보 수정 요청")
+@ApiModel(value = "MatchingInfo 수정 요청")
 public class MatchingInfoUpdateRequestDto {
 
-    @ApiModelProperty(position = 1, required = true, dataType = "String", value = "{\"DORM1\", \"DORM2\", \"DORM3\"}", example = "DORM1")
+    @NotNull(message = "기숙사 입력은 필수입니다.")
+    @ApiModelProperty(position = 1, required = true, dataType = "String", value = "기숙사 분류", example = "DORM1")
     private String dormNum;
 
-    @ApiModelProperty(position = 2, required = true, dataType = "String", value = "{\"WEEK16\", \"WEEK24\"}", example = "WEEK16")
+    @NotNull(message = "입사기간 입력은 필수입니다.")
+    @ApiModelProperty(position = 2, required = true, dataType = "String", value = "입사기간", example = "WEEK16")
     private String joinPeriod;
 
-    @ApiModelProperty(position = 3, required = true, dataType = "String", value = "{\"FEMALE\", \"MALE\"}", example = "FEMALE")
+    @NotNull(message = "성별 입력은 필수입니다.")
+    @ApiModelProperty(position = 3, required = true, dataType = "String", value = "성별", example = "FEMALE")
     private String gender;
+
 
     @ApiModelProperty(position = 4, required = true, dataType = "Integer", example = "20")
     private Integer age;
@@ -41,19 +47,21 @@ public class MatchingInfoUpdateRequestDto {
     @ApiModelProperty(position = 10, required = true, dataType = "String", example = "오전 9시에 기상합니다.")
     private String wakeUpTime;
 
+    @NotNull(message = "정리정돈 상태 입력은 필수입니다.")
     @ApiModelProperty(position = 11, required = true, dataType = "String", example = "밤 10시에 늘 청소해요.")
     private String cleanUpStatus;
 
+    @NotNull(message = "샤워 시간 입력은 필수입니다.")
     @ApiModelProperty(position = 12, required = true, dataType = "String", example = "아침 8시, 밤 12시에 주로 씻어요.")
     private String showerTime;
 
-    @ApiModelProperty(position = 13, required = false, dataType = "String", example = "https://open.kakao.com/o/szaIN6ze")
+    @ApiModelProperty(position = 13, dataType = "String", example = "https://open.kakao.com/o/szaIN6ze")
     private String openKakaoLink;
 
-    @ApiModelProperty(position = 14, required = false, dataType = "String", example = "ISTP")
+    @ApiModelProperty(position = 14, dataType = "String", example = "ISTP")
     private String mbti;
 
-    @ApiModelProperty(position = 15, required = false, dataType = "String", example = "적당한 선을 지키면서 친해질 수 있는 룸메이트 구해요 :)")
+    @ApiModelProperty(position = 15, dataType = "String", example = "적당한 선을 지키면서 친해질 수 있는 룸메이트 구해요 :)")
     private String wishText;
 
 }

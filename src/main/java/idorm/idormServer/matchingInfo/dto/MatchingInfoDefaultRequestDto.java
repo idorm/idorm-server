@@ -41,11 +41,11 @@ public class MatchingInfoDefaultRequestDto {
     private Boolean isGrinding;
 
     @NotNull(message = "이어폰 착용 의사 여부 입력은 필수입니다.")
-    @ApiModelProperty(position = 8, required = true, dataType = "Boolean", value = "이어폰 착용 의사 여부", example = "true")
+    @ApiModelProperty(position = 8, required = true, dataType = "Boolean", value = "이어폰 착용 의사 여부", example = "false")
     private Boolean isWearEarphones;
 
     @NotNull(message = "실내 음식 허용 여부 입력은 필수입니다.")
-    @ApiModelProperty(position = 9, required = true, dataType = "Boolean", value = "실내 음식 섭취 허용 여부", example = "true")
+    @ApiModelProperty(position = 9, required = true, dataType = "Boolean", value = "실내 음식 섭취 허용 여부", example = "false")
     private Boolean isAllowedFood;
 
     @NotNull(message = "기상시간 입력은 필수입니다.")

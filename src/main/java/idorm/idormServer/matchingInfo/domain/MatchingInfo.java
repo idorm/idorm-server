@@ -23,16 +23,6 @@ public class MatchingInfo extends BaseEntity {
 
     private Boolean isMatchingInfoPublic; // 매칭이미지 공개 여부
 
-//    @Enumerated(EnumType.STRING)
-//    private Dormitory dormNum; // 기숙사 선택 [DORM1,DORM2,DORM3]
-//
-//    @Enumerated(EnumType.STRING)
-//    private JoinPeriod joinPeriod; // 입사기간 [WEEK16,WEEK24]
-//
-//    @Enumerated(EnumType.STRING)
-//    private Gender gender; // 성별 [FEMALE, MALE]
-
-
     private String dormNum; // 기숙사 선택 [DORM1,DORM2,DORM3]
 
     private String joinPeriod; // 입사기간 [WEEK16,WEEK24]

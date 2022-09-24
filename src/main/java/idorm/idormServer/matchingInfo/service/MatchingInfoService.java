@@ -1,5 +1,6 @@
 package idorm.idormServer.matchingInfo.service;
 
+import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
@@ -44,6 +45,34 @@ public class MatchingInfoService {
             return matchingInfo;
         } catch(Exception e) {
             throw new InternalServerErrorException("MatchingInfo save 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
+     * MatchingInfo 매칭이미지 공개여부 변경 |
+     * true일 경우만 매칭 시 조회한다.
+     */
+    @Transactional
+    public MatchingInfo updateMatchingInfoIsPublic(Member member) {
+
+        log.info("IN PROGRESS | MatchingInfo 매칭이미지 공개여부 변경 At " + LocalDateTime.now() + " | " + member.getEmail());
+
+        try {
+            Optional<MatchingInfo> foundMatchingInfo = matchingInfoRepository.findByMemberId(member.getId());
+
+            if(foundMatchingInfo.isEmpty()) {
+                throw new ConflictException("등록된 매칭정보가 없습니다.");
+            }
+
+            foundMatchingInfo.get().updateIsMatchingInfoPublic();
+
+            matchingInfoRepository.save(foundMatchingInfo.get());
+            memberService.updateMatchingInfo(member, foundMatchingInfo.get());
+
+            log.info("COMPLETE | MatchingInfo 매칭이미지 공개여부 변경 At " + LocalDateTime.now() + " | " + member.getEmail());
+            return foundMatchingInfo.get();
+        } catch(Exception e) {
+            throw new InternalServerErrorException("MatchingInfo 매칭이미지 공개 여부 변경 중 서버 에러 발생", e);
         }
     }
 
