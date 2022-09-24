@@ -39,6 +39,12 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToOne(mappedBy = "member")
     private Photo photo; // 프로필 사진
 
+    @ElementCollection
+    private List<Long> likedMemberId = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "member")
+//    private List<Member> dislikedMembers = new ArrayList<>();
+
     /**
      * security code
      */
@@ -113,10 +119,14 @@ public class Member extends BaseEntity implements UserDetails {
         this.matchingInfo = null;
     }
 
-//    public void addLikedMember(Member member) {
-//        this.likedMembers.add(member);
-//    }
-//
+    public void addLikedMember(Long likedMemberId) {
+        this.likedMemberId.add(likedMemberId);
+    }
+
+    public void deleteLikedMember(Long likedMemberId) {
+        this.likedMemberId.remove(likedMemberId);
+    }
+
 //    public void addDislikedMember(Member member) {
 //        this.dislikedMembers.add(member);
 //    }

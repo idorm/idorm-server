@@ -239,6 +239,56 @@ public class MemberService {
     }
 
     /**
+     * Member 매칭 좋아요한 매칭멤버 조회 |
+     */
+    public List<Long> findMatchingLikedMembers(Long loginMemberId) {
+        log.info("IN PROGRESS | Member 좋아요한 매칭멤버 조회 At " + LocalDateTime.now());
+        Member loginMember = findById(loginMemberId);
+
+        try {
+            List<Long> likedMemberIdList = loginMember.getLikedMemberId();
+            log.info("COMPLETE | Member 좋아요한 매칭멤버 조회 At " + LocalDateTime.now());
+            return likedMemberIdList;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 좋아요한 매칭멤버 조회 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
+     * Member 매칭 좋아요한 매칭멤버 추가 |
+     */
+    @Transactional
+    public void addMatchingLikedMember(Long loginMemberId, Long likedMemberId) {
+        log.info("IN PROGRESS | Member 좋아요한 매칭멤버 추가 At " + LocalDateTime.now());
+
+        Member loginMember = findById(loginMemberId);
+        try {
+            loginMember.addLikedMember(likedMemberId);
+            memberRepository.save(loginMember);
+            log.info("COMPLETE | Member 좋아요한 매칭멤버 추가 At " + LocalDateTime.now());
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 좋아요한 매칭멤버 추가 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
+     * Member 매칭 좋아요한 매칭멤버 삭제
+     */
+    @Transactional
+    public void deleteMatchingLikedMember(Long loginMemberId, Long likedMemberId) {
+        log.info("IN PROGRESS | Member 좋아요한 매칭멤버 삭제 At " + LocalDateTime.now());
+
+        Member loginMember = findById(loginMemberId);
+        try {
+            loginMember.deleteLikedMember(likedMemberId);
+            memberRepository.save(loginMember);
+            log.info("COMPLETE | Member 좋아요한 매칭멤버 삭제 At " + LocalDateTime.now());
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 좋아요한 매칭멤버 삭제 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
      * Member 매칭정보 삭제 |
      */
     @Transactional

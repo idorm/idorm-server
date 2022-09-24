@@ -4,8 +4,9 @@ import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
+import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.repository.MemberRepository;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,8 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MatchingService {
 
-    private final MemberRepository memberRepository;
+    private final MatchingInfoRepository matchingInfoRepository;
     private final MemberService memberService;
+    private final MatchingInfoService matchingInfoService;
 
     /**
      * Matching 매칭멤버 전체 조회 |
@@ -42,7 +46,7 @@ public class MatchingService {
         MatchingInfo loginMemberMatchingInfo = loginMember.getMatchingInfo();
 
         try {
-             List<Long> filteredMatchingInfoId = memberRepository.findMatchingMembers(
+             List<Long> filteredMatchingInfoId = matchingInfoRepository.findMatchingMembers(
                     memberId,
                     loginMemberMatchingInfo.getDormNum(),
                     loginMemberMatchingInfo.getJoinPeriod(),
@@ -78,7 +82,7 @@ public class MatchingService {
         int isAllowedFood = (filteringRequest.getIsAllowedFood() == true) ? 1 : 0;
 
         try {
-            List<Long> filteredMatchingInfoId = memberRepository.findFilteredMatchingMembers(
+            List<Long> filteredMatchingInfoId = matchingInfoRepository.findFilteredMatchingMembers(
                     memberId,
                     filteringRequest.getDormNum(),
                     filteringRequest.getJoinPeriod(),
@@ -104,15 +108,76 @@ public class MatchingService {
     /**
      * Matching 좋아요한 매칭멤버 조회 |
      */
+    public List<MatchingInfo> findMatchingLikedMembers(Long memberId) {
+        log.info("IN PROGRESS | Matching 좋아요한 매칭멤버 조회 At " + LocalDateTime.now() + " | " + memberId);
+
+        Member loginMember = memberService.findById(memberId);
+
+        if(loginMember.getMatchingInfo() == null) {
+            throw new ConflictException("매칭정보가 존재하지 않습니다.");
+        }
+
+        try {
+            List<Long> likedMemberIdList = memberService.findMatchingLikedMembers(memberId);
+            List<MatchingInfo> likedMatchingInfoList = new ArrayList<>();
+
+            for(Long likedMemberId : likedMemberIdList) {
+                Optional<Long> matchingInfoId = matchingInfoRepository.findMatchingInfoIdByMemberId(likedMemberId);
+                if(matchingInfoId.isEmpty()) {
+                    return null;
+                }
+                MatchingInfo matchingInfo = matchingInfoService.findById(matchingInfoId.get());
+                likedMatchingInfoList.add(matchingInfo);
+            }
+            log.info("COMPLETE | Matching 좋아요한 매칭멤버 조회 At " + LocalDateTime.now() + " | " + memberId);
+            return likedMatchingInfoList;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Matching 좋아요한 매칭멤버 조회 중 서버 에러 발생", e);
+        }
+    }
 
 
     /**
      * Matching 좋아요한 매칭멤버 추가 |
      */
+    public void addMatchingLikedMember(Long memberId, Long likedMemberId) {
+
+        log.info("IN PROGRESS | Matching 좋아요한 매칭멤버 추가 At " + LocalDateTime.now() + " | " + memberId);
+
+        Member loginMember = memberService.findById(memberId);
+
+        if(loginMember.getMatchingInfo() == null) {
+            throw new ConflictException("매칭정보가 존재하지 않습니다.");
+        }
+
+        try {
+            memberService.addMatchingLikedMember(memberId, likedMemberId);
+            log.info("COMPLETE | Matching 좋아요한 매칭멤버 추가 At " + LocalDateTime.now() + " | " + memberId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Matching 좋아요한 매칭멤버 추가 중 서버 에러 발생", e);
+        }
+    }
 
     /**
      * Matching 좋아요한 매칭멤버 삭제 |
      */
+    public void deleteMatchingLikedMember(Long memberId, Long likedMemberId) {
+
+        log.info("IN PROGRESS | Matching 좋아요한 매칭멤버 삭제 At " + LocalDateTime.now() + " | " + memberId);
+
+        Member loginMember = memberService.findById(memberId);
+
+        if(loginMember.getMatchingInfo() == null) {
+            throw new ConflictException("매칭정보가 존재하지 않습니다.");
+        }
+
+        try {
+            memberService.deleteMatchingLikedMember(memberId, likedMemberId);
+            log.info("COMPLETE | Matching 좋아요한 매칭멤버 삭제 At " + LocalDateTime.now() + " | " + memberId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Matching 좋아요한 매칭멤버 삭제 중 서버 에러 발생", e);
+        }
+    }
 
     /**
      * Matching 싫어요한 매칭멤버 추가 |

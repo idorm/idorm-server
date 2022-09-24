@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ApiModel(value = "Matching 응답")
@@ -70,6 +72,9 @@ public class MatchingDefaultResponseDto {
     @ApiModelProperty(position = 19, value = "aaa@inu.ac.kr")
     private String memberEmail;
 
+    @ApiModelProperty(position = 20)
+    private List<Long> likedMemberId;
+
     public MatchingDefaultResponseDto(MatchingInfo matchingInfo) {
         this.memberId = matchingInfo.getMember().getId();
         this.matchingInfoId = matchingInfo.getId();
@@ -90,5 +95,10 @@ public class MatchingDefaultResponseDto {
         this.wishText = matchingInfo.getWishText();
         this.isMatchingInfoPublic = matchingInfo.getIsMatchingInfoPublic();
         this.memberEmail = matchingInfo.getMember().getEmail();
+
+        List<Long> likedMemberIdList = matchingInfo.getMember().getLikedMemberId();
+        for(Long likedMemberId : likedMemberIdList) {
+            this.likedMemberId.add(likedMemberId);
+        }
     }
 }
