@@ -64,10 +64,9 @@ public class EmailController {
         String requestEmail = request.getEmail();
         Optional<Email> email = emailService.findByEmailOp(request.getEmail());
 
-
-
         if(!email.isEmpty()) {
-            if (email.get().getJoined() == true) {
+            Optional<Member> memberByEmail = Optional.ofNullable(memberService.findByEmail(requestEmail));
+            if(memberByEmail.isPresent()) {
                 throw new ConflictException("이미 가입된 이메일입니다.");
             }
         }
@@ -109,7 +108,9 @@ public class EmailController {
 
         Email email = emailService.findByEmail(requestEmail);
 
-        if(email.getJoined() == false) {
+        Optional<Member> memberByEmail = Optional.ofNullable(memberService.findByEmail(requestEmail));
+
+        if(memberByEmail.isEmpty()) {
             throw new ConflictException("가입되지 않은 이메일입니다.");
         }
 
