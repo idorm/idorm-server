@@ -23,8 +23,8 @@ public class MemberDefaultResponseDto {
     @ApiModelProperty(position = 3, dataType = "String", value = "닉네임", example = "현")
     private String nickname;
 
-    @ApiModelProperty(position = 4, dataType = "MatchingInfo", value = "매칭정보")
-    private MatchingInfo matchingInfo;
+    @ApiModelProperty(position = 4, dataType = "Long", value = "매칭정보 식별자")
+    private Long matchingInfoId;
 
     @ApiModelProperty(position = 5, dataType = "String", value = "로그인 토큰")
     private String loginToken;
@@ -33,14 +33,14 @@ public class MemberDefaultResponseDto {
         this.id = member.getId();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
-        this.matchingInfo = member.getMatchingInfo();
+        this.matchingInfoId = member.getMatchingInfo().getId();
     }
 
     public MemberDefaultResponseDto(Member member, String token) {
         this.id = member.getId();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
-        this.matchingInfo = member.getMatchingInfo();
+        this.matchingInfoId = member.getMatchingInfo().getId();
         this.loginToken = token;
     }
 }

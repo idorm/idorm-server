@@ -66,7 +66,7 @@ public class MemberController {
                 .id(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
-                .matchingInfo(member.getMatchingInfo())
+                .matchingInfoId(member.getMatchingInfo().getId())
                 .build();
 
         return ResponseEntity.status(200)
@@ -134,7 +134,7 @@ public class MemberController {
                 .id(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
-                .matchingInfo(member.getMatchingInfo())
+                .matchingInfoId(member.getMatchingInfo().getId())
                 .build();
 
         return ResponseEntity.status(200)
