@@ -1,5 +1,7 @@
 package idorm.idormServer.member.service;
 
+import idorm.idormServer.email.domain.Email;
+import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.exceptions.http.NotFoundException;
@@ -23,6 +25,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final EmailService emailService;
 
     /**
      * Member 저장 |
@@ -59,9 +62,10 @@ public class MemberService {
 
         log.info("IN PROGRESS | Member 중복 여부 확인 At " + LocalDateTime.now() + " | " + email);
 
-        Optional<Member> findMembers = memberRepository.findByEmail(email);
+        Optional<Long> foundMember = memberRepository.findMemberIdByEmail(email);
+
         try {
-            if (findMembers.isPresent()) {
+            if (foundMember.isPresent()) {
                 throw new ConflictException("이미 존재하는 회원입니다.");
             }
         } catch (Exception e) {
@@ -122,14 +126,21 @@ public class MemberService {
         log.info("IN PROGRESS | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
 
         try {
-            Optional<Member> foundMember = memberRepository.findByEmail(email);
+            Optional<Email> foundEmail = emailService.findByEmailOp(email);
 
-            if(foundMember.isEmpty()) {
-                throw new UnauthorizedException("가입되지 않은 이메일입니다.");
+            if(foundEmail.isEmpty()) {
+                throw new UnauthorizedException("등록되지 않은 이메일입니다.");
             }
 
-            log.info("COMPLETE | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + foundMember.get().getEmail());
-            return foundMember.get();
+            Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
+
+            if(foundMemberId.isEmpty()) {
+                throw new NotFoundException("가입되지 않은 이메일입니다.");
+            }
+            Member member = findById(foundMemberId.get());
+            log.info("COMPLETE | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
+            return member;
+
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 이메일로 조회 중 서버 에러 발생", e);
         }

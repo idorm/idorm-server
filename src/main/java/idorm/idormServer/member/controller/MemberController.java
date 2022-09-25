@@ -128,6 +128,8 @@ public class MemberController {
 
         Member member = memberService.findById(loginMemberId);
 
+        emailService.updateIsJoined(member.getEmail());
+
         MemberDefaultResponseDto response = MemberDefaultResponseDto.builder()
                 .id(member.getId())
                 .email(member.getEmail())
@@ -162,6 +164,7 @@ public class MemberController {
         Member foundMember = memberService.findByEmail(request.getEmail());
 
         memberService.updatePassword(foundMember.getId(), passwordEncoder.encode(request.getPassword()));
+        emailService.updateIsJoined(foundMember.getEmail());
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(foundMember);
 

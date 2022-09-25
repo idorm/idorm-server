@@ -126,12 +126,29 @@ public class EmailService {
 
         Optional<Email> foundEmail = emailRepository.findByEmail(email);
 
-        if(email.isEmpty()) {
+        if(foundEmail.isEmpty()) {
             throw new NotFoundException("이메일을 찾을 수 없습니다.");
         }
 
         foundEmail.get().isChecked();
         log.info("COMPLETE | Email 인증여부 체크 At " + LocalDateTime.now() + " | " + foundEmail.get().getEmail());
+    }
+
+    /**
+     * Email 가입여부 체크 |
+     * 비밀번호 변경 시 가입여부를 체크해야할 때 사용한다.
+     */
+    @Transactional
+    public void updateIsJoined(String email) {
+        log.info("START | Email 가입여부 체크 At " + LocalDateTime.now() + " | " + email);
+        Optional<Email> foundEmail = emailRepository.findByEmail(email);
+
+        if(foundEmail.isEmpty()) {
+            throw new NotFoundException("이메일을 찾을 수 없습니다.");
+        }
+        foundEmail.get().isJoined();
+        emailRepository.save(foundEmail.get());
+        log.info("COMPLETE | Email 가입여부 체크 At " + LocalDateTime.now() + " | " + email);
     }
 
 }
