@@ -96,7 +96,7 @@ public class MemberController {
 
         Long createdMemberId = memberService.save(request.getEmail(), passwordEncoder.encode(request.getPassword()));
         Member newMember = memberService.findById(createdMemberId);
-        emailOp.get().isJoined();
+        emailService.updateIsJoined(emailOp.get().getEmail());
 
         MemberDefaultResponseDto response = MemberDefaultResponseDto.builder()
                 .id(newMember.getId())
