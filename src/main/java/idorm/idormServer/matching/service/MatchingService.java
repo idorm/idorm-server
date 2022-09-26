@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -107,6 +106,7 @@ public class MatchingService {
 
     /**
      * Matching 좋아요한 매칭멤버 조회 |
+     * 추가로직: 매칭 이미지 여부가 false일 경우 조회되지 않게 처리
      */
     public List<MatchingInfo> findMatchingLikedMembers(Long memberId) {
         log.info("IN PROGRESS | Matching 좋아요한 매칭멤버 조회 At " + LocalDateTime.now() + " | " + memberId);
@@ -122,11 +122,10 @@ public class MatchingService {
             List<MatchingInfo> likedMatchingInfoList = new ArrayList<>();
 
             for(Long likedMemberId : likedMemberIdList) {
-                Optional<Long> matchingInfoId = matchingInfoRepository.findMatchingInfoIdByMemberId(likedMemberId);
-                if(matchingInfoId.isEmpty()) {
-                    return null;
-                }
-                MatchingInfo matchingInfo = matchingInfoService.findById(matchingInfoId.get());
+
+                Long matchingInfoId = matchingInfoService.findByMemberId(likedMemberId);
+
+                MatchingInfo matchingInfo = matchingInfoService.findById(matchingInfoId);
                 likedMatchingInfoList.add(matchingInfo);
             }
             log.info("COMPLETE | Matching 좋아요한 매칭멤버 조회 At " + LocalDateTime.now() + " | " + memberId);
@@ -136,7 +135,6 @@ public class MatchingService {
         }
     }
 
-
     /**
      * Matching 좋아요한 매칭멤버 추가 |
      */
@@ -144,11 +142,8 @@ public class MatchingService {
 
         log.info("IN PROGRESS | Matching 좋아요한 매칭멤버 추가 At " + LocalDateTime.now() + " | " + memberId);
 
-        Member loginMember = memberService.findById(memberId);
-
-        if(loginMember.getMatchingInfo() == null) {
-            throw new ConflictException("매칭정보가 존재하지 않습니다.");
-        }
+        memberService.findById(memberId);
+        matchingInfoService.findByMemberId(likedMemberId);
 
         try {
             memberService.addMatchingLikedMember(memberId, likedMemberId);

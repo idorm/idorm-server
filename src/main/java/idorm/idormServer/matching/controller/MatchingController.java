@@ -174,6 +174,7 @@ public class MatchingController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
+
         Optional<Member> likedMember = Optional.ofNullable(memberService.findById(likedMemberId));
 
         if(likedMember.isEmpty()) {
@@ -181,7 +182,7 @@ public class MatchingController {
         }
 
         matchingService.addMatchingLikedMember(loginMemberId, likedMemberId);
-
+        // TODO: 여기
         MatchingInfo loginMemberMatchingInfo = loginMember.getMatchingInfo();
         MatchingDefaultResponseDto response = new MatchingDefaultResponseDto(loginMemberMatchingInfo);
 

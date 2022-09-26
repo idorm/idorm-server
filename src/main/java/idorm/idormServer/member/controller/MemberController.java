@@ -62,12 +62,7 @@ public class MemberController {
 
         Member member = memberService.findById(loginMemberId);
 
-        MemberDefaultResponseDto response = MemberDefaultResponseDto.builder()
-                .id(member.getId())
-                .email(member.getEmail())
-                .nickname(member.getNickname())
-                .matchingInfoId(member.getMatchingInfo().getId())
-                .build();
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

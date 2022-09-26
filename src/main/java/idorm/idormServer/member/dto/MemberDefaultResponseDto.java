@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.util.Optional;
+
 @Getter
 @ApiModel(value = "Member 응답")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,14 +35,21 @@ public class MemberDefaultResponseDto {
         this.id = member.getId();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
-        this.matchingInfoId = member.getMatchingInfo().getId();
+
+        if(member.getMatchingInfo() != null) {
+            this.matchingInfoId = member.getMatchingInfo().getId();
+        }
     }
 
     public MemberDefaultResponseDto(Member member, String token) {
         this.id = member.getId();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
-        this.matchingInfoId = member.getMatchingInfo().getId();
         this.loginToken = token;
+
+        if(member.getMatchingInfo() != null) {
+            this.matchingInfoId = member.getMatchingInfo().getId();
+        }
+
     }
 }

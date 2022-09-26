@@ -97,6 +97,22 @@ public class MatchingInfoService {
         }
     }
 
+    public Long findByMemberId(Long memberId) {
+        log.info("IN PROGRESS | MatchingInfo Member 식별자로 단건 조회 At " + LocalDateTime.now());
+
+        Optional<Long> matchingInfoId = matchingInfoRepository.findMatchingInfoIdByMemberId(memberId);
+
+        try {
+            if(matchingInfoId.isEmpty()) {
+                throw new NotFoundException("조회할 매칭정보가 존재하지 않습니다.");
+            }
+            log.info("COMPLETE | MatchingInfo Member 식별자로 단건 조회 At " + LocalDateTime.now());
+            return matchingInfoId.get();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("MatchingInfo Member 식별자로 단건 조회 중 서버 에러 발생", e);
+        }
+    }
+
     /**
      * MatchingInfo 전체 조회 |
      */
