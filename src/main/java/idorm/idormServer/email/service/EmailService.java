@@ -140,7 +140,7 @@ public class EmailService {
      */
     @Transactional
     public void updateIsJoined(String email) {
-        log.info("START | Email 가입여부 체크 At " + LocalDateTime.now() + " | " + email);
+        log.info("START | Email 가입여부 수정 At " + LocalDateTime.now() + " | " + email);
         Optional<Email> foundEmail = emailRepository.findByEmail(email);
 
         if(foundEmail.isEmpty()) {
@@ -148,7 +148,7 @@ public class EmailService {
         }
         foundEmail.get().isJoined();
         emailRepository.save(foundEmail.get());
-        log.info("COMPLETE | Email 가입여부 체크 At " + LocalDateTime.now() + " | " + email);
+        log.info("COMPLETE | Email 가입여부 수정 At " + LocalDateTime.now() + " | " + email);
     }
 
 }

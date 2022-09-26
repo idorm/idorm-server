@@ -117,6 +117,7 @@ public class MemberController {
     @PatchMapping("/member/password")
     public ResponseEntity<DefaultResponseDto<Object>> updateMemberPasswordLogin(
             HttpServletRequest request2, @RequestBody @Valid MemberUpdatePasswordStatusLoginRequestDto request) {
+
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
 
         memberService.updatePassword(loginMemberId, passwordEncoder.encode(request.getPassword()));
@@ -125,12 +126,7 @@ public class MemberController {
 
         emailService.updateIsJoined(member.getEmail());
 
-        MemberDefaultResponseDto response = MemberDefaultResponseDto.builder()
-                .id(member.getId())
-                .email(member.getEmail())
-                .nickname(member.getNickname())
-                .matchingInfoId(member.getMatchingInfo().getId())
-                .build();
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
