@@ -1,5 +1,6 @@
 package idorm.idormServer.calendar.domain;
 
+import idorm.idormServer.common.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Calendar {
+public class Calendar extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long calendarId;
@@ -18,13 +19,6 @@ public class Calendar {
     private String url;
     private String title;
     private String content;
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;

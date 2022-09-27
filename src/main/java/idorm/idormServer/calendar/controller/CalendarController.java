@@ -22,7 +22,7 @@ public class CalendarController {
     private final CalendarService calendarService;
 
     @PostMapping("")
-    @ApiOperation("일정 저장")
+    @ApiOperation(value = "일정 저장", notes = "startTime, endTime 예시 \"2022-10-27T13:44:05\"")
     Calendar save(@RequestBody CalendarRequest request) {
         return calendarService.save(request.toEntity(null));
     }
@@ -34,7 +34,7 @@ public class CalendarController {
     }
 
     @GetMapping("list")
-    @ApiOperation("일정 목록 조회")
+    @ApiOperation(value = "일정 목록 조회", notes = "날짜 필터 예시 \"2022-10-30\"")
     Page<Calendar> searchList(PageableDto pageableDto, DateFilterDto dateFilterDto) {
 
         return calendarService.searchList(pageableDto.toPageable(), dateFilterDto);
