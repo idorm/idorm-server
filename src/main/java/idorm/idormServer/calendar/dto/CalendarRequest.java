@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Getter
 public class CalendarRequest {
-    private Long memberId;
     private String url;
     private String title;
     private String content;
@@ -18,7 +17,7 @@ public class CalendarRequest {
     private String officialYn;
     private String together;
 
-    public Calendar toEntity(Long id) {
+    public Calendar toEntity(Long id, Long memberId) {
 
         return new Calendar(
                 id,

@@ -5,11 +5,15 @@ import idorm.idormServer.calendar.dto.CalendarRequest;
 import idorm.idormServer.calendar.dto.DateFilterDto;
 import idorm.idormServer.calendar.dto.PageableDto;
 import idorm.idormServer.calendar.service.CalendarService;
+import idorm.idormServer.member.domain.Member;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,7 +28,11 @@ public class CalendarController {
     @PostMapping("")
     @ApiOperation(value = "일정 저장", notes = "startTime, endTime 예시 \"2022-10-27T13:44:05\"")
     Calendar save(@RequestBody CalendarRequest request) {
-        return calendarService.save(request.toEntity(null));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member member = (Member)authentication.getPrincipal();
+
+        return calendarService.save(request.toEntity(null, member.getId()));
     }
 
     @GetMapping("{id}")
@@ -43,7 +51,11 @@ public class CalendarController {
     @PutMapping("{id}")
     @ApiOperation("일정 단건 수정")
     Calendar update(@PathVariable Long id, @RequestBody CalendarRequest request) {
-        return calendarService.update(request.toEntity(id));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member member = (Member)authentication.getPrincipal();
+
+        return calendarService.update(request.toEntity(id, member.getId()));
     }
 
     @DeleteMapping("{id}")
