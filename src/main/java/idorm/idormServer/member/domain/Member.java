@@ -3,10 +3,7 @@ package idorm.idormServer.member.domain;
 import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.Photo;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,15 +32,23 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToOne(mappedBy = "member")
     private MatchingInfo matchingInfo; // 매칭 정보
 
-
     @OneToOne(mappedBy = "member")
     private Photo photo; // 프로필 사진
 
-    @ElementCollection
-    private List<Long> likedMemberId = new ArrayList<>();
+//    @Setter
+//    @ManyToOne
+//    private Member loginMember; // 로그인 멤버
 
-//    @OneToMany(mappedBy = "member")
-//    private List<Member> dislikedMembers = new ArrayList<>();
+
+
+//    @Setter
+//    @OneToMany(mappedBy = "loginMember", targetEntity = Member.class, fetch = FetchType.LAZY,
+//    cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    private List<Member> likedMembers = new ArrayList<>(); // 좋아요한 멤버들
+//
+//    @Setter
+//    @OneToMany(mappedBy = "loginMember")
+//    private List<Member> dislikedMembers = new ArrayList<>(); // 싫어요한 멤버들
 
     /**
      * security code
@@ -119,13 +124,16 @@ public class Member extends BaseEntity implements UserDetails {
         this.matchingInfo = null;
     }
 
-    public void addLikedMember(Long likedMemberId) {
-        this.likedMemberId.add(likedMemberId);
-    }
 
-    public void deleteLikedMember(Long likedMemberId) {
-        this.likedMemberId.remove(likedMemberId);
-    }
+//    public void addLikedMember(Member likedMember) {
+//        this.likedMembers.add(likedMember);
+//        this.loginMember.setLikedMembers(this.likedMembers);
+//    }
+//
+//    public void deleteLikedMember(Member dislikedMember) {
+//        this.likedMembers.remove(dislikedMember);
+//        this.loginMember.setLikedMembers(this.likedMembers);
+//    }
 
 //    public void addDislikedMember(Member member) {
 //        this.dislikedMembers.add(member);

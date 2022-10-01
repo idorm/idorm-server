@@ -15,7 +15,8 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
     @Query(value = "SELECT matching_info_id " +
             "FROM matching_info mi " +
             "JOIN member m " +
-            "ON mi.member_id=m.member_id ", nativeQuery = true)
+            "ON mi.member_id = m.member_id " +
+            "WHERE mi.member_id = :memberId", nativeQuery = true)
     Optional<Long> findMatchingInfoIdByMemberId(@Param("memberId") Long memberId);
 
     @Query(value = "SELECT matching_info_id " +

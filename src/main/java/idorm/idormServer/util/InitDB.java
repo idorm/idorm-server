@@ -1,7 +1,6 @@
 package idorm.idormServer.util;
 
 import idorm.idormServer.email.domain.Email;
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

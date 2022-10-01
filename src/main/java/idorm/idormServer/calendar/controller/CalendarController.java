@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("calendar")
 @RequiredArgsConstructor
-@Api(tags = "05. 캘린더")
+@Api(tags = "Calendar API")
 public class CalendarController {
     // TODO : Authentication 추가
 
     private final CalendarService calendarService;
 
     @PostMapping("")
-    @ApiOperation(value = "일정 저장", notes = "startTime, endTime 예시 \"2022-10-27T13:44:05\"")
+    @ApiOperation(value = "Calendar 일정 저장", notes = "startTime, endTime 예시 \"2022-10-27T13:44:05\"")
     Calendar save(@RequestBody CalendarRequest request) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -36,20 +36,20 @@ public class CalendarController {
     }
 
     @GetMapping("{id}")
-    @ApiOperation("일정 단건 조회")
+    @ApiOperation("Calendar 일정 단건 조회")
     Calendar find(@PathVariable Long id) {
         return calendarService.find(id);
     }
 
     @GetMapping("list")
-    @ApiOperation(value = "일정 목록 조회", notes = "날짜 필터 예시 \"2022-10-30\"")
+    @ApiOperation(value = "Calendar 일정 목록 조회", notes = "날짜 필터 예시 \"2022-10-30\"")
     Page<Calendar> searchList(PageableDto pageableDto, DateFilterDto dateFilterDto) {
 
         return calendarService.searchList(pageableDto.toPageable(), dateFilterDto);
     }
 
     @PutMapping("{id}")
-    @ApiOperation("일정 단건 수정")
+    @ApiOperation("Calendar 일정 단건 수정")
     Calendar update(@PathVariable Long id, @RequestBody CalendarRequest request) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -59,7 +59,7 @@ public class CalendarController {
     }
 
     @DeleteMapping("{id}")
-    @ApiOperation("일정 단건 삭제")
+    @ApiOperation("Calendar 일정 단건 삭제")
     void delete(@PathVariable Long id) {
         calendarService.delete(id);
     }
