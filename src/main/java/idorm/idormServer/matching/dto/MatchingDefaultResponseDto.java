@@ -2,7 +2,6 @@ package idorm.idormServer.matching.dto;
 
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 
-import idorm.idormServer.member.domain.Member;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -73,8 +72,8 @@ public class MatchingDefaultResponseDto {
     @ApiModelProperty(position = 19, value = "aaa@inu.ac.kr")
     private String memberEmail;
 
-    @ApiModelProperty(position = 20, value = "좋아요한 룸메이트 아이디")
-    private List<Long> likedMemberId;
+    @ApiModelProperty(position = 20, value = "좋아요한 멤버 식별자")
+    private List<Long> likedMemberIdList;
 
     public MatchingDefaultResponseDto(MatchingInfo matchingInfo) {
         this.memberId = matchingInfo.getMember().getId();
@@ -96,11 +95,5 @@ public class MatchingDefaultResponseDto {
         this.wishText = matchingInfo.getWishText();
         this.isMatchingInfoPublic = matchingInfo.getIsMatchingInfoPublic();
         this.memberEmail = matchingInfo.getMember().getEmail();
-
-        // 문제 코드 NullPointerException
-//        List<Member> likedMembers = matchingInfo.getMember().getLikedMembers();
-//        for(Member likedMember : likedMembers) {
-//            this.likedMemberId.add(likedMember.getId());
-//        }
     }
 }

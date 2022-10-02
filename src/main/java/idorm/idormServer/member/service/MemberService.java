@@ -39,19 +39,15 @@ public class MemberService {
 
         isExistingEmail(email);
 
-        try {
-            Member member = Member.builder()
-                    .email(email)
-                    .password(password)
-                    .build();
+        Member member = Member.builder()
+                .email(email)
+                .password(password)
+                .build();
 
-            memberRepository.save(member);
+        memberRepository.save(member);
 
-            log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
-            return member.getId();
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Member save 중 서버 에러 발생", e);
-        }
+        log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
+        return member.getId();
     }
 
     /**
@@ -65,12 +61,8 @@ public class MemberService {
 
         Optional<Long> foundMember = memberRepository.findMemberIdByEmail(email);
 
-        try {
-            if (foundMember.isPresent()) {
-                throw new ConflictException("이미 존재하는 회원입니다.");
-            }
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Member 중복 여부 체크 중 서버 에러 발생", e);
+        if (foundMember.isPresent()) {
+            throw new ConflictException("이미 존재하는 회원입니다.");
         }
 
         log.info("COMPLETE | Member 중복 여부 확인 At " + LocalDateTime.now() + " | " + email);
@@ -84,18 +76,14 @@ public class MemberService {
 
         log.info("IN PROGRESS | Member 단건 조회 At " + LocalDateTime.now() + " | " + memberId);
 
-        try {
-            Optional<Member> member = memberRepository.findById(memberId);
+        Optional<Member> member = memberRepository.findById(memberId);
 
-            if(member.isEmpty()) {
-                throw new UnauthorizedException("해당 id의 멤버가 존재하지 않습니다.");
-            }
-
-            log.info("COMPLETE | Member 단건 조회 At " + LocalDateTime.now() + " | " + member.get().getEmail());
-            return member.get();
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Member 단건 조회 중 서버 에러 발생", e);
+        if(member.isEmpty()) {
+            throw new UnauthorizedException("해당 id의 멤버가 존재하지 않습니다.");
         }
+
+        log.info("COMPLETE | Member 단건 조회 At " + LocalDateTime.now() + " | " + member.get().getEmail());
+        return member.get();
     }
 
     /**
@@ -105,18 +93,15 @@ public class MemberService {
     public List<Member> findAll() {
 
         log.info("IN PROGRESS | Member 전체 조회 At " + LocalDateTime.now());
-        try {
-            List<Member> foundAllMembers = memberRepository.findAll();
 
-            if(foundAllMembers.isEmpty()) {
-                throw new NotFoundException("조회할 멤버가 존재하지 않습니다.");
-            }
+        List<Member> foundAllMembers = memberRepository.findAll();
 
-            log.info("COMPLETE | Member 전체 조회 At " + LocalDateTime.now() + " | Member 수: " + foundAllMembers.size());
-            return foundAllMembers;
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Member 전체 조회 중 서버 에러 발생", e);
+        if(foundAllMembers.isEmpty()) {
+            throw new NotFoundException("조회할 멤버가 존재하지 않습니다.");
         }
+
+        log.info("COMPLETE | Member 전체 조회 At " + LocalDateTime.now() + " | Member 수: " + foundAllMembers.size());
+        return foundAllMembers;
     }
 
     /**
@@ -126,25 +111,20 @@ public class MemberService {
 
         log.info("IN PROGRESS | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
 
-        try {
-            Optional<Email> foundEmail = emailService.findByEmailOp(email);
+        Optional<Email> foundEmail = emailService.findByEmailOp(email);
 
-            if(foundEmail.isEmpty()) {
-                throw new UnauthorizedException("등록되지 않은 이메일입니다.");
-            }
-
-            Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
-
-            if(foundMemberId.isEmpty()) {
-                throw new NotFoundException("가입되지 않은 이메일입니다.");
-            }
-            Member member = findById(foundMemberId.get());
-            log.info("COMPLETE | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
-            return member;
-
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Member 이메일로 조회 중 서버 에러 발생", e);
+        if(foundEmail.isEmpty()) {
+            throw new UnauthorizedException("등록되지 않은 이메일입니다.");
         }
+
+        Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
+
+        if(foundMemberId.isEmpty()) {
+            throw new NotFoundException("가입되지 않은 이메일입니다.");
+        }
+        Member member = findById(foundMemberId.get());
+        log.info("COMPLETE | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
+        return member;
     }
 
     /**
@@ -154,13 +134,10 @@ public class MemberService {
 
         log.info("IN PROGRESS | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + nickname);
 
-        try {
-            Optional<Member> foundMember = memberRepository.findByNickname(nickname);
-            log.info("COMPLETE | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + foundMember);
-            return foundMember;
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Member 닉네임으로 조회 중 서버 에러 발생", e);
-        }
+        Optional<Member> foundMember = memberRepository.findByNickname(nickname);
+
+        log.info("COMPLETE | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + foundMember);
+        return foundMember;
     }
 
     /**

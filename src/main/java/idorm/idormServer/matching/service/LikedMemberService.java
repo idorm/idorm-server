@@ -4,6 +4,7 @@ import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.repository.LikedMemberRepository;
+import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class LikedMemberService {
 
     private final LikedMemberRepository likedMemberRepository;
     private final MemberService memberService;
+    private final MatchingInfoService matchingInfoService;
 
     /**
      * LikedMember 좋아요한 멤버 조회 |
@@ -51,6 +53,8 @@ public class LikedMemberService {
         isExistingLikedMember(memberId, likedMemberId);
 
         Member loginMember = memberService.findById(memberId);
+        memberService.findById(likedMemberId);
+        matchingInfoService.findByMemberId(likedMemberId);
 
         try {
             LikedMember likedMember = LikedMember.builder()
@@ -77,14 +81,10 @@ public class LikedMemberService {
 
         List<Long> likedMemberIds = likedMemberRepository.findLikedMembersByMemberId(memberId);
 
-        try {
-            for(Long id : likedMemberIds) {
-                if(id == likedMemberId) {
-                    throw new ConflictException("이미 좋아요한 멤버입니다.");
-                }
+        for(Long id : likedMemberIds) {
+            if(id == likedMemberId) {
+                throw new ConflictException("이미 좋아요한 멤버입니다.");
             }
-        } catch (Exception e) {
-            throw new InternalServerErrorException("LikedMember 중복 여부 체크 중 서버 에러 발생", e);
         }
 
         log.info("COMPLETE | LikedMember 중복 여부 확인 At " + LocalDateTime.now() + " | " + memberId);
