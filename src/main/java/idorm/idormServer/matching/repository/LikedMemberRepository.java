@@ -24,10 +24,9 @@ public interface LikedMemberRepository extends JpaRepository<LikedMember, Long> 
      */
     @Modifying
     @Transactional
-    @Query(value = "DELETE " +
-            "FROM liked_member lm " +
-            "WHERE lm.member_id = :memberId AND " +
-            "lm.selected_liked_member_id = :selectedLikedMemberId", nativeQuery = true)
+    @Query(value = "DELETE FROM liked_member " +
+            "WHERE liked_member.member_id = :memberId " +
+            "AND liked_member.selected_liked_member_id = :selectedLikedMemberId", nativeQuery = true)
     void deleteLikedMember(@Param("memberId") Long memberId,
                            @Param("selectedLikedMemberId") Long selectedMemberId);
 
