@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -177,8 +178,6 @@ public class MatchingController {
             throw new UnauthorizedException("관리자 혹은 본인을 좋아요한 멤버로 설정할 수 없습니다.");
         }
 
-        // 매칭 정보가 없다면, 좋아요한 멤버로 지정해서는 안됨.
-
         likedMemberService.saveLikedMember(loginMemberId, selectedLikedMemberId);
 
         Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
@@ -194,39 +193,32 @@ public class MatchingController {
                         .build());
     }
 
-//    @ApiOperation(value = "Matching 좋아요한 매칭멤버 삭제")
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Matching 좋아요한 매칭멤버 삭제 완료"),
-//            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-//            @ApiResponse(code = 404, message = "좋아요한 멤버의 id가 존재하지 않습니다."),
-//            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
-//            @ApiResponse(code = 500, message = "Matching 좋아요한 매칭멤버 삭제 중 서버 에러 발생")
-//    })
-//    @DeleteMapping("/member/matchinglikedmembers")
-//    public ResponseEntity<DefaultResponseDto<Object>> deleteLikedMatchingMembers(
-//            HttpServletRequest request, Long likedMemberId
-//    ) {
-//
-//        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
-//
-//        Optional<Member> likedMember = Optional.ofNullable(memberService.findById(likedMemberId));
-//
-//        if(likedMember.isEmpty()) {
-//            throw new NotFoundException("좋아요한 멤버의 id가 존재하지 않습니다.");
-//        }
-//
-//        matchingService.deleteMatchingLikedMember(loginMemberId, likedMemberId);
-//
-//        Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
-//        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findById(loginMemberMatchingInfoId);
-//        MatchingDefaultResponseDto response = new MatchingDefaultResponseDto(loginMemberMatchingInfo);
-//
-//        return ResponseEntity.status(200)
-//                .body(DefaultResponseDto.builder()
-//                        .responseCode("OK")
-//                        .responseMessage("Matching 좋아요한 매칭멤버 삭제 완료")
-//                        .data(response)
-//                        .build());
-//    }
+    @ApiOperation(value = "Matching 좋아요한 매칭멤버 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Matching 좋아요한 매칭멤버 삭제 완료"),
+            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 404, message = "좋아요한 멤버의 id가 존재하지 않습니다."),
+            @ApiResponse(code = 500, message = "Matching 좋아요한 매칭멤버 삭제 중 서버 에러 발생")
+    })
+    @DeleteMapping("/member/matchinglikedmembers")
+    public ResponseEntity<DefaultResponseDto<Object>> deleteLikedMatchingMembers(
+            HttpServletRequest request, Long likedMemberId
+    ) {
+
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+
+        likedMemberService.deleteLikedMember(loginMemberId, likedMemberId);
+
+        Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
+        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findById(loginMemberMatchingInfoId);
+        MatchingDefaultResponseDto response = new MatchingDefaultResponseDto(loginMemberMatchingInfo);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Matching 좋아요한 매칭멤버 삭제 완료")
+                        .data(response)
+                        .build());
+    }
 
 }

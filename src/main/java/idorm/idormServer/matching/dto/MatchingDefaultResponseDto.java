@@ -72,9 +72,6 @@ public class MatchingDefaultResponseDto {
     @ApiModelProperty(position = 19, value = "aaa@inu.ac.kr")
     private String memberEmail;
 
-    @ApiModelProperty(position = 20, value = "좋아요한 멤버 식별자")
-    private List<Long> likedMemberIdList;
-
     public MatchingDefaultResponseDto(MatchingInfo matchingInfo) {
         this.memberId = matchingInfo.getMember().getId();
         this.matchingInfoId = matchingInfo.getId();

@@ -2,8 +2,10 @@ package idorm.idormServer.matching.repository;
 
 import idorm.idormServer.matching.domain.LikedMember;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +22,8 @@ public interface LikedMemberRepository extends JpaRepository<LikedMember, Long> 
     /**
      * MemberId와 SelectedLikedMemberId로 좋아요한 멤버 삭제하기
      */
+    @Modifying
+    @Transactional
     @Query(value = "DELETE " +
             "FROM liked_member lm " +
             "WHERE lm.member_id = :memberId AND " +
