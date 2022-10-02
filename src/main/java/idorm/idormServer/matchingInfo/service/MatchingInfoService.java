@@ -97,7 +97,7 @@ public class MatchingInfoService {
         }
     }
 
-    public Long findByMemberId(Long memberId) { // memberId:3
+    public Long findByMemberId(Long memberId) {
         log.info("IN PROGRESS | MatchingInfo Member 식별자로 단건 조회 At " + LocalDateTime.now());
 
         Optional<Long> matchingInfoId = matchingInfoRepository.findMatchingInfoIdByMemberId(memberId); // query did not return a unique result: 2

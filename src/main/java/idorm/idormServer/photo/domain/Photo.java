@@ -24,5 +24,4 @@ public class Photo extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "member_id")
     private Member member; // 프로필 사진 매핑을 위한 멤버
-
 }

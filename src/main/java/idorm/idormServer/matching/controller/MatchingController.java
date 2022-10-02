@@ -5,6 +5,7 @@ import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
+import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.matching.service.MatchingService;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
@@ -33,7 +34,7 @@ public class MatchingController {
 
     private final MatchingService matchingService;
     private final MatchingInfoService matchingInfoService;
-    private final MemberService memberService;
+    private final LikedMemberService likedMemberService;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -117,45 +118,48 @@ public class MatchingController {
                         .build());
     }
 
-//    @ApiOperation(value = "Matching 좋아요한 매칭멤버 조회")
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Matching 좋아요한 매칭멤버 조회 완료"),
-//            @ApiResponse(code = 204, message = "매칭되는 멤버가 없습니다."),
-//            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-//            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
-//            @ApiResponse(code = 500, message = "Matching 좋아요한 매칭멤버 조회 중 서버 에러 발생")
-//    })
-//    @GetMapping("/member/matchinglikedmembers")
-//    public ResponseEntity<DefaultResponseDto<Object>> findLikedMatchingMembers(
-//            HttpServletRequest request
-//    ) {
-//
-//        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
-//
-//        List<MatchingInfo> matchingInfoList = matchingService.findMatchingLikedMembers(loginMemberId);
-//
-//        if(matchingInfoList.isEmpty()) {
-//            return ResponseEntity.status(204)
-//                    .body(DefaultResponseDto.builder()
-//                            .responseCode("NO_CONTENT")
-//                            .responseMessage("매칭되는 멤버가 없습니다.")
-//                            .build());
-//        }
-//
-//        List<MatchingDefaultResponseDto> response = new ArrayList<>();
-//
-//        for(MatchingInfo matchingInfo : matchingInfoList) {
-//
-//            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(matchingInfo);
-//            response.add(matchingOneDto);
-//        }
-//        return ResponseEntity.status(200)
-//                .body(DefaultResponseDto.builder()
-//                        .responseCode("OK")
-//                        .responseMessage("Matching 좋아요한 매칭멤버 조회 완료")
-//                        .data(response)
-//                        .build());
-//    }
+    @ApiOperation(value = "Matching 좋아요한 매칭멤버 조회")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Matching 좋아요한 매칭멤버 조회 완료"),
+            @ApiResponse(code = 204, message = "Matching 좋아요한 매칭멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
+            @ApiResponse(code = 500, message = "Matching 좋아요한 매칭멤버 조회 중 서버 에러 발생")
+    })
+    @GetMapping("/member/matchinglikedmembers")
+    public ResponseEntity<DefaultResponseDto<Object>> findLikedMatchingMembers(
+            HttpServletRequest request
+    ) {
+
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+
+        List<Long> likedMembers = likedMemberService.findLikedMembers(loginMemberId);
+
+        if(likedMembers.isEmpty()) {
+            return ResponseEntity.status(204)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("NO_CONTENT")
+                            .responseMessage("Matching 좋아요한 매칭멤버가 존재하지 않습니다.")
+                            .build());
+        }
+
+        List<MatchingDefaultResponseDto> response = new ArrayList<>();
+
+        for(Long likedMemberId : likedMembers) {
+
+            Long likedMemberMatchingInfoId = matchingInfoService.findByMemberId(likedMemberId);
+            MatchingInfo likedMemberMatchingInfo = matchingInfoService.findById(likedMemberMatchingInfoId);
+
+            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(likedMemberMatchingInfo);
+            response.add(matchingOneDto);
+        }
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Matching 좋아요한 매칭멤버 조회 완료")
+                        .data(response)
+                        .build());
+    }
 
     // TODO: DB에 좋아요한 멤버 리스트가 조회되지 않아서 해결해야 함
 

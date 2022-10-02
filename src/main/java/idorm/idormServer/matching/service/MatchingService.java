@@ -5,9 +5,7 @@ import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
-import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.repository.MemberRepository;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -24,11 +21,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MatchingService {
 
-    private final MemberRepository memberRepository;
-
     private final MatchingInfoRepository matchingInfoRepository;
     private final MemberService memberService;
-    private final MatchingInfoService matchingInfoService;
+
 
     /**
      * Matching 매칭멤버 전체 조회 |
@@ -105,80 +100,6 @@ public class MatchingService {
             throw new InternalServerErrorException("Matching 매칭멤버 조회 중 서버 에러 발생", e);
         }
     }
-
-
-    /**
-     * Matching 좋아요한 매칭멤버 조회 |
-     * 추가로직: 매칭 이미지 여부가 false일 경우 조회되지 않게 처리
-     */
-//    public List<MatchingInfo> findMatchingLikedMembers(Long memberId) {
-//        log.info("IN PROGRESS | Matching 좋아요한 매칭멤버 조회 At " + LocalDateTime.now() + " | " + memberId);
-//
-//        Member loginMember = memberService.findById(memberId);
-//
-//        if(loginMember.getMatchingInfo() == null) {
-//            throw new ConflictException("매칭정보가 존재하지 않습니다.");
-//        }
-//
-//        log.info(loginMember.getLikedMembers().toString());
-//        try {
-//            List<Member> likedMembers = memberService.findMatchingLikedMembers(memberId);
-//            List<MatchingInfo> likedMatchingInfoList = new ArrayList<>();
-//
-//            for(Member likedMember : likedMembers) {
-//
-//                Long matchingInfoId = matchingInfoService.findByMemberId(likedMember.getId());
-//
-//                MatchingInfo matchingInfo = matchingInfoService.findById(matchingInfoId);
-//                likedMatchingInfoList.add(matchingInfo);
-//            }
-//            log.info("COMPLETE | Matching 좋아요한 매칭멤버 조회 At " + LocalDateTime.now() + " | " + memberId);
-//            return likedMatchingInfoList;
-//        } catch (Exception e) {
-//            throw new InternalServerErrorException("Matching 좋아요한 매칭멤버 조회 중 서버 에러 발생", e);
-//        }
-//    }
-
-    /**
-     * Matching 좋아요한 매칭멤버 추가 |
-     */
-//    public void addMatchingLikedMember(Long memberId, Long likedMemberId) {
-//
-//        log.info("IN PROGRESS | Matching 좋아요한 매칭멤버 추가 At " + LocalDateTime.now() + " | 로그인 멤버 식별자: " + memberId);
-//
-//        Member loginMember = memberService.findById(memberId);
-//        Member likedMember = memberService.findById(likedMemberId);
-//        matchingInfoService.findByMemberId(likedMemberId);
-//
-//        try {
-//            loginMember.addLikedMember(likedMember);
-//            memberRepository.save(loginMember);
-//            log.info("COMPLETE | Matching 좋아요한 매칭멤버 추가 At " + LocalDateTime.now() + " | 로그인 멤버 식별자 " + memberId);
-//        } catch (Exception e) {
-//            throw new InternalServerErrorException("Matching 좋아요한 매칭멤버 추가 중 서버 에러 발생", e);
-//        }
-//    }
-
-    /**
-     * Matching 좋아요한 매칭멤버 삭제 |
-     */
-//    public void deleteMatchingLikedMember(Long memberId, Long likedMemberId) {
-//
-//        log.info("IN PROGRESS | Matching 좋아요한 매칭멤버 삭제 At " + LocalDateTime.now() + " | " + memberId);
-//
-//        Member loginMember = memberService.findById(memberId);
-//
-//        if(loginMember.getMatchingInfo() == null) {
-//            throw new ConflictException("매칭정보가 존재하지 않습니다.");
-//        }
-//
-//        try {
-//            memberService.deleteMatchingLikedMember(memberId, likedMemberId);
-//            log.info("COMPLETE | Matching 좋아요한 매칭멤버 삭제 At " + LocalDateTime.now() + " | " + memberId);
-//        } catch (Exception e) {
-//            throw new InternalServerErrorException("Matching 좋아요한 매칭멤버 삭제 중 서버 에러 발생", e);
-//        }
-//    }
 
     /**
      * Matching 싫어요한 매칭멤버 추가 |

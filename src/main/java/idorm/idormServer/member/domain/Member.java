@@ -1,6 +1,7 @@
 package idorm.idormServer.member.domain;
 
 import idorm.idormServer.common.BaseEntity;
+import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.Photo;
 import lombok.*;
@@ -35,20 +36,8 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToOne(mappedBy = "member")
     private Photo photo; // 프로필 사진
 
-//    @Setter
-//    @ManyToOne
-//    private Member loginMember; // 로그인 멤버
-
-
-
-//    @Setter
-//    @OneToMany(mappedBy = "loginMember", targetEntity = Member.class, fetch = FetchType.LAZY,
-//    cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    private List<Member> likedMembers = new ArrayList<>(); // 좋아요한 멤버들
-//
-//    @Setter
-//    @OneToMany(mappedBy = "loginMember")
-//    private List<Member> dislikedMembers = new ArrayList<>(); // 싫어요한 멤버들
+//    @OneToMany(fetch = FetchType.LAZY)
+//    private List<LikedMember> likedMembers = new ArrayList<>();
 
     /**
      * security code
