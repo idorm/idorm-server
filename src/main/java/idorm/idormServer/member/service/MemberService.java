@@ -116,11 +116,7 @@ public class MemberService {
             return adminMember.get();
         }
 
-        Optional<Email> foundEmail = emailService.findByEmailOp(email);
-
-        if(foundEmail.isEmpty()) {
-            throw new UnauthorizedException("등록되지 않은 이메일입니다.");
-        }
+        Email foundEmail = emailService.findByEmail(email);
 
         Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
 
