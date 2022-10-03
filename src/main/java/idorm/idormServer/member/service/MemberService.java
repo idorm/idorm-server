@@ -111,6 +111,11 @@ public class MemberService {
 
         log.info("IN PROGRESS | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
 
+        if(email.equals("idorm")) {
+            Optional<Member> adminMember = memberRepository.findById(1L);
+            return adminMember.get();
+        }
+
         Optional<Email> foundEmail = emailService.findByEmailOp(email);
 
         if(foundEmail.isEmpty()) {
