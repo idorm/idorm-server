@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -116,17 +117,35 @@ public class MemberService {
             return adminMember.get();
         }
 
-        Email foundEmail = emailService.findByEmail(email);
+        emailService.findByEmail(email);
 
         Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
 
         if(foundMemberId.isEmpty()) {
             throw new NotFoundException("가입되지 않은 이메일입니다.");
         }
+
         Member member = findById(foundMemberId.get());
         log.info("COMPLETE | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
         return member;
     }
+
+    /**
+     * Member 식별자를 이메일로 조회 Optional
+     */
+    public Optional<Long> findByEmailOp(String email) {
+
+        log.info("IN PROGRESS | Member 이메일로 Optional 조회 At " + LocalDateTime.now() + " | " + email);
+
+        try {
+            Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
+            log.info("COMPLETE | Member 이메일로 Optional 조회 At " + LocalDateTime.now() + " | " + email);
+            return foundMemberId;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 이메일로 Optional 조회 중 서버 에러 발생", e);
+        }
+    }
+
 
     /**
      * Member 닉네임으로 조회 |

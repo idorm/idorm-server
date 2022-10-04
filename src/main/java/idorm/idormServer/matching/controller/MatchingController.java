@@ -175,8 +175,6 @@ public class MatchingController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
 
-        // 매칭 이미지 공개가 false라면 추가하지 못하게 막기?
-
         if(selectedLikedMemberId == loginMemberId || selectedLikedMemberId == 1) {
             throw new UnauthorizedException("관리자 혹은 본인을 좋아요한 멤버로 설정할 수 없습니다.");
         }
@@ -223,12 +221,6 @@ public class MatchingController {
                         .data(response)
                         .build());
     }
-
-
-    /**
-     * 싫어요한 매칭 멤버
-     */
-
 
     @ApiOperation(value = "Matching 싫어요한 매칭멤버 조회")
     @ApiResponses(value = {
@@ -286,8 +278,6 @@ public class MatchingController {
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
-
-        // 매칭 이미지 공개가 false라면 추가하지 못하게 막기?
 
         if(selectedDislikedMemberId == loginMemberId || selectedDislikedMemberId == 1) {
             throw new UnauthorizedException("관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다.");

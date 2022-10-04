@@ -65,8 +65,9 @@ public class EmailController {
         Optional<Email> email = emailService.findByEmailOp(request.getEmail());
 
         if(!email.isEmpty()) {
-            Optional<Member> memberByEmail = Optional.ofNullable(memberService.findByEmail(requestEmail));
-            if(memberByEmail.isPresent()) {
+            Optional<Long> foundMemberId = memberService.findByEmailOp(requestEmail);
+
+            if(foundMemberId.isPresent()) {
                 throw new ConflictException("이미 가입된 이메일입니다.");
             }
         }

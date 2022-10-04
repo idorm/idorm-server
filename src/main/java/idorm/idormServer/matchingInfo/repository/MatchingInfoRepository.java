@@ -42,10 +42,15 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
             "mi.join_period = :joinPeriod AND " +
             "mi.gender = :gender AND " +
             "mi.is_snoring = :isSnoring AND " +
+            "mi.is_snoring = 0 AND " +
             "mi.is_smoking = :isSmoking AND " +
+            "mi.is_smoking = 0 AND " +
             "mi.is_grinding = :isGrinding AND " +
+            "mi.is_grinding = 0 AND " +
             "mi.is_wear_earphones = :isWearEarphones AND " +
+            "mi.is_wear_earphones = 1 AND " +
             "mi.is_allowed_food = :isAllowedFood AND " +
+            "mi.is_allowed_food = 0 AND " +
             "mi.age >= :minAge && mi.age <= :maxAge AND " +
             "mi.is_matching_info_public = 1", nativeQuery = true)
     List<Long> findFilteredMatchingMembers(@Param("memberId") Long memberId,
