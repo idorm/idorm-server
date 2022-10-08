@@ -36,9 +36,6 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToOne(mappedBy = "member")
     private Photo photo; // 프로필 사진
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    private List<LikedMember> likedMembers = new ArrayList<>();
-
     /**
      * security code
      */
@@ -112,21 +109,6 @@ public class Member extends BaseEntity implements UserDetails {
     public void deleteMatchingInfo() {
         this.matchingInfo = null;
     }
-
-
-//    public void addLikedMember(Member likedMember) {
-//        this.likedMembers.add(likedMember);
-//        this.loginMember.setLikedMembers(this.likedMembers);
-//    }
-//
-//    public void deleteLikedMember(Member dislikedMember) {
-//        this.likedMembers.remove(dislikedMember);
-//        this.loginMember.setLikedMembers(this.likedMembers);
-//    }
-
-//    public void addDislikedMember(Member member) {
-//        this.dislikedMembers.add(member);
-//    }
 
     public void updatePhoto(Photo photo) {
         this.photo = photo;

@@ -34,6 +34,25 @@ public class PhotoService {
     private final AmazonS3Client amazonS3Client;
 
     /**
+     * Photo 파일이름으로 사진 조회 |
+     * 프로필 사진의 파일이름으로 포토를 조회한다. 조회되지 않는다면 404(Not Found)를 던진다.
+     */
+    public Photo findOneByFileName(String fileName) {
+        log.info("IN PROGRESS | Photo 조회 At " + LocalDateTime.now() +
+                " | 파일명 = " + fileName);
+
+        Optional<Photo> foundPhoto = photoRepository.findByFileName(fileName);
+
+        if (foundPhoto.isEmpty()) {
+            throw new NotFoundException("업로드된 파일이 없습니다.");
+        }
+
+        log.info("COMPLETE | Photo 조회 At " + LocalDateTime.now() +
+                " | 파일명 = " + fileName);
+        return foundPhoto.get();
+    }
+
+    /**
      * Photo 멤버 프로필 사진 저장 |
      * 사진을 S3에 저장한 후에 디비에 관련 정보를 입력한다. 저장 중 오류가 발생하면 500(Internal Server Error)을 던진다.
      */

@@ -8,14 +8,20 @@ import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
+import idorm.idormServer.photo.domain.Photo;
+import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.Integer.parseInt;
 
 @Slf4j
 @Service
@@ -25,6 +31,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final EmailService emailService;
+    private final PhotoService photoService;
 
     /**
      * Member 저장 |
@@ -47,6 +54,36 @@ public class MemberService {
 
         log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
         return member.getId();
+    }
+
+    /**
+     * Member 프로필 사진 저장 |
+     * 멤버의 프로필 사진을 저장한다. 식별자를 통해 멤버 조회 중 에러가 발생하면 401(Unauthorized)를 던진다. 저장할 파일이 존재 한다면 파일 이름을
+     * 부여하여 저장한다.
+     */
+    @Transactional
+    public Long savePhoto(Long memberId, MultipartFile photo) {
+
+        log.info("IN PROGRESS | Member 프로필 포토 저장 At " + LocalDateTime.now() + " | " + memberId);
+        Member foundMember = findById(memberId);
+
+        try {
+            String[] memberEmail = foundMember.getEmail().split("[@]");
+
+            String memberEmailSplit = memberEmail[0];
+
+            String fileName = memberEmailSplit + photo.getContentType().replace("image/", ".");
+            log.info("저장된 프로필 이미지 파일명 | " + fileName);
+
+            Photo savedPhoto = photoService.save(foundMember, fileName, photo);
+
+            foundMember.updatePhoto(savedPhoto);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 프로필 사진 저장 중 서버 에러 발생", e);
+        }
+
+        log.info("COMPLETE | Member 프로필 포토 저장 At " + LocalDateTime.now() + " | " + memberId);
+        return foundMember.getId();
     }
 
     /**
@@ -179,6 +216,25 @@ public class MemberService {
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 삭제 중 서버 에러 발생", e);
         }
+    }
+
+    /**
+     * Member 프로필 포토 삭제 |
+     * 멤버 식별자를 통해 관련된 멤버 정보를 조회하여 멤버 프로필 사진을 삭제한다.
+     */
+    @Transactional
+    public void deleteMemberPhoto(Long memberId, String fileName) {
+        log.info("IN PROGRESS | Member 사진 삭제 At " + LocalDateTime.now() + " | " + memberId);
+
+        Member foundMember = findById(memberId);
+        photoService.findOneByFileName(fileName);
+
+        try {
+            photoService.delete(foundMember, fileName);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 프로필 사진 삭제 중 서버 에러 발생", e);
+        }
+        log.info("COMPLETE | Member 사진 삭제 At " + LocalDateTime.now() + " | " + memberId);
     }
 
     /**

@@ -22,9 +22,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -102,6 +104,59 @@ public class MemberController {
                 .body(DefaultResponseDto.builder()
                         .responseCode("OK")
                         .responseMessage("Member 회원가입 완료")
+                        .data(response)
+                        .build());
+    }
+
+    @ApiOperation(value = "Member 프로필 사진 저장")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Member 프로필 사진 저장 완료"),
+            @ApiResponse(code = 401, message = "해당 id의 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 500, message = "업로드된 사진이 존재하지 않습니다. (추후 에러 핸들링 예정)")
+    }
+    )
+    @PostMapping("/member/profile-photo")
+    public ResponseEntity<DefaultResponseDto<Object>> saveMemberProfilePhoto(
+            HttpServletRequest request2, @RequestPart MultipartFile photo) {
+
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
+
+        memberService.savePhoto(loginMemberId, photo);
+
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Member 프로필 사진 저장 완료")
+                        .data(response)
+                        .build());
+    }
+
+    @ApiOperation(value = "Member 프로필 사진 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Member 프로필 사진 삭제 완료"),
+            @ApiResponse(code = 400, message = "파일이름 입력은 필수입니다."),
+            @ApiResponse(code = 401, message = "해당 id의 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 500, message = "Member 프로필 사진 삭제 중 서버 에러 발생")
+    }
+    )
+    @DeleteMapping("/member/profile-photo")
+    public ResponseEntity<DefaultResponseDto<Object>> deleteMemberProfilePhoto(
+            HttpServletRequest request2, MemberDeletePhotoRequestDto deleteRequestDto) {
+
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
+
+        memberService.deleteMemberPhoto(loginMemberId, deleteRequestDto.getFileName());
+
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Member 프로필 사진 삭제 완료")
                         .data(response)
                         .build());
     }

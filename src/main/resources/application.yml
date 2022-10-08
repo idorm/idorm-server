@@ -11,7 +11,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none # DDL 기능 사용 여부(create/update/create-drop/validate/none) / 운영DB에서는 사용 금지
+      ddl-auto: create-drop # DDL 기능 사용 여부(create/update/create-drop/validate/none) / 운영DB에서는 사용 금지
       use-new-id-generator-mappings: false
     properties:
       hibernate:
@@ -22,11 +22,11 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-#  servlet:
-#    multipart:
-#      max-file-size: ${MAX_FILE_SIZE}
-#      max-request-size: ${MAX_REQUEST_SIZE}
-#      enabled: true
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_REQUEST_SIZE}
+      enabled: true
 
 # S3
 s3.accessKey: ${S3_ACCESS_KEY}
