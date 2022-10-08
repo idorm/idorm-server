@@ -22,11 +22,11 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-#  servlet:
-#    multipart:
-#      max-file-size: ${MAX_FILE_SIZE}
-#      max-request-size: ${MAX_REQUEST_SIZE}
-#      enabled: true
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_REQUEST_SIZE}
+      enabled: true
 
 # S3
 s3.accessKey: ${S3_ACCESS_KEY}
