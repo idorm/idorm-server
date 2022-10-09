@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -32,6 +33,7 @@ public class PhotoService {
     private String bucketName;
     private final PhotoRepository photoRepository;
     private final AmazonS3Client amazonS3Client;
+    private final String CALENDAR_FOLDER = "/calendar";
 
     /**
      * Photo 파일이름으로 사진 조회 |
@@ -79,6 +81,12 @@ public class PhotoService {
         } catch (Exception e) {
             throw new InternalServerErrorException("Photo save 중 에러 발생", e);
         }
+    }
+
+    public String putImage(MultipartFile file) {
+        String fileName = UUID.randomUUID().toString();
+
+        return insertFileToS3(CALENDAR_FOLDER, fileName, file);
     }
 
     /**
@@ -138,6 +146,10 @@ public class PhotoService {
         }
     }
 
+    public void deleteImage(String fileName) {
+        deleteFileFromS3(CALENDAR_FOLDER, fileName);
+    }
+
     /**
      * S3에 파일 삭제 |
      * S3로부터 파일을 삭제한다. 삭제 중 오류가 발생하면 500(Internal Server Error)을 던진다.
@@ -150,5 +162,4 @@ public class PhotoService {
             throw new InternalServerErrorException("Photo deleteFileFromS3 중 에러 발생", e);
         }
     }
-
 }
