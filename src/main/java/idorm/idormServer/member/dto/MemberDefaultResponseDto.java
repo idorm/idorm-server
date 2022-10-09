@@ -1,6 +1,7 @@
 package idorm.idormServer.member.dto;
 
 import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.photo.domain.Photo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -50,8 +51,11 @@ public class MemberDefaultResponseDto {
         this.email = member.getEmail();
         this.nickname = member.getNickname();
         this.loginToken = token;
-        this.profilePhotoFileName = member.getPhoto().getFileName();
-        this.profilePhotoUrl = member.getPhoto().getUrl();
+        Photo photo = member.getPhoto();
+        if(photo != null) {
+            this.profilePhotoFileName = photo.getFileName();
+        }
+//        this.profilePhotoUrl = member.getPhoto().getUrl();
 
         if(member.getMatchingInfo() != null) {
             this.matchingInfoId = member.getMatchingInfo().getId();
