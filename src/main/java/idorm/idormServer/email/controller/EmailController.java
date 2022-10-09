@@ -8,6 +8,7 @@ import idorm.idormServer.email.dto.EmailVerifyRequestDto;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
@@ -94,95 +95,12 @@ public class EmailController {
 
     }
 
-    @ApiOperation(value = "비밀번호 수정용 Email 인증")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Email 인증코드 전송 완료"),
-            @ApiResponse(code = 401, message = "이메일을 찾을 수 없습니다."),
-            @ApiResponse(code = 409, message = "가입되지 않은 이메일입니다.")
-    }
-    )
-    @PostMapping("/email/password")
-    public ResponseEntity<DefaultResponseDto<Object>> findPassword(
-            @RequestBody @Valid EmailAuthRequestDto request) {
-
-        String requestEmail = request.getEmail();
-
-        Email email = emailService.findByEmail(requestEmail);
-
-        Optional<Member> memberByEmail = Optional.ofNullable(memberService.findByEmail(requestEmail));
-
-        if(memberByEmail.isEmpty()) {
-            throw new ConflictException("가입되지 않은 이메일입니다.");
-        }
-
-        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email);
-
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Email 인증코드 전송 완료")
-                        .data(response)
-                        .build());
-
-    }
-
-    @ApiOperation(value = "비밀번호 수정용 Email 인증코드 검증", notes = "/email/password 인증코드 확인 용도")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Email 인증코드 검증 완료"),
-            @ApiResponse(code = 400, message = "잘못된 인증번호입니다."),
-            @ApiResponse(code = 401, message = "가입되지 않은 이메일입니다."),
-            @ApiResponse(code = 404, message = "인증기간이 만료되었습니다."),
-    }
-    )
-    @PostMapping("/verifyCode/password/{email}")
-    public ResponseEntity<DefaultResponseDto<Object>> verifyCodePassword(
-            @PathVariable("email") String requestEmail, @RequestBody EmailVerifyRequestDto code) {
-
-        Optional<Email> email = emailService.findByEmailOp(requestEmail);
-        Member member = memberService.findByEmail(requestEmail);
-
-        if(email.isEmpty()) {
-            throw new UnauthorizedException("가입되지 않은 이메일입니다.");
-        }
-
-        LocalDateTime updateDateTime = email.get().getUpdatedAt();
-        LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
-
-        if(LocalDateTime.now().isAfter(expiredDateTime)) {
-            throw new UnauthorizedException("인증기간이 만료되었습니다.");
-        }
-
-        if(!(email.get().getCode().equals(code.getCode()))) {
-            throw new UnauthorizedException("잘못된 인증번호입니다.");
-        }
-
-        Iterator<String> iter = member.getRoles().iterator();
-
-        List<String> roles = new ArrayList<>();
-
-        while (iter.hasNext()) {
-            roles.add(iter.next());
-        }
-
-        jwtTokenProvider.createToken(member.getUsername(), roles);
-
-        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email.get());
-
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Email 인증코드 검증 완료")
-                        .data(response)
-                        .build());
-
-    }
-
     @ApiOperation(value = "Email 인증코드 검증", notes = "/email 인증코드 확인 용도")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Email 인증코드 검증 완료"),
-            @ApiResponse(code = 400, message = "잘못된 인증번호입니다."),
-            @ApiResponse(code = 401, message = "등록되지 않은 이메일입니다."),
-            @ApiResponse(code = 404, message = "인증기간이 만료되었습니다.")
+            @ApiResponse(code = 401, message = "인증에 실패했습니다."),
+            @ApiResponse(code = 404, message = "인증번호가 만료되었습니다."),
+            @ApiResponse(code = 409, message = "잘못된 인증번호입니다.")
     }
     )
     @PostMapping("/verifyCode/{email}")
@@ -192,11 +110,16 @@ public class EmailController {
         Email email = emailService.findByEmail(requestEmail);
 
         LocalDateTime updateDateTime = email.getUpdatedAt();
-        LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
+        LocalDateTime expiredDateTime = updateDateTime.plusMinutes(1);
+
+        if(!(email.getCode().equals(code.getCode()))) {
+            throw new ConflictException("잘못된 인증번호입니다.");
+        }
 
         if(LocalDateTime.now().isAfter(expiredDateTime)) {
-            throw new UnauthorizedException("인증기간이 만료되었습니다.");
+            throw new NotFoundException("인증번호가 만료되었습니다.");
         }
+
 
         if(email.getCode().equals(code.getCode())) {
 
@@ -214,6 +137,82 @@ public class EmailController {
         else{
             throw new UnauthorizedException("잘못된 인증번호입니다.");
         }
+    }
+
+    @ApiOperation(value = "비밀번호 수정용 Email 인증")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Email 인증코드 전송 완료"),
+            @ApiResponse(code = 400, message = "올바른 이메일 형식이 아닙니다."),
+            @ApiResponse(code = 404, message = "등록 혹은 가입되지 않은 이메일입니다.")
+    }
+    )
+    @PostMapping("/email/password")
+    public ResponseEntity<DefaultResponseDto<Object>> findPassword(
+            @RequestBody @Valid EmailAuthRequestDto request) {
+
+        String requestEmail = request.getEmail();
+
+        memberService.findByEmail(requestEmail);
+        Email email = emailService.findByEmail(requestEmail);
+
+        emailService.updateUpdatedAt(email);
+
+        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Email 인증코드 전송 완료")
+                        .data(response)
+                        .build());
+
+    }
+
+    @ApiOperation(value = "비밀번호 수정용 Email 인증코드 검증", notes = "/email/password 인증코드 확인 용도")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Email 인증코드 검증 완료"),
+            @ApiResponse(code = 401, message = "인증번호가 만료되었습니다."),
+            @ApiResponse(code = 404, message = "등록 혹은 가입되지 않은 이메일입니다."),
+            @ApiResponse(code = 409, message = "잘못된 인증번호입니다."),
+    }
+    )
+    @PostMapping("/verifyCode/password/{email}")
+    public ResponseEntity<DefaultResponseDto<Object>> verifyCodePassword(
+            @PathVariable("email") String requestEmail, @RequestBody EmailVerifyRequestDto code) {
+
+        Optional<Email> email = emailService.findByEmailOp(requestEmail);
+        Member member = memberService.findByEmail(requestEmail);
+
+        LocalDateTime updateDateTime = email.get().getUpdatedAt();
+        LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
+
+        if(!(email.get().getCode().equals(code.getCode()))) {
+            throw new ConflictException("잘못된 인증번호입니다.");
+        }
+
+        if(LocalDateTime.now().isAfter(expiredDateTime)) {
+            throw new NotFoundException("인증번호가 만료되었습니다.");
+        }
+
+
+        Iterator<String> iter = member.getRoles().iterator();
+        List<String> roles = new ArrayList<>();
+
+        while (iter.hasNext()) {
+            roles.add(iter.next());
+        }
+
+        jwtTokenProvider.createToken(member.getUsername(), roles);
+
+        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email.get());
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Email 인증코드 검증 완료")
+                        .data(response)
+                        .build());
+
     }
 
     /**

@@ -98,7 +98,7 @@ public class MemberService {
         Optional<Long> foundMember = memberRepository.findMemberIdByEmail(email);
 
         if (foundMember.isPresent()) {
-            throw new ConflictException("이미 존재하는 회원입니다.");
+            throw new ConflictException("이미 가입된 이메일입니다.");
         }
 
         log.info("COMPLETE | Member 중복 여부 확인 At " + LocalDateTime.now() + " | " + email);

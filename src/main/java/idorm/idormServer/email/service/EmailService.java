@@ -83,7 +83,7 @@ public class EmailService {
         Optional<Email> foundEmail = emailRepository.findByEmail(email);
 
         if(foundEmail.isEmpty()) {
-            throw new UnauthorizedException("등록되지 않은 이메일입니다.");
+            throw new NotFoundException("등록되지 않은 이메일입니다.");
         }
 
         log.info("COMPLETE | Email 조회 At " + LocalDateTime.now() + " | " + foundEmail.get().getEmail());
@@ -149,6 +149,18 @@ public class EmailService {
         foundEmail.get().isJoined();
         emailRepository.save(foundEmail.get());
         log.info("COMPLETE | Email 가입여부 수정 At " + LocalDateTime.now() + " | " + email);
+    }
+
+    /**
+     * Email updatedAt 수정 |
+     * 이메일 전송 시 인증기간 만료 체크를 위해 updatedAt을 현재 시간으로 수정해야 한다.
+     */
+    @Transactional
+    public void updateUpdatedAt(Email email) {
+        log.info("START | Email updatedAt 수정 At " + LocalDateTime.now() + " | " + email);
+        email.modifyUpdatedAt(LocalDateTime.now());
+        emailRepository.save(email);
+        log.info("COMPLETE | Email updatedAt 수정 At " + LocalDateTime.now() + " | " + email);
     }
 
 }

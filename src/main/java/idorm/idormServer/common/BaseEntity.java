@@ -20,4 +20,8 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt; // 수정일
 
+    public void modifyUpdatedAt(LocalDateTime now) {
+        this.updatedAt = now;
+    }
+
 }

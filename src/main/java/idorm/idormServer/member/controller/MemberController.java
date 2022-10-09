@@ -77,9 +77,9 @@ public class MemberController {
     @ApiOperation(value = "Member 회원가입", notes = "회원가입은 이메일 인증이 완료된 후 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 회원가입 완료"),
-            @ApiResponse(code = 400, message = "입력은 필수입니다."),
-            @ApiResponse(code = 401, message = "등록되지 않은 이메일입니다."),
-            @ApiResponse(code = 500, message = "이미 존재하는 회원입니다.")
+            @ApiResponse(code = 400, message = "올바른 형식의 이메일 주소여야 합니다."),
+            @ApiResponse(code = 401, message = "인증에 실패했습니다."),
+            @ApiResponse(code = 409, message = "이미 가입된 이메일입니다.")
     }
     )
     @PostMapping("/register")
@@ -292,10 +292,7 @@ public class MemberController {
     @ApiOperation(value = "Member 로그인", notes = "로그인 후 토큰을 던져줍니다.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 로그인 완료, 토큰을 반환합니다."),
-            @ApiResponse(code = 400, message = "가입되지 않은 이메일입니다."),
-            @ApiResponse(code = 400, message = "이메일 입력은 필수입니다."),
-            @ApiResponse(code = 400, message = "비밀번호 입력은 필수입니다."),
-            @ApiResponse(code = 401, message = "올바르지 않은 비밀번호입니다.")
+            @ApiResponse(code = 401, message = "인증에 실패했습니다.")
     }
     )
     @PostMapping("/login")
