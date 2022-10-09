@@ -4,13 +4,16 @@ import idorm.idormServer.calendar.domain.Calendar;
 import idorm.idormServer.calendar.dto.DateFilterDto;
 import idorm.idormServer.calendar.repository.CalendarRepository;
 import idorm.idormServer.exceptions.http.NotFoundException;
+import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -18,6 +21,7 @@ import java.util.NoSuchElementException;
 public class CalendarService {
 
     private final CalendarRepository calendarRepository;
+    private final PhotoService photoService;
 
     @Transactional
     public Calendar save(Calendar entity) {
@@ -52,6 +56,16 @@ public class CalendarService {
 
     @Transactional
     public void delete(Long id) {
+
+        Optional<Calendar> calendar = calendarRepository.findById(id);
+        calendar.ifPresent( value -> {
+            String imageUrl = value.getImageUrl();
+            if(imageUrl != null) {
+                String uuid = value.getImageUrl().split("/")[4];
+                photoService.deleteImage(uuid);
+            }
+        });
+
         calendarRepository.deleteById(id);
     }
 }
