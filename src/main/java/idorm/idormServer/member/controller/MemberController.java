@@ -5,6 +5,7 @@ import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.*;
@@ -26,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -78,7 +78,7 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 회원가입 완료"),
             @ApiResponse(code = 400, message = "올바른 형식의 이메일 주소여야 합니다."),
-            @ApiResponse(code = 401, message = "인증에 실패했습니다."),
+            @ApiResponse(code = 404, message = "등록하지 않은 이메일입니다."),
             @ApiResponse(code = 409, message = "이미 가입된 이메일입니다.")
     }
     )
@@ -88,7 +88,7 @@ public class MemberController {
         Optional<Email> emailOp = emailService.findByEmailOp(request.getEmail());
 
         if(emailOp.isEmpty()) {
-            throw new UnauthorizedException("등록하지 않은 이메일입니다.");
+            throw new NotFoundException("등록하지 않은 이메일입니다.");
         }
 
         Long createdMemberId = memberService.save(request.getEmail(), passwordEncoder.encode(request.getPassword()));
@@ -165,7 +165,7 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 로그인 상태에서 비밀번호 변경 완료"),
             @ApiResponse(code = 400, message = "비밀번호 입력은 필수입니다."),
-            @ApiResponse(code = 401, message = "비밀번호를 변경할 멤버를 찾을 수 없습니다."),
+            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
             @ApiResponse(code = 500, message = "Member 비밀번호 변경 중 서버 에러 발생")
     }
     )
@@ -178,7 +178,6 @@ public class MemberController {
         memberService.updatePassword(loginMemberId, passwordEncoder.encode(request.getPassword()));
 
         Member member = memberService.findById(loginMemberId);
-
         emailService.updateIsJoined(member.getEmail());
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
@@ -194,9 +193,8 @@ public class MemberController {
     @ApiOperation(value = "로그인 불가 시, Member 비밀번호 변경")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 로그아웃 상태에서 비밀번호 변경 완료"),
-            @ApiResponse(code = 400, message = "입력은 필수입니다."),
-            @ApiResponse(code = 401, message = "등록되지 않은 이메일입니다."),
-            @ApiResponse(code = 404, message = "비밀번호를 변경할 멤버를 찾을 수 없습니다."),
+            @ApiResponse(code = 400, message = "올바른 형식의 이메일 주소여야 합니다."),
+            @ApiResponse(code = 404, message = "등록 혹은 가입되지 않은 이메일입니다."),
             @ApiResponse(code = 500, message = "Member 비밀번호 변경 중 서버 에러 발생")
     }
     )

@@ -1,7 +1,6 @@
 package idorm.idormServer.exceptions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import idorm.idormServer.exceptions.http.ForbiddenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;

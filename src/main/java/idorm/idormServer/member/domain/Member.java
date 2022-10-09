@@ -1,7 +1,6 @@
 package idorm.idormServer.member.domain;
 
 import idorm.idormServer.common.BaseEntity;
-import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.Photo;
 import lombok.*;
@@ -91,9 +90,6 @@ public class Member extends BaseEntity implements UserDetails {
         this.roles.add("ROLE_USER");
     }
 
-    /**
-     * 비지니스 로직
-     */
     public void updatePassword(String password) {
         this.password = password;
     }
@@ -113,5 +109,4 @@ public class Member extends BaseEntity implements UserDetails {
     public void updatePhoto(Photo photo) {
         this.photo = photo;
     }
-
 }

@@ -4,7 +4,6 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.repository.EmailRepository;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.exceptions.http.NotFoundException;
-import idorm.idormServer.exceptions.http.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;

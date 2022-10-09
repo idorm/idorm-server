@@ -1,6 +1,5 @@
 package idorm.idormServer.email.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import idorm.idormServer.email.domain.Email;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

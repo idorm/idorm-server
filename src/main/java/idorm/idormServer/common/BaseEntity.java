@@ -15,10 +15,10 @@ public abstract class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdAt; // 생성일
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime updatedAt; // 수정일
+    private LocalDateTime updatedAt;
 
     public void modifyUpdatedAt(LocalDateTime now) {
         this.updatedAt = now;

@@ -38,11 +38,14 @@ public class MemberDefaultResponseDto {
         this.id = member.getId();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
-        this.profilePhotoFileName = member.getPhoto().getFileName();
-        this.profilePhotoUrl = member.getPhoto().getUrl();
 
         if(member.getMatchingInfo() != null) {
             this.matchingInfoId = member.getMatchingInfo().getId();
+        }
+
+        if(member.getPhoto() != null) {
+            this.profilePhotoFileName = member.getPhoto().getFileName();
+            this.profilePhotoUrl = member.getPhoto().getUrl();
         }
     }
 
@@ -51,11 +54,11 @@ public class MemberDefaultResponseDto {
         this.email = member.getEmail();
         this.nickname = member.getNickname();
         this.loginToken = token;
-        Photo photo = member.getPhoto();
-        if(photo != null) {
-            this.profilePhotoFileName = photo.getFileName();
+
+        if(member.getPhoto() != null) {
+            this.profilePhotoFileName = member.getPhoto().getFileName();
+            this.profilePhotoUrl = member.getPhoto().getUrl();
         }
-//        this.profilePhotoUrl = member.getPhoto().getUrl();
 
         if(member.getMatchingInfo() != null) {
             this.matchingInfoId = member.getMatchingInfo().getId();

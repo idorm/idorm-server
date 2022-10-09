@@ -1,15 +1,10 @@
 package idorm.idormServer.config;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Pageable;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
@@ -19,10 +14,6 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import java.util.Arrays;
 import java.util.List;
-
-/**
- * http://localhost:8080/swagger-ui/#/
- */
 
 @Configuration
 public class SwaggerConfiguration {
@@ -66,10 +57,6 @@ public class SwaggerConfiguration {
         authorizationScopes[0] = authorizationScope;
         return Arrays.asList(new SecurityReference("X-AUTH-TOKEN", authorizationScopes));
     }
-
-    /**
-     * jwt 인증을 위한 swagger 코드 end
-     */
 
     /**
      * api 정보 설정 부분

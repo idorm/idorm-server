@@ -10,12 +10,12 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @Getter
-@MappedSuperclass // 공통 매핑 정보가 필요할 때 사용, 부모 클래스를 상속받는 자식 클래스에 매핑
-@EntityListeners(AuditingEntityListener.class) // Auditing 적용 어노테이션
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseTimeEntity {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdAt; // 생성일
+    private LocalDateTime createdAt;
 
 }
