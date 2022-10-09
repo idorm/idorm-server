@@ -1,6 +1,7 @@
 package idorm.idormServer.auth;
 
-import idorm.idormServer.exceptions.http.NotFoundException;
+import idorm.idormServer.exceptions.http.InternalServerErrorException;
+import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

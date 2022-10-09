@@ -6,7 +6,6 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.NotFoundException;
-import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.MemberService;
@@ -46,14 +45,16 @@ public class MemberController {
     @Value("${id}")
     private String ENV_USERNAME;
 
+    @Value("${password}")
+    private String ENV_PASSWORD;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @ApiOperation(value = "Member 단건 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 단건 조회 완료"),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "Member 단건 조회 중 서버 에러 발생")
+            @ApiResponse(code = 401, message = "로그인이 필요합니다.")
     })
     @GetMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> findOneMember(
@@ -61,7 +62,6 @@ public class MemberController {
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
-
         Member member = memberService.findById(loginMemberId);
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
@@ -111,16 +111,21 @@ public class MemberController {
     @ApiOperation(value = "Member 프로필 사진 저장")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 프로필 사진 저장 완료"),
-            @ApiResponse(code = 401, message = "해당 id의 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "업로드된 사진이 존재하지 않습니다. (추후 에러 핸들링 예정)")
+            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
+            @ApiResponse(code = 404, message = "업로드한 파일이 존재하지 않습니다."),
+            @ApiResponse(code = 500, message = "Member 프로필 사진 저장 중 서버 에러 발생")
     }
     )
     @PostMapping("/member/profile-photo")
     public ResponseEntity<DefaultResponseDto<Object>> saveMemberProfilePhoto(
-            HttpServletRequest request2, @RequestPart MultipartFile photo) {
+            HttpServletRequest request2, @RequestPart(value = "file", required = false) MultipartFile photo) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
+
+        if(photo == null) {
+            throw new NotFoundException("업로드한 파일이 존재하지 않습니다.");
+        }
 
         memberService.savePhoto(loginMemberId, photo);
 
@@ -138,13 +143,14 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 프로필 사진 삭제 완료"),
             @ApiResponse(code = 400, message = "파일이름 입력은 필수입니다."),
-            @ApiResponse(code = 401, message = "해당 id의 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
+            @ApiResponse(code = 404, message = "업로드한 파일이 없습니다."),
             @ApiResponse(code = 500, message = "Member 프로필 사진 삭제 중 서버 에러 발생")
     }
     )
     @DeleteMapping("/member/profile-photo")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMemberProfilePhoto(
-            HttpServletRequest request2, MemberDeletePhotoRequestDto deleteRequestDto) {
+            HttpServletRequest request2, @Valid MemberDeletePhotoRequestDto deleteRequestDto) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
@@ -224,9 +230,9 @@ public class MemberController {
     @ApiOperation(value = "Member 닉네임 변경")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 닉네임 변경 완료"),
-            @ApiResponse(code = 400, message = "기존의 닉네임과 같습니다."),
-            @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 409, message = "이미 존재하는 닉네임입니다."),
+            @ApiResponse(code = 400, message = "닉네임 입력은 필수입니다."),
+            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
+            @ApiResponse(code = 409, message = "기존의 닉네임과 같습니다. 혹은 이미 존재하는 닉네임입니다."),
             @ApiResponse(code = 500, message = "Member 비밀번호 변경 중 서버 에러 발생")
     }
     )
@@ -262,9 +268,8 @@ public class MemberController {
     @ApiOperation(value = "Member 삭제")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 삭제 완료"),
-            @ApiResponse(code = 401, message = "등록되지 않은 이메일입니다."),
-            @ApiResponse(code = 404, message = "삭제할 멤버를 찾을 수 없습니다."),
-            @ApiResponse(code = 500, message = "Member 삭제 중 서버 에러 발생")
+            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
+            @ApiResponse(code = 500, message = "사용자를 찾을 수 없습니다.")
     }
     )
     @DeleteMapping("/member")
@@ -290,16 +295,28 @@ public class MemberController {
     @ApiOperation(value = "Member 로그인", notes = "로그인 후 토큰을 던져줍니다.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 로그인 완료, 토큰을 반환합니다."),
-            @ApiResponse(code = 401, message = "인증에 실패했습니다.")
+            @ApiResponse(code = 400, message = "이메일 입력은 필수입니다."),
+            @ApiResponse(code = 404, message = "등록 혹은 가입되지 않은 이메일입니다."),
+            @ApiResponse(code = 409, message = "올바르지 않은 비밀번호입니다.")
     }
     )
     @PostMapping("/login")
-    public ResponseEntity<DefaultResponseDto<Object>> login(@RequestBody MemberLoginRequestDto request) {
+    public ResponseEntity<DefaultResponseDto<Object>> login(
+            @RequestBody @Valid MemberLoginRequestDto request) {
 
-        Member loginMember = memberService.findByEmail(request.getEmail());
+        Member loginMember = null;
 
-        if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
-            throw new UnauthorizedException("올바르지 않은 비밀번호입니다.");
+        if(request.getEmail().equals(ENV_USERNAME)) {
+            if (!passwordEncoder.matches(request.getPassword(), ENV_PASSWORD)) {
+                throw new ConflictException("올바르지 않은 비밀번호입니다.");
+            }
+            loginMember = memberService.findById(1L);
+        } else {
+            loginMember = memberService.findByEmail(request.getEmail());
+
+            if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
+                throw new ConflictException("올바르지 않은 비밀번호입니다.");
+            }
         }
 
         Iterator<String> iter = loginMember.getRoles().iterator();
@@ -329,9 +346,8 @@ public class MemberController {
     @ApiOperation(value = "관리자용 / Member 전체 조회", notes = "가입된 전체 멤버에 대한 데이터를 조회할 수 있습니다.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 전체 조회 완료"),
-            @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "조회할 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
+            @ApiResponse(code = 403, message = "일반 유저 로그인이 아닌 관리자 로그인이 필요합니다."),
             @ApiResponse(code = 500, message = "Member 전체 조회 중 서버 에러 발생")
     }
     )
@@ -354,10 +370,10 @@ public class MemberController {
     @ApiOperation(value = "관리자용 / 특정 Member 정보 수정 (비밀번호, 닉네임)")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 정보 수정 완료"),
-            @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "해당 id의 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "Member 비밀번호 변경 중 서버 에러 발생")
+            @ApiResponse(code = 400, message = "닉네임 혹은 비밀번호 입력은 필수입니다."),
+            @ApiResponse(code = 401, message = "로그인이 필요합니다. 혹은 수정할 id의 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 403, message = "일반 유저 로그인이 아닌 관리자 로그인이 필요합니다."),
+            @ApiResponse(code = 500, message = "Member 닉네임 혹은 비밀번호 변경 중 서버 에러 발생")
     }
     )
     @PatchMapping("/admin/member/{id}")
@@ -382,9 +398,8 @@ public class MemberController {
     @ApiOperation(value = "관리자용 / 특정 Member 삭제")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 삭제 완료"),
-            @ApiResponse(code = 401, message = "UnAuthorized"),
-            @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "삭제할 멤버를 찾을 수 없습니다."),
+            @ApiResponse(code = 401, message = "로그인이 필요합니다. 혹은 삭제할 id의 멤버를 찾을 수 없습니다."),
+            @ApiResponse(code = 403, message = "일반 유저 로그인이 아닌 관리자 로그인이 필요합니다."),
             @ApiResponse(code = 500, message = "Member 삭제 중 서버 에러 발생")
     }
     )

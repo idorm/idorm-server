@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Getter
@@ -14,7 +13,6 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class MemberLoginRequestDto {
 
-    @Email
     @NotBlank(message = "이메일 입력은 필수입니다.")
     @ApiModelProperty(position = 1, required = true, dataType = "String", value = "이메일", example = "aaa@inu.ac.kr")
     private String email;

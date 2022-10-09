@@ -46,7 +46,7 @@ public class PhotoService {
         Optional<Photo> foundPhoto = photoRepository.findByFileName(fileName);
 
         if (foundPhoto.isEmpty()) {
-            throw new NotFoundException("업로드된 파일이 없습니다.");
+            throw new NotFoundException("업로드한 파일이 없습니다.");
         }
 
         log.info("COMPLETE | Photo 조회 At " + LocalDateTime.now() +
@@ -123,6 +123,26 @@ public class PhotoService {
         fileOutputStream.close();
         log.info("COMPLETE | MultipartFile을 File로 전환 At " + LocalDateTime.now());
         return convertingFile;
+    }
+
+    /**
+     * Photo 멤버 프로필 사진 수정 |
+     * 사진을 S3에 저장한 후에 디비에 관련 정보를 입력한다. 저장 중 오류가 발생하면 500(Internal Server Error)을 던진다.
+     */
+    @Transactional
+    public Photo update(Member member, String fileName, MultipartFile file) {
+        log.info("IN PROGRESS | Photo 업데이트 At " + LocalDateTime.now() +
+                " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
+
+        String folderName = member.getEmail() + "-" + member.getId();
+        String url = insertFileToS3(folderName, fileName, file);
+
+        Photo savedPhoto = findOneByFileName(fileName);
+        savedPhoto.modifyUpdatedAt(LocalDateTime.now());
+
+        log.info("COMPLETE | Photo 업데이트 At " + LocalDateTime.now() +
+                " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
+        return savedPhoto;
     }
 
     /**

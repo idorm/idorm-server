@@ -56,26 +56,33 @@ public class MemberService {
 
     /**
      * Member 프로필 사진 저장 |
-     * 멤버의 프로필 사진을 저장한다. 식별자를 통해 멤버 조회 중 에러가 발생하면 401(Unauthorized)를 던진다. 저장할 파일이 존재 한다면 파일 이름을
-     * 부여하여 저장한다.
+     * 멤버의 프로필 사진을 저장한다. 저장할 파일이 존재 한다면 파일 이름을 부여하여 저장한다. 저장 전에 이미 저장된 프로필 사진이 존재한다면 DB에는 중복으로
+     * 생성하지 않고, 업데이트 하도록 한다.
      */
     @Transactional
     public Long savePhoto(Long memberId, MultipartFile photo) {
 
         log.info("IN PROGRESS | Member 프로필 포토 저장 At " + LocalDateTime.now() + " | " + memberId);
+
         Member foundMember = findById(memberId);
 
         try {
             String[] memberEmail = foundMember.getEmail().split("[@]");
-
             String memberEmailSplit = memberEmail[0];
-
             String fileName = memberEmailSplit + photo.getContentType().replace("image/", ".");
-            log.info("저장된 프로필 이미지 파일명 | " + fileName);
 
-            Photo savedPhoto = photoService.save(foundMember, fileName, photo);
+            Optional<Photo> foundPhoto = Optional.ofNullable(photoService.findOneByFileName(fileName));
 
-            foundMember.updatePhoto(savedPhoto);
+            if(foundPhoto.isPresent()) {
+                Photo updatedPhoto = photoService.update(foundMember, fileName, photo);
+                foundMember.updatePhoto(updatedPhoto);
+            }
+
+            if(foundPhoto.isEmpty()) {
+                Photo savedPhoto = photoService.save(foundMember, fileName, photo);
+                foundMember.updatePhoto(savedPhoto);
+            }
+
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 프로필 사진 저장 중 서버 에러 발생", e);
         }
