@@ -6,6 +6,7 @@ import idorm.idormServer.calendar.dto.DateFilterDto;
 import idorm.idormServer.calendar.dto.PageableDto;
 import idorm.idormServer.calendar.service.CalendarService;
 import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("calendar")
@@ -24,6 +26,7 @@ public class CalendarController {
     // TODO : Authentication 추가
 
     private final CalendarService calendarService;
+    private final PhotoService photoService;
 
     @PostMapping("")
     @ApiOperation(value = "Calendar 일정 저장", notes = "startTime, endTime 예시 \"2022-10-27T13:44:05\"")
@@ -62,5 +65,11 @@ public class CalendarController {
     @ApiOperation("Calendar 일정 단건 삭제")
     void delete(@PathVariable Long id) {
         calendarService.delete(id);
+    }
+
+    @PostMapping("image")
+    @ApiOperation("Calendar 사진 업로드")
+    String uploadPicture(@RequestPart("file") MultipartFile file) {
+        return photoService.putImage(file);
     }
 }

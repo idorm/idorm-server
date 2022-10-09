@@ -33,7 +33,7 @@ public class PhotoService {
     private String bucketName;
     private final PhotoRepository photoRepository;
     private final AmazonS3Client amazonS3Client;
-    private final String CALENDAR_FOLDER = "/calendar";
+    private final String CALENDAR_FOLDER = "calendar";
 
     /**
      * Photo 파일이름으로 사진 조회 |
