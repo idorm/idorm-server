@@ -3,6 +3,7 @@ package idorm.idormServer.photo.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.member.domain.Member;
@@ -39,19 +40,15 @@ public class PhotoService {
      * Photo 파일이름으로 사진 조회 |
      * 프로필 사진의 파일이름으로 포토를 조회한다. 조회되지 않는다면 404(Not Found)를 던진다.
      */
-    public Photo findOneByFileName(String fileName) {
+    public Optional<Photo> findOneByFileName(String fileName) {
         log.info("IN PROGRESS | Photo 조회 At " + LocalDateTime.now() +
                 " | 파일명 = " + fileName);
 
         Optional<Photo> foundPhoto = photoRepository.findByFileName(fileName);
 
-        if (foundPhoto.isEmpty()) {
-            throw new NotFoundException("업로드한 파일이 없습니다.");
-        }
-
         log.info("COMPLETE | Photo 조회 At " + LocalDateTime.now() +
                 " | 파일명 = " + fileName);
-        return foundPhoto.get();
+        return foundPhoto;
     }
 
     /**
@@ -137,12 +134,16 @@ public class PhotoService {
         String folderName = member.getEmail() + "-" + member.getId();
         String url = insertFileToS3(folderName, fileName, file);
 
-        Photo savedPhoto = findOneByFileName(fileName);
-        savedPhoto.modifyUpdatedAt(LocalDateTime.now());
+        Optional<Photo> savedPhoto = findOneByFileName(fileName);
+
+        if(savedPhoto.isEmpty()) {
+            throw new ConflictException("저장된 멤버 프로필 사진이 없습니다.");
+        }
+        savedPhoto.get().modifyUpdatedAt(LocalDateTime.now());
 
         log.info("COMPLETE | Photo 업데이트 At " + LocalDateTime.now() +
                 " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
-        return savedPhoto;
+        return savedPhoto.get();
     }
 
     /**

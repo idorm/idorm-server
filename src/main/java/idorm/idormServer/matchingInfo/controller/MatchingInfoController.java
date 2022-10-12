@@ -150,7 +150,6 @@ public class MatchingInfoController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "MatchingInfo 삭제 완료"),
             @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 404, message = "삭제할 매칭정보가 존재하지 않습니다."),
             @ApiResponse(code = 409, message = "등록된 매칭정보가 없습니다."),
             @ApiResponse(code = 500, message = "MatchingInfo 삭제 중 서버 에러 발생")
     })

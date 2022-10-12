@@ -11,7 +11,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create # DDL 기능 사용 여부(create/update/create-drop/validate/none) / 운영DB에서는 사용 금지
+      ddl-auto: none # DDL 기능 사용 여부(create/update/create-drop/validate/none) / 운영DB에서는 사용 금지
       use-new-id-generator-mappings: false
     properties:
       hibernate:

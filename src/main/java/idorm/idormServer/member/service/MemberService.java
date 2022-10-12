@@ -71,7 +71,7 @@ public class MemberService {
             String memberEmailSplit = memberEmail[0];
             String fileName = memberEmailSplit + photo.getContentType().replace("image/", ".");
 
-            Optional<Photo> foundPhoto = Optional.ofNullable(photoService.findOneByFileName(fileName));
+            Optional<Photo> foundPhoto = photoService.findOneByFileName(fileName);
 
             if(foundPhoto.isPresent()) {
                 Photo updatedPhoto = photoService.update(foundMember, fileName, photo);
@@ -82,6 +82,7 @@ public class MemberService {
                 Photo savedPhoto = photoService.save(foundMember, fileName, photo);
                 foundMember.updatePhoto(savedPhoto);
             }
+
 
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 프로필 사진 저장 중 서버 에러 발생", e);
