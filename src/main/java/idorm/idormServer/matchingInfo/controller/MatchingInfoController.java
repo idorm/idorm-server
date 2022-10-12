@@ -87,7 +87,7 @@ public class MatchingInfoController {
                 );
     }
 
-    @PatchMapping("/member/matchinginfoispublic")
+    @PatchMapping("/member/matchinginfo")
     @ApiOperation(value = "MatchingInfo 공개여부 수정")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "MatchingInfo 공개여부 수정 완료"),

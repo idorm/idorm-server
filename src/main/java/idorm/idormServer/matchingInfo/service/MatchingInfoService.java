@@ -70,6 +70,7 @@ public class MatchingInfoService {
 
     /**
      * MatchingInfo 단건 조회 |
+     * 매칭인포 식별자로 매칭인포를 단건 조회한다. 저장된 매칭정보가 없다면 404(Not Found)를 던진다.
      */
     public MatchingInfo findById(Long matchingInfoId) {
 
@@ -85,6 +86,10 @@ public class MatchingInfoService {
         return foundMatchingInfo.get();
     }
 
+    /**
+     * MatchingInfo 단건 조회 |
+     * 멤버 식별자로 매칭인포를 단건 조회한다. 저장된 매칭정보가 없다면 404(Not Found)를 던진다.
+     */
     public Long findByMemberId(Long memberId) {
         log.info("IN PROGRESS | MatchingInfo Member 식별자로 단건 조회 At " + LocalDateTime.now());
 
@@ -100,6 +105,7 @@ public class MatchingInfoService {
 
     /**
      * MatchingInfo 전체 조회 |
+     * 전체 매칭인포를 조회한다. 조회할 매칭정보가 없다면 404(Not Found)를 던진다.
      */
     public List<MatchingInfo> findAll() {
 

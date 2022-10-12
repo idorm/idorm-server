@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 
 @Entity
 @Getter
@@ -32,7 +31,6 @@ public class MatchingInfo extends BaseEntity {
     private Integer age;
 
     private Boolean isSnoring;// 코골이 여부
-
     private Boolean isGrinding; // 이갈이 여부
     private Boolean isSmoking; // 흡연 여부
     private Boolean isAllowedFood; // 실내 음식 허용 여부
@@ -41,11 +39,8 @@ public class MatchingInfo extends BaseEntity {
     private String wakeUpTime; // 기상 시간
     private String cleanUpStatus; // 정리정돈 상태
     private String showerTime; // 샤워 시간
-
     private String openKakaoLink; // 오픈채팅 링크
     private String mbti;
-
-    @Size(max=100)
     private String wishText; // 하고 싶은 말
 
     /**
@@ -75,7 +70,6 @@ public class MatchingInfo extends BaseEntity {
                         String wishText,
                         String openKakaoLink,
                         Member member) {
-
         this.isMatchingInfoPublic = false;
         this.dormNum = dormNum;
         this.joinPeriod = joinPeriod;
@@ -99,11 +93,10 @@ public class MatchingInfo extends BaseEntity {
      * 핵심 비지니스 로직
      */
     public void updateIsMatchingInfoPublic() {
-        this.isMatchingInfoPublic = (isMatchingInfoPublic == false) ? true : false;
+        this.isMatchingInfoPublic = !isMatchingInfoPublic;
     }
 
     public void updateMatchingInfo(MatchingInfoDefaultRequestDto requestDto) {
-
         this.dormNum = requestDto.getDormNum();
         this.joinPeriod = requestDto.getJoinPeriod();
         this.gender = requestDto.getGender();
