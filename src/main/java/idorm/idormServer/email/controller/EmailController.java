@@ -148,13 +148,14 @@ public class EmailController {
     )
     @PostMapping("/email/password")
     public ResponseEntity<DefaultResponseDto<Object>> findPassword(
-            @RequestBody @Valid EmailAuthRequestDto request) {
+            @RequestBody @Valid EmailAuthRequestDto request) throws Exception {
 
         String requestEmail = request.getEmail();
 
         memberService.findByEmail(requestEmail);
         Email email = emailService.findByEmail(requestEmail);
 
+        sendSimpleMessage(requestEmail);
         emailService.updateUpdatedAt(email);
 
         EmailDefaultResponseDto response = new EmailDefaultResponseDto(email);
