@@ -110,7 +110,7 @@ public class EmailController {
         Email email = emailService.findByEmail(requestEmail);
 
         LocalDateTime updateDateTime = email.getUpdatedAt();
-        LocalDateTime expiredDateTime = updateDateTime.plusMinutes(1);
+        LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
 
         if(!(email.getCode().equals(code.getCode()))) {
             throw new ConflictException("잘못된 인증번호입니다.");
