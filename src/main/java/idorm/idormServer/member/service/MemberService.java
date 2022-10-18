@@ -43,15 +43,18 @@ public class MemberService {
 
         isExistingEmail(email);
 
-        Member member = Member.builder()
-                .email(email)
-                .password(password)
-                .build();
+        try {
+            Member member = Member.builder()
+                    .email(email)
+                    .password(password)
+                    .build();
 
-        memberRepository.save(member);
-
-        log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
-        return member.getId();
+            memberRepository.save(member);
+            log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
+            return member.getId();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 저장 중 서버 에러 발생", e);
+        }
     }
 
     /**
@@ -62,7 +65,7 @@ public class MemberService {
     @Transactional
     public Long savePhoto(Long memberId, MultipartFile photo) {
 
-        log.info("IN PROGRESS | Member 프로필 포토 저장 At " + LocalDateTime.now() + " | " + memberId);
+        log.info("IN PROGRESS | Member 프로필 사진 저장 At " + LocalDateTime.now() + " | " + memberId);
 
         Member foundMember = findById(memberId);
 
@@ -88,7 +91,7 @@ public class MemberService {
             throw new InternalServerErrorException("Member 프로필 사진 저장 중 서버 에러 발생", e);
         }
 
-        log.info("COMPLETE | Member 프로필 포토 저장 At " + LocalDateTime.now() + " | " + memberId);
+        log.info("COMPLETE | Member 프로필 사진 저장 At " + LocalDateTime.now() + " | " + memberId);
         return foundMember.getId();
     }
 

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -15,12 +16,15 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class MatchingInfoDefaultRequestDto {
 
+    @NotBlank(message = "기숙사 분류를 입력해 주세요.")
     @ApiModelProperty(position = 1, required = true, dataType = "String", value = "기숙사 분류", example = "DORM1")
     private String dormNum;
 
+    @NotBlank(message = "입사기간을 입력해 주세요.")
     @ApiModelProperty(position = 2, required = true, dataType = "String", value = "입사기간", example = "WEEK16")
     private String joinPeriod;
 
+    @NotBlank(message = "성별을 입력해 주세요.")
     @ApiModelProperty(position = 3, required = true, dataType = "String", value = "성별", example = "FEMALE")
     private String gender;
 
@@ -48,15 +52,15 @@ public class MatchingInfoDefaultRequestDto {
     @ApiModelProperty(position = 9, required = true, dataType = "Boolean", value = "실내 음식 섭취 허용 여부", example = "false")
     private Boolean isAllowedFood;
 
-    @NotNull(message = "기상시간 입력은 필수입니다.")
+    @NotBlank(message = "기상시간을 입력해 주세요.")
     @ApiModelProperty(position = 10, required = true, dataType = "String", value = "기상 시간", example = "주로 아침 8시에 일어납니다.")
     private String wakeupTime;
 
-    @NotNull(message = "청소 상태 입력은 필수입니다.")
+    @NotBlank(message = "청소 상태를 입력해 주세요.")
     @ApiModelProperty(position = 11, required = true, dataType = "String", value = "청소 상태", example = "적당히 깨끗한 걸 좋아해요.")
     private String cleanUpStatus;
 
-    @NotNull(message = "샤워 시간 입력은 필수입니다.")
+    @NotBlank(message = "샤워 시간을 입력해 주세요.")
     @ApiModelProperty(position = 12, required = true, dataType = "String", value = "샤워 시간", example = "주로 아침 8시 30분, 밤 11시에 씻어요.")
     private String showerTime;
 

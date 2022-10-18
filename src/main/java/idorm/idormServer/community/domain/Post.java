@@ -22,33 +22,61 @@ public class Post extends BaseEntity {
     @Column(name="post_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member; // 게시글 작성자
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "photo_id")
-    private List<Photo> photos = new ArrayList<>(); // 업로드 사진들
-
+    @Column(length = 15, nullable = false)
     private String dormNum; // 기숙사 분류 (커뮤니티 카테고리)
+
+    @Column(length = 15, nullable = false)
     private String title; // 제목
+
+    @Column(nullable = false)
     private String content; // 내용
+
+    private Boolean isAnonymous; // 익명 여부, default는 true(익명)
     private Boolean isVisible; // 게시글 공개 여부, 삭제 시 false로 변경
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private List<Member> likes = new ArrayList<>();
+    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
+    @JoinColumn(name = "member_id", updatable = false)
+    private Member member;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
+    @OneToMany(mappedBy = "post")
+    private List<Photo> photos = new ArrayList<>(); // 업로드 사진들
+
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Post(Member member, String dormNum, String title, String content) {
+    public Post(Member member, String dormNum, String title, String content, Boolean isAnonymous) {
         this.member = member;
         this.dormNum = dormNum;
         this.title = title;
         this.content = content;
+        this.isAnonymous = isAnonymous;
         this.isVisible = true;
+    }
+
+    public void updatePost(String title, String content, Boolean isAnonymous) {
+        this.title = title;
+        this.content = content;
+        this.isAnonymous = isAnonymous;
+    }
+
+    public void addPhotos(List<Photo> photos) {
+        for (Photo photo : photos) {
+            this.photos.add(photo);
+        }
+    }
+
+    public void deletePhotos(List<Photo> photos) {
+        for (Photo photo : photos) {
+            this.photos.remove(photo);
+        }
+    }
+
+    public void updateIsVisible() {
+        this.isVisible = false;
+    }
+
+    public void deletePost() {
+        this.isVisible = false;
     }
 }

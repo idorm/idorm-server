@@ -20,6 +20,7 @@ public class SubComment extends BaseEntity {
     private Long id;
 
     private String content;
+    private Boolean isAnonymous; // 익명 여부, default는 true(익명)
     private Boolean isVisible;
 
     @OneToOne
@@ -36,5 +37,9 @@ public class SubComment extends BaseEntity {
         this.isVisible = true;
         this.member = member;
         this.comment = comment;
+    }
+
+    public void deleteSubComment() {
+        this.isVisible = false;
     }
 }

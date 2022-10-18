@@ -83,7 +83,9 @@ public class MemberController {
     }
     )
     @PostMapping("/register")
-    public ResponseEntity<DefaultResponseDto<Object>> saveMember(@RequestBody @Valid MemberSaveRequestDto request) {
+    public ResponseEntity<DefaultResponseDto<Object>> saveMember(
+            @RequestBody @Valid MemberSaveRequestDto request
+    ) {
 
         Optional<Email> emailOp = emailService.findByEmailOp(request.getEmail());
 
@@ -100,7 +102,7 @@ public class MemberController {
                 .email(newMember.getEmail())
                 .build();
 
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
                         .responseCode("OK")
                         .responseMessage("Member 회원가입 완료")
@@ -285,7 +287,7 @@ public class MemberController {
         emailService.deleteById(emailObj.getId());
         memberService.deleteMember(loginMemberId);
 
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
                         .responseCode("OK")
                         .responseMessage("Member 삭제 완료")

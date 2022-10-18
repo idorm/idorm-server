@@ -164,7 +164,7 @@ public class MatchingInfoController {
         Long matchingInfoId = member.getMatchingInfo().getId();
         matchingInfoService.deleteMatchingInfo(matchingInfoId);
 
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
                         .responseCode("OK")
                         .responseMessage("MatchingInfo 삭제 완료")

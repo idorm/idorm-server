@@ -21,6 +21,7 @@ public class Comment extends BaseEntity {
     private Long id;
 
     private String content; // 내용
+    private Boolean isAnonymous; // 익명 여부, default는 true(익명)
     private Boolean isVisible; // 댓글 공개 여부
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,5 +42,9 @@ public class Comment extends BaseEntity {
         this.isVisible = true;
         this.member = member;
         this.post = post;
+    }
+
+    public void deleteComment() {
+        this.isVisible = false;
     }
 }
