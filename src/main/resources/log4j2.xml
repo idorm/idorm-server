@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+  <!-- Appenders -->
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%-5p: %c - %m%n" />
+    </Console>
+  </Appenders>
+
+  <!-- Application Loggers -->
+  <Loggers>
+    <Logger name="java.sql" level="DEBUG" additivity="false">
+      <AppenderRef ref="console" />
+    </Logger>
+    <Logger name="egovframework" level="DEBUG" additivity="false">
+      <AppenderRef ref="console" />
+    </Logger>
+    <Logger name="jdbc.sqltiming" level="DEBUG" additivity="false">
+      <AppenderRef ref="console" />
+    </Logger>
+    <Logger name="org.springframework" level="DEBUG" additivity="false">
+      <AppenderRef ref="console" />
+    </Logger>
+    <Logger name="jdbc.resultsettable" additivity="false">
+      <level value="info" />
+      <appender-ref ref="console-log4jdbc" />
+    </Logger>
+  </Loggers>
+
+</Configuration>

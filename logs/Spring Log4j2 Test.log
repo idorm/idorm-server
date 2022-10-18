@@ -1,0 +1,1530 @@
+[36m2022/10/17 22:01:25,894[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/ResponseMessagesReader.class]
+ -[36m2022/10/17 22:01:25,901[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/OperationParameterReader.class]
+ -[36m2022/10/17 22:01:25,901[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/OperationTagsReader.class]
+ -[36m2022/10/17 22:01:25,902[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/ApiOperationReader.class]
+ -[36m2022/10/17 22:01:25,902[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/DefaultOperationReader.class]
+ -[36m2022/10/17 22:01:25,903[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/OperationParameterRequestConditionReader.class]
+ -[36m2022/10/17 22:01:25,903[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/OperationParameterHeadersConditionReader.class]
+ -[36m2022/10/17 22:01:25,903[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/ContentParameterAggregator.class]
+ -[36m2022/10/17 22:01:25,904[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/OperationResponseClassReader.class]
+ -[36m2022/10/17 22:01:25,904[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/operation/CachingOperationNameGenerator.class]
+ -[36m2022/10/17 22:01:25,906[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/parameter/ParameterMultiplesReader.class]
+ -[36m2022/10/17 22:01:25,907[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/parameter/ModelAttributeParameterExpander.class]
+ -[36m2022/10/17 22:01:25,907[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/parameter/ParameterTypeReader.class]
+ -[36m2022/10/17 22:01:25,908[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/parameter/ParameterRequiredReader.class]
+ -[36m2022/10/17 22:01:25,909[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/parameter/ParameterDataTypeReader.class]
+ -[36m2022/10/17 22:01:25,909[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/parameter/ParameterDefaultReader.class]
+ -[36m2022/10/17 22:01:25,909[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/parameter/ParameterNameReader.class]
+ -[36m2022/10/17 22:01:25,910[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/readers/parameter/ExpandedParameterBuilder.class]
+ -[36m2022/10/17 22:01:25,912[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-webmvc/3.0.0/7ed22363fdfd651cd811c0b2391f16bddb91db8b/springfox-spring-webmvc-3.0.0.jar!/springfox/documentation/spring/web/plugins/WebMvcRequestHandlerProvider.class]
+ -[36m2022/10/17 22:01:25,913[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/plugins/DefaultResponseTypeReader.class]
+ -[36m2022/10/17 22:01:25,915[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/plugins/DocumentationPluginsBootstrapper.class]
+ -[36m2022/10/17 22:01:25,916[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/plugins/DocumentationPluginsManager.class]
+ -[36m2022/10/17 22:01:25,917[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/paths/QueryStringUriTemplateDecorator.class]
+ -[36m2022/10/17 22:01:25,918[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/paths/PathMappingDecorator.class]
+ -[36m2022/10/17 22:01:25,918[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/paths/PathSanitizer.class]
+ -[36m2022/10/17 22:01:25,919[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/3.0.0/a76f2fbe805bfd2798e20dc8f2cfbfad554d52da/springfox-spring-web-3.0.0.jar!/springfox/documentation/spring/web/paths/OperationPathDecorator.class]
+ -[36m2022/10/17 22:01:25,941[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/JacksonJsonViewProvider.class]
+ -[36m2022/10/17 22:01:25,941[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/CachingModelDependencyProvider.class]
+ -[36m2022/10/17 22:01:25,942[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/TypeNameExtractor.class]
+ -[36m2022/10/17 22:01:25,942[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/plugins/PropertyDiscriminatorBasedInheritancePlugin.class]
+ -[36m2022/10/17 22:01:25,943[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/plugins/XmlModelPlugin.class]
+ -[36m2022/10/17 22:01:25,944[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/plugins/SchemaPluginsManager.class]
+ -[36m2022/10/17 22:01:25,945[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/plugins/JsonIgnorePropertiesModelPlugin.class]
+ -[36m2022/10/17 22:01:25,946[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/property/CachingModelPropertiesProvider.class]
+ -[36m2022/10/17 22:01:25,947[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/property/ObjectMapperBeanPropertyNamingStrategy.class]
+ -[36m2022/10/17 22:01:25,948[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/property/bean/AccessorsProvider.class]
+ -[36m2022/10/17 22:01:25,948[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/property/field/FieldProvider.class]
+ -[36m2022/10/17 22:01:25,949[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/property/XmlPropertyPlugin.class]
+ -[36m2022/10/17 22:01:25,950[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/property/OptimizedModelPropertiesProvider.class]
+ -[36m2022/10/17 22:01:25,951[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/property/FactoryMethodProvider.class]
+ -[36m2022/10/17 22:01:25,951[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/property/ModelSpecificationFactory.class]
+ -[36m2022/10/17 22:01:25,952[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/CachingModelProvider.class]
+ -[36m2022/10/17 22:01:25,953[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/DefaultModelDependencyProvider.class]
+ -[36m2022/10/17 22:01:25,953[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/JacksonEnumTypeDeterminer.class]
+ -[36m2022/10/17 22:01:25,954[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/DefaultModelProvider.class]
+ -[36m2022/10/17 22:01:25,954[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/3.0.0/32c5d6965617830ef6480fadb9030008945bcd9c/springfox-schema-3.0.0.jar!/springfox/documentation/schema/DefaultModelSpecificationProvider.class]
+ -[36m2022/10/17 22:01:25,970[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/schema/OpenApiSchemaPropertyBuilder.class]
+ -[36m2022/10/17 22:01:25,970[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/schema/ApiModelPropertyPropertyBuilder.class]
+ -[36m2022/10/17 22:01:25,971[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/schema/ApiModelTypeNameProvider.class]
+ -[36m2022/10/17 22:01:25,971[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/schema/ApiModelBuilder.class]
+ -[36m2022/10/17 22:01:25,972[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OperationImplicitParameterReader.class]
+ -[36m2022/10/17 22:01:25,973[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/VendorExtensionsReader.class]
+ -[36m2022/10/17 22:01:25,973[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/SwaggerOperationResponseClassReader.class]
+ -[36m2022/10/17 22:01:25,974[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/SwaggerOperationModelsProvider.class]
+ -[36m2022/10/17 22:01:25,974[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OpenApiOperationAuthReader.class]
+ -[36m2022/10/17 22:01:25,974[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/SwaggerMediaTypeReader.class]
+ -[36m2022/10/17 22:01:25,975[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OperationHttpMethodReader.class]
+ -[36m2022/10/17 22:01:25,975[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OperationImplicitParametersReader.class]
+ -[36m2022/10/17 22:01:25,975[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OperationAuthReader.class]
+ -[36m2022/10/17 22:01:25,976[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OperationHiddenReader.class]
+ -[36m2022/10/17 22:01:25,976[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OperationSummaryReader.class]
+ -[36m2022/10/17 22:01:25,976[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OpenApiOperationTagsReader.class]
+ -[36m2022/10/17 22:01:25,977[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/SwaggerResponseMessageReader.class]
+ -[36m2022/10/17 22:01:25,977[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OperationNicknameIntoUniqueIdReader.class]
+ -[36m2022/10/17 22:01:25,978[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OperationPositionReader.class]
+ -[36m2022/10/17 22:01:25,978[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OpenApiResponseReader.class]
+ -[36m2022/10/17 22:01:25,978[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/OperationNotesReader.class]
+ -[36m2022/10/17 22:01:25,979[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/operation/SwaggerOperationTagsReader.class]
+ -[36m2022/10/17 22:01:25,979[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/parameter/ApiParamParameterBuilder.class]
+ -[36m2022/10/17 22:01:25,980[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/parameter/SwaggerExpandedParameterBuilder.class]
+ -[36m2022/10/17 22:01:25,980[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/readers/parameter/OpenApiParameterBuilder.class]
+ -[36m2022/10/17 22:01:25,983[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/web/SwaggerApiListingReader.class]
+ -[36m2022/10/17 22:01:25,984[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/web/InMemorySwaggerResourcesProvider.class]
+ -[36m2022/10/17 22:01:25,985[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/3.0.0/2e2fae840984cfcabfd50e1b4b1c23422135ba12/springfox-swagger-common-3.0.0.jar!/springfox/documentation/swagger/web/ApiResourceController.class]
+ -[36m2022/10/17 22:01:26,002[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/ServiceModelToSwagger2MapperImpl.class]
+ -[36m2022/10/17 22:01:26,002[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/VendorExtensionsMapperImpl.class]
+ -[36m2022/10/17 22:01:26,003[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/PropertyMapperImpl.class]
+ -[36m2022/10/17 22:01:26,004[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/CompatibilityModelMapperImpl.class]
+ -[36m2022/10/17 22:01:26,005[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/ParameterMapperImpl.class]
+ -[36m2022/10/17 22:01:26,006[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/ModelMapperImpl.class]
+ -[36m2022/10/17 22:01:26,007[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/RequestParameterMapperImpl.class]
+ -[36m2022/10/17 22:01:26,007[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/ModelSpecificationMapperImpl.class]
+ -[36m2022/10/17 22:01:26,008[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/LicenseMapperImpl.class]
+ -[36m2022/10/17 22:01:26,008[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/mappers/SecurityMapperImpl.class]
+ -[36m2022/10/17 22:01:26,012[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: URL [jar:file:/Users/nahyeon/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/3.0.0/7bcb18d496576eff76ef7bb72684e149cbb75c1d/springfox-swagger2-3.0.0.jar!/springfox/documentation/swagger2/web/Swagger2ControllerWebMvc.class]
+ -[36m2022/10/17 22:01:26,314[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationDelegate] [33m[main][m- Multiple Spring Data modules found, entering strict repository configuration mode!
+ -[36m2022/10/17 22:01:26,315[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationDelegate] [33m[main][m- Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+ -[36m2022/10/17 22:01:26,318[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.AutoConfigurationPackages'
+ -[36m2022/10/17 22:01:26,318[m [34m[DEBUG][m  [org.springframework.boot.autoconfigure.AutoConfigurationPackages$BasePackages] [33m[main][m- @EnableAutoConfiguration was declared on a class in the package 'idorm.idormServer'. Automatic @Repository and @Entity scanning is enabled.
+ -[36m2022/10/17 22:01:26,320[m [34m[DEBUG][m  [org.springframework.data.repository.config.RepositoryConfigurationDelegate] [33m[main][m- Scanning for JDBC repositories in packages idorm.idormServer.
+ -[36m2022/10/17 22:01:26,329[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/calendar/repository/CalendarRepository.class]
+ -[36m2022/10/17 22:01:26,330[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/community/repository/CommentRepository.class]
+ -[36m2022/10/17 22:01:26,330[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/community/repository/PostRepository.class]
+ -[36m2022/10/17 22:01:26,330[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/community/repository/SubCommentRepository.class]
+ -[36m2022/10/17 22:01:26,331[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/email/repository/EmailRepository.class]
+ -[36m2022/10/17 22:01:26,331[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/matching/repository/DislikedMemberRepository.class]
+ -[36m2022/10/17 22:01:26,332[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/matching/repository/LikedMemberRepository.class]
+ -[36m2022/10/17 22:01:26,332[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/matchingInfo/repository/MatchingInfoRepository.class]
+ -[36m2022/10/17 22:01:26,332[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/member/repository/MemberRepository.class]
+ -[36m2022/10/17 22:01:26,333[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/photo/repository/PhotoRepository.class]
+ -[36m2022/10/17 22:01:26,342[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.calendar.repository.CalendarRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,343[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.community.repository.CommentRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,344[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.community.repository.PostRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,345[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.community.repository.SubCommentRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,346[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.email.repository.EmailRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,347[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.matching.repository.DislikedMemberRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,348[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.matching.repository.LikedMemberRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,349[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.matchingInfo.repository.MatchingInfoRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,350[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.member.repository.MemberRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,351[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport] [33m[main][m- Spring Data JDBC - Could not safely identify store assignment for repository candidate interface idorm.idormServer.photo.repository.PhotoRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+ -[36m2022/10/17 22:01:26,352[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationDelegate] [33m[main][m- Finished Spring Data repository scanning in 31 ms. Found 0 JDBC repository interfaces.
+ -[36m2022/10/17 22:01:26,359[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationDelegate] [33m[main][m- Multiple Spring Data modules found, entering strict repository configuration mode!
+ -[36m2022/10/17 22:01:26,359[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationDelegate] [33m[main][m- Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+ -[36m2022/10/17 22:01:26,361[m [34m[DEBUG][m  [org.springframework.data.repository.config.RepositoryConfigurationDelegate] [33m[main][m- Scanning for JPA repositories in packages idorm.idormServer.
+ -[36m2022/10/17 22:01:26,366[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/calendar/repository/CalendarRepository.class]
+ -[36m2022/10/17 22:01:26,366[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/community/repository/CommentRepository.class]
+ -[36m2022/10/17 22:01:26,366[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/community/repository/PostRepository.class]
+ -[36m2022/10/17 22:01:26,366[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/community/repository/SubCommentRepository.class]
+ -[36m2022/10/17 22:01:26,367[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/email/repository/EmailRepository.class]
+ -[36m2022/10/17 22:01:26,367[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/matching/repository/DislikedMemberRepository.class]
+ -[36m2022/10/17 22:01:26,367[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/matching/repository/LikedMemberRepository.class]
+ -[36m2022/10/17 22:01:26,367[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/matchingInfo/repository/MatchingInfoRepository.class]
+ -[36m2022/10/17 22:01:26,367[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/member/repository/MemberRepository.class]
+ -[36m2022/10/17 22:01:26,367[m [34m[DEBUG][m  [org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider] [33m[main][m- Identified candidate component class: file [/Users/nahyeon/Dev/projects/idormServer/out/production/classes/idorm/idormServer/photo/repository/PhotoRepository.class]
+ -[36m2022/10/17 22:01:26,393[m [32m[INFO ][m  [org.springframework.data.repository.config.RepositoryConfigurationDelegate] [33m[main][m- Finished Spring Data repository scanning in 32 ms. Found 10 JPA repository interfaces.
+ -[36m2022/10/17 22:01:26,544[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'propertySourcesPlaceholderConfigurer'
+ -[36m2022/10/17 22:01:26,552[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.sql.init.dependency.DatabaseInitializationDependencyConfigurer$DependsOnDatabaseInitializationPostProcessor'
+ -[36m2022/10/17 22:01:26,553[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'emBeanDefinitionRegistrarPostProcessor'
+ -[36m2022/10/17 22:01:26,611[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerProcessor'
+ -[36m2022/10/17 22:01:26,613[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'conversionServicePostProcessor'
+ -[36m2022/10/17 22:01:26,622[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.data.jpa.domain.support.AuditingBeanFactoryPostProcessor'
+ -[36m2022/10/17 22:01:26,622[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'preserveErrorControllerTargetClassPostProcessor'
+ -[36m2022/10/17 22:01:26,623[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerFactory'
+ -[36m2022/10/17 22:01:26,623[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.transaction.config.internalTransactionalEventListenerFactory'
+ -[36m2022/10/17 22:01:26,630[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.context.annotation.internalAutowiredAnnotationProcessor'
+ -[36m2022/10/17 22:01:26,631[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.context.annotation.internalCommonAnnotationProcessor'
+ -[36m2022/10/17 22:01:26,633[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.context.annotation.internalPersistenceAnnotationProcessor'
+ -[36m2022/10/17 22:01:26,633[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor'
+ -[36m2022/10/17 22:01:26,634[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.context.internalConfigurationPropertiesBinder'
+ -[36m2022/10/17 22:01:26,634[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.context.internalConfigurationPropertiesBinderFactory'
+ -[36m2022/10/17 22:01:26,637[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'methodValidationPostProcessor'
+ -[36m2022/10/17 22:01:26,654[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'methodValidationPostProcessor' via factory method to bean named 'environment'
+ -[36m2022/10/17 22:01:26,655[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.context.properties.EnableConfigurationPropertiesRegistrar.methodValidationExcludeFilter'
+ -[36m2022/10/17 22:01:26,664[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'dataSourceDecoratorBeanPostProcessor'
+ -[36m2022/10/17 22:01:26,664[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.aop.config.internalAutoProxyCreator'
+ -[36m2022/10/17 22:01:26,678[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'persistenceExceptionTranslationPostProcessor'
+ -[36m2022/10/17 22:01:26,679[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'persistenceExceptionTranslationPostProcessor' via factory method to bean named 'environment'
+ -[36m2022/10/17 22:01:26,681[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'webServerFactoryCustomizerBeanPostProcessor'
+ -[36m2022/10/17 22:01:26,682[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'errorPageRegistrarBeanPostProcessor'
+ -[36m2022/10/17 22:01:26,682[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'projectingArgumentResolverBeanPostProcessor'
+ -[36m2022/10/17 22:01:26,683[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.transaction.config.internalTransactionAdvisor'
+ -[36m2022/10/17 22:01:26,684[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration'
+ -[36m2022/10/17 22:01:26,696[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'transactionAttributeSource'
+ -[36m2022/10/17 22:01:26,699[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'transactionInterceptor'
+ -[36m2022/10/17 22:01:26,700[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'transactionInterceptor' via factory method to bean named 'transactionAttributeSource'
+ -[36m2022/10/17 22:01:26,704[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'org.springframework.transaction.config.internalTransactionAdvisor' via factory method to bean named 'transactionAttributeSource'
+ -[36m2022/10/17 22:01:26,704[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'org.springframework.transaction.config.internalTransactionAdvisor' via factory method to bean named 'transactionInterceptor'
+ -[36m2022/10/17 22:01:26,716[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'webMvcObjectMapperConfigurer'
+ -[36m2022/10/17 22:01:26,719[m [34m[DEBUG][m  [org.springframework.ui.context.support.UiApplicationContextUtils] [33m[main][m- Unable to locate ThemeSource with name 'themeSource': using default [org.springframework.ui.context.support.ResourceBundleThemeSource@56a05324]
+ -[36m2022/10/17 22:01:26,719[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'tomcatServletWebServerFactory'
+ -[36m2022/10/17 22:01:26,719[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryConfiguration$EmbeddedTomcat'
+ -[36m2022/10/17 22:01:26,741[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'websocketServletWebServerCustomizer'
+ -[36m2022/10/17 22:01:26,742[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration$TomcatWebSocketConfiguration'
+ -[36m2022/10/17 22:01:26,742[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'servletWebServerFactoryCustomizer'
+ -[36m2022/10/17 22:01:26,743[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration'
+ -[36m2022/10/17 22:01:26,744[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'server-org.springframework.boot.autoconfigure.web.ServerProperties'
+ -[36m2022/10/17 22:01:26,749[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.context.properties.BoundConfigurationProperties'
+ -[36m2022/10/17 22:01:26,768[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'servletWebServerFactoryCustomizer' via factory method to bean named 'server-org.springframework.boot.autoconfigure.web.ServerProperties'
+ -[36m2022/10/17 22:01:26,772[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'tomcatServletWebServerFactoryCustomizer'
+ -[36m2022/10/17 22:01:26,773[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'tomcatServletWebServerFactoryCustomizer' via factory method to bean named 'server-org.springframework.boot.autoconfigure.web.ServerProperties'
+ -[36m2022/10/17 22:01:26,773[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'tomcatWebServerFactoryCustomizer'
+ -[36m2022/10/17 22:01:26,774[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration$TomcatWebServerFactoryCustomizerConfiguration'
+ -[36m2022/10/17 22:01:26,776[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'tomcatWebServerFactoryCustomizer' via factory method to bean named 'environment'
+ -[36m2022/10/17 22:01:26,776[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'tomcatWebServerFactoryCustomizer' via factory method to bean named 'server-org.springframework.boot.autoconfigure.web.ServerProperties'
+ -[36m2022/10/17 22:01:26,779[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'localeCharsetMappingsCustomizer'
+ -[36m2022/10/17 22:01:26,780[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration'
+ -[36m2022/10/17 22:01:26,781[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration' via constructor to bean named 'server-org.springframework.boot.autoconfigure.web.ServerProperties'
+ -[36m2022/10/17 22:01:26,804[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'errorPageCustomizer'
+ -[36m2022/10/17 22:01:26,805[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration'
+ -[36m2022/10/17 22:01:26,806[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration' via constructor to bean named 'server-org.springframework.boot.autoconfigure.web.ServerProperties'
+ -[36m2022/10/17 22:01:26,807[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'dispatcherServletRegistration'
+ -[36m2022/10/17 22:01:26,807[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration$DispatcherServletRegistrationConfiguration'
+ -[36m2022/10/17 22:01:26,811[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'dispatcherServlet'
+ -[36m2022/10/17 22:01:26,811[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration$DispatcherServletConfiguration'
+ -[36m2022/10/17 22:01:26,813[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'spring.mvc-org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties'
+ -[36m2022/10/17 22:01:26,820[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'dispatcherServlet' via factory method to bean named 'spring.mvc-org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties'
+ -[36m2022/10/17 22:01:26,836[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'dispatcherServletRegistration' via factory method to bean named 'dispatcherServlet'
+ -[36m2022/10/17 22:01:26,837[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'dispatcherServletRegistration' via factory method to bean named 'spring.mvc-org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties'
+ -[36m2022/10/17 22:01:26,838[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'multipartConfigElement'
+ -[36m2022/10/17 22:01:26,839[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration'
+ -[36m2022/10/17 22:01:26,839[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'spring.servlet.multipart-org.springframework.boot.autoconfigure.web.servlet.MultipartProperties'
+ -[36m2022/10/17 22:01:26,845[m [34m[DEBUG][m  [org.springframework.core.env.PropertySourcesPropertyResolver] [33m[main][m- Found key 'MAX_FILE_SIZE' in PropertySource 'systemEnvironment' with value of type String
+ -[36m2022/10/17 22:01:26,847[m [34m[DEBUG][m  [org.springframework.core.env.PropertySourcesPropertyResolver] [33m[main][m- Found key 'MAX_REQUEST_SIZE' in PropertySource 'systemEnvironment' with value of type String
+ -[36m2022/10/17 22:01:26,850[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration' via constructor to bean named 'spring.servlet.multipart-org.springframework.boot.autoconfigure.web.servlet.MultipartProperties'
+ -[36m2022/10/17 22:01:26,854[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'errorPageCustomizer' via factory method to bean named 'dispatcherServletRegistration'
+ -[36m2022/10/17 22:01:26,910[m [34m[DEBUG][m  [org.springframework.boot.web.servlet.server.DocumentRoot] [33m[main][m- Code archive: /Users/nahyeon/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot/2.7.0/df8bd106d6c6a6494b787b71d23cef6d2dc73703/spring-boot-2.7.0.jar
+ -[36m2022/10/17 22:01:26,911[m [34m[DEBUG][m  [org.springframework.boot.web.servlet.server.DocumentRoot] [33m[main][m- Code archive: /Users/nahyeon/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot/2.7.0/df8bd106d6c6a6494b787b71d23cef6d2dc73703/spring-boot-2.7.0.jar
+ -[36m2022/10/17 22:01:26,911[m [34m[DEBUG][m  [org.springframework.boot.web.servlet.server.DocumentRoot] [33m[main][m- None of the document roots [src/main/webapp, public, static] point to a directory and will be ignored.
+ -[36m2022/10/17 22:01:26,926[m [32m[INFO ][m  [org.springframework.boot.web.embedded.tomcat.TomcatWebServer] [33m[main][m- Tomcat initialized with port(s): 8080 (http)
+ -[36m2022/10/17 22:01:27,038[m [34m[DEBUG][m  [org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext] [33m[main][m- Published root WebApplicationContext as ServletContext attribute with name [org.springframework.web.context.WebApplicationContext.ROOT]
+ -[36m2022/10/17 22:01:27,038[m [32m[INFO ][m  [org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext] [33m[main][m- Root WebApplicationContext: initialization completed in 1691 ms
+ -[36m2022/10/17 22:01:27,043[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'errorPageSecurityFilter'
+ -[36m2022/10/17 22:01:27,043[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration$ErrorPageSecurityFilterConfiguration'
+ -[36m2022/10/17 22:01:27,045[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'errorPageSecurityFilter' via factory method to bean named 'org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@25cc7470'
+ -[36m2022/10/17 22:01:27,050[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'securityFilterChainRegistration'
+ -[36m2022/10/17 22:01:27,051[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration'
+ -[36m2022/10/17 22:01:27,054[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'spring.security-org.springframework.boot.autoconfigure.security.SecurityProperties'
+ -[36m2022/10/17 22:01:27,056[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'securityFilterChainRegistration' via factory method to bean named 'spring.security-org.springframework.boot.autoconfigure.security.SecurityProperties'
+ -[36m2022/10/17 22:01:27,066[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'requestContextFilter'
+ -[36m2022/10/17 22:01:27,070[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'formContentFilter'
+ -[36m2022/10/17 22:01:27,071[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration'
+ -[36m2022/10/17 22:01:27,079[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'characterEncodingFilter'
+ -[36m2022/10/17 22:01:27,091[m [34m[DEBUG][m  [org.springframework.boot.web.servlet.ServletContextInitializerBeans] [33m[main][m- Mapping filters: springSecurityFilterChain urls=[/*] order=-100, filterRegistrationBean urls=[/*] order=2147483647, characterEncodingFilter urls=[/*] order=-2147483648, formContentFilter urls=[/*] order=-9900, requestContextFilter urls=[/*] order=-105
+ -[36m2022/10/17 22:01:27,092[m [34m[DEBUG][m  [org.springframework.boot.web.servlet.ServletContextInitializerBeans] [33m[main][m- Mapping servlets: dispatcherServlet urls=[/]
+ -[36m2022/10/17 22:01:27,108[m [34m[DEBUG][m  [org.springframework.web.filter.GenericFilterBean] [33m[main][m- Filter 'requestContextFilter' configured for use
+ -[36m2022/10/17 22:01:27,109[m [34m[DEBUG][m  [org.springframework.web.filter.GenericFilterBean] [33m[main][m- Filter 'characterEncodingFilter' configured for use
+ -[36m2022/10/17 22:01:27,109[m [34m[DEBUG][m  [org.springframework.web.filter.GenericFilterBean] [33m[main][m- Filter 'springSecurityFilterChain' configured for use
+ -[36m2022/10/17 22:01:27,110[m [34m[DEBUG][m  [org.springframework.web.filter.GenericFilterBean] [33m[main][m- Filter 'formContentFilter' configured for use
+ -[36m2022/10/17 22:01:27,117[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'dataSourceScriptDatabaseInitializer'
+ -[36m2022/10/17 22:01:27,117[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.sql.init.DataSourceInitializationConfiguration'
+ -[36m2022/10/17 22:01:27,118[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'dataSource'
+ -[36m2022/10/17 22:01:27,118[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration$Hikari'
+ -[36m2022/10/17 22:01:27,119[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'spring.datasource-org.springframework.boot.autoconfigure.jdbc.DataSourceProperties'
+ -[36m2022/10/17 22:01:27,122[m [34m[DEBUG][m  [org.springframework.core.env.PropertySourcesPropertyResolver] [33m[main][m- Found key 'DB_PORT' in PropertySource 'systemEnvironment' with value of type String
+ -[36m2022/10/17 22:01:27,122[m [34m[DEBUG][m  [org.springframework.core.env.PropertySourcesPropertyResolver] [33m[main][m- Found key 'DB_NAME' in PropertySource 'systemEnvironment' with value of type String
+ -[36m2022/10/17 22:01:27,127[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'dataSource' via factory method to bean named 'spring.datasource-org.springframework.boot.autoconfigure.jdbc.DataSourceProperties'
+ -[36m2022/10/17 22:01:27,150[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'decorator.datasource-com.github.gavlyukovskiy.boot.jdbc.decorator.DataSourceDecoratorProperties'
+ -[36m2022/10/17 22:01:27,157[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'p6SpyDataSourceDecorator'
+ -[36m2022/10/17 22:01:27,158[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'com.github.gavlyukovskiy.boot.jdbc.decorator.p6spy.P6SpyConfiguration'
+ -[36m2022/10/17 22:01:27,181[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'jdbcEventListenerFactory'
+ -[36m2022/10/17 22:01:27,182[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'p6SpyDataSourceDecorator' via factory method to bean named 'jdbcEventListenerFactory'
+ -[36m2022/10/17 22:01:27,214[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'spring.sql.init-org.springframework.boot.autoconfigure.sql.init.SqlInitializationProperties'
+ -[36m2022/10/17 22:01:27,216[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'dataSourceScriptDatabaseInitializer' via factory method to bean named 'dataSource'
+ -[36m2022/10/17 22:01:27,216[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'dataSourceScriptDatabaseInitializer' via factory method to bean named 'spring.sql.init-org.springframework.boot.autoconfigure.sql.init.SqlInitializationProperties'
+ -[36m2022/10/17 22:01:27,220[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.context.config.internalBeanConfigurerAspect'
+ -[36m2022/10/17 22:01:27,222[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'entityManagerFactory'
+ -[36m2022/10/17 22:01:27,222[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaConfiguration'
+ -[36m2022/10/17 22:01:27,224[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'spring.jpa-org.springframework.boot.autoconfigure.orm.jpa.JpaProperties'
+ -[36m2022/10/17 22:01:27,229[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'spring.jpa.hibernate-org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties'
+ -[36m2022/10/17 22:01:27,230[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaConfiguration' via constructor to bean named 'dataSource'
+ -[36m2022/10/17 22:01:27,230[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaConfiguration' via constructor to bean named 'spring.jpa-org.springframework.boot.autoconfigure.orm.jpa.JpaProperties'
+ -[36m2022/10/17 22:01:27,230[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaConfiguration' via constructor to bean named 'org.springframework.beans.factory.support.DefaultListableBeanFactory@57540fd0'
+ -[36m2022/10/17 22:01:27,230[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaConfiguration' via constructor to bean named 'spring.jpa.hibernate-org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties'
+ -[36m2022/10/17 22:01:27,233[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'hikariPoolDataSourceMetadataProvider'
+ -[36m2022/10/17 22:01:27,233[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'org.springframework.boot.autoconfigure.jdbc.metadata.DataSourcePoolMetadataProvidersConfiguration$HikariPoolDataSourceMetadataProviderConfiguration'
+ -[36m2022/10/17 22:01:27,237[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'entityManagerFactoryBuilder'
+ -[36m2022/10/17 22:01:27,238[m [34m[DEBUG][m  [org.springframework.beans.factory.support.DefaultSingletonBeanRegistry] [33m[main][m- Creating shared instance of singleton bean 'jpaVendorAdapter'
+ -[36m2022/10/17 22:01:27,243[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'entityManagerFactoryBuilder' via factory method to bean named 'jpaVendorAdapter'
+ -[36m2022/10/17 22:01:27,245[m [34m[DEBUG][m  [org.springframework.beans.factory.support.ConstructorResolver] [33m[main][m- Autowiring by type from bean name 'entityManagerFactory' via factory method to bean named 'entityManagerFactoryBuilder'
+ -[36m2022/10/17 22:01:27,292[m [34m[DEBUG][m  [org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean] [33m[main][m- Building JPA container EntityManagerFactory for persistence unit 'default'
+ -[36m2022/10/17 22:01:27,310[m [32m[INFO ][m  [org.hibernate.jpa.internal.util.LogHelper] [33m[main][m- HHH000204: Processing PersistenceUnitInfo [name: default]
+ -[36m2022/10/17 22:01:27,376[m [32m[INFO ][m  [org.hibernate.Version] [33m[main][m- HHH000412: Hibernate ORM core version 5.6.9.Final
+ -[36m2022/10/17 22:01:27,553[m [32m[INFO ][m  [org.hibernate.annotations.common.reflection.java.JavaReflectionManager] [33m[main][m- HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+ -[36m2022/10/17 22:01:27,657[m [33m[WARN ][m  [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator] [33m[main][m- HHH000342: Could not obtain connection to query metadata
+ - java.lang.RuntimeException: Driver com.mysql.cj.jdbc.Driver claims to not accept jdbcUrl, jdbc:log4jdbc:mysql://localhost:3306/idorm?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+	at com.zaxxer.hikari.util.DriverDataSource.<init>(DriverDataSource.java:110) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.initializeDataSource(PoolBase.java:331) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.<init>(PoolBase.java:114) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:108) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-4.0.3.jar:?]
+	at com.p6spy.engine.spy.P6DataSource.getConnection(P6DataSource.java:303) ~[p6spy-3.8.2.jar:?]
+	at com.github.gavlyukovskiy.boot.jdbc.decorator.DataSourceDecoratorInterceptor.invoke(DataSourceDecoratorInterceptor.java:53) ~[datasource-decorator-spring-boot-autoconfigure-1.5.7.jar:?]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.20.jar:5.3.20]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763) ~[spring-aop-5.3.20.jar:5.3.20]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-5.3.20.jar:5.3.20]
+	at com.zaxxer.hikari.HikariDataSource$$EnhancerBySpringCGLIB$$2cfbf849.getConnection(<generated>) ~[HikariCP-4.0.3.jar:?]
+	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:181) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:35) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:101) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:237) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:214) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.id.factory.internal.DefaultIdentifierGeneratorFactory.injectServices(DefaultIdentifierGeneratorFactory.java:175) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.injectDependencies(AbstractServiceRegistryImpl.java:286) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:243) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:214) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:173) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:127) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1460) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1494) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:58) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1154) ~[spring-context-5.3.20.jar:5.3.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:908) ~[spring-context-5.3.20.jar:5.3.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583) ~[spring-context-5.3.20.jar:5.3.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:734) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:408) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1306) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1295) ~[spring-boot-2.7.0.jar:2.7.0]
+	at idorm.idormServer.IdormServerApplication.main(IdormServerApplication.java:12) ~[classes/:?]
+[36m2022/10/17 22:01:27,663[m [31m[ERROR][m  [org.springframework.orm.jpa.AbstractEntityManagerFactoryBean] [33m[main][m- Failed to initialize JPA EntityManagerFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment]
+ -[36m2022/10/17 22:01:27,663[m [33m[WARN ][m  [org.springframework.context.support.AbstractApplicationContext] [33m[main][m- Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Invocation of init method failed; nested exception is org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment]
+ -[36m2022/10/17 22:01:27,692[m [34m[DEBUG][m  [org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener] [33m[main][m- 
+
+
+============================
+CONDITIONS EVALUATION REPORT
+============================
+
+
+Positive matches:
+-----------------
+
+   AopAutoConfiguration matched:
+      - @ConditionalOnProperty (spring.aop.auto=true) matched (OnPropertyCondition)
+
+   AopAutoConfiguration.AspectJAutoProxyingConfiguration matched:
+      - @ConditionalOnClass found required class 'org.aspectj.weaver.Advice' (OnClassCondition)
+
+   AopAutoConfiguration.AspectJAutoProxyingConfiguration.CglibAutoProxyConfiguration matched:
+      - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   BeanValidatorPluginsConfiguration matched:
+      - @ConditionalOnClass found required class 'javax.validation.executable.ExecutableValidator' (OnClassCondition)
+
+   DataSourceAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'javax.sql.DataSource', 'org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType' (OnClassCondition)
+      - @ConditionalOnMissingBean (types: io.r2dbc.spi.ConnectionFactory; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   DataSourceAutoConfiguration.PooledDataSourceConfiguration matched:
+      - AnyNestedCondition 1 matched 1 did not; NestedCondition on DataSourceAutoConfiguration.PooledDataSourceCondition.PooledDataSourceAvailable PooledDataSource found supported DataSource; NestedCondition on DataSourceAutoConfiguration.PooledDataSourceCondition.ExplicitType @ConditionalOnProperty (spring.datasource.type) did not find property 'type' (DataSourceAutoConfiguration.PooledDataSourceCondition)
+      - @ConditionalOnMissingBean (types: javax.sql.DataSource,javax.sql.XADataSource; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   DataSourceConfiguration.Hikari matched:
+      - @ConditionalOnClass found required class 'com.zaxxer.hikari.HikariDataSource' (OnClassCondition)
+      - @ConditionalOnProperty (spring.datasource.type=com.zaxxer.hikari.HikariDataSource) matched (OnPropertyCondition)
+      - @ConditionalOnMissingBean (types: javax.sql.DataSource; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   DataSourceDecoratorAutoConfiguration matched:
+      - @ConditionalOnProperty (decorator.datasource.enabled=true) matched (OnPropertyCondition)
+      - @ConditionalOnBean (types: javax.sql.DataSource; SearchStrategy: all) found bean 'dataSource' (OnBeanCondition)
+
+   DataSourceDecoratorAutoConfiguration#dataSourceDecoratorBeanPostProcessor matched:
+      - @ConditionalOnBean (types: com.github.gavlyukovskiy.boot.jdbc.decorator.DataSourceDecorator; SearchStrategy: all) found bean 'p6SpyDataSourceDecorator' (OnBeanCondition)
+
+   DataSourceDecoratorAutoConfiguration#dataSourceNameResolver matched:
+      - @ConditionalOnMissingBean (types: com.github.gavlyukovskiy.boot.jdbc.decorator.DataSourceNameResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   DataSourceInitializationConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.jdbc.datasource.init.DatabasePopulator' (OnClassCondition)
+      - @ConditionalOnSingleCandidate (types: javax.sql.DataSource; SearchStrategy: all) found a single bean 'dataSource'; @ConditionalOnMissingBean (types: org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer,org.springframework.boot.autoconfigure.sql.init.SqlR2dbcScriptDatabaseInitializer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   DataSourceJmxConfiguration matched:
+      - @ConditionalOnProperty (spring.jmx.enabled=true) matched (OnPropertyCondition)
+
+   DataSourceJmxConfiguration.Hikari matched:
+      - @ConditionalOnClass found required class 'com.zaxxer.hikari.HikariDataSource' (OnClassCondition)
+      - @ConditionalOnSingleCandidate (types: javax.sql.DataSource; SearchStrategy: all) found a single bean 'dataSource' (OnBeanCondition)
+
+   DataSourcePoolMetadataProvidersConfiguration.HikariPoolDataSourceMetadataProviderConfiguration matched:
+      - @ConditionalOnClass found required class 'com.zaxxer.hikari.HikariDataSource' (OnClassCondition)
+
+   DataSourceTransactionManagerAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.jdbc.core.JdbcTemplate', 'org.springframework.transaction.TransactionManager' (OnClassCondition)
+
+   DataSourceTransactionManagerAutoConfiguration.JdbcTransactionManagerConfiguration matched:
+      - @ConditionalOnSingleCandidate (types: javax.sql.DataSource; SearchStrategy: all) found a single bean 'dataSource' (OnBeanCondition)
+
+   DispatcherServletAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.web.servlet.DispatcherServlet' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+
+   DispatcherServletAutoConfiguration.DispatcherServletConfiguration matched:
+      - @ConditionalOnClass found required class 'javax.servlet.ServletRegistration' (OnClassCondition)
+      - Default DispatcherServlet did not find dispatcher servlet beans (DispatcherServletAutoConfiguration.DefaultDispatcherServletCondition)
+
+   DispatcherServletAutoConfiguration.DispatcherServletRegistrationConfiguration matched:
+      - @ConditionalOnClass found required class 'javax.servlet.ServletRegistration' (OnClassCondition)
+      - DispatcherServlet Registration did not find servlet registration bean (DispatcherServletAutoConfiguration.DispatcherServletRegistrationCondition)
+
+   DispatcherServletAutoConfiguration.DispatcherServletRegistrationConfiguration#dispatcherServletRegistration matched:
+      - @ConditionalOnBean (names: dispatcherServlet types: org.springframework.web.servlet.DispatcherServlet; SearchStrategy: all) found bean 'dispatcherServlet' (OnBeanCondition)
+
+   EmbeddedWebServerFactoryCustomizerAutoConfiguration matched:
+      - @ConditionalOnWebApplication (required) found 'session' scope (OnWebApplicationCondition)
+
+   EmbeddedWebServerFactoryCustomizerAutoConfiguration.TomcatWebServerFactoryCustomizerConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.apache.catalina.startup.Tomcat', 'org.apache.coyote.UpgradeProtocol' (OnClassCondition)
+
+   ErrorMvcAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'javax.servlet.Servlet', 'org.springframework.web.servlet.DispatcherServlet' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+
+   ErrorMvcAutoConfiguration#basicErrorController matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.web.servlet.error.ErrorController; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   ErrorMvcAutoConfiguration#errorAttributes matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.web.servlet.error.ErrorAttributes; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   ErrorMvcAutoConfiguration.DefaultErrorViewResolverConfiguration#conventionErrorViewResolver matched:
+      - @ConditionalOnBean (types: org.springframework.web.servlet.DispatcherServlet; SearchStrategy: all) found bean 'dispatcherServlet'; @ConditionalOnMissingBean (types: org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ErrorMvcAutoConfiguration.WhitelabelErrorViewConfiguration matched:
+      - @ConditionalOnProperty (server.error.whitelabel.enabled) matched (OnPropertyCondition)
+      - ErrorTemplate Missing did not find error template view (ErrorMvcAutoConfiguration.ErrorTemplateMissingCondition)
+
+   ErrorMvcAutoConfiguration.WhitelabelErrorViewConfiguration#beanNameViewResolver matched:
+      - @ConditionalOnMissingBean (types: org.springframework.web.servlet.view.BeanNameViewResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ErrorMvcAutoConfiguration.WhitelabelErrorViewConfiguration#defaultErrorView matched:
+      - @ConditionalOnMissingBean (names: error; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   GenericCacheConfiguration matched:
+      - Cache org.springframework.boot.autoconfigure.cache.GenericCacheConfiguration automatic cache type (CacheCondition)
+
+   HibernateJpaAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean', 'javax.persistence.EntityManager', 'org.hibernate.engine.spi.SessionImplementor' (OnClassCondition)
+
+   HibernateJpaConfiguration matched:
+      - @ConditionalOnSingleCandidate (types: javax.sql.DataSource; SearchStrategy: all) found a single bean 'dataSource' (OnBeanCondition)
+
+   HttpEncodingAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.web.filter.CharacterEncodingFilter' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnProperty (server.servlet.encoding.enabled) matched (OnPropertyCondition)
+
+   HttpEncodingAutoConfiguration#characterEncodingFilter matched:
+      - @ConditionalOnMissingBean (types: org.springframework.web.filter.CharacterEncodingFilter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   HttpMessageConvertersAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.http.converter.HttpMessageConverter' (OnClassCondition)
+      - NoneNestedConditions 0 matched 1 did not; NestedCondition on HttpMessageConvertersAutoConfiguration.NotReactiveWebApplicationCondition.ReactiveWebApplication did not find reactive web application classes (HttpMessageConvertersAutoConfiguration.NotReactiveWebApplicationCondition)
+
+   HttpMessageConvertersAutoConfiguration#messageConverters matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.autoconfigure.http.HttpMessageConverters; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   HttpMessageConvertersAutoConfiguration.StringHttpMessageConverterConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.http.converter.StringHttpMessageConverter' (OnClassCondition)
+
+   HttpMessageConvertersAutoConfiguration.StringHttpMessageConverterConfiguration#stringHttpMessageConverter matched:
+      - @ConditionalOnMissingBean (types: org.springframework.http.converter.StringHttpMessageConverter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JacksonAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'com.fasterxml.jackson.databind.ObjectMapper' (OnClassCondition)
+
+   JacksonAutoConfiguration.Jackson2ObjectMapperBuilderCustomizerConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.http.converter.json.Jackson2ObjectMapperBuilder' (OnClassCondition)
+
+   JacksonAutoConfiguration.JacksonObjectMapperBuilderConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.http.converter.json.Jackson2ObjectMapperBuilder' (OnClassCondition)
+
+   JacksonAutoConfiguration.JacksonObjectMapperBuilderConfiguration#jacksonObjectMapperBuilder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.http.converter.json.Jackson2ObjectMapperBuilder; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JacksonAutoConfiguration.JacksonObjectMapperConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.http.converter.json.Jackson2ObjectMapperBuilder' (OnClassCondition)
+
+   JacksonAutoConfiguration.JacksonObjectMapperConfiguration#jacksonObjectMapper matched:
+      - @ConditionalOnMissingBean (types: com.fasterxml.jackson.databind.ObjectMapper; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JacksonAutoConfiguration.ParameterNamesModuleConfiguration matched:
+      - @ConditionalOnClass found required class 'com.fasterxml.jackson.module.paramnames.ParameterNamesModule' (OnClassCondition)
+
+   JacksonAutoConfiguration.ParameterNamesModuleConfiguration#parameterNamesModule matched:
+      - @ConditionalOnMissingBean (types: com.fasterxml.jackson.module.paramnames.ParameterNamesModule; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JacksonHttpMessageConvertersConfiguration.MappingJackson2HttpMessageConverterConfiguration matched:
+      - @ConditionalOnClass found required class 'com.fasterxml.jackson.databind.ObjectMapper' (OnClassCondition)
+      - @ConditionalOnProperty (spring.mvc.converters.preferred-json-mapper=jackson) matched (OnPropertyCondition)
+      - @ConditionalOnBean (types: com.fasterxml.jackson.databind.ObjectMapper; SearchStrategy: all) found bean 'jacksonObjectMapper' (OnBeanCondition)
+
+   JacksonHttpMessageConvertersConfiguration.MappingJackson2HttpMessageConverterConfiguration#mappingJackson2HttpMessageConverter matched:
+      - @ConditionalOnMissingBean (types: org.springframework.http.converter.json.MappingJackson2HttpMessageConverter ignored: org.springframework.hateoas.server.mvc.TypeConstrainedMappingJackson2HttpMessageConverter,org.springframework.data.rest.webmvc.alps.AlpsJsonHttpMessageConverter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JdbcRepositoriesAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations', 'org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration' (OnClassCondition)
+      - @ConditionalOnProperty (spring.data.jdbc.repositories.enabled=true) matched (OnPropertyCondition)
+      - @ConditionalOnBean (types: org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations,org.springframework.transaction.PlatformTransactionManager; SearchStrategy: all) found beans 'transactionManager', 'namedParameterJdbcTemplate' (OnBeanCondition)
+
+   JdbcRepositoriesAutoConfiguration.JdbcRepositoriesConfiguration matched:
+      - @ConditionalOnMissingBean (types: org.springframework.data.jdbc.repository.config.JdbcRepositoryConfigExtension; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JdbcRepositoriesAutoConfiguration.SpringBootJdbcConfiguration matched:
+      - @ConditionalOnMissingBean (types: org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JdbcTemplateAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'javax.sql.DataSource', 'org.springframework.jdbc.core.JdbcTemplate' (OnClassCondition)
+      - @ConditionalOnSingleCandidate (types: javax.sql.DataSource; SearchStrategy: all) found a single bean 'dataSource' (OnBeanCondition)
+
+   JdbcTemplateConfiguration matched:
+      - @ConditionalOnMissingBean (types: org.springframework.jdbc.core.JdbcOperations; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JmxAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.jmx.export.MBeanExporter' (OnClassCondition)
+      - @ConditionalOnProperty (spring.jmx.enabled=true) matched (OnPropertyCondition)
+
+   JmxAutoConfiguration#mbeanExporter matched:
+      - @ConditionalOnMissingBean (types: org.springframework.jmx.export.MBeanExporter; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   JmxAutoConfiguration#mbeanServer matched:
+      - @ConditionalOnMissingBean (types: javax.management.MBeanServer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JmxAutoConfiguration#objectNamingStrategy matched:
+      - @ConditionalOnMissingBean (types: org.springframework.jmx.export.naming.ObjectNamingStrategy; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   JpaBaseConfiguration#entityManagerFactory matched:
+      - @ConditionalOnMissingBean (types: org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean,javax.persistence.EntityManagerFactory; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JpaBaseConfiguration#entityManagerFactoryBuilder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JpaBaseConfiguration#jpaVendorAdapter matched:
+      - @ConditionalOnMissingBean (types: org.springframework.orm.jpa.JpaVendorAdapter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JpaBaseConfiguration#transactionManager matched:
+      - @ConditionalOnMissingBean (types: org.springframework.transaction.TransactionManager; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JpaBaseConfiguration.JpaWebConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.web.servlet.config.annotation.WebMvcConfigurer' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnProperty (spring.jpa.open-in-view=true) matched (OnPropertyCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor,org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JpaRepositoriesAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.data.jpa.repository.JpaRepository' (OnClassCondition)
+      - @ConditionalOnProperty (spring.data.jpa.repositories.enabled=true) matched (OnPropertyCondition)
+      - @ConditionalOnBean (types: javax.sql.DataSource; SearchStrategy: all) found bean 'dataSource'; @ConditionalOnMissingBean (types: org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean,org.springframework.data.jpa.repository.config.JpaRepositoryConfigExtension; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   JtaAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'javax.transaction.Transaction' (OnClassCondition)
+      - @ConditionalOnProperty (spring.jta.enabled) matched (OnPropertyCondition)
+
+   LifecycleAutoConfiguration#defaultLifecycleProcessor matched:
+      - @ConditionalOnMissingBean (names: lifecycleProcessor; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   MultipartAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'javax.servlet.Servlet', 'org.springframework.web.multipart.support.StandardServletMultipartResolver', 'javax.servlet.MultipartConfigElement' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnProperty (spring.servlet.multipart.enabled) matched (OnPropertyCondition)
+
+   MultipartAutoConfiguration#multipartConfigElement matched:
+      - @ConditionalOnMissingBean (types: javax.servlet.MultipartConfigElement,org.springframework.web.multipart.commons.CommonsMultipartResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   MultipartAutoConfiguration#multipartResolver matched:
+      - @ConditionalOnMissingBean (types: org.springframework.web.multipart.MultipartResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   NamedParameterJdbcTemplateConfiguration matched:
+      - @ConditionalOnSingleCandidate (types: org.springframework.jdbc.core.JdbcTemplate; SearchStrategy: all) found a single bean 'jdbcTemplate'; @ConditionalOnMissingBean (types: org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   NoOpCacheConfiguration matched:
+      - Cache org.springframework.boot.autoconfigure.cache.NoOpCacheConfiguration automatic cache type (CacheCondition)
+
+   OpenApiAutoConfiguration matched:
+      - @ConditionalOnProperty (springfox.documentation.enabled=true) matched (OnPropertyCondition)
+
+   OpenApiControllerWebMvc matched:
+      - found 'session' scope (OnWebApplicationCondition)
+
+   OpenApiWebMvcConfiguration matched:
+      - found 'session' scope (OnWebApplicationCondition)
+
+   P6SpyConfiguration matched:
+      - @ConditionalOnClass found required class 'com.p6spy.engine.spy.P6DataSource' (OnClassCondition)
+
+   P6SpyConfiguration#jdbcEventListenerFactory matched:
+      - @ConditionalOnMissingBean (types: com.p6spy.engine.spy.JdbcEventListenerFactory; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   PersistenceExceptionTranslationAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor' (OnClassCondition)
+
+   PersistenceExceptionTranslationAutoConfiguration#persistenceExceptionTranslationPostProcessor matched:
+      - @ConditionalOnProperty (spring.dao.exceptiontranslation.enabled) matched (OnPropertyCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   PropertyPlaceholderAutoConfiguration#propertySourcesPlaceholderConfigurer matched:
+      - @ConditionalOnMissingBean (types: org.springframework.context.support.PropertySourcesPlaceholderConfigurer; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   RestTemplateAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.web.client.RestTemplate' (OnClassCondition)
+      - NoneNestedConditions 0 matched 1 did not; NestedCondition on RestTemplateAutoConfiguration.NotReactiveWebApplicationCondition.ReactiveWebApplication did not find reactive web application classes (RestTemplateAutoConfiguration.NotReactiveWebApplicationCondition)
+
+   RestTemplateAutoConfiguration#restTemplateBuilder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.web.client.RestTemplateBuilder; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   RestTemplateAutoConfiguration#restTemplateBuilderConfigurer matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.autoconfigure.web.client.RestTemplateBuilderConfigurer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   SecurityAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.authentication.DefaultAuthenticationEventPublisher' (OnClassCondition)
+
+   SecurityAutoConfiguration#authenticationEventPublisher matched:
+      - @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationEventPublisher; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   SecurityFilterAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer', 'org.springframework.security.config.http.SessionCreationPolicy' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+
+   SecurityFilterAutoConfiguration#securityFilterChainRegistration matched:
+      - @ConditionalOnBean (names: springSecurityFilterChain; SearchStrategy: all) found bean 'springSecurityFilterChain' (OnBeanCondition)
+
+   ServletWebServerFactoryAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'javax.servlet.ServletRequest' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+
+   ServletWebServerFactoryAutoConfiguration#tomcatServletWebServerFactoryCustomizer matched:
+      - @ConditionalOnClass found required class 'org.apache.catalina.startup.Tomcat' (OnClassCondition)
+
+   ServletWebServerFactoryConfiguration.EmbeddedTomcat matched:
+      - @ConditionalOnClass found required classes 'javax.servlet.Servlet', 'org.apache.catalina.startup.Tomcat', 'org.apache.coyote.UpgradeProtocol' (OnClassCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.boot.web.servlet.server.ServletWebServerFactory; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   SimpleCacheConfiguration matched:
+      - Cache org.springframework.boot.autoconfigure.cache.SimpleCacheConfiguration automatic cache type (CacheCondition)
+
+   SpringApplicationAdminJmxAutoConfiguration matched:
+      - @ConditionalOnProperty (spring.application.admin.enabled=true) matched (OnPropertyCondition)
+
+   SpringApplicationAdminJmxAutoConfiguration#springApplicationAdminRegistrar matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.admin.SpringApplicationAdminMXBeanRegistrar; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   SpringBootWebSecurityConfiguration matched:
+      - found 'session' scope (OnWebApplicationCondition)
+
+   SpringBootWebSecurityConfiguration.ErrorPageSecurityFilterConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.web.access.WebInvocationPrivilegeEvaluator' (OnClassCondition)
+      - @ConditionalOnBean (types: org.springframework.security.web.access.WebInvocationPrivilegeEvaluator; SearchStrategy: all) found bean 'privilegeEvaluator' (OnBeanCondition)
+
+   SpringDataWebAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.data.web.PageableHandlerMethodArgumentResolver', 'org.springframework.web.servlet.config.annotation.WebMvcConfigurer' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.data.web.PageableHandlerMethodArgumentResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   SpringDataWebAutoConfiguration#pageableCustomizer matched:
+      - @ConditionalOnMissingBean (types: org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   SpringDataWebAutoConfiguration#sortCustomizer matched:
+      - @ConditionalOnMissingBean (types: org.springframework.data.web.config.SortHandlerMethodArgumentResolverCustomizer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   SpringfoxWebMvcConfiguration matched:
+      - found 'session' scope (OnWebApplicationCondition)
+
+   SqlInitializationAutoConfiguration matched:
+      - @ConditionalOnProperty (spring.sql.init.enabled) matched (OnPropertyCondition)
+      - NoneNestedConditions 0 matched 1 did not; NestedCondition on SqlInitializationAutoConfiguration.SqlInitializationModeCondition.ModeIsNever @ConditionalOnProperty (spring.sql.init.mode=never) did not find property 'mode' (SqlInitializationAutoConfiguration.SqlInitializationModeCondition)
+
+   Swagger2ControllerWebMvc matched:
+      - found 'session' scope (OnWebApplicationCondition)
+
+   Swagger2WebMvcConfiguration matched:
+      - found 'session' scope (OnWebApplicationCondition)
+
+   SwaggerUiWebMvcConfiguration matched:
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnProperty (springfox.documentation.swagger-ui.enabled=true) matched (OnPropertyCondition)
+
+   TaskExecutionAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor' (OnClassCondition)
+
+   TaskExecutionAutoConfiguration#applicationTaskExecutor matched:
+      - @ConditionalOnMissingBean (types: java.util.concurrent.Executor; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TaskExecutionAutoConfiguration#taskExecutorBuilder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.task.TaskExecutorBuilder; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TaskSchedulingAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler' (OnClassCondition)
+
+   TaskSchedulingAutoConfiguration#taskSchedulerBuilder matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.task.TaskSchedulerBuilder; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.transaction.PlatformTransactionManager' (OnClassCondition)
+
+   TransactionAutoConfiguration#platformTransactionManagerCustomizers matched:
+      - @ConditionalOnMissingBean (types: org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.transaction.TransactionManager; SearchStrategy: all) found bean 'transactionManager'; @ConditionalOnMissingBean (types: org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration.CglibAutoProxyConfiguration matched:
+      - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   TransactionAutoConfiguration.TransactionTemplateConfiguration matched:
+      - @ConditionalOnSingleCandidate (types: org.springframework.transaction.PlatformTransactionManager; SearchStrategy: all) found a single bean 'transactionManager' (OnBeanCondition)
+
+   TransactionAutoConfiguration.TransactionTemplateConfiguration#transactionTemplate matched:
+      - @ConditionalOnMissingBean (types: org.springframework.transaction.support.TransactionOperations; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ValidationAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'javax.validation.executable.ExecutableValidator' (OnClassCondition)
+      - @ConditionalOnResource found location classpath:META-INF/services/javax.validation.spi.ValidationProvider (OnResourceCondition)
+
+   ValidationAutoConfiguration#defaultValidator matched:
+      - @ConditionalOnMissingBean (types: javax.validation.Validator; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   ValidationAutoConfiguration#methodValidationPostProcessor matched:
+      - @ConditionalOnMissingBean (types: org.springframework.validation.beanvalidation.MethodValidationPostProcessor; SearchStrategy: current) did not find any beans (OnBeanCondition)
+
+   WebMvcAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'javax.servlet.Servlet', 'org.springframework.web.servlet.DispatcherServlet', 'org.springframework.web.servlet.config.annotation.WebMvcConfigurer' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebMvcAutoConfiguration#formContentFilter matched:
+      - @ConditionalOnProperty (spring.mvc.formcontent.filter.enabled) matched (OnPropertyCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.web.filter.FormContentFilter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebMvcAutoConfiguration.EnableWebMvcConfiguration#flashMapManager matched:
+      - @ConditionalOnMissingBean (names: flashMapManager; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebMvcAutoConfiguration.EnableWebMvcConfiguration#localeResolver matched:
+      - @ConditionalOnMissingBean (names: localeResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebMvcAutoConfiguration.EnableWebMvcConfiguration#themeResolver matched:
+      - @ConditionalOnMissingBean (names: themeResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter#defaultViewResolver matched:
+      - @ConditionalOnMissingBean (types: org.springframework.web.servlet.view.InternalResourceViewResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter#requestContextFilter matched:
+      - @ConditionalOnMissingBean (types: org.springframework.web.context.request.RequestContextListener,org.springframework.web.filter.RequestContextFilter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter#viewResolver matched:
+      - @ConditionalOnBean (types: org.springframework.web.servlet.ViewResolver; SearchStrategy: all) found beans 'defaultViewResolver', 'beanNameViewResolver', 'mvcViewResolver'; @ConditionalOnMissingBean (names: viewResolver types: org.springframework.web.servlet.view.ContentNegotiatingViewResolver; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebMvcRequestHandlerProvider matched:
+      - found 'session' scope (OnWebApplicationCondition)
+
+   WebSocketServletAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'javax.servlet.Servlet', 'javax.websocket.server.ServerContainer' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+
+   WebSocketServletAutoConfiguration.TomcatWebSocketConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.apache.catalina.startup.Tomcat', 'org.apache.tomcat.websocket.server.WsSci' (OnClassCondition)
+
+   WebSocketServletAutoConfiguration.TomcatWebSocketConfiguration#websocketServletWebServerCustomizer matched:
+      - @ConditionalOnMissingBean (names: websocketServletWebServerCustomizer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   ActiveMQAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'javax.jms.ConnectionFactory' (OnClassCondition)
+
+   AopAutoConfiguration.AspectJAutoProxyingConfiguration.JdkDynamicAutoProxyConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.aop.proxy-target-class=false) did not find property 'proxy-target-class' (OnPropertyCondition)
+
+   AopAutoConfiguration.ClassProxyingConfiguration:
+      Did not match:
+         - @ConditionalOnMissingClass found unwanted class 'org.aspectj.weaver.Advice' (OnClassCondition)
+
+   ArtemisAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'javax.jms.ConnectionFactory' (OnClassCondition)
+
+   AtomikosJtaConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.atomikos.icatch.jta.UserTransactionManager' (OnClassCondition)
+
+   BatchAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.batch.core.launch.JobLauncher' (OnClassCondition)
+
+   Cache2kCacheConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.cache2k.Cache2kBuilder' (OnClassCondition)
+
+   CacheAutoConfiguration:
+      Did not match:
+         - @ConditionalOnBean (types: org.springframework.cache.interceptor.CacheAspectSupport; SearchStrategy: all) did not find any beans of type org.springframework.cache.interceptor.CacheAspectSupport (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.cache.CacheManager' (OnClassCondition)
+
+   CacheAutoConfiguration.CacheManagerEntityManagerFactoryDependsOnPostProcessor:
+      Did not match:
+         - Ancestor org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration did not match (ConditionEvaluationReport.AncestorsMatchedCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean' (OnClassCondition)
+
+   CaffeineCacheConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.github.benmanes.caffeine.cache.Caffeine' (OnClassCondition)
+
+   CassandraAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.datastax.oss.driver.api.core.CqlSession' (OnClassCondition)
+
+   CassandraDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.datastax.oss.driver.api.core.CqlSession' (OnClassCondition)
+
+   CassandraReactiveDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.datastax.oss.driver.api.core.CqlSession' (OnClassCondition)
+
+   CassandraReactiveRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.cassandra.ReactiveSession' (OnClassCondition)
+
+   CassandraRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.datastax.oss.driver.api.core.CqlSession' (OnClassCondition)
+
+   ClientHttpConnectorAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.web.reactive.function.client.WebClient' (OnClassCondition)
+
+   CodecsAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.web.reactive.function.client.WebClient' (OnClassCondition)
+
+   CouchbaseAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.couchbase.client.java.Cluster' (OnClassCondition)
+
+   CouchbaseCacheConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.couchbase.client.java.Cluster' (OnClassCondition)
+
+   CouchbaseDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.couchbase.client.java.Bucket' (OnClassCondition)
+
+   CouchbaseReactiveDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.couchbase.client.java.Cluster' (OnClassCondition)
+
+   CouchbaseReactiveRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.couchbase.client.java.Cluster' (OnClassCondition)
+
+   CouchbaseRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.couchbase.client.java.Bucket' (OnClassCondition)
+
+   DataSourceAutoConfiguration.EmbeddedDatabaseConfiguration:
+      Did not match:
+         - EmbeddedDataSource spring.datasource.url is set (DataSourceAutoConfiguration.EmbeddedDatabaseCondition)
+
+   DataSourceConfiguration.Dbcp2:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.apache.commons.dbcp2.BasicDataSource' (OnClassCondition)
+
+   DataSourceConfiguration.Generic:
+      Did not match:
+         - @ConditionalOnProperty (spring.datasource.type) did not find property 'spring.datasource.type' (OnPropertyCondition)
+
+   DataSourceConfiguration.OracleUcp:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'oracle.ucp.jdbc.PoolDataSourceImpl', 'oracle.jdbc.OracleConnection' (OnClassCondition)
+
+   DataSourceConfiguration.Tomcat:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.apache.tomcat.jdbc.pool.DataSource' (OnClassCondition)
+
+   DataSourceJmxConfiguration.TomcatDataSourceJmxConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.apache.tomcat.jdbc.pool.DataSourceProxy' (OnClassCondition)
+
+   DataSourcePoolMetadataProvidersConfiguration.CommonsDbcp2PoolDataSourceMetadataProviderConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.apache.commons.dbcp2.BasicDataSource' (OnClassCondition)
+
+   DataSourcePoolMetadataProvidersConfiguration.OracleUcpPoolDataSourceMetadataProviderConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'oracle.ucp.jdbc.PoolDataSource', 'oracle.jdbc.OracleConnection' (OnClassCondition)
+
+   DataSourcePoolMetadataProvidersConfiguration.TomcatDataSourcePoolMetadataProviderConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.apache.tomcat.jdbc.pool.DataSource' (OnClassCondition)
+
+   DataSourceProxyConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'net.ttddyy.dsproxy.support.ProxyDataSource' (OnClassCondition)
+
+   DataSourceTransactionManagerAutoConfiguration.JdbcTransactionManagerConfiguration#transactionManager:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.transaction.TransactionManager; SearchStrategy: all) found beans of type 'org.springframework.transaction.TransactionManager' transactionManager (OnBeanCondition)
+
+   DispatcherServletAutoConfiguration.DispatcherServletConfiguration#multipartResolver:
+      Did not match:
+         - @ConditionalOnBean (types: org.springframework.web.multipart.MultipartResolver; SearchStrategy: all) did not find any beans of type org.springframework.web.multipart.MultipartResolver (OnBeanCondition)
+
+   EhCacheCacheConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'net.sf.ehcache.Cache' (OnClassCondition)
+
+   ElasticsearchDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate' (OnClassCondition)
+
+   ElasticsearchRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.elasticsearch.client.Client' (OnClassCondition)
+
+   ElasticsearchRestClientAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.elasticsearch.client.RestClientBuilder' (OnClassCondition)
+
+   EmbeddedLdapAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.unboundid.ldap.listener.InMemoryDirectoryServer' (OnClassCondition)
+
+   EmbeddedMongoAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.mongodb.MongoClientSettings' (OnClassCondition)
+
+   EmbeddedWebServerFactoryCustomizerAutoConfiguration.JettyWebServerFactoryCustomizerConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'org.eclipse.jetty.server.Server', 'org.eclipse.jetty.util.Loader', 'org.eclipse.jetty.webapp.WebAppContext' (OnClassCondition)
+
+   EmbeddedWebServerFactoryCustomizerAutoConfiguration.NettyWebServerFactoryCustomizerConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'reactor.netty.http.server.HttpServer' (OnClassCondition)
+
+   EmbeddedWebServerFactoryCustomizerAutoConfiguration.UndertowWebServerFactoryCustomizerConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'io.undertow.Undertow', 'org.xnio.SslClientAuthMode' (OnClassCondition)
+
+   ErrorWebFluxAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.web.reactive.config.WebFluxConfigurer' (OnClassCondition)
+
+   FlexyPoolConfiguration.Ordered:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.vladmihalcea.flexypool.FlexyPoolDataSource' (OnClassCondition)
+
+   FlywayAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.flywaydb.core.Flyway' (OnClassCondition)
+
+   FreeMarkerAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'freemarker.template.Configuration' (OnClassCondition)
+
+   GraphQlAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GraphQlQueryByExampleAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GraphQlQuerydslAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GraphQlRSocketAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GraphQlReactiveQueryByExampleAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GraphQlReactiveQuerydslAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GraphQlWebFluxAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GraphQlWebFluxSecurityAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GraphQlWebMvcAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GraphQlWebMvcSecurityAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   GroovyTemplateAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'groovy.text.markup.MarkupTemplateEngine' (OnClassCondition)
+
+   GsonAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.google.gson.Gson' (OnClassCondition)
+
+   GsonHttpMessageConvertersConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.google.gson.Gson' (OnClassCondition)
+
+   H2ConsoleAutoConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.h2.console.enabled=true) did not find property 'enabled' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.h2.server.web.WebServlet' (OnClassCondition)
+         - found 'session' scope (OnWebApplicationCondition)
+
+   HazelcastAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.hazelcast.core.HazelcastInstance' (OnClassCondition)
+
+   HazelcastCacheConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.hazelcast.core.HazelcastInstance' (OnClassCondition)
+
+   HazelcastJpaDependencyAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.hazelcast.core.HazelcastInstance' (OnClassCondition)
+
+   HttpHandlerAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.web.reactive.DispatcherHandler' (OnClassCondition)
+
+   HypermediaAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.hateoas.EntityModel' (OnClassCondition)
+
+   InfinispanCacheConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.infinispan.spring.embedded.provider.SpringEmbeddedCacheManager' (OnClassCondition)
+
+   InfluxDbAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.influxdb.InfluxDB' (OnClassCondition)
+
+   IntegrationAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.integration.config.EnableIntegration' (OnClassCondition)
+
+   JCacheCacheConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'javax.cache.Caching' (OnClassCondition)
+
+   JacksonHttpMessageConvertersConfiguration.MappingJackson2XmlHttpMessageConverterConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.fasterxml.jackson.dataformat.xml.XmlMapper' (OnClassCondition)
+
+   JerseyAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.glassfish.jersey.server.spring.SpringComponentProvider' (OnClassCondition)
+
+   JmsAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'javax.jms.Message' (OnClassCondition)
+
+   JndiConnectionFactoryAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.jms.core.JmsTemplate' (OnClassCondition)
+
+   JndiDataSourceAutoConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.datasource.jndi-name) did not find property 'jndi-name' (OnPropertyCondition)
+      Matched:
+         - @ConditionalOnClass found required classes 'javax.sql.DataSource', 'org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType' (OnClassCondition)
+
+   JndiJtaConfiguration:
+      Did not match:
+         - @ConditionalOnJndi JNDI environment is not available (OnJndiCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.transaction.jta.JtaTransactionManager' (OnClassCondition)
+
+   JooqAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.jooq.DSLContext' (OnClassCondition)
+
+   JpaRepositoriesAutoConfiguration#entityManagerFactoryBootstrapExecutorCustomizer:
+      Did not match:
+         - AnyNestedCondition 0 matched 2 did not; NestedCondition on JpaRepositoriesAutoConfiguration.BootstrapExecutorCondition.LazyBootstrapMode @ConditionalOnProperty (spring.data.jpa.repositories.bootstrap-mode=lazy) did not find property 'bootstrap-mode'; NestedCondition on JpaRepositoriesAutoConfiguration.BootstrapExecutorCondition.DeferredBootstrapMode @ConditionalOnProperty (spring.data.jpa.repositories.bootstrap-mode=deferred) did not find property 'bootstrap-mode' (JpaRepositoriesAutoConfiguration.BootstrapExecutorCondition)
+
+   JsonbAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'javax.json.bind.Jsonb' (OnClassCondition)
+
+   JsonbHttpMessageConvertersConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'javax.json.bind.Jsonb' (OnClassCondition)
+
+   KafkaAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.kafka.core.KafkaTemplate' (OnClassCondition)
+
+   LdapAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.ldap.core.ContextSource' (OnClassCondition)
+
+   LdapRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.ldap.repository.LdapRepository' (OnClassCondition)
+
+   LiquibaseAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'liquibase.change.DatabaseChange' (OnClassCondition)
+
+   MailSenderAutoConfiguration:
+      Did not match:
+         - AnyNestedCondition 0 matched 2 did not; NestedCondition on MailSenderAutoConfiguration.MailSenderCondition.JndiNameProperty @ConditionalOnProperty (spring.mail.jndi-name) did not find property 'jndi-name'; NestedCondition on MailSenderAutoConfiguration.MailSenderCondition.HostProperty @ConditionalOnProperty (spring.mail.host) did not find property 'host' (MailSenderAutoConfiguration.MailSenderCondition)
+      Matched:
+         - @ConditionalOnClass found required classes 'javax.mail.internet.MimeMessage', 'javax.activation.MimeType', 'org.springframework.mail.MailSender' (OnClassCondition)
+
+   MailSenderValidatorAutoConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.mail.test-connection) did not find property 'test-connection' (OnPropertyCondition)
+
+   MessageSourceAutoConfiguration:
+      Did not match:
+         - ResourceBundle did not find bundle with basename messages (MessageSourceAutoConfiguration.ResourceBundleCondition)
+
+   MongoAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.mongodb.client.MongoClient' (OnClassCondition)
+
+   MongoDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.mongodb.client.MongoClient' (OnClassCondition)
+
+   MongoReactiveAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.mongodb.reactivestreams.client.MongoClient' (OnClassCondition)
+
+   MongoReactiveDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.mongodb.reactivestreams.client.MongoClient' (OnClassCondition)
+
+   MongoReactiveRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.mongodb.reactivestreams.client.MongoClient' (OnClassCondition)
+
+   MongoRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.mongodb.client.MongoClient' (OnClassCondition)
+
+   MustacheAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.samskivert.mustache.Mustache' (OnClassCondition)
+
+   Neo4jAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.neo4j.driver.Driver' (OnClassCondition)
+
+   Neo4jDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.neo4j.driver.Driver' (OnClassCondition)
+
+   Neo4jReactiveDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.neo4j.driver.Driver' (OnClassCondition)
+
+   Neo4jReactiveRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.neo4j.driver.Driver' (OnClassCondition)
+
+   Neo4jRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.neo4j.driver.Driver' (OnClassCondition)
+
+   NettyAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'io.netty.util.NettyRuntime' (OnClassCondition)
+
+   OAuth2ClientAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.security.oauth2.client.registration.ClientRegistration' (OnClassCondition)
+
+   OAuth2ResourceServerAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken' (OnClassCondition)
+
+   OpenApiControllerWebFlux:
+      Did not match:
+         - did not find reactive web application classes (OnWebApplicationCondition)
+
+   OpenApiWebFluxConfiguration:
+      Did not match:
+         - did not find reactive web application classes (OnWebApplicationCondition)
+
+   ProjectInfoAutoConfiguration#buildProperties:
+      Did not match:
+         - @ConditionalOnResource did not find resource '${spring.info.build.location:classpath:META-INF/build-info.properties}' (OnResourceCondition)
+
+   ProjectInfoAutoConfiguration#gitProperties:
+      Did not match:
+         - GitResource did not find git info at classpath:git.properties (ProjectInfoAutoConfiguration.GitResourceAvailableCondition)
+
+   QuartzAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.quartz.Scheduler' (OnClassCondition)
+
+   R2dbcAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'io.r2dbc.spi.ConnectionFactory' (OnClassCondition)
+
+   R2dbcDataAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.r2dbc.core.R2dbcEntityTemplate' (OnClassCondition)
+
+   R2dbcInitializationConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'io.r2dbc.spi.ConnectionFactory', 'org.springframework.r2dbc.connection.init.DatabasePopulator' (OnClassCondition)
+
+   R2dbcRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'io.r2dbc.spi.ConnectionFactory' (OnClassCondition)
+
+   R2dbcTransactionManagerAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.r2dbc.connection.R2dbcTransactionManager' (OnClassCondition)
+
+   RSocketGraphQlClientAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'graphql.GraphQL' (OnClassCondition)
+
+   RSocketMessagingAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'io.rsocket.RSocket' (OnClassCondition)
+
+   RSocketRequesterAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'io.rsocket.RSocket' (OnClassCondition)
+
+   RSocketSecurityAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.security.rsocket.core.SecuritySocketAcceptorInterceptor' (OnClassCondition)
+
+   RSocketServerAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'io.rsocket.core.RSocketServer' (OnClassCondition)
+
+   RSocketStrategiesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'io.netty.buffer.PooledByteBufAllocator' (OnClassCondition)
+
+   RabbitAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.rabbitmq.client.Channel' (OnClassCondition)
+
+   ReactiveElasticsearchRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.elasticsearch.client.reactive.ReactiveElasticsearchClient' (OnClassCondition)
+
+   ReactiveElasticsearchRestClientAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'reactor.netty.http.client.HttpClient' (OnClassCondition)
+
+   ReactiveMultipartAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.web.reactive.config.WebFluxConfigurer' (OnClassCondition)
+
+   ReactiveOAuth2ClientAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'reactor.core.publisher.Flux' (OnClassCondition)
+
+   ReactiveOAuth2ResourceServerAutoConfiguration:
+      Did not match:
+         - @ConditionalOnWebApplication did not find reactive web application classes (OnWebApplicationCondition)
+
+   ReactiveSecurityAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'reactor.core.publisher.Flux' (OnClassCondition)
+
+   ReactiveUserDetailsServiceAutoConfiguration:
+      Did not match:
+         - AnyNestedCondition 0 matched 2 did not; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.ReactiveUserDetailsServiceCondition.ReactiveWebApplicationCondition did not find reactive web application classes; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.ReactiveUserDetailsServiceCondition.RSocketSecurityEnabledCondition @ConditionalOnBean (types: org.springframework.messaging.rsocket.annotation.support.RSocketMessageHandler; SearchStrategy: all) did not find any beans of type org.springframework.messaging.rsocket.annotation.support.RSocketMessageHandler (ReactiveUserDetailsServiceAutoConfiguration.ReactiveUserDetailsServiceCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.authentication.ReactiveAuthenticationManager' (OnClassCondition)
+
+   ReactiveWebServerFactoryAutoConfiguration:
+      Did not match:
+         - @ConditionalOnWebApplication did not find reactive web application classes (OnWebApplicationCondition)
+
+   RedisAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.redis.core.RedisOperations' (OnClassCondition)
+
+   RedisCacheConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.redis.connection.RedisConnectionFactory' (OnClassCondition)
+
+   RedisReactiveAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'reactor.core.publisher.Flux' (OnClassCondition)
+
+   RedisRepositoriesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.redis.repository.configuration.EnableRedisRepositories' (OnClassCondition)
+
+   RepositoryRestMvcAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration' (OnClassCondition)
+
+   Saml2RelyingPartyAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository' (OnClassCondition)
+
+   SecurityDataConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.security.data.repository.query.SecurityEvaluationContextExtension' (OnClassCondition)
+
+   SendGridAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'com.sendgrid.SendGrid' (OnClassCondition)
+
+   ServletWebServerFactoryAutoConfiguration.ForwardedHeaderFilterConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (server.forward-headers-strategy=framework) did not find property 'server.forward-headers-strategy' (OnPropertyCondition)
+
+   ServletWebServerFactoryConfiguration.EmbeddedJetty:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'org.eclipse.jetty.server.Server', 'org.eclipse.jetty.util.Loader', 'org.eclipse.jetty.webapp.WebAppContext' (OnClassCondition)
+
+   ServletWebServerFactoryConfiguration.EmbeddedUndertow:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'io.undertow.Undertow', 'org.xnio.SslClientAuthMode' (OnClassCondition)
+
+   SessionAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.session.Session' (OnClassCondition)
+
+   SleuthListenerAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'brave.Tracer' (OnClassCondition)
+
+   SolrAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.apache.solr.client.solrj.impl.CloudSolrClient' (OnClassCondition)
+
+   SpringBootWebSecurityConfiguration.SecurityFilterChainConfiguration:
+      Did not match:
+         - AllNestedConditions 1 matched 1 did not; NestedCondition on DefaultWebSecurityCondition.Beans @ConditionalOnMissingBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter,org.springframework.security.web.SecurityFilterChain; SearchStrategy: all) found beans of type 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' securityConfiguration; NestedCondition on DefaultWebSecurityCondition.Classes @ConditionalOnClass found required classes 'org.springframework.security.web.SecurityFilterChain', 'org.springframework.security.config.annotation.web.builders.HttpSecurity' (DefaultWebSecurityCondition)
+
+   SpringBootWebSecurityConfiguration.WebSecurityEnablerConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) found beans named springSecurityFilterChain (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.EnableWebSecurity' (OnClassCondition)
+
+   SpringDataRestConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.data.rest.core.config.RepositoryRestConfiguration' (OnClassCondition)
+
+   SpringfoxWebFluxConfiguration:
+      Did not match:
+         - did not find reactive web application classes (OnWebApplicationCondition)
+
+   Swagger2ControllerWebFlux:
+      Did not match:
+         - did not find reactive web application classes (OnWebApplicationCondition)
+
+   Swagger2WebFluxConfiguration:
+      Did not match:
+         - did not find reactive web application classes (OnWebApplicationCondition)
+
+   SwaggerUiWebFluxConfiguration:
+      Did not match:
+         - did not find reactive web application classes (OnWebApplicationCondition)
+
+   TaskSchedulingAutoConfiguration#taskScheduler:
+      Did not match:
+         - @ConditionalOnBean (names: org.springframework.context.annotation.internalScheduledAnnotationProcessor; SearchStrategy: all) did not find any beans named org.springframework.context.annotation.internalScheduledAnnotationProcessor (OnBeanCondition)
+
+   ThymeleafAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.thymeleaf.spring5.SpringTemplateEngine' (OnClassCondition)
+
+   TransactionAutoConfiguration#transactionalOperator:
+      Did not match:
+         - @ConditionalOnSingleCandidate (types: org.springframework.transaction.ReactiveTransactionManager; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration.JdkDynamicAutoProxyConfiguration:
+      Did not match:
+         - @ConditionalOnProperty (spring.aop.proxy-target-class=false) did not find property 'proxy-target-class' (OnPropertyCondition)
+
+   UserDetailsServiceAutoConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.authentication.AuthenticationManagerResolver,org.springframework.security.oauth2.jwt.JwtDecoder,org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector,org.springframework.security.oauth2.client.registration.ClientRegistrationRepository,org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository; SearchStrategy: all) found beans of type 'org.springframework.security.authentication.AuthenticationManager' authenticationManagerBean and found beans of type 'org.springframework.security.core.userdetails.UserDetailsService' customUserDetailService (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+
+   WebClientAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.web.reactive.function.client.WebClient' (OnClassCondition)
+
+   WebFluxAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.web.reactive.config.WebFluxConfigurer' (OnClassCondition)
+
+   WebFluxRequestHandlerProvider:
+      Did not match:
+         - did not find reactive web application classes (OnWebApplicationCondition)
+
+   WebMvcAutoConfiguration#hiddenHttpMethodFilter:
+      Did not match:
+         - @ConditionalOnProperty (spring.mvc.hiddenmethod.filter.enabled) did not find property 'enabled' (OnPropertyCondition)
+
+   WebMvcAutoConfiguration.ResourceChainCustomizerConfiguration:
+      Did not match:
+         - @ConditionalOnEnabledResourceChain did not find class org.webjars.WebJarAssetLocator (OnEnabledResourceChainCondition)
+
+   WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter#beanNameViewResolver:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.web.servlet.view.BeanNameViewResolver; SearchStrategy: all) found beans of type 'org.springframework.web.servlet.view.BeanNameViewResolver' beanNameViewResolver (OnBeanCondition)
+
+   WebServiceTemplateAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.oxm.Marshaller' (OnClassCondition)
+
+   WebServicesAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.ws.transport.http.MessageDispatcherServlet' (OnClassCondition)
+
+   WebSessionIdResolverAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'reactor.core.publisher.Mono' (OnClassCondition)
+
+   WebSocketMessagingAutoConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer' (OnClassCondition)
+
+   WebSocketReactiveAutoConfiguration:
+      Did not match:
+         - @ConditionalOnWebApplication did not find reactive web application classes (OnWebApplicationCondition)
+
+   WebSocketServletAutoConfiguration.Jetty10WebSocketConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required classes 'org.eclipse.jetty.websocket.javax.server.internal.JavaxWebSocketServerContainer', 'org.eclipse.jetty.websocket.server.JettyWebSocketServerContainer' (OnClassCondition)
+
+   WebSocketServletAutoConfiguration.JettyWebSocketConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer' (OnClassCondition)
+
+   WebSocketServletAutoConfiguration.UndertowWebSocketConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'io.undertow.websockets.jsr.Bootstrap' (OnClassCondition)
+
+   XADataSourceAutoConfiguration:
+      Did not match:
+         - @ConditionalOnBean (types: org.springframework.boot.jdbc.XADataSourceWrapper; SearchStrategy: all) did not find any beans of type org.springframework.boot.jdbc.XADataSourceWrapper (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required classes 'javax.sql.DataSource', 'javax.transaction.TransactionManager', 'org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType' (OnClassCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration
+
+    org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration
+
+    org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration
+
+    org.springframework.boot.autoconfigure.availability.ApplicationAvailabilityAutoConfiguration
+
+    org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration
+
+
+
+ -[36m2022/10/17 22:01:27,715[m [31m[ERROR][m  [org.springframework.boot.SpringApplication] [33m[main][m- Application run failed
+ - org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Invocation of init method failed; nested exception is org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1804) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1154) ~[spring-context-5.3.20.jar:5.3.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:908) ~[spring-context-5.3.20.jar:5.3.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583) ~[spring-context-5.3.20.jar:5.3.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:734) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:408) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1306) ~[spring-boot-2.7.0.jar:2.7.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1295) ~[spring-boot-2.7.0.jar:2.7.0]
+	at idorm.idormServer.IdormServerApplication.main(IdormServerApplication.java:12) ~[classes/:?]
+Caused by: org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:275) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:237) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:214) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.id.factory.internal.DefaultIdentifierGeneratorFactory.injectServices(DefaultIdentifierGeneratorFactory.java:175) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.injectDependencies(AbstractServiceRegistryImpl.java:286) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:243) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:214) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:173) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:127) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1460) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1494) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:58) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800) ~[spring-beans-5.3.20.jar:5.3.20]
+	... 16 more
+Caused by: org.hibernate.HibernateException: Access to DialectResolutionInfo cannot be null when 'hibernate.dialect' not set
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.determineDialect(DialectFactoryImpl.java:100) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.buildDialect(DialectFactoryImpl.java:54) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:138) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:35) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:101) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:237) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:214) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.id.factory.internal.DefaultIdentifierGeneratorFactory.injectServices(DefaultIdentifierGeneratorFactory.java:175) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.injectDependencies(AbstractServiceRegistryImpl.java:286) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:243) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:214) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:173) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:127) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1460) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1494) ~[hibernate-core-5.6.9.Final.jar:5.6.9.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:58) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341) ~[spring-orm-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863) ~[spring-beans-5.3.20.jar:5.3.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800) ~[spring-beans-5.3.20.jar:5.3.20]
+	... 16 more
