@@ -1,9 +1,7 @@
 package idorm.idormServer.member.domain;
 
 import idorm.idormServer.common.BaseEntity;
-import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.domain.SubComment;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.Photo;
 import lombok.*;

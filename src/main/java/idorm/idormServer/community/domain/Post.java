@@ -41,8 +41,8 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Photo> photos = new ArrayList<>(); // 업로드 사진들
 
-    @OneToMany(mappedBy = "post")
-    private List<Comment> comments = new ArrayList<>();
+//    @OneToMany(mappedBy = "post")
+//    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Post(Member member, String dormNum, String title, String content, Boolean isAnonymous) {

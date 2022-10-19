@@ -1,8 +1,6 @@
 package idorm.idormServer.community.dto.post;
 
-import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.Photo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
