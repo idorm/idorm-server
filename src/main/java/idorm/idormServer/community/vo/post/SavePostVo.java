@@ -1,4 +1,4 @@
-package idorm.idormServer.community.vo;
+package idorm.idormServer.community.vo.post;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,7 +33,7 @@ public class SavePostVo {
     @ApiModelProperty(position = 5, required = true, dataType = "Boolean", value = "익명 여부")
     private Boolean isAnonymous;
 
-    @ApiModelProperty(position = 6, dataType = "List<MultipartFile>", value = "게시글 사진들", example = "DORM1, DORM2, DORM3")
+    @ApiModelProperty(position = 6, dataType = "List<MultipartFile>", value = "게시글 사진들")
     private List<MultipartFile> files = new ArrayList<>();
 
 }

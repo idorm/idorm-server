@@ -41,6 +41,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Photo> photos = new ArrayList<>(); // 업로드 사진들
 
+    @OneToMany(mappedBy = "post")
+    private List<PostLikedMember> postLikedMembers = new ArrayList<>(); // 게시글에 공감한 멤버들
+
 //    @OneToMany(mappedBy = "post")
 //    private List<Comment> comments = new ArrayList<>();
 
@@ -66,17 +69,15 @@ public class Post extends BaseEntity {
         }
     }
 
-    public void deletePhotos(List<Photo> photos) {
-        for (Photo photo : photos) {
-            this.photos.remove(photo);
-        }
-    }
-
-    public void updateIsVisible() {
-        this.isVisible = false;
-    }
-
     public void deletePost() {
         this.isVisible = false;
+    }
+
+    public void addLikedMember(Member member) {
+
+    }
+
+    public void subtractLikesCount(Member member) {
+
     }
 }

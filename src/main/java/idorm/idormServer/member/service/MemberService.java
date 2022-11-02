@@ -238,11 +238,7 @@ public class MemberService {
         Member foundMember = findById(memberId);
         photoService.findOneByFileName(fileName);
 
-        try {
-            photoService.delete(foundMember, fileName);
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Member 프로필 사진 삭제 중 서버 에러 발생", e);
-        }
+        photoService.delete(foundMember, fileName);
         log.info("COMPLETE | Member 사진 삭제 At " + LocalDateTime.now() + " | " + memberId);
     }
 

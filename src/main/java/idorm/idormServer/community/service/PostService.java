@@ -34,8 +34,7 @@ public class PostService {
 
     /**
      * Post 게시글 사진 추가 메소드 |
-     * 사진 최대 개수 10개임. 넘으면 exception 던져야댐
-     * 사진 파일이름 라벨링 작업 필요함
+     * TODO: 사진 최대 개수 10개로 넘으면 exception handling이 필요함
      */
     private List<Photo> savePhotos(Post post, Member member, List<MultipartFile> files) {
         log.info("IN PROGRESS | Post 게시글 사진 저장 At " + LocalDateTime.now() + " | 게시글 식별자: " + post.getId());
@@ -44,7 +43,7 @@ public class PostService {
         List<String> fileNames = new ArrayList<>();
 
         for(MultipartFile file : files) {
-            String fileName = post.getId() + "_" + index + file.getContentType().replace("image/", ".");;
+            String fileName = index + file.getContentType().replace("image/", ".");;
             fileNames.add(fileName);
             index += 1;
         }
@@ -114,108 +113,38 @@ public class PostService {
         }
     }
 
+
     /**
-     * Post 수정 |
-     * 게시글 사진을 제외한 부분들을 수정합니다.
+     * Post 게시글 수정
+     * 작성한 멤버가 맞는지 확인 후 게시글 식별자를 통해 게시글을 수정합니다.
+     * 수정할 수 있는 요소는 제목, 내용, 익명여부, 사진 입니다.
      */
     @Transactional
     public void updatePost(
-                     Long postId,
-                     Member member,
-                     String title,
-                     String content,
-                     Boolean isAnonymous
-    ) {
-        log.info("IN PROGRESS | Post 수정 At " + LocalDateTime.now() + " | " + title);
-
-        Optional<Post> foundPost = postRepository.findById(postId);
-
-        if (foundPost.isEmpty()) {
-            throw new NotFoundException("수정할 게시글이 존재하지 않습니다.");
-        }
-
-        if(foundPost.get().getMember().getId() != member.getId()) {
-            throw new UnauthorizedException("본인이 작성한 게시글만 수정할 수 있습니다.");
-        }
-
-        try {
-            foundPost.get().updatePost(title, content, isAnonymous);
-
-            Post updatedPost = postRepository.save(foundPost.get());
-
-            log.info("COMPLETE | Post 수정 At " + LocalDateTime.now() + " | Post 식별자: " + updatedPost.getId());
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Post 수정 중 서버 에러 발생", e);
-        }
-    }
-
-    /**
-     * Post 게시글 수정 - 사진 추가 |
-     * Post 게시글 사진을 추가할 때 사용합니다.
-     */
-    @Transactional
-    public void updatePostAddPhoto(
             Long postId,
             Member member,
+            String title,
+            String content,
+            Boolean isAnonymous,
             List<MultipartFile> files
     ) {
-        log.info("IN PROGRESS | Post 사진 추가 수정 At " + LocalDateTime.now() + " | 게시글 식별자: " + postId);
+        log.info("IN PROGRESS | Post 수정 At " + LocalDateTime.now() + " | " + title + " | 수정 사진 개수 : " + files.size());
 
-        Optional<Post> foundPost = postRepository.findById(postId);
-
-        if (foundPost.isEmpty()) {
-            throw new NotFoundException("수정할 게시글이 존재하지 않습니다.");
-        }
-
-        if(foundPost.get().getMember().getId() != member.getId()) {
-            throw new UnauthorizedException("본인이 작성한 게시글만 수정할 수 있습니다.");
-        }
+        Post foundPost = findById(postId);
 
         try {
+            foundPost.updatePost(title, content, isAnonymous);
 
-            List<Photo> savedPhotos = savePhotos(foundPost.get(), member, files);
-            foundPost.get().addPhotos(savedPhotos);
+            photoService.deletePostFullPhotos(foundPost, member);
 
-            postRepository.save(foundPost.get());
+            List<Photo> updatedPhotos = savePhotos(foundPost, member, files);
+            foundPost.addPhotos(updatedPhotos);
+            Post updatedPost = postRepository.save(foundPost);
 
-            log.info("COMPLETE | Post 사진 추가 수정 At " + LocalDateTime.now() + " | 저장된 사진 개수 " + foundPost.get().getPhotos().size());
+            log.info("COMPLETE | Post 수정 At " + LocalDateTime.now() + " | Post 식별자: " + updatedPost.getId()
+                    + " | 저장된 사진 개수 " + foundPost.getPhotos().size());
         } catch (Exception e) {
-            throw new InternalServerErrorException("Post 사진 추가 수정 중 서버 에러 발생", e);
-        }
-    }
-
-
-    /**
-     * Post 게시글 수정 - 사진 삭제 |
-     * Post 게시글 사진을 삭제할 때 사용합니다.
-     */
-    @Transactional
-    public void updatePostDeletePhoto(
-            Long postId,
-            Member member,
-            List<String> fileNames
-    ) {
-        log.info("IN PROGRESS | Post 게시글 사진 삭제 At " + LocalDateTime.now() + " | 게시글 식별자: " + postId + " | 파일 크기: " + fileNames.size());
-
-        Optional<Post> foundPost = postRepository.findById(postId);
-
-        if (foundPost.isEmpty()) {
-            throw new NotFoundException("수정할 게시글이 존재하지 않습니다.");
-        }
-
-        if(foundPost.get().getMember().getId() != member.getId()) {
-            throw new UnauthorizedException("본인이 작성한 게시글만 수정할 수 있습니다.");
-        }
-
-        try {
-            // TODO: Post 의 photos 부분에서도 사진 삭제를 해야하는지 확인
-
-            photoService.deletePostPhotos(foundPost.get(), member, fileNames);
-            postRepository.save(foundPost.get());
-
-            log.info("COMPLETE | Post 게시글 사진 삭제 At " + LocalDateTime.now() + " | 저장된 사진 개수 " + foundPost.get().getPhotos().size());
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Post 게시글 사진 삭제 중 서버 에러 발생", e);
+            throw new InternalServerErrorException("Post 수정 중 서버 에러 발생", e);
         }
     }
 
@@ -224,20 +153,16 @@ public class PostService {
      */
     @Transactional
     public void deletePost(Long postId, Member member) {
-        Optional<Post> foundPost = postRepository.findById(postId);
+        log.info("IN PROGRESS | Post 삭제 At " + LocalDateTime.now() + " | " + postId);
+        Post foundPost = findById(postId);
 
-        if(foundPost.isEmpty()) {
-            throw new NotFoundException("삭제할 게시글이 존재하지 않습니다.");
-        }
-        if(foundPost.get().getMember().getId() != member.getId()) {
+        if(foundPost.getMember().getId() != member.getId()) {
             throw new UnauthorizedException("본인이 작성한 게시글만 삭제할 수 있습니다.");
         }
 
-        foundPost.get().updateIsVisible();
-        postRepository.save(foundPost.get());
-
-        // TODO: Post에 연관된 댓글, 대댓글도 isVisible 처리 필요
-        // TODO: Member에 매핑된 Post도 삭제 처리 필요
+        foundPost.deletePost();
+        postRepository.save(foundPost);
+        log.info("COMPLETE | Post 삭제 At " + LocalDateTime.now() + " | " + postId);
     }
 
     /**
@@ -245,29 +170,27 @@ public class PostService {
      * 게시글 식별자를 통해 조회합니다.
      */
     public Post findById(Long postId) {
+        log.info("IN PROGRESS | Post 단건 조회 At " + LocalDateTime.now() + " | " + postId);
         Optional<Post> foundPost = postRepository.findById(postId);
-
         // TODO: 댓글, 대댓글까지 조회
 
         if(foundPost.isEmpty()) {
             throw new NotFoundException("조회할 게시글이 존재하지 않습니다.");
         }
-
+        log.info("COMPLETE | Post 단건 조회 At " + LocalDateTime.now() + " | " + postId);
         return foundPost.get();
     }
 
     /**
      * Post 기숙사 카테고리 별 다건 조회 |
      * 기숙사 카테고리를 사용한 쿼리를 통해 해당되는 기숙사의 게시글들을 조회합니다.
-     * 페이징이 필요할 듯
+     * TODO: 페이징 처리
      */
     public List<Post> findManyPostsByDormCategory(String dormNum) {
-        List<Long> foundPostsId = postRepository.findManyByDormCategory(dormNum);
+        log.info("IN PROGRESS | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
 
-        List<Post> foundPosts = new ArrayList<>();
-        for(Long postId : foundPostsId) {
-            foundPosts.add(postRepository.findById(postId).get());
-        }
+        List<Post> foundPosts = postRepository.findManyByDormCategory(dormNum);
+        log.info("COMPLETE | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
         return foundPosts;
     }
 
@@ -277,15 +200,30 @@ public class PostService {
      * 일주일 이내의 글만 인기글로 선정
      * 공감 순으로 상위 10개 조회 (만약 동일 공감이 많다면 더 빠른 최신 날짜로)
      */
-//    public List<Post> findTopPosts(String dormNum) {
-//
-//    }
+    public List<Post> findTopPosts(String dormNum) {
+        log.info("IN PROGRESS | Post 기숙사 카테고리 별 인기 게시글 조회 At " + LocalDateTime.now() + " | " + dormNum);
+        try {
+            List<Post> foundPosts = postRepository.findTopPostsByDormCategory(dormNum);
+            log.info("COMPLETE | Post 기숙사 카테고리 별 인기 게시글 조회 At " + LocalDateTime.now() + " | 조회된 게시글 수: " + foundPosts.size());
+            return foundPosts;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("인기 게시글 조회 중 서버 에러가 발생했습니다.", e);
+        }
+    }
 
     /**
      * 로그인한 멤버가 작성한 모든 게시글 리스트 조회 |
      */
-//    public List<Post> findPostsByMember(Member member) {
-//
-//    }
+    public List<Post> findPostsByMember(Member member) {
+        log.info("IN PROGRESS | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | " + member.getId());
+        memberService.findById(member.getId());
+        try {
+            List<Post> postsByMemberId = postRepository.findPostsByMemberId(member.getId());
+            log.info("COMPLETE | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 게시글 수 " + postsByMemberId.size());
+            return postsByMemberId;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("멤버가 작성한 게시글 전체 조회 중 서버 에러가 발생했습니다.", e);
+        }
+    }
 
 }

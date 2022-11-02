@@ -2,6 +2,7 @@ package idorm.idormServer.member.domain;
 
 import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.Photo;
 import lombok.*;
@@ -39,14 +40,8 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<Post> posts = new ArrayList<>(); // 작성한 게시글
 
-
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "post_id")
-//    private List<Post> posts = new ArrayList<>(); // 작성한 게시글들
-
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "post_id")
-//    private List<Post> likedPosts = new ArrayList<>(); // 좋아요한 게시글들
+    @OneToMany(mappedBy = "member")
+    private List<PostLikedMember> postLikedMembers = new ArrayList<>(); // 멤버가 공감한 게시글들
 
 //    @OneToMany(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "comment_id")

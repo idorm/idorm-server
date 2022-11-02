@@ -64,6 +64,7 @@ public class PhotoService {
 
         try {
             Photo photo = Photo.builder()
+                    .folderName(folderName)
                     .fileName(fileName)
                     .url(url)
                     .member(member)
@@ -103,13 +104,13 @@ public class PhotoService {
         try {
             int fileNameIndex = 0;
             for (MultipartFile file : files) {
-//                String fileName = fileNames[fileNameIndex];
                 String fileName = fileNames.get(fileNameIndex);
 
                 String url = insertFileToS3(folderName, fileName, file);
                 urls.add(url);
 
                 Photo photo = Photo.builder()
+                        .folderName(folderName)
                         .fileName(fileName)
                         .url(url)
                         .member(member)
@@ -221,7 +222,28 @@ public class PhotoService {
     }
 
     /**
-     * Photo 게시글 사진 삭제 |
+     * Photo 게시글 사진 삭제 - 해당 게시글의 전체 사진 삭제 |
+     * 폴더명 (post-{postId}/)을 받으면 해당 폴더 내의 전체 사진을 삭제합니다.
+     */
+    @Transactional
+    public void deletePostFullPhotos(Post post, Member member) {
+        log.info("IN PROGRESS | Photo 커뮤니티 게시글 폴더 전체 삭제 At " + LocalDateTime.now() +
+                " | 게시글 아이디 = " + post.getId() + " 멤버 아이디 = "  + member.getId());
+
+        String folderName = "community/" + post.getDormNum() + "/" + "post-" + post.getId();
+
+        List<Photo> foundPhotos = photoRepository.findByFolderName(folderName);
+
+        for(Photo photo : foundPhotos) {
+            deleteFileFromS3(folderName, photo.getFileName());
+            photoRepository.delete(photo);
+        }
+
+        log.info("COMPLETE | Photo 커뮤니티 게시글 폴더 전체 삭제 At " + LocalDateTime.now());
+    }
+
+    /**
+     * Photo 게시글 사진 삭제 - 해당 파일만 삭제|
      */
     @Transactional
     public void deletePostPhotos(Post post, Member member, List<String> fileNames) {

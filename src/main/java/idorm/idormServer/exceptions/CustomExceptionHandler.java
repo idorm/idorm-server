@@ -138,28 +138,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * 406 Not Acceptable |
-     * 서버 주도 콘텐츠 협상을 수행한 후, 사용자 에이전트에서 정해준 규격에 따른 어떠한 콘텐츠도 찾지 않습니다.
-     */
-    @ExceptionHandler(NotAcceptableException.class)
-    @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
-    public ResponseEntity<Object> handleNotAcceptableException(NotAcceptableException exception) {
-        String responseMessage = exception.getMessage();
-        String responseCode = "NOT_ACCEPTABLE";
-        LocalDateTime timestamp = LocalDateTime.now();
-
-        log.error("ERROR | " + responseMessage + " At " + timestamp + " | "
-                + exception.getMessage() + " = " + exception.getCause());
-
-        return ResponseEntity.status(406).body(
-                DefaultExceptionResponseDto.builder()
-                        .responseCode(responseCode)
-                        .responseMessage(responseMessage)
-                        .build()
-        );
-    }
-
-    /**
      * 409 Conflict |
      * 요청이 현재 서버의 상태와 충돌됩니다.
      */

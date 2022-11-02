@@ -20,6 +20,7 @@ public class Photo extends BaseEntity {
     private Long id;
 
     private String fileName;
+    private String folderName;
 
     @Column(length = 1000)
     private String url;
@@ -32,13 +33,15 @@ public class Photo extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post; // 커뮤니티 게시글
 
-    public Photo(String fileName, String url, Member member) {
+    public Photo(String folderName, String fileName, String url, Member member) {
+        this.folderName = folderName;
         this.fileName = fileName;
         this.url = url;
         this.member = member;
     }
 
-    public Photo(String fileName, String url, Member member, Post post) {
+    public Photo(String folderName, String fileName, String url, Member member, Post post) {
+        this.folderName = folderName;
         this.fileName = fileName;
         this.url = url;
         this.member = member;
