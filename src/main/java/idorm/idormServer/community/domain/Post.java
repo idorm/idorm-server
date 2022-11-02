@@ -34,6 +34,8 @@ public class Post extends BaseEntity {
     private Boolean isAnonymous; // 익명 여부, default는 true(익명)
     private Boolean isVisible; // 게시글 공개 여부, 삭제 시 false로 변경
 
+    private Integer likesCount; // 개사글 좋아요 수
+
     @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
     @JoinColumn(name = "member_id", updatable = false)
     private Member member;
@@ -55,6 +57,7 @@ public class Post extends BaseEntity {
         this.content = content;
         this.isAnonymous = isAnonymous;
         this.isVisible = true;
+        this.likesCount = 0;
     }
 
     public void updatePost(String title, String content, Boolean isAnonymous) {
@@ -73,11 +76,11 @@ public class Post extends BaseEntity {
         this.isVisible = false;
     }
 
-    public void addLikedMember(Member member) {
-
+    public void plusPostLikesCount() {
+        this.likesCount += 1;
     }
 
-    public void subtractLikesCount(Member member) {
-
+    public void minusPostLikesCount() {
+        this.likesCount -= 1;
     }
 }

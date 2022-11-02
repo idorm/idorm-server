@@ -37,12 +37,13 @@ public class PostDefaultResponseDto {
     @ApiModelProperty(position = 7, value = "게시글 공개 여부")
     private Boolean isVisible;
 
-    @ApiModelProperty(position = 8, value = "업로드 사진 url")
+    @ApiModelProperty(position = 8, value = "공감 수")
+    private Integer likesCount;
+
+    @ApiModelProperty(position = 9, value = "업로드 사진 url")
     private List<String> photoUrls = new ArrayList<>();
 
-//    @ApiModelProperty(position = 9, value = "공감한 멤버 식별자")
-//    private List<Long> postLikedMemberIds = new ArrayList<>();
-//
+
 //    @ApiModelProperty(position = 10, value = "댓글 식별자")
 //    private List<Long> commentIds = new ArrayList<>();
 
@@ -54,6 +55,7 @@ public class PostDefaultResponseDto {
         this.content = post.getContent();
         this.isAnonymous = post.getIsAnonymous();
         this.isVisible = post.getIsVisible();
+        this.likesCount = post.getLikesCount();
 
         if(post.getPhotos() != null) {
             for(Photo photo : post.getPhotos()) {
@@ -61,12 +63,6 @@ public class PostDefaultResponseDto {
             }
         }
 
-//        if(post.getLikes() != null) {
-//            for(Member member : post.getLikes()) {
-//                this.postLikedMemberIds.add(member.getId());
-//            }
-//        }
-//
 //        if(post.getComments() != null) {
 //            for(Comment comment : post.getComments()) {
 //                this.commentIds.add(comment.getId());

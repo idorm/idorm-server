@@ -348,7 +348,7 @@ public class PostController {
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
-        postLikedMemberService.save(member, post);
+        postService.addPostLikes(member, post);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -373,8 +373,7 @@ public class PostController {
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
-        PostLikedMember foundPostLikedMember = postLikedMemberService.findOneByMemberIdAndPostId(member.getId(), post.getId());
-        postLikedMemberService.deleteById(foundPostLikedMember.getId());
+        postService.deletePostLikes(member, post);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

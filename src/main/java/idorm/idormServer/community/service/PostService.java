@@ -1,7 +1,9 @@
 package idorm.idormServer.community.service;
 
 import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.repository.PostRepository;
+import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.exceptions.http.UnauthorizedException;
@@ -31,6 +33,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final PhotoService photoService;
     private final MemberService memberService;
+    private final PostLikedMemberService postLikedMemberService;
 
     /**
      * Post 게시글 사진 추가 메소드 |
@@ -223,6 +226,42 @@ public class PostService {
             return postsByMemberId;
         } catch (Exception e) {
             throw new InternalServerErrorException("멤버가 작성한 게시글 전체 조회 중 서버 에러가 발생했습니다.", e);
+        }
+    }
+
+    /**
+     * 게시글에 멤버가 공감했을 때
+     * Post 공감 카운트 증가 및 PostLikedMember save 호출
+     */
+    @Transactional
+    public Long addPostLikes(Member member, Post post) {
+
+        Long savedPostLikedMemberId = postLikedMemberService.save(member, post);
+        try {
+            post.plusPostLikesCount();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("게시글 공감 수 추가 중 서버 에러가 발생했습니다.", e);
+        }
+        return savedPostLikedMemberId;
+    }
+
+    /**
+     * 게시글에 멤버가 공감 취소했을 때
+     * Post 공감 카운트 감소 및 PostLikedMember deletePostLikes 호출
+     */
+    @Transactional
+    public void deletePostLikes(Member member, Post post) {
+        PostLikedMember foundPostLikedMember = postLikedMemberService.findOneByMemberIdAndPostId(member.getId(), post.getId());
+        postLikedMemberService.deleteById(foundPostLikedMember.getId());
+
+        if(post.getLikesCount() <= 0) {
+            throw new ConflictException("취소할 수 있는 공감이 없습니다.");
+        }
+
+        try {
+            post.minusPostLikesCount();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("게시글 공감 수 삭제 중 서버 에러가 발생했습니다.", e);
         }
     }
 
