@@ -163,8 +163,12 @@ public class PostService {
             throw new UnauthorizedException("본인이 작성한 게시글만 삭제할 수 있습니다.");
         }
 
-        foundPost.deletePost();
-        postRepository.save(foundPost);
+        try {
+            foundPost.deletePost();
+            postRepository.save(foundPost);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Post 삭제 중 서버 에러 발생", e);
+        }
         log.info("COMPLETE | Post 삭제 At " + LocalDateTime.now() + " | " + postId);
     }
 

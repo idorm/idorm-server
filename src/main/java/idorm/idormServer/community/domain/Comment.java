@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,9 +32,8 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "sub_comment_id")
-//    private List<SubComment> subComments = new ArrayList<>();
+    @OneToMany(mappedBy = "comment")
+    private List<SubComment> subComments = new ArrayList<>();
 
     @Builder
     public Comment(String content, Boolean isAnonymous, Post post, Member member) {
