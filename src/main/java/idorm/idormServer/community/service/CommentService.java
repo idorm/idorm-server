@@ -27,7 +27,7 @@ public class CommentService {
     private final MemberService memberService;
 
     /**
-     * Comment 저장(생성) |
+     * Comment 저장
      */
     @Transactional
     public Comment saveComment(String content,
@@ -72,12 +72,12 @@ public class CommentService {
      * 로그인한 멤버가 작성한 모든 댓글들 조회
      */
     public List<Comment> findCommentsByMember(Member member) {
-        log.info("IN PROGRESS | Comment 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
+        log.info("IN PROGRESS | Comment 로그인한 멤버가 작성한 댓글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
         memberService.findById(member.getId());
 
         try {
             List<Comment> commentsByMemberId = commentRepository.findCommentsByMemberId(member.getId());
-            log.info("COMPLETE | Comment 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
+            log.info("COMPLETE | Comment 로그인한 멤버가 작성한 댓글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
             return commentsByMemberId;
         } catch (Exception e) {
             throw new InternalServerErrorException("멤버가 작성한 댓글 전체 조회 중 서버 에러가 발생했습니다.", e);

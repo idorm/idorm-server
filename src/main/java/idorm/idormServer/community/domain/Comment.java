@@ -44,11 +44,6 @@ public class Comment extends BaseEntity {
         this.post = post;
     }
 
-    public void updateComment(String content, Boolean isAnonymous) {
-        this.content = content;
-        this.isAnonymous = isAnonymous;
-    }
-
     public void deleteComment() {
         this.isVisible = false;
     }

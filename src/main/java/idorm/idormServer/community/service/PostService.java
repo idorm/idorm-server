@@ -153,6 +153,7 @@ public class PostService {
 
     /**
      * Post 삭제 |
+     * TODO: 댓글 / 대댓글도 삭제 처리
      */
     @Transactional
     public void deletePost(Long postId, Member member) {
