@@ -18,7 +18,7 @@ import java.util.List;
 public class Post extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="post_id")
     private Long id;
 
@@ -31,8 +31,8 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content; // 내용
 
-    private Boolean isAnonymous; // 익명 여부, default는 true(익명)
-    private Boolean isVisible; // 게시글 공개 여부, 삭제 시 false로 변경
+    private Boolean isAnonymous; // 익명 여부
+    private Boolean isVisible; // 게시글 공개 여부
 
     private Integer likesCount; // 개사글 좋아요 수
 

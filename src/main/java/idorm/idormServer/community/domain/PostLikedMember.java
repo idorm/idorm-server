@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class PostLikedMember {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="post_liked_member_id")
     private Long id;
 
