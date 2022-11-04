@@ -5,6 +5,7 @@ import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
+import idorm.idormServer.matching.dto.MatchingSelectedMemberIdRequestDto;
 import idorm.idormServer.matching.service.DislikedMemberService;
 import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.matching.service.MatchingService;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +89,7 @@ public class MatchingController {
     })
     @GetMapping("/member/matchingfiltered")
     public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(
-            HttpServletRequest request, MatchingFilteredMatchingInfoRequestDto filteringRequest
+            HttpServletRequest request, @Valid MatchingFilteredMatchingInfoRequestDto filteringRequest
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
@@ -170,11 +171,12 @@ public class MatchingController {
     })
     @PostMapping("/member/matchinglikedmembers")
     public ResponseEntity<DefaultResponseDto<Object>> addLikedMatchingMembers(
-            HttpServletRequest request, Long selectedLikedMemberId
+            HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
 
+        Long selectedLikedMemberId = requestDto.getSelectedMemberId();
         if(selectedLikedMemberId == loginMemberId || selectedLikedMemberId == 1) {
             throw new UnauthorizedException("관리자 혹은 본인을 좋아요한 멤버로 설정할 수 없습니다.");
         }
@@ -203,11 +205,12 @@ public class MatchingController {
     })
     @DeleteMapping("/member/matchinglikedmembers")
     public ResponseEntity<DefaultResponseDto<Object>> deleteLikedMatchingMembers(
-            HttpServletRequest request, @NotBlank Long likedMemberId
+            HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
 
+        Long likedMemberId = requestDto.getSelectedMemberId();
         likedMemberService.deleteLikedMember(loginMemberId, likedMemberId);
 
         Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
@@ -274,10 +277,12 @@ public class MatchingController {
     })
     @PostMapping("/member/matchingdislikedmembers")
     public ResponseEntity<DefaultResponseDto<Object>> addDislikedMatchingMembers(
-            HttpServletRequest request, @NotBlank Long selectedDislikedMemberId
+            HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+
+        Long selectedDislikedMemberId = requestDto.getSelectedMemberId();
 
         if(selectedDislikedMemberId == loginMemberId || selectedDislikedMemberId == 1) {
             throw new UnauthorizedException("관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다.");
@@ -307,11 +312,12 @@ public class MatchingController {
     })
     @DeleteMapping("/member/matchingdislikedmembers")
     public ResponseEntity<DefaultResponseDto<Object>> deleteDislikedMatchingMembers(
-            HttpServletRequest request, @NotBlank Long dislikedMemberId
+            HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
 
+        Long dislikedMemberId = requestDto.getSelectedMemberId();
         dislikedMemberService.deleteDislikedMember(loginMemberId, dislikedMemberId);
 
         Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
