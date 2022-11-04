@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+<configuration scan="true" scanPeriod="30 seconds">
 
-  <!-- Appenders -->
-  <Appenders>
-    <Console name="console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%-5p: %c - %m%n" />
-    </Console>
-  </Appenders>
+  <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+  <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+  <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
 
-  <!-- Application Loggers -->
-  <Loggers>
-    <Logger name="java.sql" level="DEBUG" additivity="false">
-      <AppenderRef ref="console" />
-    </Logger>
-    <Logger name="egovframework" level="DEBUG" additivity="false">
-      <AppenderRef ref="console" />
-    </Logger>
-    <Logger name="jdbc.sqltiming" level="DEBUG" additivity="false">
-      <AppenderRef ref="console" />
-    </Logger>
-    <Logger name="org.springframework" level="DEBUG" additivity="false">
-      <AppenderRef ref="console" />
-    </Logger>
-    <Logger name="jdbc.resultsettable" additivity="false">
-      <level value="info" />
-      <appender-ref ref="console-log4jdbc" />
-    </Logger>
-  </Loggers>
+  <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){green} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+  <property name="CONSOLE_LOG_CHARSET" value="${CONSOLE_LOG_CHARSET:-default}"/>
 
-</Configuration>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>${CONSOLE_LOG_CHARSET}</charset>
+    </encoder>
+  </appender>
+
+  <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+
+  <logger name="org.apache.catalina.startup.DigesterFactory" level="ERROR"/>
+  <logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
+  <logger name="org.apache.coyote.http11.Http11NioProtocol" level="WARN"/>
+  <logger name="org.apache.sshd.common.util.SecurityUtils" level="WARN"/>
+  <logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
+  <logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="ERROR"/>
+  <logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
+  <logger name="org.springframework.boot.actuate.endpoint.jmx" level="WARN"/>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE" />
+  </root>
+
+</configuration>

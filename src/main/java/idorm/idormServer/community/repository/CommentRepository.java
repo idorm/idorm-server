@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
@@ -18,4 +19,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "c.is_visible = 1 " +
             "ORDER BY c.updated_at", nativeQuery = true)
     List<Comment> findCommentsByMemberId(@Param("memberId") Long memberId);
+
+    @Query(value = "SELECT * " +
+            "FROM comment c " +
+            "WHERE c.post_id = :postId AND " +
+            "c.comment_id = :commentId AND " +
+            "c.is_visible = 1", nativeQuery = true)
+    Optional<Comment> findCommentByPostIdAndCommentId(@Param("postId") Long postId,
+                                                      @Param("commentId") Long commentId);
 }

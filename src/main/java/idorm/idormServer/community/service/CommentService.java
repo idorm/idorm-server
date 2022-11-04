@@ -55,10 +55,26 @@ public class CommentService {
 
     /**
      * Comment 단건 조회 (해당 댓글의 전체 대댓글까지 조회되게)
+     * TODO: 조회 시 Post와 연결되게 조회해야함
      */
     public Comment findById(Long commentId) {
         log.info("IN PROGRESS | Comment 단건 조회 At " + LocalDateTime.now() + " | " + commentId);
         Optional<Comment> foundComment = commentRepository.findById(commentId);
+
+        if(foundComment.isEmpty()) {
+            throw new NotFoundException("조회할 댓글이 존재하지 않습니다.");
+        }
+
+        log.info("COMPLETE | Comment 단건 조회 At " + LocalDateTime.now() + " | " + commentId);
+        return foundComment.get();
+    }
+
+    /**
+     * Comment 단건 조회 (게시글 식별자, 댓글 식별자로 이중 체크)
+     */
+    public Comment findByPostIdAndCommentId(Long postId, Long commentId) {
+        log.info("IN PROGRESS | Comment 단건 조회 At " + LocalDateTime.now() + " | " + commentId);
+        Optional<Comment> foundComment = commentRepository.findCommentByPostIdAndCommentId(postId, commentId);
 
         if(foundComment.isEmpty()) {
             throw new NotFoundException("조회할 댓글이 존재하지 않습니다.");

@@ -34,7 +34,7 @@ public class PostDefaultResponseDto {
     @ApiModelProperty(position = 6, value = "게시글 익명 여부")
     private Boolean isAnonymous;
 
-    @ApiModelProperty(position = 7, value = "게시글 공개 여부")
+    @ApiModelProperty(position = 7, value = "게시글 삭제 여부")
     private Boolean isVisible;
 
     @ApiModelProperty(position = 8, value = "공감 수")

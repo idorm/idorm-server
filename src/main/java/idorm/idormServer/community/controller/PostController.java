@@ -3,7 +3,6 @@ package idorm.idormServer.community.controller;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.dto.post.PostDefaultResponseDto;
 import idorm.idormServer.community.dto.post.PostLikedMembersCountByPostResponseDto;
 import idorm.idormServer.community.service.PostLikedMemberService;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@Api(tags = "Community_Post(게시글) API")
+@Api(tags = "Community - Post API")
 public class PostController {
 
     private final MemberService memberService;
@@ -91,6 +90,7 @@ public class PostController {
             @ModelAttribute @Valid SavePostVo postRequest
     ) throws IOException {
 
+        // TODO: 로그인한 멤버 받아올 수 있는 방법 찾아야 함 (security multipart csrf)
         // TODO: 로그인한 멤버 식별자와 입력받은 멤버 식별자가 다른지 확인 필요
         // TODO: files 개수 10개 제한
 
