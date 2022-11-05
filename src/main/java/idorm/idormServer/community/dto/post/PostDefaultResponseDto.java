@@ -1,5 +1,6 @@
 package idorm.idormServer.community.dto.post;
 
+import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.photo.domain.Photo;
 import io.swagger.annotations.ApiModel;
@@ -8,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +45,14 @@ public class PostDefaultResponseDto {
     @ApiModelProperty(position = 9, value = "업로드 사진 url")
     private List<String> photoUrls = new ArrayList<>();
 
+    @ApiModelProperty(position = 10, value = "생성일자")
+    private LocalDateTime createdAt;
 
-//    @ApiModelProperty(position = 10, value = "댓글 식별자")
-//    private List<Long> commentIds = new ArrayList<>();
+    @ApiModelProperty(position = 11, value = "수정일자")
+    private LocalDateTime updatedAt;
+
+    @ApiModelProperty(position = 10, value = "댓글 식별자")
+    private List<Long> commentIds = new ArrayList<>();
 
     public PostDefaultResponseDto(Post post) {
         this.postId = post.getId();
@@ -56,6 +63,8 @@ public class PostDefaultResponseDto {
         this.isAnonymous = post.getIsAnonymous();
         this.isVisible = post.getIsVisible();
         this.likesCount = post.getLikesCount();
+        this.createdAt = post.getCreatedAt();
+        this.updatedAt = post.getUpdatedAt();
 
         if(post.getPhotos() != null) {
             for(Photo photo : post.getPhotos()) {
@@ -63,10 +72,10 @@ public class PostDefaultResponseDto {
             }
         }
 
-//        if(post.getComments() != null) {
-//            for(Comment comment : post.getComments()) {
-//                this.commentIds.add(comment.getId());
-//            }
-//        }
+        if(post.getComments() != null) {
+            for(Comment comment : post.getComments()) {
+                this.commentIds.add(comment.getId());
+            }
+        }
     }
 }

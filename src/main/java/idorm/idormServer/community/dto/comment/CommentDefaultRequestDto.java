@@ -19,8 +19,12 @@ public class CommentDefaultRequestDto {
     @ApiModelProperty(position = 2, required = true, dataType = "Boolean", value = "익명 여부", example = "true")
     private Boolean isAnonymous;
 
-    public CommentDefaultRequestDto(String content, Boolean isAnonymous) {
+    @ApiModelProperty(position = 3, required = false, dataType = "Long", value = "대댓글이라면 부모 댓글 식별자", example = "1")
+    private Long parentCommentId;
+
+    public CommentDefaultRequestDto(String content, Boolean isAnonymous, Long parentCommentId) {
         this.content = content;
         this.isAnonymous = isAnonymous;
+        this.parentCommentId = parentCommentId;
     }
 }

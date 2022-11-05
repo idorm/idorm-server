@@ -34,6 +34,7 @@ public class PostService {
     private final PhotoService photoService;
     private final MemberService memberService;
     private final PostLikedMemberService postLikedMemberService;
+    private final CommentService commentService;
 
     /**
      * Post 게시글 사진 추가 메소드 |
@@ -165,11 +166,15 @@ public class PostService {
         }
 
         try {
+            // 게시글 내 모든 댓글 삭제
+            commentService.deleteCommentsByPostId(postId);
+            // 게시글 삭제
             foundPost.deletePost();
             postRepository.save(foundPost);
         } catch (Exception e) {
             throw new InternalServerErrorException("Post 삭제 중 서버 에러 발생", e);
         }
+
         log.info("COMPLETE | Post 삭제 At " + LocalDateTime.now() + " | " + postId);
     }
 

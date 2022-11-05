@@ -4,7 +4,6 @@ import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
-import idorm.idormServer.community.domain.SubComment;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.Photo;
 import lombok.*;
@@ -47,10 +46,7 @@ public class Member extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>(); // 작성한 댓글들
-
-    @OneToMany(mappedBy = "member")
-    private List<SubComment> subComments = new ArrayList<>(); // 작성한 대댓글들
-
+    
     /**
      * security code
      */

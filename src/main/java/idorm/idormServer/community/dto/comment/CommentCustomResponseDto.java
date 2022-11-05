@@ -8,17 +8,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ApiModel(value = "Comment 응답")
-public class CommentDefaultResponseDto {
-
+@ApiModel(value = "Comment 게시글 내 모든 댓글 대댓글 커스텀 응답")
+public class CommentCustomResponseDto {
     @ApiModelProperty(position = 1, value="댓글 식별자")
     private Long commentId;
-
-    @ApiModelProperty(position = 2, value="부모 댓글 식별자")
-    private Long parentCommentId;
 
     @ApiModelProperty(position = 3, value="게시글 식별자")
     private Long postId;
@@ -41,15 +39,23 @@ public class CommentDefaultResponseDto {
     @ApiModelProperty(position = 9, value = "수정일자")
     private LocalDateTime updatedAt;
 
-    public CommentDefaultResponseDto(Comment comment) {
-        this.commentId = comment.getId();
-        this.parentCommentId = comment.getParentCommentId();
-        this.postId = comment.getPost().getId();
-        this.memberId = comment.getMember().getId();
-        this.content = comment.getContent();
-        this.isAnonymous = comment.getIsAnonymous();
-        this.isVisible = comment.getIsVisible();
-        this.createdAt = comment.getCreatedAt();
-        this.updatedAt = comment.getUpdatedAt();
+    @ApiModelProperty(position = 10, value = "대댓글들")
+    private List<Comment> subComments = new ArrayList<>();
+
+
+    public CommentCustomResponseDto(Comment parentComment, List<Comment> subComments) {
+
+        this.commentId = parentComment.getId();
+        this.postId = parentComment.getPost().getId();
+        this.memberId = parentComment.getMember().getId();
+        this.content = parentComment.getContent();
+        this.isAnonymous = parentComment.getIsAnonymous();
+        this.isVisible = parentComment.getIsVisible();
+        this.createdAt = parentComment.getCreatedAt();
+        this.updatedAt = parentComment.getUpdatedAt();
+
+        for (Comment subComment : subComments) {
+            this.subComments.add(subComment);
+        }
     }
 }

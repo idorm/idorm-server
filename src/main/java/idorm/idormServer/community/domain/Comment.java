@@ -24,6 +24,8 @@ public class Comment extends BaseEntity {
     private Boolean isAnonymous; // 익명 여부
     private Boolean isVisible; // 댓글 삭제 여부
 
+    private Long parentCommentId; // 부모 댓글 식별자
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post; // 게시글
@@ -32,9 +34,6 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
-    @OneToMany(mappedBy = "comment")
-    private List<SubComment> subComments = new ArrayList<>();
-
     @Builder
     public Comment(String content, Boolean isAnonymous, Post post, Member member) {
         this.content = content;
@@ -42,6 +41,10 @@ public class Comment extends BaseEntity {
         this.isVisible = true;
         this.member = member;
         this.post = post;
+    }
+
+    public void updateParentCommentId(Long parentCommentId) {
+        this.parentCommentId = parentCommentId;
     }
 
     public void deleteComment() {

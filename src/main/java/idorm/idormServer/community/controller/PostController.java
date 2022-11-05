@@ -166,6 +166,8 @@ public class PostController {
         // TODO: Post 단건 조회 로직 - 댓글, 대댓글까지 조회
         Post foundPost = postService.findById(postId);
 
+        // TODO: 댓글, 대댓글 리스트 반환
+        // TODO: 멤버 정보 반환 (익명 여부 체크 후)
         PostDefaultResponseDto response = new PostDefaultResponseDto(foundPost);
 
         return ResponseEntity.status(200)
@@ -398,7 +400,7 @@ public class PostController {
         Member member = memberService.findById(loginMemberId);
 
         postService.deletePost(postId,member);
-        // TODO: 댓글/대댓글도 isVisible 처리
+        // TODO: 댓글, 대댓글 삭제 처리 필요
 
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
