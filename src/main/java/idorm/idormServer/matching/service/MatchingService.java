@@ -97,7 +97,7 @@ public class MatchingService {
                     memberId,
                     filteringRequest.getDormNum(),
                     filteringRequest.getJoinPeriod(),
-                    filteringRequest.getGender(),
+                    loginMember.getMatchingInfo().getGender(),
                     isSnoring,
                     isSmoking,
                     isGrinding,
