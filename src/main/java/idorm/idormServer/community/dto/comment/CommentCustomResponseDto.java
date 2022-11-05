@@ -40,11 +40,10 @@ public class CommentCustomResponseDto {
     private LocalDateTime updatedAt;
 
     @ApiModelProperty(position = 10, value = "대댓글들")
-    private List<Comment> subComments = new ArrayList<>();
+    private List<CommentDefaultResponseDto> subComments = new ArrayList<>();
 
 
-    public CommentCustomResponseDto(Comment parentComment, List<Comment> subComments) {
-
+    public CommentCustomResponseDto(Comment parentComment, List<CommentDefaultResponseDto> subComments) {
         this.commentId = parentComment.getId();
         this.postId = parentComment.getPost().getId();
         this.memberId = parentComment.getMember().getId();
@@ -54,7 +53,7 @@ public class CommentCustomResponseDto {
         this.createdAt = parentComment.getCreatedAt();
         this.updatedAt = parentComment.getUpdatedAt();
 
-        for (Comment subComment : subComments) {
+        for (CommentDefaultResponseDto subComment : subComments) {
             this.subComments.add(subComment);
         }
     }
