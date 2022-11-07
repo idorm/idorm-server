@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
@@ -39,14 +41,16 @@ public class MatchingService {
 
         Member loginMember = memberService.findById(memberId);
 
-        if(loginMember.getMatchingInfo() == null) {
+        if (loginMember.getMatchingInfo() == null) {
             throw new ConflictException("매칭정보가 존재하지 않습니다.");
         }
 
-        MatchingInfo loginMemberMatchingInfo = loginMember.getMatchingInfo();
+        List<Long> filteredMatchingInfoId = new ArrayList<>();
 
         try {
-             List<Long> filteredMatchingInfoId = matchingInfoRepository.findMatchingMembers(
+            MatchingInfo loginMemberMatchingInfo = loginMember.getMatchingInfo();
+
+            filteredMatchingInfoId = matchingInfoRepository.findMatchingMembers(
                     memberId,
                     loginMemberMatchingInfo.getDormNum(),
                     loginMemberMatchingInfo.getJoinPeriod(),
@@ -55,21 +59,24 @@ public class MatchingService {
 
             List<Long> dislikedMembersId = dislikedMemberService.findDislikedMembers(memberId);
 
-            for(Long matchingInfoId : filteredMatchingInfoId) {
+            Iterator<Long> iterator = filteredMatchingInfoId.iterator();
+            while (iterator.hasNext()) {
+                Long matchingInfoId = iterator.next();
                 Long filteredMemberId = matchingInfoService.findById(matchingInfoId).getMember().getId();
 
                 for (Long dislikedMemberId : dislikedMembersId) {
-                    if(filteredMemberId == dislikedMemberId) {
-                        filteredMatchingInfoId.remove(matchingInfoId);
+
+                    if (filteredMemberId == dislikedMemberId) {
+                        iterator.remove();
                     }
                 }
             }
-
-            log.info("COMPLETE | Matching 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
-            return filteredMatchingInfoId;
         } catch (Exception e) {
-            throw new InternalServerErrorException("Matching 매칭멤버 조회 중 서버 에러 발생", e);
+            throw new InternalServerErrorException("Matching 매칭멤버 전체 조회 중 서버 에러 발생", e);
         }
+
+        log.info("COMPLETE | Matching 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
+        return filteredMatchingInfoId;
     }
 
     /**
@@ -109,12 +116,15 @@ public class MatchingService {
 
             List<Long> dislikedMembersId = dislikedMemberService.findDislikedMembers(memberId);
 
-            for(Long matchingInfoId : filteredMatchingInfoId) {
+            Iterator<Long> iterator = filteredMatchingInfoId.iterator();
+            while (iterator.hasNext()) {
+                Long matchingInfoId = iterator.next();
                 Long filteredMemberId = matchingInfoService.findById(matchingInfoId).getMember().getId();
 
                 for (Long dislikedMemberId : dislikedMembersId) {
-                    if(filteredMemberId == dislikedMemberId) {
-                        filteredMatchingInfoId.remove(matchingInfoId);
+
+                    if (filteredMemberId == dislikedMemberId) {
+                        iterator.remove();
                     }
                 }
             }
@@ -122,7 +132,7 @@ public class MatchingService {
             log.info("COMPLETE | Matching 필터링된 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return filteredMatchingInfoId;
         } catch (Exception e) {
-            throw new InternalServerErrorException("Matching 매칭멤버 조회 중 서버 에러 발생", e);
+            throw new InternalServerErrorException("Matching 필터링된 매칭멤버 조회 중 서버 에러 발생", e);
         }
     }
 }

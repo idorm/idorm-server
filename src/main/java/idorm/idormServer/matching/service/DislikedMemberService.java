@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static idorm.idormServer.matching.domain.DislikedMember.*;
 
@@ -41,6 +42,20 @@ public class DislikedMemberService {
         } catch (Exception e) {
             throw new InternalServerErrorException("DislikedMembers 싫어요한 멤버 전체 조회 중 서버 에러 발생", e);
         }
+    }
+
+    /**
+     * DislikedMember 싫어요한 멤버로 등록되어있는지 조회
+     * 멤버 식별자와 싫어요한 멤버 식별자를 인자로 받아서 이미 등록되어있다면 true로 반환한다.
+     */
+    public boolean isRegisteredDislikedMemberIdByMemberId(Long memberId, Long selectedMemberId) {
+        log.info("IN PROGRESS | DislikedMember 싫어요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
+        Optional<Long> registeredDislikedMemberId = dislikedMemberRepository.isRegisteredDislikedMemberIdByMemberId(memberId, selectedMemberId);
+        if(registeredDislikedMemberId.isPresent()) {
+            return true;
+        }
+        log.info("COMPLETE | DislikedMember 싫어요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
+        return false;
     }
 
     /**
@@ -101,7 +116,6 @@ public class DislikedMemberService {
         log.info("IN PROGRESS | DislikedMember 싫어요한 멤버 삭제 At " + LocalDateTime.now()
                 + " | 로그인 멤버 식별자: " + loginMemberId + " | 싫어요한 멤버 식별자 : " + dislikedMemberId);
 
-        // 삭제할 싫어요한 멤버가 존재하는지 확인하기 위한 코드
         memberService.findById(loginMemberId);
         List<Long> dislikedMemberIds = dislikedMemberRepository.findDislikedMembersByMemberId(loginMemberId);
 

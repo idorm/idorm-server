@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -40,6 +41,21 @@ public class LikedMemberService {
             throw new InternalServerErrorException("LikedMember 좋아요한 멤버 전체 조회 중 서버 에러 발생", e);
         }
     }
+
+    /**
+     * LikedMember 좋아요한 멤버로 등록되어있는지 조회
+     * 멤버 식별자와 선택한 멤버 식별자를 인자로 받아서 이미 좋아요한 멤버로 등록되어있다면 true로 반환한다.
+     */
+    public boolean isRegisteredlikedMemberIdByMemberId(Long memberId, Long selectedMemberId) {
+        log.info("IN PROGRESS | LikedMember 좋아요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
+        Optional<Long> registeredLikedMemberId = likedMemberRepository.isRegisteredLikedMemberIdByMemberId(memberId, selectedMemberId);
+        if(registeredLikedMemberId.isPresent()) {
+            return true;
+        }
+        log.info("COMPLETE | LikedMember 좋아요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
+        return false;
+    }
+
 
     /**
      * LikedMember 좋아요한 멤버 저장 |

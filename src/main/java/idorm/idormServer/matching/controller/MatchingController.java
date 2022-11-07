@@ -2,7 +2,7 @@ package idorm.idormServer.matching.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.exceptions.http.UnauthorizedException;
+import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
 import idorm.idormServer.matching.dto.MatchingSelectedMemberIdRequestDto;
@@ -165,8 +165,8 @@ public class MatchingController {
     @ApiOperation(value = "Matching 좋아요한 매칭멤버 추가")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Matching 좋아요한 매칭멤버 추가 완료"),
-            @ApiResponse(code = 401, message = "해당 멤버의 id를 좋아요한 멤버로 설정할 수 없습니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
+            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
+            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다."),
             @ApiResponse(code = 500, message = "LikedMember save 중 서버 에러 발생")
     })
     @PostMapping("/member/matchinglikedmembers")
@@ -178,7 +178,15 @@ public class MatchingController {
 
         Long selectedLikedMemberId = requestDto.getSelectedMemberId();
         if(selectedLikedMemberId == loginMemberId || selectedLikedMemberId == 1) {
-            throw new UnauthorizedException("관리자 혹은 본인을 좋아요한 멤버로 설정할 수 없습니다.");
+            throw new ConflictException("관리자 혹은 본인을 좋아요한 멤버로 설정할 수 없습니다.");
+        }
+
+        // 싫어요한 멤버로 등록되어있는지 확인, 되어있다면 true 반환
+        boolean isRegisteredDislikedMember = dislikedMemberService.isRegisteredDislikedMemberIdByMemberId(loginMemberId, selectedLikedMemberId);
+
+        //  등록되어있다면 싫어요한 멤버 삭제 처리 필요
+        if(isRegisteredDislikedMember == true) {
+            dislikedMemberService.deleteDislikedMember(loginMemberId, selectedLikedMemberId);
         }
 
         likedMemberService.saveLikedMember(loginMemberId, selectedLikedMemberId);
@@ -271,8 +279,8 @@ public class MatchingController {
     @ApiOperation(value = "Matching 싫어요한 매칭멤버 추가")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Matching 싫어요한 매칭멤버 추가 완료"),
-            @ApiResponse(code = 401, message = "해당 멤버의 id를 싫어요한 멤버로 설정할 수 없습니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
+            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
+            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다."),
             @ApiResponse(code = 500, message = "DislikedMember save 중 서버 에러 발생")
     })
     @PostMapping("/member/matchingdislikedmembers")
@@ -285,7 +293,15 @@ public class MatchingController {
         Long selectedDislikedMemberId = requestDto.getSelectedMemberId();
 
         if(selectedDislikedMemberId == loginMemberId || selectedDislikedMemberId == 1) {
-            throw new UnauthorizedException("관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다.");
+            throw new ConflictException("관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다.");
+        }
+
+        // 좋아요한 멤버로 등록되어있는지 확인, 되어있다면 true 반환
+        boolean isRegisteredLikedMember = likedMemberService.isRegisteredlikedMemberIdByMemberId(loginMemberId, selectedDislikedMemberId);
+
+        //  등록되어있다면 좋아요한 멤버 삭제 처리 필요
+        if(isRegisteredLikedMember == true) {
+            likedMemberService.deleteLikedMember(loginMemberId, selectedDislikedMemberId);
         }
 
         dislikedMemberService.saveDislikedMember(loginMemberId, selectedDislikedMemberId);

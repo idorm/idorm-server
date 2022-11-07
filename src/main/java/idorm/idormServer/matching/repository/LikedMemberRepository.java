@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LikedMemberRepository extends JpaRepository<LikedMember, Long> {
 
@@ -29,5 +30,16 @@ public interface LikedMemberRepository extends JpaRepository<LikedMember, Long> 
             "AND liked_member.selected_liked_member_id = :selectedLikedMemberId", nativeQuery = true)
     void deleteLikedMember(@Param("memberId") Long memberId,
                            @Param("selectedLikedMemberId") Long selectedMemberId);
+
+    /**
+     * MemberId와 좋아요한 멤버 식별자로 등록되었는지 확인하기. 존재한다면 LikedMember 엔티티 식별자로 반환한다.
+     * 싫어요 매칭 멤버로 등록하기 전 체크 용도로 사용한다.
+     */
+    @Query(value = "SELECT liked_member_id " +
+            "FROM liked_member lm " +
+            "WHERE lm.member_id = :memberId AND " +
+            "lm.selected_liked_member_id = :likedMemberId", nativeQuery = true)
+    Optional<Long> isRegisteredLikedMemberIdByMemberId(@Param("memberId") Long memberId,
+                                                          @Param("likedMemberId") Long likedMemberId);
 
 }
