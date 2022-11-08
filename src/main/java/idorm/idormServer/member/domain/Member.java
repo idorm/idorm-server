@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,8 @@ public class Member extends BaseEntity implements UserDetails {
 
     private String email;
     private String password;
+
+    @NotBlank(message = "닉네임은 필수입니다.")
     private String nickname;
 
     /**
@@ -99,6 +102,7 @@ public class Member extends BaseEntity implements UserDetails {
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
+        this.nickname = "도미";
         this.roles.add("ROLE_USER");
     }
 
