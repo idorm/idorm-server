@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -55,6 +56,7 @@ public class MatchingInfoUpdateRequestDto {
     @ApiModelProperty(position = 12, required = true, dataType = "String", example = "아침 8시, 밤 12시에 주로 씻어요.")
     private String showerTime;
 
+    @NotBlank(message = "오픈 채팅 링크를 입력해 주세요.")
     @ApiModelProperty(position = 13, dataType = "String", example = "https://open.kakao.com/o/szaIN6ze")
     private String openKakaoLink;
 

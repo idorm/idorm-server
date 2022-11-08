@@ -70,7 +70,8 @@ public class MatchingInfoDefaultRequestDto {
     @ApiModelProperty(position = 14, required = false, dataType = "String", value = "룸메에게 하고싶은 말", example = "주말에는 주로 본가에 갑니다. 함께 잘 지내봐요!")
     private String wishText;
 
-    @ApiModelProperty(position = 15, required = false, dataType = "String", value = "오픈채팅 링크", example = "https://open.kakao.com/o/szaIN6ze")
+    @NotBlank(message = "오픈 채팅 링크를 입력해 주세요.")
+    @ApiModelProperty(position = 15, required = true, dataType = "String", value = "오픈채팅 링크", example = "https://open.kakao.com/o/szaIN6ze")
     private String openKakaoLink;
 
     public MatchingInfoDefaultRequestDto(MatchingInfo matchingInfo) {
