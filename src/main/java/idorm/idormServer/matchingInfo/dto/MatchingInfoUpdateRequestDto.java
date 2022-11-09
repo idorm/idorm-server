@@ -26,7 +26,6 @@ public class MatchingInfoUpdateRequestDto {
     @ApiModelProperty(position = 3, required = true, dataType = "String", value = "성별", example = "FEMALE")
     private String gender;
 
-
     @ApiModelProperty(position = 4, required = true, dataType = "Integer", example = "20")
     private Integer age;
 

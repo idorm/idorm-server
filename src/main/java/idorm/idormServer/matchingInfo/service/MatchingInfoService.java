@@ -49,7 +49,7 @@ public class MatchingInfoService {
      * true일 경우만 매칭 시 조회한다.
      */
     @Transactional
-    public MatchingInfo updateMatchingInfoIsPublic(Member member) {
+    public MatchingInfo updateMatchingInfoIsPublic(Member member, Boolean isMatchingInfoPublic) {
 
         log.info("IN PROGRESS | MatchingInfo 매칭이미지 공개여부 변경 At " + LocalDateTime.now() + " | " + member.getEmail());
 
@@ -59,7 +59,7 @@ public class MatchingInfoService {
             throw new ConflictException("등록된 매칭정보가 없습니다.");
         }
 
-        foundMatchingInfo.get().updateIsMatchingInfoPublic();
+        foundMatchingInfo.get().updateIsMatchingInfoPublic(isMatchingInfoPublic);
 
         matchingInfoRepository.save(foundMatchingInfo.get());
         memberService.updateMatchingInfo(member, foundMatchingInfo.get());

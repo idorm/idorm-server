@@ -92,8 +92,8 @@ public class MatchingInfo extends BaseEntity {
     /**
      * 핵심 비지니스 로직
      */
-    public void updateIsMatchingInfoPublic() {
-        this.isMatchingInfoPublic = !isMatchingInfoPublic;
+    public void updateIsMatchingInfoPublic(Boolean isMatchingInfoPublic) {
+        this.isMatchingInfoPublic = isMatchingInfoPublic;
     }
 
     public void updateMatchingInfo(MatchingInfoDefaultRequestDto requestDto) {

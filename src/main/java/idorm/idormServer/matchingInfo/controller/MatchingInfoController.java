@@ -6,6 +6,7 @@ import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultResponseDto;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
 import idorm.idormServer.auth.JwtTokenProvider;
+import idorm.idormServer.matchingInfo.dto.MatchingInfoUpdateIsPublicRequestDto;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
@@ -64,7 +65,9 @@ public class MatchingInfoController {
             @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 500, message = "MatchingInfo 수정 중 서버 에러 발생")
     })
-    public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(HttpServletRequest request2, @RequestBody @Valid MatchingInfoDefaultRequestDto updateRequestDto) {
+    public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(
+            HttpServletRequest request2,
+            @RequestBody @Valid MatchingInfoDefaultRequestDto updateRequestDto) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
@@ -95,7 +98,9 @@ public class MatchingInfoController {
             @ApiResponse(code = 409, message = "등록된 매칭정보가 존재하지 않습니다."),
             @ApiResponse(code = 500, message = "MatchingInfo 매칭이미지 공개 여부 변경 중 서버 에러 발생")
     })
-    public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfoIsPublic(HttpServletRequest request2) {
+    public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfoIsPublic(
+            HttpServletRequest request2,
+            MatchingInfoUpdateIsPublicRequestDto requestDto) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
@@ -103,7 +108,9 @@ public class MatchingInfoController {
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
             throw new ConflictException("등록된 매칭정보가 없습니다.");
 
-        MatchingInfo updatedMatchingInfo = matchingInfoService.updateMatchingInfoIsPublic(member);
+        MatchingInfo updatedMatchingInfo = matchingInfoService.updateMatchingInfoIsPublic(
+                member,
+                requestDto.getIsMatchingInfoPublic());
 
         MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(updatedMatchingInfo);
 
