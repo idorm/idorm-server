@@ -45,6 +45,10 @@ public class MatchingService {
             throw new ConflictException("매칭정보가 존재하지 않습니다.");
         }
 
+        if (loginMember.getMatchingInfo().getIsMatchingInfoPublic() == false) {
+            throw new ConflictException("매칭이미지가 비공개 입니다.");
+        }
+
         List<Long> filteredMatchingInfoId = new ArrayList<>();
 
         try {
@@ -90,6 +94,10 @@ public class MatchingService {
 
         if(loginMember.getMatchingInfo() == null) {
             throw new ConflictException("매칭정보가 존재하지 않습니다.");
+        }
+
+        if(loginMember.getMatchingInfo().getIsMatchingInfoPublic() == false) {
+            throw new ConflictException("매칭이미지가 비공개 입니다.");
         }
 
         // TODO: true일 경우 false,true 모두 괜찮은 경우이므로 둘 다 조회되어야함

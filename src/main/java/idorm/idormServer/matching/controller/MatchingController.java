@@ -44,7 +44,7 @@ public class MatchingController {
             @ApiResponse(code = 200, message = "Matching 매칭멤버 조회 완료"),
             @ApiResponse(code = 204, message = "매칭되는 멤버가 없습니다."),
             @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
+            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 매칭이미지가 비공개 상태입니다."),
             @ApiResponse(code = 500, message = "Matching 매칭멤버 조회 중 서버 에러 발생")
     })
     @GetMapping("/member/matching")
@@ -84,7 +84,7 @@ public class MatchingController {
             @ApiResponse(code = 200, message = "Matching 필터링된 매칭멤버 조회 완료"),
             @ApiResponse(code = 204, message = "매칭되는 멤버가 없습니다."),
             @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
+            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 매칭이미지가 비공개 입니다."),
             @ApiResponse(code = 500, message = "Matching 매칭멤버 조회 중 서버 에러 발생")
     })
     @GetMapping("/member/matchingfiltered")
