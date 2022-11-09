@@ -685,22 +685,42 @@ public class InitDB {
                                                 String wishText,
                                                 String openKakaoLink,
                                                 Member member) {
-            MatchingInfo matchingInfo = new MatchingInfo(dormNum,
-                    joinPeriod,
-                    gender,
-                    age,
-                    isSnoring,
-                    isSmoking,
-                    isGrinding,
-                    isWearEarphones,
-                    isAllowedFood,
-                    wakeUpTime,
-                    cleanUpStatus,
-                    showerTime,
-                    mbti,
-                    wishText,
-                    openKakaoLink,
-                    member);
+
+            MatchingInfo matchingInfo = MatchingInfo.builder()
+                    .age(age)
+                    .cleanUpStatus(cleanUpStatus)
+                    .dormNum(dormNum)
+                    .gender(gender)
+                    .isAllowedFood(isAllowedFood)
+                    .isGrinding(isGrinding)
+                    .isSmoking(isSmoking)
+                    .isSnoring(isSnoring)
+                    .isWearEarphones(isWearEarphones)
+                    .joinPeriod(joinPeriod)
+                    .mbti(mbti)
+                    .member(member)
+                    .openKakaoLink(openKakaoLink)
+                    .showerTime(showerTime)
+                    .wakeUpTime(wakeUpTime)
+                    .wishText(wishText)
+                    .build();
+
+//            MatchingInfo matchingInfo = new MatchingInfo(dormNum,
+//                    joinPeriod,
+//                    gender,
+//                    age,
+//                    isSnoring,
+//                    isSmoking,
+//                    isGrinding,
+//                    isWearEarphones,
+//                    isAllowedFood,
+//                    wakeUpTime,
+//                    cleanUpStatus,
+//                    showerTime,
+//                    mbti,
+//                    wishText,
+//                    openKakaoLink,
+//                    member);
 
             return matchingInfo;
         }

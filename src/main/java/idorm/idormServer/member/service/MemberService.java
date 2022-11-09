@@ -271,7 +271,7 @@ public class MemberService {
     @Transactional
     public void updateNickname(Long memberId, String nickname) {
 
-        log.info("IN PROGRESS | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
+        log.info("IN PROGRESS | Member 닉네임 변경 At " + LocalDateTime.now() + " | " + memberId);
 
         Optional<Member> foundMember = memberRepository.findById(memberId);
 
@@ -283,7 +283,7 @@ public class MemberService {
             foundMember.get().updateNickname(nickname);
             memberRepository.save(foundMember.get());
 
-            log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
+            log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | " + memberId);
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 닉네임 변경 중 서버 에러 발생", e);
         }

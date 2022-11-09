@@ -1,15 +1,16 @@
 # MySQL
 spring:
   datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: jdbc:log4jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+#    url: jdbc:log4jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 #    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
 #    url: jdbc:log4jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-#    username: nahyeon
-#    password: lsmi81
+    username: nahyeon
+    password: lsmi81
 
   jpa:
     hibernate:
@@ -30,13 +31,13 @@ spring:
       max-request-size: ${MAX_REQUEST_SIZE}
       enabled: true
 
-logging:
-  config: classpath:log4j2.xml
-  level:
-    org:
-      apache:
-        coyote:
-          http11=debug:
+#logging:
+#  config: classpath:log4j2.xml
+#  level:
+#    org:
+#      apache:
+#        coyote:
+#          http11=debug:
 # S3
 s3.accessKey: ${S3_ACCESS_KEY}
 s3.secretKey: ${S3_SECRET_KEY}
