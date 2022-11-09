@@ -9,8 +9,8 @@ spring:
     password: ${DB_PASSWORD}
 #    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
 #    url: jdbc:log4jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-    username: nahyeon
-    password: lsmi81
+#    username: nahyeon
+#    password: lsmi81
 
   jpa:
     hibernate:
