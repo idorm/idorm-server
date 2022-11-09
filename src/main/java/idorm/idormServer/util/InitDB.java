@@ -3,7 +3,6 @@ package idorm.idormServer.util;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +20,6 @@ import javax.persistence.EntityManager;
 public class InitDB {
 
     private final InitService initService;
-    private final MemberService memberService;
 
     @PostConstruct // 스프링빈이 다 올라오면 스프링이 호출
     public void init() {
@@ -542,33 +540,33 @@ public class InitDB {
                     member26);
 
 
-            matchingInfo1.updateIsMatchingInfoPublic();
-            matchingInfo2.updateIsMatchingInfoPublic();
-            matchingInfo3.updateIsMatchingInfoPublic();
-            matchingInfo4.updateIsMatchingInfoPublic();
+            matchingInfo1.updateIsMatchingInfoPublic(true);
+            matchingInfo2.updateIsMatchingInfoPublic(true);
+            matchingInfo3.updateIsMatchingInfoPublic(true);
+            matchingInfo4.updateIsMatchingInfoPublic(true);
 
-            matchingInfo5.updateIsMatchingInfoPublic();
-            matchingInfo6.updateIsMatchingInfoPublic();
-            matchingInfo7.updateIsMatchingInfoPublic();
-            matchingInfo8.updateIsMatchingInfoPublic();
-            matchingInfo9.updateIsMatchingInfoPublic();
-            matchingInfo10.updateIsMatchingInfoPublic();
-            matchingInfo11.updateIsMatchingInfoPublic();
-            matchingInfo12.updateIsMatchingInfoPublic();
-            matchingInfo13.updateIsMatchingInfoPublic();
-            matchingInfo14.updateIsMatchingInfoPublic();
-            matchingInfo15.updateIsMatchingInfoPublic();
-            matchingInfo16.updateIsMatchingInfoPublic();
-            matchingInfo17.updateIsMatchingInfoPublic();
-            matchingInfo18.updateIsMatchingInfoPublic();
-            matchingInfo19.updateIsMatchingInfoPublic();
-            matchingInfo20.updateIsMatchingInfoPublic();
-            matchingInfo21.updateIsMatchingInfoPublic();
-            matchingInfo22.updateIsMatchingInfoPublic();
-            matchingInfo23.updateIsMatchingInfoPublic();
-            matchingInfo24.updateIsMatchingInfoPublic();
-            matchingInfo25.updateIsMatchingInfoPublic();
-            matchingInfo26.updateIsMatchingInfoPublic();
+            matchingInfo5.updateIsMatchingInfoPublic(true);
+            matchingInfo6.updateIsMatchingInfoPublic(true);
+            matchingInfo7.updateIsMatchingInfoPublic(true);
+            matchingInfo8.updateIsMatchingInfoPublic(true);
+            matchingInfo9.updateIsMatchingInfoPublic(true);
+            matchingInfo10.updateIsMatchingInfoPublic(true);
+            matchingInfo11.updateIsMatchingInfoPublic(true);
+            matchingInfo12.updateIsMatchingInfoPublic(true);
+            matchingInfo13.updateIsMatchingInfoPublic(true);
+            matchingInfo14.updateIsMatchingInfoPublic(true);
+            matchingInfo15.updateIsMatchingInfoPublic(true);
+            matchingInfo16.updateIsMatchingInfoPublic(true);
+            matchingInfo17.updateIsMatchingInfoPublic(true);
+            matchingInfo18.updateIsMatchingInfoPublic(true);
+            matchingInfo19.updateIsMatchingInfoPublic(true);
+            matchingInfo20.updateIsMatchingInfoPublic(true);
+            matchingInfo21.updateIsMatchingInfoPublic(true);
+            matchingInfo22.updateIsMatchingInfoPublic(true);
+            matchingInfo23.updateIsMatchingInfoPublic(true);
+            matchingInfo24.updateIsMatchingInfoPublic(true);
+            matchingInfo25.updateIsMatchingInfoPublic(true);
+            matchingInfo26.updateIsMatchingInfoPublic(true);
 
             em.persist(matchingInfo1);
             em.persist(matchingInfo2);
