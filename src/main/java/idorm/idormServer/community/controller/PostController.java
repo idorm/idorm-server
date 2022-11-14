@@ -312,12 +312,10 @@ public class PostController {
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(loginMemberId);
+        memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
-        List<Long> foundMemberIds = postLikedMemberService.findLikedMemberIdsByPostId(postId);
-
-        int likedCount = foundMemberIds.size();
+        int likedCount = postLikedMemberService.countLikedMemberByPostId(postId);
 
         PostLikedMembersCountByPostResponseDto response = PostLikedMembersCountByPostResponseDto.builder()
                 .postId(post.getId())

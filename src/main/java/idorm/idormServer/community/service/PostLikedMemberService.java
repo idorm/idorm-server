@@ -106,16 +106,17 @@ public class PostLikedMemberService {
     }
 
     /**
-     * 게시글 식별자로 게시글을 공감한 Member 식별자 리스트 조회
+     * 게시글 식별자로 게시글을 공감한 Member 명 수 카운트 조회
      */
-    public List<Long> findLikedMemberIdsByPostId(Long postId) {
-        log.info("IN PROGRESS | PostLikedMember 게시글 식별자로 좋아요한 멤버 조회 At " + LocalDateTime.now() + " | 게시글 식별자 " + postId);
+    public int countLikedMemberByPostId(Long postId) {
+        log.info("IN PROGRESS | PostLikedMember 게시글 식별자로 좋아요한 멤버 카운트 조회 At " + LocalDateTime.now() + " | 게시글 식별자 " + postId);
+
         try {
-            List<Long> foundLikedMembers = postLikedMemberRepository.findLikedMemberByPostId(postId);
-            log.info("IN PROGRESS | PostLikedMember 게시글 식별자로 좋아요한 멤버 조회 At " + LocalDateTime.now() + " | 좋아요 멤버 명수 " + foundLikedMembers.size());
-            return foundLikedMembers;
+            int likedCounts = postLikedMemberRepository.countByPostId(postId);
+            log.info("COMPLETE | PostLikedMember 게시글 식별자로 좋아요한 멤버 카운트 조회 At " + LocalDateTime.now() + " | 게시글 식별자 " + postId);
+            return likedCounts;
         } catch (Exception e) {
-            throw new InternalServerErrorException("PostLikedMemberService 게시글 식별자로 좋아요한 멤버 조회 중 서버 에러 발생", e);
+            throw new InternalServerErrorException("PostLikedMemberService 게시글 식별자로 좋아요한 멤버 카운트 조회 중 서버 에러 발생", e);
         }
     }
 

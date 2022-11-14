@@ -15,10 +15,7 @@ public interface PostLikedMemberRepository extends JpaRepository<PostLikedMember
             "WHERE plm.member_id = :memberId", nativeQuery = true)
     List<Long> findLikedPostsByMemberId(@Param("memberId") Long memberId);
 
-    @Query(value = "SELECT member_id " +
-            "FROM post_liked_member plm " +
-            "WHERE plm.post_id = :postId", nativeQuery = true)
-    List<Long> findLikedMemberByPostId(@Param("postId") Long postId);
+    int countByPostId(@Param("postId") Long postId);
 
     @Query(value = "SELECT * " +
             "FROM post_liked_member plm " +
