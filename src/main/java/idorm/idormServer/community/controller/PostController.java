@@ -129,7 +129,7 @@ public class PostController {
             @ApiResponse(code = 500, message = "Post 다건 조회 중 서버 에러 발생"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> findPostsFilteredByCategory(
-            @RequestParam(value = "dormitory-category", required = false, defaultValue = "DORM1") String dormNum
+            @PathVariable(value = "dormitory-category") String dormNum
     ) {
 
         if(!dormNum.equals("DORM1") && !dormNum.equals("DORM2") && !dormNum.equals("DORM3")) {
