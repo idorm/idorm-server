@@ -12,8 +12,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ApiModel(value = "MatchingInfo 저장 요청")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
-@AllArgsConstructor
 public class MatchingInfoDefaultRequestDto {
 
     @NotBlank(message = "기숙사 분류를 입력해 주세요.")

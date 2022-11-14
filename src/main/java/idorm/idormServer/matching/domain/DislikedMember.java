@@ -18,11 +18,11 @@ public class DislikedMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long selectedDislikedMemberId;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
-
-    private Long selectedDislikedMemberId;
 
     @Builder
     public DislikedMember(Member loginMember, Long dislikedMemberId) {

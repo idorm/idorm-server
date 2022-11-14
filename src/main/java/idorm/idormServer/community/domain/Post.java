@@ -22,16 +22,14 @@ public class Post extends BaseEntity {
     @Column(name="post_id")
     private Long id;
 
-    @Column(length = 15, nullable = false)
     private String dormNum; // 기숙사 분류 (커뮤니티 카테고리)
 
-    @Column(length = 15, nullable = false)
     private String title; // 제목
 
-    @Column(nullable = false)
     private String content; // 내용
 
     private Boolean isAnonymous; // 익명 여부
+
     private Boolean isVisible; // 게시글 공개 여부
 
     private Integer likesCount; // 개사글 좋아요 수

@@ -104,24 +104,6 @@ public class MatchingInfoService {
     }
 
     /**
-     * MatchingInfo 전체 조회 |
-     * 전체 매칭인포를 조회한다. 조회할 매칭정보가 없다면 404(Not Found)를 던진다.
-     */
-    public List<MatchingInfo> findAll() {
-
-        log.info("IN PROGRESS | MatchingInfo 전체 조회 At " + LocalDateTime.now());
-
-        List<MatchingInfo> foundAllMatchingInfos = matchingInfoRepository.findAll();
-
-        if(foundAllMatchingInfos.isEmpty()) {
-            throw new NotFoundException("조회할 매칭정보가 존재하지 않습니다.");
-        }
-
-        log.info("COMPLETE | MatchingInfo 전체 조회 At " + LocalDateTime.now() + " | MatchingInfo 수: " + foundAllMatchingInfos.size());
-        return foundAllMatchingInfos;
-    }
-
-    /**
      * MatchingInfo 삭제 |
      */
     @Transactional

@@ -9,8 +9,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ApiModel(value = "Matching 매칭정보 필터링 요청")
-@AllArgsConstructor
-@Builder
 public class MatchingFilteredMatchingInfoRequestDto {
 
     @NotNull(message = "기숙사 입력은 필수입니다.")

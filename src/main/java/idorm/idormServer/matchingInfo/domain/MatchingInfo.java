@@ -23,23 +23,19 @@ public class MatchingInfo extends BaseEntity {
     private Boolean isMatchingInfoPublic; // 매칭이미지 공개 여부
 
     private String dormNum; // 기숙사 선택 [DORM1,DORM2,DORM3]
-
     private String joinPeriod; // 입사기간 [WEEK16,WEEK24]
-
     private String gender; // 성별 [FEMALE, MALE]
-
     private Integer age;
-
     private Boolean isSnoring;// 코골이 여부
     private Boolean isGrinding; // 이갈이 여부
     private Boolean isSmoking; // 흡연 여부
     private Boolean isAllowedFood; // 실내 음식 허용 여부
     private Boolean isWearEarphones; // 이어폰 착용 의사 여부
-
     private String wakeUpTime; // 기상 시간
     private String cleanUpStatus; // 정리정돈 상태
     private String showerTime; // 샤워 시간
     private String openKakaoLink; // 오픈채팅 링크
+
     private String mbti;
     private String wishText; // 하고 싶은 말
 

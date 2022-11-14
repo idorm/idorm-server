@@ -9,9 +9,9 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Photo extends BaseEntity {
 
     @Id
@@ -20,9 +20,9 @@ public class Photo extends BaseEntity {
     private Long id;
 
     private String fileName;
+
     private String folderName;
 
-    @Column(length = 1000)
     private String url;
 
     @OneToOne
@@ -46,13 +46,5 @@ public class Photo extends BaseEntity {
         this.url = url;
         this.member = member;
         this.post = post;
-    }
-
-    public void updateFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public void updateUrl(String url) {
-        this.url = url;
     }
 }

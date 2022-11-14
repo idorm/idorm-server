@@ -18,16 +18,16 @@ public class LikedMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long selectedLikedMemberId;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private Long selectedLikedMemberId;
 
     @Builder
     public LikedMember(Member loginMember, Long likedMemberId) {
         this.member = loginMember;
         this.selectedLikedMemberId = likedMemberId;
     }
-
 }

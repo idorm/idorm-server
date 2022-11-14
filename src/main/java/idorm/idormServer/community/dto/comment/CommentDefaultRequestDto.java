@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @ApiModel(value = "Comment 저장 요청")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class CommentDefaultRequestDto {
 
     @NotBlank(message = "내용을 입력해 주세요.")

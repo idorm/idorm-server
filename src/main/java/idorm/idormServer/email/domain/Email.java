@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -18,8 +19,11 @@ public class Email extends BaseEntity {
     private Long id;
 
     private String email;
+
     private String code;
+
     private boolean isCheck; // 인증 여부
+
     private boolean isJoin; // 가입 여부
 
     public Email(String email, String code) {

@@ -6,13 +6,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ApiModel(value = "Matching 응답")
-@AllArgsConstructor
-@Builder
 public class MatchingDefaultResponseDto {
 
     @ApiModelProperty(position = 1, value="멤버 식별자")

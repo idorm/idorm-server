@@ -20,7 +20,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "MatchingInfo(온보딩) API")
+@Api(tags = "MatchingInfo API")
 public class MatchingInfoController {
 
     private final MatchingInfoService matchingInfoService;
@@ -155,7 +155,7 @@ public class MatchingInfoController {
     @DeleteMapping("/member/matchinginfo")
     @ApiOperation(value = "MatchingInfo 삭제")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "MatchingInfo 삭제 완료"),
+            @ApiResponse(code = 204, message = "MatchingInfo 삭제 완료"),
             @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 409, message = "등록된 매칭정보가 없습니다."),
             @ApiResponse(code = 500, message = "MatchingInfo 삭제 중 서버 에러 발생")

@@ -56,7 +56,7 @@ public class MatchingInfoUpdateRequestDto {
     private String showerTime;
 
     @NotBlank(message = "오픈 채팅 링크를 입력해 주세요.")
-    @ApiModelProperty(position = 13, dataType = "String", example = "https://open.kakao.com/o/szaIN6ze")
+    @ApiModelProperty(position = 13, required = true, dataType = "String", example = "https://open.kakao.com/o/szaIN6ze")
     private String openKakaoLink;
 
     @ApiModelProperty(position = 14, dataType = "String", example = "ISTP")

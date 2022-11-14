@@ -17,8 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -33,6 +32,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @Api(tags = "Email API")
@@ -43,9 +43,6 @@ public class EmailController {
 
     private final JavaMailSender emailSender;
     private final JwtTokenProvider jwtTokenProvider;
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
     @ApiOperation(value = "Email 인증")
     @ApiResponses(value = {
@@ -219,11 +216,11 @@ public class EmailController {
 
     //이메일,인증번호로그/DB 저장
     private MimeMessage createMessage(String to) throws Exception{
-        logger.info("보내는 대상 : "+ to);
+        log.info("보내는 대상 : " + to);
 
         MimeMessage  message = emailSender.createMimeMessage();
         String ePw = createKey();
-        logger.info("인증 번호 : " + ePw);
+        log.info("인증 번호 : " + ePw);
         String code = createCode(ePw);
         message.addRecipients(MimeMessage.RecipientType.TO, to); //보내는 대상
         message.setSubject("IDORM 확인 코드: " + code,"UTF-8"); //제목

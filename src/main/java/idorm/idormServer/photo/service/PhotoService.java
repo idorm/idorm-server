@@ -200,28 +200,6 @@ public class PhotoService {
     }
 
     /**
-     * Photo 프로필 사진 삭제 |
-     * 사진을 S3에서 삭제한 후에 디비에서 관련 정보 찾아 삭제를 한다. 디비에서 관련 정보를 찾는 중 오류가 발생하면 404(Not Found)를 던지고, 디비에서
-     * 데이터를 삭제하는 과정에서 오류가 발생하면 500(Internal Server Error)을 던진다.
-     */
-    @Transactional
-    public void delete(Member member, String fileName) {
-        log.info("IN PROGRESS | Photo 삭제 At " + LocalDateTime.now());
-        String folderName = member.getEmail() + "-" + member.getId();
-        deleteFileFromS3(folderName, fileName);
-        Optional<Photo> foundPhoto = photoRepository.findByFileName(fileName);
-        if (foundPhoto.isEmpty()) {
-            throw new NotFoundException("사진이 존재하지 않습니다");
-        }
-        try {
-            photoRepository.delete(foundPhoto.get());
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Photo delete 중 에러 발생", e);
-        }
-        log.info("COMPLETE | Photo 삭제 At " + LocalDateTime.now());
-    }
-
-    /**
      * Photo 폴더명으로 프로필 사진 삭제 |
      * 사진을 S3에서 삭제한 후에 디비에서 관련 정보 찾아 삭제를 한다. 디비에서 관련 정보를 찾는 중 오류가 발생하면 404(Not Found)를 던지고, 디비에서
      * 데이터를 삭제하는 과정에서 오류가 발생하면 500(Internal Server Error)을 던진다.
@@ -274,34 +252,6 @@ public class PhotoService {
         }
 
         log.info("COMPLETE | Photo 커뮤니티 게시글 폴더 전체 삭제 At " + LocalDateTime.now());
-    }
-
-    /**
-     * Photo 게시글 사진 삭제 - 해당 파일만 삭제|
-     */
-    @Transactional
-    public void deletePostPhotos(Post post, Member member, List<String> fileNames) {
-        log.info("IN PROGRESS | Photo 커뮤니티 게시글 삭제 At " + LocalDateTime.now() +
-                " | 게시글 아이디 = " + post.getId() + " 멤버 아이디 = "  + member.getId());
-
-        String folderName = "community/" + post.getDormNum() + "/" + post + "_" + post.getId();
-
-
-        try {
-            for(String fileName : fileNames) {
-                deleteFileFromS3(folderName, fileName);
-                Optional<Photo> foundPhoto = photoRepository.findByFileName(fileName);
-                if (foundPhoto.isEmpty()) {
-                    throw new NotFoundException("사진이 존재하지 않습니다");
-                }
-                photoRepository.delete(foundPhoto.get());
-            }
-
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Photo 커뮤니티 사진 삭제 중 서버 에러 발생", e);
-        }
-
-        log.info("COMPLETE | Photo 커뮤니티 게시글 삭제 At " + LocalDateTime.now());
     }
 
     /**

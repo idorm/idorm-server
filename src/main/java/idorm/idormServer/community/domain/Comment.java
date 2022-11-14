@@ -19,7 +19,9 @@ public class Comment extends BaseEntity {
     private Long id;
 
     private String content; // 내용
+
     private Boolean isAnonymous; // 익명 여부
+
     private Boolean isVisible; // 댓글 삭제 여부
 
     private Long parentCommentId; // 부모 댓글 식별자
