@@ -2,6 +2,7 @@ package idorm.idormServer.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -26,7 +27,7 @@ public class SwaggerConfiguration {
         return new Docket(DocumentationType.OAS_30)
                 .useDefaultResponseMessages(false) // Swagger에서 제공해주는 기본 응답 코드 (200, 401, 403, 404). false로 설정하면 기본 응답 코드를 노출하지 않습니다.
                 .select()
-                .apis(RequestHandlerSelectors.any()) // Swagger를 적용할 패키지 설정
+                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class)) // Swagger를 적용할 패키지 설정
                 .paths(PathSelectors.any()) // Swagger를 적용할 주소 패턴을 세팅
                 .build()
                 .apiInfo(apiInfo()).securityContexts(Arrays.asList(securityContext())) // Swagger UI로 노출할 정보
