@@ -47,10 +47,7 @@ public class EmailController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    @ApiOperation(value = "Email 인증", notes = "개발용 인증: 이미 인증된 이메일 한에서 인증코드 포함 응답을 줍니다. " +
-            "배포용 응답: data가 null 입니다. " +
-            "/ 개발용 테스트 이메일: {aaa,bbb,ccc}@inu.ac.kr(인증완료, 회원가입완료/비밀번호 각각 aaa,bbb,ccc) // " +
-            "{ddd,eee,fff}@inu.ac.kr(인증완료, 가입여부만 true(실제론 멤버등록 X))")
+    @ApiOperation(value = "Email 인증")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Email 인증코드 전송 완료"),
             @ApiResponse(code = 400, message = "이메일을 입력해 주세요."),

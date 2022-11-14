@@ -232,14 +232,12 @@ public class MemberService {
      * 멤버 식별자를 통해 관련된 멤버 정보를 조회하여 멤버 프로필 사진을 삭제한다.
      */
     @Transactional
-    public void deleteMemberPhoto(Long memberId, String fileName) {
-        log.info("IN PROGRESS | Member 사진 삭제 At " + LocalDateTime.now() + " | " + memberId);
+    public void deleteMemberProfilePhoto(Member member) {
+        log.info("IN PROGRESS | Member 사진 삭제 At " + LocalDateTime.now() + " | 멤버 식별자 " + member.getId());
 
-        Member foundMember = findById(memberId);
-        photoService.findOneByFileName(fileName);
+        photoService.deleteProfilePhotos(member);
 
-        photoService.delete(foundMember, fileName);
-        log.info("COMPLETE | Member 사진 삭제 At " + LocalDateTime.now() + " | " + memberId);
+        log.info("COMPLETE | Member 사진 삭제 At " + LocalDateTime.now() + " | 멤버 식별자 " + member.getId());
     }
 
     /**

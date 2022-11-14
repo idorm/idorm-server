@@ -30,18 +30,13 @@ import java.util.stream.Collectors;
 @Api(tags = "Community - Comment API")
 public class CommentController {
 
-    // 게시글에서 댓글, 대댓글 전체 조회
-    // 내가 쓴 전체 댓글 조회
-    // 댓글 수정
-    // 댓글, 대댓글 삭제
-
     private final CommentService commentService;
     private final PostService postService;
     private final MemberService memberService;
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping(value = "/member/post/{postId}/comment")
+    @PostMapping(value = "/member/post/{post-id}/comment")
     @ApiOperation(value = "Comment 댓글 혹은 대댓글 저장")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Comment 저장 완료"),
@@ -52,7 +47,7 @@ public class CommentController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> saveComment(
             HttpServletRequest request,
-            @PathVariable("postId") Long postId,
+            @PathVariable("post-id") Long postId,
             @RequestBody @Valid CommentDefaultRequestDto requestDto
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
@@ -84,7 +79,7 @@ public class CommentController {
     /**
      * 해당 게시글에서 조회되는 모든 댓글 및 대댓글 조회
      */
-    @GetMapping(value = "/member/post/{postId}/comments")
+    @GetMapping(value = "/member/post/{post-id}/comments")
     @ApiOperation(value = "Comment 특정 게시글에서 조회되는 모든 댓글 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Comment 로그인한 멤버가 작성한 모든 댓글 조회 완료"),
@@ -95,7 +90,7 @@ public class CommentController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> findCommentsByPost(
             HttpServletRequest request,
-            @PathVariable("postId") Long postId
+            @PathVariable("post-id") Long postId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
@@ -143,7 +138,7 @@ public class CommentController {
     /**
      * 로그인한 멤버가 작성한 모든 댓글 및 대댓글 조회
      */
-    @GetMapping(value = "/member/comments/me")
+    @GetMapping(value = "/member/comments")
     @ApiOperation(value = "Comment 로그인한 멤버가 작성한 모든 댓글 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Comment 로그인한 멤버가 작성한 모든 댓글 조회 완료"),
@@ -183,7 +178,7 @@ public class CommentController {
     /**
      * Comment 단건 댓글, 대댓글 삭제
      */
-    @DeleteMapping(value = "/member/post/{postId}/comment/{commentId}")
+    @DeleteMapping(value = "/member/post/{post-id}/comment/{comment-id}")
     @ApiOperation(value = "Comment 삭제")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Comment 삭제 완료"),
@@ -194,8 +189,8 @@ public class CommentController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> deleteComment(
             HttpServletRequest request,
-            @PathVariable("postId") Long postId,
-            @PathVariable("commentId") Long commentId
+            @PathVariable("post-id") Long postId,
+            @PathVariable("comment-id") Long commentId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);

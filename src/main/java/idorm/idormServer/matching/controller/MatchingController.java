@@ -3,6 +3,7 @@ package idorm.idormServer.matching.controller;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
 import idorm.idormServer.matching.dto.MatchingSelectedMemberIdRequestDto;
@@ -84,15 +85,27 @@ public class MatchingController {
             @ApiResponse(code = 200, message = "Matching 필터링된 매칭멤버 조회 완료"),
             @ApiResponse(code = 204, message = "매칭되는 멤버가 없습니다."),
             @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 404, message = "올바른 기숙사 분류 혹은 입사기간이 아닙니다."),
             @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 매칭이미지가 비공개 입니다."),
             @ApiResponse(code = 500, message = "Matching 매칭멤버 조회 중 서버 에러 발생")
     })
-    @GetMapping("/member/matchingfiltered")
+    @GetMapping("/member/matching/filter")
     public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(
             HttpServletRequest request, @Valid MatchingFilteredMatchingInfoRequestDto filteringRequest
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+
+        if(!filteringRequest.getDormNum().equals("DORM1") &&
+                !filteringRequest.getDormNum().equals("DORM2") &&
+                !filteringRequest.getDormNum().equals("DORM3")) {
+            throw new NotFoundException("올바른 기숙사 분류가 아닙니다.");
+        }
+
+        if(!filteringRequest.getJoinPeriod().equals("WEEK16") &&
+                !filteringRequest.getJoinPeriod().equals("WEEK24")) {
+            throw new NotFoundException("올바른 기숙사 분류가 아닙니다.");
+        }
 
         List<Long> filteredMatchingInfoId = matchingService.findFilteredMatchingMembers(loginMemberId, filteringRequest);
 
@@ -127,7 +140,7 @@ public class MatchingController {
             @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
             @ApiResponse(code = 500, message = "Matching 좋아요한 매칭멤버 조회 중 서버 에러 발생")
     })
-    @GetMapping("/member/matchinglikedmembers")
+    @GetMapping("/member/matching/like")
     public ResponseEntity<DefaultResponseDto<Object>> findLikedMatchingMembers(
             HttpServletRequest request
     ) {
@@ -169,7 +182,7 @@ public class MatchingController {
             @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다."),
             @ApiResponse(code = 500, message = "LikedMember save 중 서버 에러 발생")
     })
-    @PostMapping("/member/matchinglikedmembers")
+    @PostMapping("/member/matching/like")
     public ResponseEntity<DefaultResponseDto<Object>> addLikedMatchingMembers(
             HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
@@ -211,7 +224,7 @@ public class MatchingController {
             @ApiResponse(code = 404, message = "좋아요한 멤버의 id가 존재하지 않습니다."),
             @ApiResponse(code = 500, message = "Matching 좋아요한 매칭멤버 삭제 중 서버 에러 발생")
     })
-    @DeleteMapping("/member/matchinglikedmembers")
+    @DeleteMapping("/member/matching/like")
     public ResponseEntity<DefaultResponseDto<Object>> deleteLikedMatchingMembers(
             HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
@@ -241,7 +254,7 @@ public class MatchingController {
             @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
             @ApiResponse(code = 500, message = "Matching 싫어요한 매칭멤버 조회 중 서버 에러 발생")
     })
-    @GetMapping("/member/matchingdislikedmembers")
+    @GetMapping("/member/matching/dislike")
     public ResponseEntity<DefaultResponseDto<Object>> findDislikedMatchingMembers(
             HttpServletRequest request
     ) {
@@ -283,7 +296,7 @@ public class MatchingController {
             @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다."),
             @ApiResponse(code = 500, message = "DislikedMember save 중 서버 에러 발생")
     })
-    @PostMapping("/member/matchingdislikedmembers")
+    @PostMapping("/member/matching/dislike")
     public ResponseEntity<DefaultResponseDto<Object>> addDislikedMatchingMembers(
             HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
@@ -326,7 +339,7 @@ public class MatchingController {
             @ApiResponse(code = 404, message = "싫어요한 멤버의 id가 존재하지 않습니다."),
             @ApiResponse(code = 500, message = "Matching 싫어요한 매칭멤버 삭제 중 서버 에러 발생")
     })
-    @DeleteMapping("/member/matchingdislikedmembers")
+    @DeleteMapping("/member/matching/dislike")
     public ResponseEntity<DefaultResponseDto<Object>> deleteDislikedMatchingMembers(
             HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
@@ -347,8 +360,4 @@ public class MatchingController {
                         .data(response)
                         .build());
     }
-
-
-
-
 }

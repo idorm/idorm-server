@@ -22,9 +22,6 @@ public class MemberDefaultResponseDto {
     @ApiModelProperty(position = 3, dataType = "String", value = "닉네임", example = "현")
     private String nickname;
 
-    @ApiModelProperty(position = 4, dataType = "String", value = "프로필사진 이름", example = "aaa.png")
-    private String profilePhotoFileName;
-
     @ApiModelProperty(position = 5, dataType = "String", value = "프로필사진 주소", example = "aws S3 저장 url")
     private String profilePhotoUrl;
 
@@ -44,7 +41,6 @@ public class MemberDefaultResponseDto {
         }
 
         if(member.getPhoto() != null) {
-            this.profilePhotoFileName = member.getPhoto().getFileName();
             this.profilePhotoUrl = member.getPhoto().getUrl();
         }
     }
@@ -56,7 +52,6 @@ public class MemberDefaultResponseDto {
         this.loginToken = token;
 
         if(member.getPhoto() != null) {
-            this.profilePhotoFileName = member.getPhoto().getFileName();
             this.profilePhotoUrl = member.getPhoto().getUrl();
         }
 

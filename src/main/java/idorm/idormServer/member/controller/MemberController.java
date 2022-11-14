@@ -144,20 +144,19 @@ public class MemberController {
     @ApiOperation(value = "Member 프로필 사진 삭제")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Member 프로필 사진 삭제 완료"),
-            @ApiResponse(code = 400, message = "파일이름 입력은 필수입니다."),
             @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 404, message = "업로드한 파일이 없습니다."),
+            @ApiResponse(code = 409, message = "삭제할 프로필 사진이 없습니다."),
             @ApiResponse(code = 500, message = "Member 프로필 사진 삭제 중 서버 에러 발생")
     }
     )
     @DeleteMapping("/member/profile-photo")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMemberProfilePhoto(
-            HttpServletRequest request2, @Valid MemberDeletePhotoRequestDto deleteRequestDto) {
+            HttpServletRequest request2) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
-        memberService.deleteMemberPhoto(loginMemberId, deleteRequestDto.getFileName());
+        memberService.deleteMemberProfilePhoto(loginMember);
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
 

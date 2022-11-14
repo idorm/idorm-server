@@ -222,6 +222,40 @@ public class PhotoService {
     }
 
     /**
+     * Photo 폴더명으로 프로필 사진 삭제 |
+     * 사진을 S3에서 삭제한 후에 디비에서 관련 정보 찾아 삭제를 한다. 디비에서 관련 정보를 찾는 중 오류가 발생하면 404(Not Found)를 던지고, 디비에서
+     * 데이터를 삭제하는 과정에서 오류가 발생하면 500(Internal Server Error)을 던진다.
+     */
+    @Transactional
+    public void deleteProfilePhotos(Member member) {
+        log.info("IN PROGRESS | Photo 프로필 사진 삭제 At " + LocalDateTime.now());
+
+        String folderName = "profile-photo/" + member.getEmail() + "-" + member.getId();
+        List<Photo> profilePhotos = photoRepository.findByFolderName(folderName);
+
+        if(profilePhotos.isEmpty()) {
+            throw new ConflictException("삭제할 프로필 사진이 존재하지 않습니다.");
+        }
+
+        try {
+            for(Photo photo : profilePhotos) {
+                String deleteFileName = photo.getFileName();
+                deleteFileFromS3(folderName, deleteFileName);
+                Optional<Photo> foundPhoto = photoRepository.findByFileName(deleteFileName);
+                if (foundPhoto.isEmpty()) {
+                    throw new ConflictException("삭제할 프로필 사진이 존재하지 않습니다.");
+                }
+                photoRepository.delete(foundPhoto.get());
+            }
+
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Photo 프로필사진 삭제 중 서버 에러 발생", e);
+        }
+
+        log.info("COMPLETE | Photo 프로필 사진 삭제 At " + LocalDateTime.now());
+    }
+
+    /**
      * Photo 게시글 사진 삭제 - 해당 게시글의 전체 사진 삭제 |
      * 폴더명 (post-{postId}/)을 받으면 해당 폴더 내의 전체 사진을 삭제합니다.
      */

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 @Api(tags = "Community - Post API")
@@ -40,7 +39,7 @@ public class PostController {
     private final PostService postService;
     private final PostLikedMemberService postLikedMemberService;
 
-    @PostMapping(value = "/member/post/{postId}",
+    @PostMapping(value = "/member/post/{post-id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Post 수정")
@@ -51,7 +50,7 @@ public class PostController {
             @ApiResponse(code = 500, message = "Post update 중 서버 에러 발생"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> updatePost(
-            @PathVariable("postId") Long updatePostId,
+            @PathVariable("post-id") Long updatePostId,
             @ModelAttribute @Valid UpdatePostVo updateRequest
     ) throws IOException {
 
@@ -151,7 +150,7 @@ public class PostController {
                 );
     }
 
-    @GetMapping("/member/post/{postId}")
+    @GetMapping("/member/post/{post-id}")
     @ApiOperation(value = "Post 단건 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Post 단건 조회 완료"),
@@ -160,7 +159,7 @@ public class PostController {
             @ApiResponse(code = 500, message = "Post 단건 조회 중 서버 에러 발생"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> findOnePost(
-            @PathVariable("postId") Long postId
+            @PathVariable("post-id") Long postId
     ) {
 
         // TODO: Post 단건 조회 로직 - 댓글, 대댓글까지 조회
@@ -219,7 +218,7 @@ public class PostController {
     }
 
     // TODO: 최신순 혹은 과거순으로 order by 해서 반환
-    @GetMapping("/member/posts/me/write")
+    @GetMapping("/member/posts/write")
     @ApiOperation(value = "Post 로그인한 멤버가 작성한 모든 게시글 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Post 로그인한 멤버가 작성한 게시글 조회 완료"),
@@ -256,7 +255,7 @@ public class PostController {
                 );
     }
 
-    @GetMapping("/member/posts/me/liked")
+    @GetMapping("/member/posts/like")
     @ApiOperation(value = "Post 로그인한 멤버가 공감한 모든 게시글 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Post 로그인한 멤버가 공감한 게시글 조회 완료"),
@@ -300,7 +299,7 @@ public class PostController {
                 );
     }
 
-    @GetMapping("/member/posts/{postId}/liked")
+    @GetMapping("/member/post/{post-id}/like")
     @ApiOperation(value = "Post 특정 게시글을 공감한 멤버 카운트 조회")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Post 특정 게시글을 공감한 멤버 카운트 조회 완료"),
@@ -309,7 +308,7 @@ public class PostController {
             @ApiResponse(code = 500, message = "Post 특정 게시글을 공감한 멤버 조회 중 서버 에러가 발생했습니다.")
     })
     public ResponseEntity<DefaultResponseDto<Object>> findLikedMembersByPost(
-            HttpServletRequest request2, @PathVariable("postId") Long postId
+            HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
@@ -334,7 +333,7 @@ public class PostController {
                 );
     }
 
-    @PutMapping("/member/post/{postId}/liked")
+    @PutMapping("/member/post/{post-id}/like")
     @ApiOperation(value = "Post 게시글 공감하기")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Post 게시글 공감하기 완료"),
@@ -344,7 +343,7 @@ public class PostController {
             @ApiResponse(code = 500, message = "Post 게시글 공감하기 중 서버 에러 발생"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> savePostLikes(
-            HttpServletRequest request2, @PathVariable("postId") Long postId
+            HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
@@ -360,7 +359,7 @@ public class PostController {
                 );
     }
 
-    @DeleteMapping("/member/post/{postId}/liked")
+    @DeleteMapping("/member/post/{post-id}/like")
     @ApiOperation(value = "Post 게시글 공감 취소하기")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Post 게시글 공감 삭제 완료"),
@@ -369,7 +368,7 @@ public class PostController {
             @ApiResponse(code = 500, message = "Post 게시글 공감 취소하기 중 서버 에러 발생"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> deletePostLikes(
-            HttpServletRequest request2, @PathVariable("postId") Long postId
+            HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
@@ -385,7 +384,7 @@ public class PostController {
                 );
     }
 
-    @DeleteMapping("/member/post/{postId}")
+    @DeleteMapping("/member/post/{post-id}")
     @ApiOperation(value = "Post 삭제")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Post 삭제 완료"),
@@ -393,14 +392,13 @@ public class PostController {
             @ApiResponse(code = 500, message = "Post 삭제 중 서버 에러 발생"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> deletePost(
-            HttpServletRequest request2, @PathVariable("postId") Long postId
+            HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         postService.deletePost(postId,member);
-        // TODO: 댓글, 대댓글 삭제 처리 필요
 
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
