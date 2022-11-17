@@ -1,5 +1,6 @@
 package idorm.idormServer.community.domain;
 
+import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostLikedMember {
+public class PostLikedMember extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

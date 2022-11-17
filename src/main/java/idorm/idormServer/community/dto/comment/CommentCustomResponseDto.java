@@ -4,6 +4,7 @@ import idorm.idormServer.community.domain.Comment;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @ApiModel(value = "Comment 게시글 내 모든 댓글 대댓글 커스텀 응답")
 public class CommentCustomResponseDto {
     @ApiModelProperty(position = 1, value="댓글 식별자")

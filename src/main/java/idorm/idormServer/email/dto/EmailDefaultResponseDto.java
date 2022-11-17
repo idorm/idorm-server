@@ -4,6 +4,7 @@ import idorm.idormServer.email.domain.Email;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @ApiModel(value = "Email 응답")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class EmailDefaultResponseDto {
 
     @ApiModelProperty(position = 1, required = true, value = "식별자")

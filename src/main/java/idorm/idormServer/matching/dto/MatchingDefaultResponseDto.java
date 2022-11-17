@@ -8,6 +8,7 @@ import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @ApiModel(value = "Matching 응답")
 public class MatchingDefaultResponseDto {
 

@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @ApiModel(value = "Matching 매칭정보 필터링 요청")
 public class MatchingFilteredMatchingInfoRequestDto {
 

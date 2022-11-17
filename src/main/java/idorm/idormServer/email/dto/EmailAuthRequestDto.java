@@ -3,6 +3,7 @@ package idorm.idormServer.email.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ApiModel(value = "Email 인증 요청")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class EmailAuthRequestDto {
 
     @ApiModelProperty(position = 1, required = true, dataType = "String", value = "이메일", example = "aaa@inu.ac.kr")

@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @ApiModel(value = "Comment 저장 요청")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CommentDefaultRequestDto {
 
     @NotBlank(message = "내용을 입력해 주세요.")
@@ -20,10 +21,4 @@ public class CommentDefaultRequestDto {
 
     @ApiModelProperty(position = 3, required = false, dataType = "Long", value = "대댓글이라면 부모 댓글 식별자", example = "1")
     private Long parentCommentId;
-
-    public CommentDefaultRequestDto(String content, Boolean isAnonymous, Long parentCommentId) {
-        this.content = content;
-        this.isAnonymous = isAnonymous;
-        this.parentCommentId = parentCommentId;
-    }
 }

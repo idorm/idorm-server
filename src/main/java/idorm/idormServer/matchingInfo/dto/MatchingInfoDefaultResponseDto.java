@@ -4,12 +4,14 @@ import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ApiModel(value = "MatchingInfo 응답")
+@AllArgsConstructor
 public class MatchingInfoDefaultResponseDto {
 
     @ApiModelProperty(position = 1, value="식별자")

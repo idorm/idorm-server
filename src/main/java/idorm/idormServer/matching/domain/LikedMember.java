@@ -1,5 +1,6 @@
 package idorm.idormServer.matching.domain;
 
+import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LikedMember {
+public class LikedMember extends BaseEntity {
 
     @Id
     @Column(name = "liked_member_id")
