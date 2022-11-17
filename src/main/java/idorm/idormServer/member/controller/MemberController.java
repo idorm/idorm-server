@@ -79,7 +79,7 @@ public class MemberController {
             @ApiResponse(code = 200, message = "Member 회원가입 완료"),
             @ApiResponse(code = 400, message = "올바른 형식의 이메일 주소여야 합니다."),
             @ApiResponse(code = 404, message = "등록하지 않은 이메일입니다."),
-            @ApiResponse(code = 409, message = "이미 가입된 이메일입니다.")
+            @ApiResponse(code = 409, message = "이미 가입된 이메일 혹은 닉네임입니다.")
     }
     )
     @PostMapping("/register")
@@ -184,10 +184,9 @@ public class MemberController {
             HttpServletRequest request2, @RequestBody @Valid MemberUpdatePasswordStatusLoginRequestDto request) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
-
-        memberService.updatePassword(loginMemberId, passwordEncoder.encode(request.getPassword()));
-
         Member member = memberService.findById(loginMemberId);
+
+        memberService.updatePassword(member, passwordEncoder.encode(request.getPassword()));
         emailService.updateIsJoined(member.getEmail());
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
@@ -217,7 +216,7 @@ public class MemberController {
 
         Member foundMember = memberService.findByEmail(request.getEmail());
 
-        memberService.updatePassword(foundMember.getId(), passwordEncoder.encode(request.getPassword()));
+        memberService.updatePassword(foundMember, passwordEncoder.encode(request.getPassword()));
         emailService.updateIsJoined(foundMember.getEmail());
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(foundMember);
@@ -247,26 +246,15 @@ public class MemberController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
-        Optional<Member> foundMemberByNickname = memberService.findByNickname(request.getNickname());
+        memberService.updateNickname(loginMember, request.getNickname());
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
 
-        if(foundMemberByNickname.isEmpty()) {
-            memberService.updateNickname(loginMemberId, request.getNickname());
-
-            MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
-
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("Member 닉네임 변경 완료")
-                            .data(response)
-                            .build());
-        }
-
-        if(loginMember.equals(foundMemberByNickname.get())) {
-            throw new ConflictException("기존의 닉네임과 같습니다.");
-        } else {
-            throw new ConflictException("이미 존재하는 닉네임입니다.");
-        }
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Member 닉네임 변경 완료")
+                        .data(response)
+                        .build());
     }
 
     @ApiOperation(value = "Member 삭제")
@@ -386,8 +374,8 @@ public class MemberController {
 
         Member updateMember = memberService.findById(updateMemberId);
 
-        memberService.updatePassword(updateMemberId, request.getPassword());
-        memberService.updateNickname(updateMemberId, request.getNickname());
+        memberService.updatePassword(updateMember, request.getPassword());
+        memberService.updateNickname(updateMember, request.getNickname());
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(updateMember);
 

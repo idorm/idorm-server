@@ -44,6 +44,8 @@ public class MemberService {
         isExistingEmail(email);
 
         try {
+            isDuplicateNickname(nickname);
+
             Member member = Member.builder()
                     .email(email)
                     .password(password)
@@ -55,6 +57,16 @@ public class MemberService {
             return member.getId();
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 저장 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
+     * Member 닉네임 중복 여부 체크 |
+     */
+    public void isDuplicateNickname(String nickname) {
+        Optional<Member> foundMember = memberRepository.findByNickname(nickname);
+        if(foundMember.isPresent()) {
+            throw new ConflictException("이미 존재하는 닉네임입니다.");
         }
     }
 
@@ -198,7 +210,6 @@ public class MemberService {
     public Optional<Member> findByNickname(String nickname) {
 
         log.info("IN PROGRESS | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + nickname);
-
         Optional<Member> foundMember = memberRepository.findByNickname(nickname);
 
         log.info("COMPLETE | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + foundMember);
@@ -245,20 +256,14 @@ public class MemberService {
      * Member 비밀번호 수정 |
      */
     @Transactional
-    public void updatePassword(Long memberId, String password) {
+    public void updatePassword(Member member, String password) {
 
-        log.info("IN PROGRESS | Member 비밀번호 변경 At " + LocalDateTime.now() + " | " + memberId);
-
-        Optional<Member> foundMember = memberRepository.findById(memberId);
-
-        if(foundMember.isEmpty()) {
-            throw new UnauthorizedException("비밀번호를 변경할 멤버를 찾을 수 없습니다.");
-        }
+        log.info("IN PROGRESS | Member 비밀번호 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
 
         try {
-            foundMember.get().updatePassword(password);
-            memberRepository.save(foundMember.get());
-            log.info("COMPLETE | Member 비밀번호 변경 At " + LocalDateTime.now() + " | " + memberId);
+            member.updatePassword(password);
+            memberRepository.save(member);
+            log.info("COMPLETE | Member 비밀번호 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 비밀번호 변경 중 서버 에러 발생", e);
         }
@@ -268,21 +273,21 @@ public class MemberService {
      * Member 닉네임 수정 |
      */
     @Transactional
-    public void updateNickname(Long memberId, String nickname) {
+    public void updateNickname(Member member, String nickname) {
 
-        log.info("IN PROGRESS | Member 닉네임 변경 At " + LocalDateTime.now() + " | " + memberId);
+        log.info("IN PROGRESS | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
 
-        Optional<Member> foundMember = memberRepository.findById(memberId);
-
-        if(foundMember.isEmpty()) {
-            throw new UnauthorizedException("닉네임을 변경할 멤버를 찾을 수 없습니다.");
+        if(member.getNickname().equals(nickname)) {
+            throw new ConflictException("기존의 닉네임과 같습니다.");
         }
 
-        try {
-            foundMember.get().updateNickname(nickname);
-            memberRepository.save(foundMember.get());
+        isDuplicateNickname(nickname);
 
-            log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | " + memberId);
+        try {
+            member.updateNickname(nickname);
+            memberRepository.save(member);
+
+            log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 닉네임 변경 중 서버 에러 발생", e);
         }
