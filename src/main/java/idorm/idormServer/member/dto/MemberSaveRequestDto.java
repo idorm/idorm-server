@@ -22,4 +22,8 @@ public class MemberSaveRequestDto {
     @NotBlank(message = "비밀번호 입력은 필수입니다.")
     @ApiModelProperty(position = 2, required = true, dataType = "String", value = "비밀번호", example = "aaa")
     private String password;
+
+    @NotBlank(message = "닉네임 입력은 필수입니다.")
+    @ApiModelProperty(position = 3, required = true, dataType = "String", value = "닉네임", example = "응철이")
+    private String nickname;
 }

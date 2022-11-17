@@ -93,7 +93,10 @@ public class MemberController {
             throw new NotFoundException("등록하지 않은 이메일입니다.");
         }
 
-        Long createdMemberId = memberService.save(request.getEmail(), passwordEncoder.encode(request.getPassword()));
+        Long createdMemberId = memberService.save(request.getEmail(),
+                passwordEncoder.encode(request.getPassword()),
+                request.getNickname());
+
         Member newMember = memberService.findById(createdMemberId);
         emailService.updateIsJoined(emailOp.get().getEmail());
 

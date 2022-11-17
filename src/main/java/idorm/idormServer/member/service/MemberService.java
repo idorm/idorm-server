@@ -37,7 +37,7 @@ public class MemberService {
      * 멤버를 저장 중에 문제가 발생하면 500(Internal Server Error)을 던진다.
      */
     @Transactional
-    public Long save(String email, String password) {
+    public Long save(String email, String password, String nickname) {
 
         log.info("IN PROGRESS | Member 저장 At " + LocalDateTime.now() + " | " + email);
 
@@ -47,6 +47,7 @@ public class MemberService {
             Member member = Member.builder()
                     .email(email)
                     .password(password)
+                    .nickname(nickname)
                     .build();
 
             memberRepository.save(member);

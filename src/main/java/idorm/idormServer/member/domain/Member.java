@@ -25,7 +25,6 @@ public class Member extends BaseEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     private String email;
 
     private String password;
@@ -99,10 +98,10 @@ public class Member extends BaseEntity implements UserDetails {
      */
 
     @Builder
-    public Member(String email, String password) {
+    public Member(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
-        this.nickname = "도미";
+        this.nickname = nickname;
         this.roles.add("ROLE_USER");
     }
 

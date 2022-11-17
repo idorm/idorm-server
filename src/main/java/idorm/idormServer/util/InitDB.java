@@ -25,9 +25,9 @@ public class InitDB {
     public void init() {
         // 여기에 InitService를 넣어줘도 되지만 굳이 transaction을 따로 먹여서 호출하는 이유는
         // spring life cycle이 있어서 transaction 등이 잘 작동이 안됨. 그래서 별도의 bean으로 등록하고 호출하는 방식으로 사용하는 것을 권장
-//         initService.dbInit1();
-//         initService.dbInit2();
-//        initService.dbInit3();
+         initService.dbInit1();
+         initService.dbInit2();
+        initService.dbInit3();
     }
 
     @Component
@@ -48,44 +48,43 @@ public class InitDB {
 
         public void dbInit1() {
             String adminEmail = id;
-            Member admin = createMember(adminEmail, passwordEncoder.encode(password));
+            Member admin = createMember(adminEmail, passwordEncoder.encode(password), "idorm");
             em.persist(admin);
 
             admin.getRoles().clear();
 
             admin.getRoles().add("ROLE_ADMIN");
-            admin.updateNickname("root");
         }
 
         public void dbInit2() {
-            Member member1 = createMember("aaa@inu.ac.kr", passwordEncoder.encode("aaa"));
-            Member member2 = createMember("bbb@inu.ac.kr", passwordEncoder.encode("bbb"));
-            Member member3 = createMember("ccc@inu.ac.kr", passwordEncoder.encode("ccc"));
-            Member member4 = createMember("ddd@inu.ac.kr", passwordEncoder.encode("ddd"));
-            Member member5 = createMember("eee@inu.ac.kr", passwordEncoder.encode("eee"));
+            String nickname = "응철이";
+            Member member1 = createMember("aaa@inu.ac.kr", passwordEncoder.encode("aaa"), nickname);
+            Member member2 = createMember("bbb@inu.ac.kr", passwordEncoder.encode("bbb"), nickname);
+            Member member3 = createMember("ccc@inu.ac.kr", passwordEncoder.encode("ccc"), nickname);
+            Member member4 = createMember("ddd@inu.ac.kr", passwordEncoder.encode("ddd"), nickname);
+            Member member5 = createMember("eee@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
 
-            Member member6 = createMember("fff@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member7 = createMember("ggg@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member8 = createMember("hhh@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member9 = createMember("iii@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member10 = createMember("jjj@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member11 = createMember("kkk@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member12 = createMember("lll@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member13 = createMember("mmm@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member14 = createMember("nnn@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member15 = createMember("ooo@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member16 = createMember("ppp@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member17 = createMember("qqq@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member18 = createMember("rrr@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member19 = createMember("sss@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member20 = createMember("ttt@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member21 = createMember("uuu@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member22 = createMember("vvv@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member23 = createMember("www@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member24 = createMember("xxx@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member25 = createMember("yyy@inu.ac.kr", passwordEncoder.encode("eee"));
-            Member member26 = createMember("zzz@inu.ac.kr", passwordEncoder.encode("eee"));
-
+            Member member6 = createMember("fff@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member7 = createMember("ggg@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member8 = createMember("hhh@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member9 = createMember("iii@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member10 = createMember("jjj@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member11 = createMember("kkk@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member12 = createMember("lll@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member13 = createMember("mmm@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member14 = createMember("nnn@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member15 = createMember("ooo@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member16 = createMember("ppp@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member17 = createMember("qqq@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member18 = createMember("rrr@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member19 = createMember("sss@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member20 = createMember("ttt@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member21 = createMember("uuu@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member22 = createMember("vvv@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member23 = createMember("www@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member24 = createMember("xxx@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member25 = createMember("yyy@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
+            Member member26 = createMember("zzz@inu.ac.kr", passwordEncoder.encode("eee"), nickname);
 
             em.persist(member1);
             em.persist(member2);
@@ -657,8 +656,8 @@ public class InitDB {
             em.persist(email26);
         }
 
-        private Member createMember(String email, String password) {
-            Member member = new Member(email, password);
+        private Member createMember(String email, String password, String nickname) {
+            Member member = new Member(email, password, nickname);
             return member;
         }
 
