@@ -18,9 +18,9 @@ import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +34,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "Member API")
-//@PropertySource("classpath:login.properties")
 public class MemberController {
 
     private final MemberService memberService;
@@ -47,10 +47,10 @@ public class MemberController {
     private final LikedMemberService likedMemberService;
     private final DislikedMemberService dislikedMemberService;
 
-    @Value("${id}")
+    @Value("${DB_USERNAME}")
     private String ENV_USERNAME;
 
-    @Value("${password}")
+    @Value("${DB_PASSWORD}")
     private String ENV_PASSWORD;
 
     @Autowired
@@ -305,8 +305,11 @@ public class MemberController {
 
         Member loginMember = null;
 
+        log.info(request.getEmail());
+        log.info(request.getPassword());
+
         if(request.getEmail().equals(ENV_USERNAME)) {
-            if (!passwordEncoder.matches(request.getPassword(), ENV_PASSWORD)) {
+            if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
                 throw new ConflictException("올바르지 않은 비밀번호입니다.");
             }
             loginMember = memberService.findById(1L);
