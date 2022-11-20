@@ -37,16 +37,16 @@ public class Member extends BaseEntity implements UserDetails {
     /**
      * 연관관계 매핑
      */
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE)
     private MatchingInfo matchingInfo; // 매칭 정보
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE)
     private Photo photo; // 프로필 사진
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>(); // 작성한 게시글
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<PostLikedMember> postLikedMembers = new ArrayList<>(); // 멤버가 공감한 게시글들
 
     @OneToMany(mappedBy = "member")

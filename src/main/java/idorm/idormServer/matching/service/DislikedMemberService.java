@@ -142,7 +142,7 @@ public class DislikedMemberService {
 
     /**
      * DislikedMembers 삭제
-     * 회원 탈퇴 시 사용하며, 해당 멤버 식별자가 들어있는 모든 컬럼을 삭제합니다.
+     * 회원 탈퇴 시 사용한다. selectedMemberId가 탈퇴한 멤버 식별자일 경우 삭제한다.
      */
     @Transactional
     public void deleteDislikedMembers(Long memberId) {

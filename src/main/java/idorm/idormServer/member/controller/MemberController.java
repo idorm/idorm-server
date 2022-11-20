@@ -11,6 +11,7 @@ import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.MemberService;
+import idorm.idormServer.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -18,7 +19,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +28,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "Member API")
@@ -279,9 +277,9 @@ public class MemberController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
         Member foundMember = memberService.findById(loginMemberId);
 
-        memberService.deleteMember(foundMember);
         likedMemberService.deleteLikedMembers(foundMember.getId());
         dislikedMemberService.deleteDislikedMembers(foundMember.getId());
+        memberService.deleteMember(foundMember);
 
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
@@ -316,9 +314,6 @@ public class MemberController {
                 throw new ConflictException("올바르지 않은 비밀번호입니다.");
             }
         }
-
-        log.info("로그인 로그: " + loginMember.getId());
-        log.info("로그인 로그: " + loginMember.getEmail());
 
         Iterator<String> iter = loginMember.getRoles().iterator();
         List<String> roles = new ArrayList<>();
@@ -409,9 +404,9 @@ public class MemberController {
             @PathVariable("id") Long deleteMemberId
     ) {
         Member foundMember = memberService.findById(deleteMemberId);
-        memberService.deleteMember(foundMember);
         likedMemberService.deleteLikedMembers(foundMember.getId());
         dislikedMemberService.deleteDislikedMembers(foundMember.getId());
+        memberService.deleteMember(foundMember);
 
         List<Member> members = memberService.findAll();
         List<MemberDefaultResponseDto> collect = members.stream()
