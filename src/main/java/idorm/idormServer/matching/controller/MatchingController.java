@@ -4,6 +4,8 @@ import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.NotFoundException;
+import idorm.idormServer.matching.domain.DislikedMember;
+import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
 import idorm.idormServer.matching.dto.MatchingSelectedMemberIdRequestDto;
@@ -147,7 +149,8 @@ public class MatchingController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
 
-        List<Long> likedMembers = likedMemberService.findLikedMembers(loginMemberId);
+//        List<Long> likedMembers = likedMemberService.findLikedMembers(loginMemberId);
+        List<LikedMember> likedMembers = likedMemberService.findLikedMembersByMemberId(loginMemberId);
 
         if(likedMembers.isEmpty()) {
             return ResponseEntity.status(204)
@@ -159,12 +162,12 @@ public class MatchingController {
 
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
-        for(Long likedMemberId : likedMembers) {
+        for(LikedMember likedMember : likedMembers) {
 
-            Long likedMemberMatchingInfoId = matchingInfoService.findByMemberId(likedMemberId); // 에러 발생
+            Long likedMemberMatchingInfoId = matchingInfoService.findByMemberId(likedMember.getSelectedLikedMemberId());
             MatchingInfo likedMemberMatchingInfo = matchingInfoService.findById(likedMemberMatchingInfoId);
 
-            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(likedMemberMatchingInfo);
+            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(likedMemberMatchingInfo, likedMember.getCreatedAt());
             response.add(matchingOneDto);
         }
         return ResponseEntity.status(200)
@@ -261,7 +264,7 @@ public class MatchingController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
 
-        List<Long> dislikedMembers = dislikedMemberService.findDislikedMembers(loginMemberId);
+        List<DislikedMember> dislikedMembers = dislikedMemberService.findDislikedMembersByMemberId(loginMemberId);
 
         if(dislikedMembers.isEmpty()) {
             return ResponseEntity.status(204)
@@ -273,12 +276,12 @@ public class MatchingController {
 
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
-        for(Long dislikedMemberId : dislikedMembers) {
+        for(DislikedMember dislikedMember : dislikedMembers) {
 
-            Long dislikedMemberMatchingInfoId = matchingInfoService.findByMemberId(dislikedMemberId);
+            Long dislikedMemberMatchingInfoId = matchingInfoService.findByMemberId(dislikedMember.getSelectedDislikedMemberId());
             MatchingInfo dislikedMemberMatchingInfo = matchingInfoService.findById(dislikedMemberMatchingInfoId);
 
-            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(dislikedMemberMatchingInfo);
+            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(dislikedMemberMatchingInfo, dislikedMember.getCreatedAt());
             response.add(matchingOneDto);
         }
         return ResponseEntity.status(200)

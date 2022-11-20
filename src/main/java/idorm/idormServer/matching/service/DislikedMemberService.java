@@ -3,6 +3,7 @@ package idorm.idormServer.matching.service;
 import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.matching.domain.DislikedMember;
+import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.repository.DislikedMemberRepository;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
@@ -41,6 +42,21 @@ public class DislikedMemberService {
             return DislikedMembers;
         } catch (Exception e) {
             throw new InternalServerErrorException("DislikedMembers 싫어요한 멤버 전체 조회 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
+     * DislikedMember 싫어요한 멤버 조회 |
+     */
+    public List<DislikedMember> findDislikedMembersByMemberId(Long memberId) {
+        log.info("IN PROGRESS | DislikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
+
+        try {
+            List<DislikedMember> dislikedMembers = dislikedMemberRepository.findAllByMemberId(memberId);
+            log.info("COMPLETE | DislikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
+            return dislikedMembers;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("LikedMember 좋아요한 멤버 전체 조회 중 서버 에러 발생", e);
         }
     }
 

@@ -20,6 +20,9 @@ public interface LikedMemberRepository extends JpaRepository<LikedMember, Long> 
             "WHERE lm.member_id = :memberId", nativeQuery = true)
     List<Long> findLikedMembersByMemberId(@Param("memberId") Long memberId);
 
+
+    List<LikedMember> findAllByMemberId(@Param("memberId") Long memberId);
+
     /**
      * MemberId와 SelectedLikedMemberId로 좋아요한 멤버 삭제하기
      */

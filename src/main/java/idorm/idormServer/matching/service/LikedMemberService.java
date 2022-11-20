@@ -43,6 +43,21 @@ public class LikedMemberService {
     }
 
     /**
+     * LikedMember 좋아요한 멤버 조회 |
+     */
+    public List<LikedMember> findLikedMembersByMemberId(Long memberId) {
+        log.info("IN PROGRESS | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
+
+        try {
+            List<LikedMember> likedMembers = likedMemberRepository.findAllByMemberId(memberId);
+            log.info("COMPLETE | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
+            return likedMembers;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("LikedMember 좋아요한 멤버 전체 조회 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
      * LikedMember 좋아요한 멤버로 등록되어있는지 조회
      * 멤버 식별자와 선택한 멤버 식별자를 인자로 받아서 이미 좋아요한 멤버로 등록되어있다면 true로 반환한다.
      */

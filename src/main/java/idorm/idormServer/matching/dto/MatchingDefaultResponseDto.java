@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -63,11 +65,8 @@ public class MatchingDefaultResponseDto {
     @ApiModelProperty(position = 17, value = "룸메에게 하고싶은 말")
     private String wishText;
 
-    @ApiModelProperty(position = 18, value = "매칭이미지 공개 여부")
-    private Boolean isMatchingInfoPublic;
-
-    @ApiModelProperty(position = 19, value = "aaa@inu.ac.kr")
-    private String memberEmail;
+    @ApiModelProperty(position = 18, value = "좋아요 혹은 싫어요한 멤버로 추가한 시간")
+    private LocalDateTime addedAt;
 
     public MatchingDefaultResponseDto(MatchingInfo matchingInfo) {
         this.memberId = matchingInfo.getMember().getId();
@@ -87,7 +86,26 @@ public class MatchingDefaultResponseDto {
         this.openKakaoLink = matchingInfo.getOpenKakaoLink();
         this.mbti = matchingInfo.getMbti();
         this.wishText = matchingInfo.getWishText();
-        this.isMatchingInfoPublic = matchingInfo.getIsMatchingInfoPublic();
-        this.memberEmail = matchingInfo.getMember().getEmail();
+    }
+
+    public MatchingDefaultResponseDto(MatchingInfo matchingInfo, LocalDateTime addedAt) {
+        this.memberId = matchingInfo.getMember().getId();
+        this.matchingInfoId = matchingInfo.getId();
+        this.dormNum = matchingInfo.getDormNum();
+        this.joinPeriod = matchingInfo.getJoinPeriod();
+        this.gender = matchingInfo.getGender();
+        this.age = matchingInfo.getAge();
+        this.isSnoring = matchingInfo.getIsSnoring();
+        this.isGrinding = matchingInfo.getIsGrinding();
+        this.isSmoking = matchingInfo.getIsSmoking();
+        this.isAllowedFood = matchingInfo.getIsAllowedFood();
+        this.isWearEarphones = matchingInfo.getIsWearEarphones();
+        this.wakeUpTime = matchingInfo.getWakeUpTime();
+        this.cleanUpStatus = matchingInfo.getCleanUpStatus();
+        this.showerTime = matchingInfo.getShowerTime();
+        this.openKakaoLink = matchingInfo.getOpenKakaoLink();
+        this.mbti = matchingInfo.getMbti();
+        this.wishText = matchingInfo.getWishText();
+        this.addedAt = addedAt;
     }
 }

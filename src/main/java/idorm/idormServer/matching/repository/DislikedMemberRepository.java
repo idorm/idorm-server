@@ -1,6 +1,7 @@
 package idorm.idormServer.matching.repository;
 
 import idorm.idormServer.matching.domain.DislikedMember;
+import idorm.idormServer.matching.domain.LikedMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,8 @@ public interface DislikedMemberRepository extends JpaRepository<DislikedMember, 
             "FROM disliked_member dm " +
             "WHERE dm.member_id = :memberId", nativeQuery = true)
     List<Long> findDislikedMembersByMemberId(@Param("memberId") Long memberId);
+
+    List<DislikedMember> findAllByMemberId(@Param("memberId") Long memberId);
 
     /**
      * MemberId와 SelectedDislikedMemberId로 싫어요한 멤버 삭제하기
