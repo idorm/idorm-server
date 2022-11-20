@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,8 @@ public class Member extends BaseEntity implements UserDetails {
     private String password;
 
     private String nickname;
+
+    private LocalDateTime nicknameUpdatedAt;
 
     /**
      * 연관관계 매핑
@@ -115,5 +118,9 @@ public class Member extends BaseEntity implements UserDetails {
 
     public void updatePhoto(Photo photo) {
         this.photo = photo;
+    }
+
+    public void updateNicknameUpdatedAt(LocalDateTime updatedAt) {
+        this.nicknameUpdatedAt = updatedAt;
     }
 }

@@ -264,6 +264,46 @@ public class MemberService {
     }
 
     /**
+     * Member 닉네임 수정 시간 확인 |
+     * 닉네임 변경은 30일 이후로만 가능합니다.
+     */
+    private void checkNicknameUpdatedAt(Member member) {
+
+        if(member.getNicknameUpdatedAt() != null) { // 닉네임이 한 번이라도 변경 되었다면
+            LocalDateTime updatedDateTime = member.getNicknameUpdatedAt();
+            LocalDateTime possibleUpdateTime = updatedDateTime.plusMonths(1);
+
+            if(possibleUpdateTime.isAfter(LocalDateTime.now())) {
+                throw new ConflictException("닉네임 변경 후 30일 동안 변경이 불가합니다.");
+            }
+        }
+    }
+
+    /**
+     * Member 관리자계정으로 닉네임 수정
+     */
+    @Transactional
+    public void updateNicknameByAdmin(Member member, String nickname) {
+
+        log.info("IN PROGRESS | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
+
+        if(member.getNickname().equals(nickname)) {
+            throw new ConflictException("기존의 닉네임과 같습니다.");
+        }
+
+        isDuplicateNickname(nickname);
+
+        try {
+            member.updateNickname(nickname);
+            memberRepository.save(member);
+
+            log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Member 닉네임 변경 중 서버 에러 발생", e);
+        }
+    }
+
+    /**
      * Member 닉네임 수정 |
      */
     @Transactional
@@ -276,9 +316,11 @@ public class MemberService {
         }
 
         isDuplicateNickname(nickname);
+        checkNicknameUpdatedAt(member);
 
         try {
             member.updateNickname(nickname);
+            member.updateNicknameUpdatedAt(LocalDateTime.now());
             memberRepository.save(member);
 
             log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());

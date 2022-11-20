@@ -1,7 +1,5 @@
 package idorm.idormServer.auth;
 
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
-import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +21,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+        log.info("log: " + username);
 
         Optional<Member> foundMember = memberRepository.findById(Long.parseLong(username));
 

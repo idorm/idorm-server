@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -240,7 +241,7 @@ public class MemberController {
             @ApiResponse(code = 200, message = "Member 닉네임 변경 완료"),
             @ApiResponse(code = 400, message = "닉네임 입력은 필수입니다."),
             @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 409, message = "기존의 닉네임과 같습니다. 혹은 이미 존재하는 닉네임입니다."),
+            @ApiResponse(code = 409, message = "기존의 닉네임과 같음 / 이미 존재하는 닉네임 / 닉네임 변경은 30일 이후 가능"),
             @ApiResponse(code = 500, message = "Member 비밀번호 변경 중 서버 에러 발생")
     }
     )
@@ -252,6 +253,7 @@ public class MemberController {
         Member loginMember = memberService.findById(loginMemberId);
 
         memberService.updateNickname(loginMember, request.getNickname());
+
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
 
         return ResponseEntity.status(200)
@@ -276,9 +278,6 @@ public class MemberController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
         Member foundMember = memberService.findById(loginMemberId);
-
-        // TODO: 좋아요한 멤버 삭제
-        // TODO: 싫어요한 멤버 삭제
 
         memberService.deleteMember(foundMember);
         likedMemberService.deleteLikedMembers(foundMember.getId());
@@ -305,9 +304,6 @@ public class MemberController {
 
         Member loginMember = null;
 
-        log.info(request.getEmail());
-        log.info(request.getPassword());
-
         if(request.getEmail().equals(ENV_USERNAME)) {
             if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
                 throw new ConflictException("올바르지 않은 비밀번호입니다.");
@@ -320,6 +316,9 @@ public class MemberController {
                 throw new ConflictException("올바르지 않은 비밀번호입니다.");
             }
         }
+
+        log.info("로그인 로그: " + loginMember.getId());
+        log.info("로그인 로그: " + loginMember.getEmail());
 
         Iterator<String> iter = loginMember.getRoles().iterator();
         List<String> roles = new ArrayList<>();
@@ -385,7 +384,7 @@ public class MemberController {
         Member updateMember = memberService.findById(updateMemberId);
 
         memberService.updatePassword(updateMember, request.getPassword());
-        memberService.updateNickname(updateMember, request.getNickname());
+        memberService.updateNicknameByAdmin(updateMember, request.getNickname());
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(updateMember);
 
@@ -411,6 +410,8 @@ public class MemberController {
     ) {
         Member foundMember = memberService.findById(deleteMemberId);
         memberService.deleteMember(foundMember);
+        likedMemberService.deleteLikedMembers(foundMember.getId());
+        dislikedMemberService.deleteDislikedMembers(foundMember.getId());
 
         List<Member> members = memberService.findAll();
         List<MemberDefaultResponseDto> collect = members.stream()
