@@ -168,8 +168,8 @@ public class MatchingInfoController {
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없는 경우
             throw new ConflictException("등록된 매칭정보가 없습니다.");
 
-        Long matchingInfoId = member.getMatchingInfo().getId();
-        matchingInfoService.deleteMatchingInfo(matchingInfoId);
+        MatchingInfo matchingInfo = member.getMatchingInfo();
+        matchingInfoService.deleteMatchingInfo(matchingInfo);
 
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()

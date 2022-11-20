@@ -26,8 +26,8 @@ public class InitDB {
         // 여기에 InitService를 넣어줘도 되지만 굳이 transaction을 따로 먹여서 호출하는 이유는
         // spring life cycle이 있어서 transaction 등이 잘 작동이 안됨. 그래서 별도의 bean으로 등록하고 호출하는 방식으로 사용하는 것을 권장
          initService.dbInit1();
-         initService.dbInit2();
         initService.dbInit3();
+         initService.dbInit2();
     }
 
     @Component
@@ -538,35 +538,6 @@ public class InitDB {
                     "kakao.2244~",
                     member26);
 
-
-            matchingInfo1.updateIsMatchingInfoPublic(true);
-            matchingInfo2.updateIsMatchingInfoPublic(true);
-            matchingInfo3.updateIsMatchingInfoPublic(true);
-            matchingInfo4.updateIsMatchingInfoPublic(true);
-
-            matchingInfo5.updateIsMatchingInfoPublic(true);
-            matchingInfo6.updateIsMatchingInfoPublic(true);
-            matchingInfo7.updateIsMatchingInfoPublic(true);
-            matchingInfo8.updateIsMatchingInfoPublic(true);
-            matchingInfo9.updateIsMatchingInfoPublic(true);
-            matchingInfo10.updateIsMatchingInfoPublic(true);
-            matchingInfo11.updateIsMatchingInfoPublic(true);
-            matchingInfo12.updateIsMatchingInfoPublic(true);
-            matchingInfo13.updateIsMatchingInfoPublic(true);
-            matchingInfo14.updateIsMatchingInfoPublic(true);
-            matchingInfo15.updateIsMatchingInfoPublic(true);
-            matchingInfo16.updateIsMatchingInfoPublic(true);
-            matchingInfo17.updateIsMatchingInfoPublic(true);
-            matchingInfo18.updateIsMatchingInfoPublic(true);
-            matchingInfo19.updateIsMatchingInfoPublic(true);
-            matchingInfo20.updateIsMatchingInfoPublic(true);
-            matchingInfo21.updateIsMatchingInfoPublic(true);
-            matchingInfo22.updateIsMatchingInfoPublic(true);
-            matchingInfo23.updateIsMatchingInfoPublic(true);
-            matchingInfo24.updateIsMatchingInfoPublic(true);
-            matchingInfo25.updateIsMatchingInfoPublic(true);
-            matchingInfo26.updateIsMatchingInfoPublic(true);
-
             em.persist(matchingInfo1);
             em.persist(matchingInfo2);
             em.persist(matchingInfo3);
@@ -704,22 +675,7 @@ public class InitDB {
                     .wishText(wishText)
                     .build();
 
-//            MatchingInfo matchingInfo = new MatchingInfo(dormNum,
-//                    joinPeriod,
-//                    gender,
-//                    age,
-//                    isSnoring,
-//                    isSmoking,
-//                    isGrinding,
-//                    isWearEarphones,
-//                    isAllowedFood,
-//                    wakeUpTime,
-//                    cleanUpStatus,
-//                    showerTime,
-//                    mbti,
-//                    wishText,
-//                    openKakaoLink,
-//                    member);
+            matchingInfo.updateIsMatchingInfoPublic(true);
 
             return matchingInfo;
         }

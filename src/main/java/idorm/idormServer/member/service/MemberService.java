@@ -1,11 +1,13 @@
 package idorm.idormServer.member.service;
 
+import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import idorm.idormServer.photo.domain.Photo;
@@ -30,6 +32,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final EmailService emailService;
     private final PhotoService photoService;
+    private final MatchingInfoService matchingInfoService;
 
     /**
      * Member 저장 |
@@ -203,37 +206,28 @@ public class MemberService {
         }
     }
 
-
-    /**
-     * Member 닉네임으로 조회 |
-     */
-    public Optional<Member> findByNickname(String nickname) {
-
-        log.info("IN PROGRESS | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + nickname);
-        Optional<Member> foundMember = memberRepository.findByNickname(nickname);
-
-        log.info("COMPLETE | Member 닉네임으로 조회 At " + LocalDateTime.now() + " | " + foundMember);
-        return foundMember;
-    }
-
     /**
      * Member 삭제 |
      * 식별자로 삭제할 멤버를 조회한다. 멤버를 찾지 못하면 404(Not Found)를 던진다.
      * 멤버 삭제 중 에러가 발생하면 500(Internal Server Error)을 던진다.
      */
     @Transactional
-    public void deleteMember(Long memberId) {
+    public void deleteMember(Member member) {
+        log.info("IN PROGRESS | Member 삭제 At " + LocalDateTime.now() + " | " + member.getId());
 
-        log.info("IN PROGRESS | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
-        Optional<Member> foundMember = memberRepository.findById(memberId);
-
-        if (foundMember.isEmpty()) {
-            throw new NotFoundException("삭제할 멤버를 찾을 수 없습니다.");
+        Optional<MatchingInfo> foundMatchingInfo = matchingInfoService.findOpByMemberId(member.getId());
+        if(foundMatchingInfo.isPresent()) {
+            matchingInfoService.deleteMatchingInfo(foundMatchingInfo.get());
         }
 
+        Email foundEmail = emailService.findByEmail(member.getEmail());
+        emailService.deleteById(foundEmail.getId());
+
         try {
-            memberRepository.delete(findById(memberId));
-            log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now() + " | " + memberId);
+            // 프로필 사진 삭제
+            // 작성한 게시글, 댓글 (커뮤니티 관련) - 탈퇴한 회원입니다 로 메시지 전달
+            memberRepository.delete(member);
+            log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now());
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 삭제 중 서버 에러 발생", e);
         }
@@ -290,40 +284,6 @@ public class MemberService {
             log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
         } catch (Exception e) {
             throw new InternalServerErrorException("Member 닉네임 변경 중 서버 에러 발생", e);
-        }
-    }
-
-    /**
-     * Member 매칭정보 수정 |
-     */
-    @Transactional
-    public void updateMatchingInfo(Member member, MatchingInfo matchingInfo) {
-        log.info("IN PROGRESS | Member 매칭정보 수정 At " + LocalDateTime.now());
-
-        try {
-            member.updateMatchingInfo(matchingInfo);
-            memberRepository.save(member);
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Member 매칭정보 수정 중 서버 에러 발생", e);
-        }
-
-        log.info("COMPLETE | Member 매칭정보 수정 At " + LocalDateTime.now());
-    }
-
-    /**
-     * Member 매칭정보 삭제 |
-     */
-    @Transactional
-    public void deleteMatchingInfo(Member member) {
-
-        log.info("IN PROGRESS | Member 매칭정보 삭제 At " + LocalDateTime.now() + " | " + member.getEmail());
-
-        try {
-            member.deleteMatchingInfo();
-            memberRepository.save(member);
-            log.info("COMPLETE | Member 매칭정보 삭제 At " + LocalDateTime.now() + " | " + member.getEmail());
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Member 매칭정보 삭제 중 서버 에러 발생", e);
         }
     }
 }

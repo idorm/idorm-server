@@ -42,4 +42,14 @@ public interface LikedMemberRepository extends JpaRepository<LikedMember, Long> 
     Optional<Long> isRegisteredLikedMemberIdByMemberId(@Param("memberId") Long memberId,
                                                           @Param("likedMemberId") Long likedMemberId);
 
+    /**
+     * MemberId 혹은 SelectedLikedMemberId에 해당 멤버 식별자가 들어있다면 삭제한다. 이는 회원 탈퇴 시 사용한다.
+     */
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM liked_member " +
+            "WHERE liked_member.member_id = :memberId " +
+            "OR liked_member.selected_liked_member_id = :memberId", nativeQuery = true)
+    void deleteLikedMembers(@Param("memberId") Long memberId);
+
 }

@@ -41,4 +41,14 @@ public interface DislikedMemberRepository extends JpaRepository<DislikedMember, 
             "dm.selected_disliked_member_id = :dislikedMemberId", nativeQuery = true)
     Optional<Long> isRegisteredDislikedMemberIdByMemberId(@Param("memberId") Long memberId,
                                                           @Param("dislikedMemberId") Long dislikedMemberId);
+
+    /**
+     * MemberId 혹은 SelectedDislikedMemberId에 해당 멤버 식별자가 들어있다면 삭제한다. 이는 회원 탈퇴 시 사용한다.
+     */
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM disliked_member " +
+            "WHERE disliked_member.member_id = :memberId " +
+            "OR disliked_member.selected_disliked_member_id = :memberId", nativeQuery = true)
+    void deleteDislikedMembers(@Param("memberId") Long memberId);
 }

@@ -6,6 +6,8 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.http.ConflictException;
 import idorm.idormServer.exceptions.http.NotFoundException;
+import idorm.idormServer.matching.service.DislikedMemberService;
+import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.MemberService;
@@ -35,12 +37,15 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "Member API")
-@PropertySource("classpath:login.properties")
+//@PropertySource("classpath:login.properties")
 public class MemberController {
 
     private final MemberService memberService;
     private final EmailService emailService;
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final LikedMemberService likedMemberService;
+    private final DislikedMemberService dislikedMemberService;
 
     @Value("${id}")
     private String ENV_USERNAME;
@@ -270,12 +275,14 @@ public class MemberController {
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
-        String email = memberService.findById(loginMemberId).getEmail();
-        Email emailObj = emailService.findByEmail(email);
+        Member foundMember = memberService.findById(loginMemberId);
 
-        //TODO: Member 삭제 시, 연관된 엔티티들 전부 삭제가 필요합니다.
-        emailService.deleteById(emailObj.getId());
-        memberService.deleteMember(loginMemberId);
+        // TODO: 좋아요한 멤버 삭제
+        // TODO: 싫어요한 멤버 삭제
+
+        memberService.deleteMember(foundMember);
+        likedMemberService.deleteLikedMembers(foundMember.getId());
+        dislikedMemberService.deleteDislikedMembers(foundMember.getId());
 
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
@@ -399,13 +406,8 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> deleteMemberRoot(
             @PathVariable("id") Long deleteMemberId
     ) {
-
-        String email = memberService.findById(deleteMemberId).getEmail();
-        Email emailObj = emailService.findByEmail(email);
-
-        //TODO: Member 삭제 시, 연관된 엔티티들 전부 삭제가 필요합니다.
-        emailService.deleteById(emailObj.getId());
-        memberService.deleteMember(deleteMemberId);
+        Member foundMember = memberService.findById(deleteMemberId);
+        memberService.deleteMember(foundMember);
 
         List<Member> members = memberService.findAll();
         List<MemberDefaultResponseDto> collect = members.stream()

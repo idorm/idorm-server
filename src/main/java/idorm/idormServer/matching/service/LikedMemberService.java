@@ -139,4 +139,23 @@ public class LikedMemberService {
             throw new InternalServerErrorException("LikedMember 좋아요한 멤버 삭제 중 서버 에러 발생", e);
         }
     }
+
+    /**
+     * LikedMembers 삭제
+     * 회원 탈퇴 시 사용하며, 해당 멤버 식별자가 들어있는 모든 컬럼을 삭제합니다.
+     */
+    @Transactional
+    public void deleteLikedMembers(Long memberId) {
+        log.info("IN PROGRESS | LikedMember 좋아요한 멤버들 삭제 At " + LocalDateTime.now()
+                + " | 로그인 멤버 식별자: " + memberId);
+
+        try {
+            likedMemberRepository.deleteLikedMembers(memberId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("LikedMember 좋아요한 멤버 삭제들 중 서버 에러 발생", e);
+        }
+
+        log.info("COMPLETE | LikedMember 좋아요한 멤버들 삭제 At " + LocalDateTime.now()
+                + " | 로그인 멤버 식별자: " + memberId);
+    }
 }

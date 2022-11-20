@@ -113,14 +113,6 @@ public class Member extends BaseEntity implements UserDetails {
         this.nickname = nickname;
     }
 
-    public void updateMatchingInfo(MatchingInfo matchingInfo) {
-        this.matchingInfo = matchingInfo;
-    }
-
-    public void deleteMatchingInfo() {
-        this.matchingInfo = null;
-    }
-
     public void updatePhoto(Photo photo) {
         this.photo = photo;
     }

@@ -24,11 +24,9 @@ import java.util.Optional;
 public class MatchingInfoService {
 
     private final MatchingInfoRepository matchingInfoRepository;
-    private final MemberService memberService;
 
     /**
      * MatchingInfo 저장 |
-     * 매칭정보를 저장한다. 멤버 연관관계를 매칭해야한다.
      */
     @Transactional
     public MatchingInfo save(MatchingInfoDefaultRequestDto requestDto, Member member) {
@@ -36,9 +34,7 @@ public class MatchingInfoService {
         log.info("IN PROGRESS | MatchingInfo 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
 
         MatchingInfo matchingInfo = requestDto.toEntity(member);
-
         matchingInfoRepository.save(matchingInfo);
-        memberService.updateMatchingInfo(member, matchingInfo);
 
         log.info("COMPLETE | MatchingInfo 저장 At " + LocalDateTime.now() + " | " + matchingInfo.getMember().getEmail());
         return matchingInfo;
@@ -60,9 +56,7 @@ public class MatchingInfoService {
         }
 
         foundMatchingInfo.get().updateIsMatchingInfoPublic(isMatchingInfoPublic);
-
         matchingInfoRepository.save(foundMatchingInfo.get());
-        memberService.updateMatchingInfo(member, foundMatchingInfo.get());
 
         log.info("COMPLETE | MatchingInfo 매칭이미지 공개여부 변경 At " + LocalDateTime.now() + " | " + member.getEmail());
         return foundMatchingInfo.get();
@@ -87,6 +81,18 @@ public class MatchingInfoService {
     }
 
     /**
+     * MatchingInfo Optional 단건 조회 |
+     */
+    public Optional<MatchingInfo> findOpByMemberId(Long memberId) {
+        log.info("IN PROGRESS | MatchingInfo Optional 단건 조회 At " + LocalDateTime.now());
+
+        Optional<MatchingInfo> foundMatchingInfo = matchingInfoRepository.findByMemberId(memberId);
+
+        log.info("COMPLETE | MatchingInfo Optional 단건 조회 At " + LocalDateTime.now());
+        return foundMatchingInfo;
+    }
+
+    /**
      * MatchingInfo 단건 조회 |
      * 멤버 식별자로 매칭인포를 단건 조회한다. 저장된 매칭정보가 없다면 404(Not Found)를 던진다.
      */
@@ -107,24 +113,15 @@ public class MatchingInfoService {
      * MatchingInfo 삭제 |
      */
     @Transactional
-    public void deleteMatchingInfo(Long matchingInfoId) {
+    public void deleteMatchingInfo(MatchingInfo matchingInfo) {
 
         log.info("IN PROGRESS | MatchingInfo 삭제 At " + LocalDateTime.now());
 
-        Optional<MatchingInfo> foundMatchingInfo = matchingInfoRepository.findById(matchingInfoId);
-        Member member = foundMatchingInfo.get().getMember();
-
-        if(foundMatchingInfo.isEmpty()) {
-            throw new NotFoundException("삭제할 매칭정보가 존재하지 않습니다.");
-        }
-
         try {
-            matchingInfoRepository.delete(foundMatchingInfo.get());
+            matchingInfoRepository.delete(matchingInfo);
         } catch(Exception e) {
             throw new InternalServerErrorException("MatchingInfo 삭제 중 서버 에러 발생", e);
         }
-
-        memberService.deleteMatchingInfo(member);
         log.info("COMPLETE | MatchingInfo 삭제 At " + LocalDateTime.now());
     }
 
