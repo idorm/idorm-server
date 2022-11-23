@@ -149,7 +149,6 @@ public class MatchingController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
 
-//        List<Long> likedMembers = likedMemberService.findLikedMembers(loginMemberId);
         List<LikedMember> likedMembers = likedMemberService.findLikedMembersByMemberId(loginMemberId);
 
         if(likedMembers.isEmpty()) {

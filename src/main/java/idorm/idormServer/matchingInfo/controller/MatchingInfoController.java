@@ -75,9 +75,9 @@ public class MatchingInfoController {
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
             throw new ConflictException("등록된 매칭정보가 없습니다.");
 
-        MatchingInfo updateMatchingInfo = updateRequestDto.toEntity(member);
+        MatchingInfo updateMatchingInfo = member.getMatchingInfo();
 
-        matchingInfoService.updateMatchingInfo(member.getMatchingInfo().getId(), updateRequestDto);
+        matchingInfoService.updateMatchingInfo(updateMatchingInfo.getId(), updateRequestDto);
 
         MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(updateMatchingInfo);
 
