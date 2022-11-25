@@ -65,7 +65,7 @@ public class MemberController {
             HttpServletRequest request
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
@@ -129,7 +129,7 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> saveMemberProfilePhoto(
             HttpServletRequest request2, @RequestPart(value = "file", required = false) MultipartFile photo) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
         if(photo == null) {
@@ -160,7 +160,7 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> deleteMemberProfilePhoto(
             HttpServletRequest request2) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
         memberService.deleteMemberProfilePhoto(loginMember);
@@ -187,7 +187,7 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> updateMemberPasswordLogin(
             HttpServletRequest request2, @RequestBody @Valid MemberUpdatePasswordStatusLoginRequestDto request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         memberService.updatePassword(member, passwordEncoder.encode(request.getPassword()));
@@ -247,7 +247,7 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> updateMemberNickname(
             HttpServletRequest request2, @RequestBody @Valid MemberUpdateNicknameRequestDto request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
         memberService.updateNickname(loginMember, request.getNickname());
@@ -274,7 +274,7 @@ public class MemberController {
             HttpServletRequest request
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member foundMember = memberService.findById(loginMemberId);
 
         likedMemberService.deleteLikedMembers(foundMember.getId());

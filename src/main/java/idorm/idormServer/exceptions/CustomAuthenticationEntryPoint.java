@@ -17,18 +17,20 @@ import java.io.OutputStream;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private static DefaultExceptionResponseDto exceptionResponse =
-            new DefaultExceptionResponseDto("UNAUTHORIZED", null);
+            new DefaultExceptionResponseDto("UNAUTHORIZED", "인증에 실패하였습니다.");
 
     @Override
-    public void commence(HttpServletRequest httpServletRequest,
-                         HttpServletResponse httpServletResponse,
-                         AuthenticationException e) throws IOException, ServletException {
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException ex) throws IOException, ServletException {
 
-        //response에 넣기
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-        try (OutputStream os = httpServletResponse.getOutputStream()) {
-            ObjectMapper objectMapper = new ObjectMapper();
+        // [commence] 인증 실패로 response.sendError 발생
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        response.setStatus(401);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        try (OutputStream os = response.getOutputStream()) {
             objectMapper.writeValue(os, exceptionResponse);
             os.flush();
         }

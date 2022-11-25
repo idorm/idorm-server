@@ -39,7 +39,7 @@ public class MatchingInfoController {
     public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(
             HttpServletRequest request2, @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() != null) // 등록된 매칭정보가 있다면
@@ -69,7 +69,7 @@ public class MatchingInfoController {
             HttpServletRequest request2,
             @RequestBody @Valid MatchingInfoDefaultRequestDto updateRequestDto) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
@@ -102,7 +102,7 @@ public class MatchingInfoController {
             HttpServletRequest request2,
             MatchingInfoUpdateIsPublicRequestDto requestDto) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
@@ -132,7 +132,7 @@ public class MatchingInfoController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingInfo(HttpServletRequest request2) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
@@ -162,7 +162,7 @@ public class MatchingInfoController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingInfo(HttpServletRequest request2) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없는 경우

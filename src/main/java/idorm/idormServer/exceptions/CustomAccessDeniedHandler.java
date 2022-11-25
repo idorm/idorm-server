@@ -17,15 +17,15 @@ import java.io.OutputStream;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private static DefaultExceptionResponseDto exceptionResponse =
-            new DefaultExceptionResponseDto("FORBIDDEN", null);
+            new DefaultExceptionResponseDto("FORBIDDEN", "접근 권한이 없습니다.");
 
     @Override
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse,
-                       AccessDeniedException e) throws IOException, ServletException {
+                       AccessDeniedException exception) throws IOException, ServletException {
 
 
-        //response에 넣기
+        // [handle] 접근이 막혔을 경우 경로 리다이렉트
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
         try (OutputStream os = httpServletResponse.getOutputStream()) {

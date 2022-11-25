@@ -50,7 +50,7 @@ public class CommentController {
             @PathVariable("post-id") Long postId,
             @RequestBody @Valid CommentDefaultRequestDto requestDto
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
@@ -92,7 +92,7 @@ public class CommentController {
             HttpServletRequest request,
             @PathVariable("post-id") Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
@@ -149,7 +149,7 @@ public class CommentController {
     public ResponseEntity<DefaultResponseDto<Object>> findCommentsByMember(
             HttpServletRequest request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
         List<Comment> foundComments = commentService.findCommentsByMember(loginMember);
@@ -192,7 +192,7 @@ public class CommentController {
             @PathVariable("post-id") Long postId,
             @PathVariable("comment-id") Long commentId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
         postService.findById(postId);
         commentService.deleteComment(commentId, loginMember);

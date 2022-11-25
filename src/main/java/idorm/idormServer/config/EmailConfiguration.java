@@ -11,7 +11,7 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:email.properties")
-public class EmailConfig {
+public class EmailConfiguration {
 
     @Value("${mail.smtp.port}")
     private int port;

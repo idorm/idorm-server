@@ -55,7 +55,7 @@ public class MatchingController {
             HttpServletRequest request
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         List<Long> filteredMatchingInfoId = matchingService.findMatchingMembers(loginMemberId);
 
@@ -96,7 +96,7 @@ public class MatchingController {
             HttpServletRequest request, @Valid MatchingFilteredMatchingInfoRequestDto filteringRequest
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         if(!filteringRequest.getDormNum().equals("DORM1") &&
                 !filteringRequest.getDormNum().equals("DORM2") &&
@@ -147,7 +147,7 @@ public class MatchingController {
             HttpServletRequest request
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         List<LikedMember> likedMembers = likedMemberService.findLikedMembersByMemberId(loginMemberId);
 
@@ -189,7 +189,7 @@ public class MatchingController {
             HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         Long selectedLikedMemberId = requestDto.getSelectedMemberId();
         if(selectedLikedMemberId == loginMemberId || selectedLikedMemberId == 1) {
@@ -231,7 +231,7 @@ public class MatchingController {
             HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         Long likedMemberId = requestDto.getSelectedMemberId();
         likedMemberService.deleteLikedMember(loginMemberId, likedMemberId);
@@ -261,7 +261,7 @@ public class MatchingController {
             HttpServletRequest request
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         List<DislikedMember> dislikedMembers = dislikedMemberService.findDislikedMembersByMemberId(loginMemberId);
 
@@ -303,7 +303,7 @@ public class MatchingController {
             HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         Long selectedDislikedMemberId = requestDto.getSelectedMemberId();
 
@@ -346,7 +346,7 @@ public class MatchingController {
             HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         Long dislikedMemberId = requestDto.getSelectedMemberId();
         dislikedMemberService.deleteDislikedMember(loginMemberId, dislikedMemberId);

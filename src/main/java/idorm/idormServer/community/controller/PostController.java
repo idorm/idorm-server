@@ -233,7 +233,7 @@ public class PostController {
             HttpServletRequest request2
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         List<Post> posts = postService.findPostsByMember(member);
@@ -270,7 +270,7 @@ public class PostController {
             HttpServletRequest request2
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         List<Long> foundPostIds = postLikedMemberService.findLikedPostIdsByMemberId(loginMemberId);
@@ -314,7 +314,7 @@ public class PostController {
             HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
@@ -346,7 +346,7 @@ public class PostController {
     public ResponseEntity<DefaultResponseDto<Object>> savePostLikes(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
@@ -371,7 +371,7 @@ public class PostController {
     public ResponseEntity<DefaultResponseDto<Object>> deletePostLikes(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
@@ -396,7 +396,7 @@ public class PostController {
             HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUserPk(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         postService.deletePost(postId,member);
