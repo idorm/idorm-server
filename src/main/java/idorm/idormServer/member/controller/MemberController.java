@@ -99,6 +99,7 @@ public class MemberController {
         }
 
         passwordValidator(request.getPassword());
+        nicknameValidator(request.getNickname());
 
         Long createdMemberId = memberService.save(request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
@@ -447,16 +448,30 @@ public class MemberController {
         final String REGEX_SYMBOL =
                 "([0-9].*[!,@,#,^,&,*,(,)])|([!,@,#,^,&,*,(,)].*[0-9])";
 
-        // 정규표현식 컴파일
         Pattern pattern = Pattern.compile(REGEX);
         Pattern pattern_symbol = Pattern.compile(REGEX_SYMBOL);
 
-        // 문자 매칭
         Matcher matcher = pattern.matcher(password);
         Matcher matcher_symbol = pattern_symbol.matcher(password);
 
         if(!matcher.find() || !matcher_symbol.find()) { // wrong regex
             throw new ConflictException("비밀번호는 숫자, 특수문자가 포함되어야 하며 8자 이상 15자 이하 여야 합니다.");
+        }
+    }
+
+    private void nicknameValidator(String nickname) {
+        /**
+         * 닉네임 포맷 확인
+         * 한글 / 영어 / 숫자 입력 가능
+         * 2 - 8자, 공백 불가
+         */
+        final String REGEX = "^[A-Za-z0-9ㄱ-ㅎ가-힣]{2,8}$";
+
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(nickname);
+
+        if (!matcher.find()) {
+            throw new ConflictException("닉네임은 한글, 영문, 숫자 중 입력해야 하며, 2자 이상 8자 이하여야 합니다.");
         }
 
     }
