@@ -10,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @ApiModel(value = "Member 저장 요청")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @AllArgsConstructor
 public class MemberSaveRequestDto {
 

@@ -11,7 +11,6 @@ import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.MemberService;
-import idorm.idormServer.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -32,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
@@ -83,7 +84,7 @@ public class MemberController {
             @ApiResponse(code = 200, message = "Member 회원가입 완료"),
             @ApiResponse(code = 400, message = "올바른 형식의 이메일 주소여야 합니다."),
             @ApiResponse(code = 404, message = "등록하지 않은 이메일입니다."),
-            @ApiResponse(code = 409, message = "이미 가입된 이메일 혹은 닉네임입니다.")
+            @ApiResponse(code = 409, message = "이미 가입된 이메일 혹은 닉네임입니다. 혹은 비밀번호 정규식 검증 실패")
     }
     )
     @PostMapping("/register")
@@ -96,6 +97,8 @@ public class MemberController {
         if(emailOp.isEmpty()) {
             throw new NotFoundException("등록하지 않은 이메일입니다.");
         }
+
+        passwordValidator(request.getPassword());
 
         Long createdMemberId = memberService.save(request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
@@ -190,6 +193,8 @@ public class MemberController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
+        passwordValidator(request.getPassword());
+
         memberService.updatePassword(member, passwordEncoder.encode(request.getPassword()));
         emailService.updateIsJoined(member.getEmail());
 
@@ -219,6 +224,8 @@ public class MemberController {
         emailService.findByEmail(request.getEmail());
 
         Member foundMember = memberService.findByEmail(request.getEmail());
+
+        passwordValidator(request.getPassword());
 
         memberService.updatePassword(foundMember, passwordEncoder.encode(request.getPassword()));
         emailService.updateIsJoined(foundMember.getEmail());
@@ -369,6 +376,7 @@ public class MemberController {
             @ApiResponse(code = 400, message = "닉네임 혹은 비밀번호 입력은 필수입니다."),
             @ApiResponse(code = 401, message = "로그인이 필요합니다. 혹은 수정할 id의 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 403, message = "일반 유저 로그인이 아닌 관리자 로그인이 필요합니다."),
+            @ApiResponse(code = 409, message = "비밀번호 정규식 검증 실패"),
             @ApiResponse(code = 500, message = "Member 닉네임 혹은 비밀번호 변경 중 서버 에러 발생")
     }
     )
@@ -377,6 +385,8 @@ public class MemberController {
             @PathVariable("id") Long updateMemberId, @RequestBody @Valid MemberUpdateStatusAdminRequestDto request) {
 
         Member updateMember = memberService.findById(updateMemberId);
+
+        passwordValidator(request.getPassword());
 
         memberService.updatePassword(updateMember, request.getPassword());
         memberService.updateNicknameByAdmin(updateMember, request.getNickname());
@@ -418,6 +428,37 @@ public class MemberController {
                         .responseMessage("Member 삭제 완료")
                         .data(new Result(collect))
                         .build());
+    }
+
+    private void passwordValidator(String password) {
+
+        /**
+         * 비밀번호 포맷 확인
+         * 8 - 15자, 필수 영소문자, 숫자, 특수문자
+         * optional 대문자
+         */
+        final int MIN = 8;
+        final int MAX = 20;
+
+        final String REGEX =
+                "^((?=.*\\d)(?=.*[a-zA-Z])(?=.*[\\W]).{" + MIN + "," + MAX + "})$";
+
+        // 숫자, 특수문자가 포함되어야 한다.
+        final String REGEX_SYMBOL =
+                "([0-9].*[!,@,#,^,&,*,(,)])|([!,@,#,^,&,*,(,)].*[0-9])";
+
+        // 정규표현식 컴파일
+        Pattern pattern = Pattern.compile(REGEX);
+        Pattern pattern_symbol = Pattern.compile(REGEX_SYMBOL);
+
+        // 문자 매칭
+        Matcher matcher = pattern.matcher(password);
+        Matcher matcher_symbol = pattern_symbol.matcher(password);
+
+        if(!matcher.find() || !matcher_symbol.find()) { // wrong regex
+            throw new ConflictException("비밀번호는 숫자, 특수문자가 포함되어야 하며 8자 이상 15자 이하 여야 합니다.");
+        }
+
     }
 
     @Data

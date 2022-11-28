@@ -596,6 +596,7 @@ public class InitDB {
             Email email24 = createEmail("xxx@inu.ac.kr", "111-111");
             Email email25 = createEmail("yyy@inu.ac.kr", "111-111");
             Email email26 = createEmail("zzz@inu.ac.kr", "111-111");
+            Email email27 = createEmail("knh709@inu.ac.kr", "111-111");
 
             em.persist(email1);
             em.persist(email2);
@@ -623,6 +624,7 @@ public class InitDB {
             em.persist(email24);
             em.persist(email25);
             em.persist(email26);
+            em.persist(email27);
         }
 
         private Member createMember(String email, String password, String nickname) {
