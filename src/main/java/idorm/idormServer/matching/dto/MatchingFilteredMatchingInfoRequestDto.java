@@ -3,6 +3,7 @@ package idorm.idormServer.matching.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 
@@ -22,10 +23,12 @@ public class MatchingFilteredMatchingInfoRequestDto {
     private String joinPeriod;
 
     @NotNull(message = "매칭을 원하는 룸메이트의 최소 나이 입력은 필수입니다.")
+    @Range(min = 20, max = 100, message = "나이는 20과 100 사이여야 합니다.")
     @ApiModelProperty(position = 3, required = true, dataType = "Integer", value = "20", example = "20")
     private Integer minAge;
 
     @NotNull(message = "매칭을 원하는 룸메이트의 최대 나이 입력은 필수입니다.")
+    @Range(min = 20, max = 100, message = "나이는 20과 100 사이여야 합니다.")
     @ApiModelProperty(position = 4, required = true, dataType = "Integer", value = "30", example = "30")
     private Integer maxAge;
 
