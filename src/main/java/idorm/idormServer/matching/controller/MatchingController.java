@@ -8,7 +8,6 @@ import idorm.idormServer.matching.domain.DislikedMember;
 import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
-import idorm.idormServer.matching.dto.MatchingSelectedMemberIdRequestDto;
 import idorm.idormServer.matching.service.DislikedMemberService;
 import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.matching.service.MatchingService;
