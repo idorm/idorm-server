@@ -58,7 +58,7 @@ public class MemberService {
             memberRepository.save(member);
             log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
             return member.getId();
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Member 저장 중 서버 에러 발생", e);
         }
     }
@@ -103,7 +103,7 @@ public class MemberService {
             }
 
 
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Member 프로필 사진 저장 중 서버 에러 발생", e);
         }
 
@@ -201,7 +201,7 @@ public class MemberService {
             Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
             log.info("COMPLETE | Member 이메일로 Optional 조회 At " + LocalDateTime.now() + " | " + email);
             return foundMemberId;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Member 이메일로 Optional 조회 중 서버 에러 발생", e);
         }
     }
@@ -228,7 +228,7 @@ public class MemberService {
             // 작성한 게시글, 댓글 (커뮤니티 관련) - 탈퇴한 회원입니다 로 메시지 전달
             memberRepository.delete(member);
             log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now());
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Member 삭제 중 서버 에러 발생", e);
         }
     }
@@ -254,11 +254,11 @@ public class MemberService {
 
         log.info("IN PROGRESS | Member 비밀번호 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
 
+        member.updatePassword(password);
         try {
-            member.updatePassword(password);
             memberRepository.save(member);
             log.info("COMPLETE | Member 비밀번호 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Member 비밀번호 변경 중 서버 에러 발생", e);
         }
     }
@@ -274,7 +274,7 @@ public class MemberService {
             LocalDateTime possibleUpdateTime = updatedDateTime.plusMonths(1);
 
             if(possibleUpdateTime.isAfter(LocalDateTime.now())) {
-                throw new ConflictException("닉네임 변경 후 30일 동안 변경이 불가합니다.");
+                throw new IllegalStateException("닉네임 변경 후 30일 동안 변경이 불가합니다.");
             }
         }
     }
@@ -298,7 +298,7 @@ public class MemberService {
             memberRepository.save(member);
 
             log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Member 닉네임 변경 중 서버 에러 발생", e);
         }
     }
@@ -318,13 +318,12 @@ public class MemberService {
         isDuplicateNickname(nickname);
         checkNicknameUpdatedAt(member);
 
+        member.updateNickname(nickname);
+        member.updateNicknameUpdatedAt(LocalDateTime.now());
         try {
-            member.updateNickname(nickname);
-            member.updateNicknameUpdatedAt(LocalDateTime.now());
             memberRepository.save(member);
-
             log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Member 닉네임 변경 중 서버 에러 발생", e);
         }
     }

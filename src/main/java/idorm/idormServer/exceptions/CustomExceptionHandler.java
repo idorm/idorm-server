@@ -14,12 +14,77 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.mail.AuthenticationFailedException;
+import java.lang.IllegalArgumentException;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Slf4j
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+
+    /**
+     * 400 Bad Request
+     * 부정 또는 올바르지 않은 때에 메소드가 불려 간 것을 나타냅니다.
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleIllegalStateException(IllegalStateException exception) {
+        String responseMessage = exception.getMessage();
+        String responseCode = "ILLEGAL_STATE";
+        LocalDateTime timestamp = LocalDateTime.now();
+
+        log.error("ERROR | " + responseMessage + " At " + timestamp + " | " + exception);
+
+        return ResponseEntity.status(400).body(
+                DefaultExceptionResponseDto.builder()
+                        .responseCode(responseCode)
+                        .responseMessage(responseMessage)
+                        .build()
+        );
+    }
+
+    /**
+     * 409 AuthenticationFailedException
+     * bad username, password
+     */
+    @ExceptionHandler(AuthenticationFailedException.class)
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public ResponseEntity<Object> handleAuthenticationFailedException(AuthenticationFailedException exception) {
+        String responseMessage = exception.getMessage();
+        String responseCode = "AUTHENTICATION_FAILED";
+        LocalDateTime timestamp = LocalDateTime.now();
+
+        log.error("ERROR | " + responseMessage + " At " + timestamp + " | " + exception);
+
+        return ResponseEntity.status(409).body(
+                DefaultExceptionResponseDto.builder()
+                        .responseCode(responseCode)
+                        .responseMessage(responseMessage)
+                        .build()
+        );
+    }
+
+    /**
+     * 400 Bad Request
+     * 메서드에 유형이 일치하지 않는 매개변수를 전달하는 경우
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException exception) {
+        String responseMessage = exception.getMessage();
+        String responseCode = "ILLEGAL_ARGUMENT";
+        LocalDateTime timestamp = LocalDateTime.now();
+
+        log.error("ERROR | " + responseMessage + " At " + timestamp + " | " + exception);
+
+        return ResponseEntity.status(400).body(
+                DefaultExceptionResponseDto.builder()
+                        .responseCode(responseCode)
+                        .responseMessage(responseMessage)
+                        .build()
+        );
+    }
 
     /**
      * 400 Bad Request |
@@ -36,12 +101,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (Objects.requireNonNull(responseMessage).contains("입력")) {
             responseCode = "FIELD_REQUIRED";
+        } else if (responseMessage.contains("~")) {
+            responseCode = exception.getFieldError().getField().toUpperCase().concat("_LENGTH_INVALID");
+        } else if (responseMessage.contains("형식")) {
+            responseCode = exception.getFieldError().getField().toUpperCase().concat("_FORMAT_INVALID");
         } else {
             responseCode = exception.getFieldError().getField().toUpperCase();
         }
 
         log.error("ERROR | " + responseMessage + " At " + timestamp + " | "
-                + exception.getFieldError().getField() + " = " + exception.getFieldError().getRejectedValue());
+                + exception.getFieldError().getField() + " = " +
+                ((Objects.requireNonNull(exception.getFieldError().getRejectedValue()).toString() == null) ?
+                        "null" : exception.getFieldError().getRejectedValue().toString()));
 
         return ResponseEntity.status(status).body(
                 DefaultExceptionResponseDto.builder()

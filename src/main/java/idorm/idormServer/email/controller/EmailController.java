@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.AuthenticationFailedException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
@@ -99,7 +100,8 @@ public class EmailController {
     )
     @PostMapping("/verifyCode/{email}")
     public ResponseEntity<DefaultResponseDto<Object>> verifyCode(
-            @PathVariable("email") String requestEmail, @RequestBody EmailVerifyRequestDto code) {
+            @PathVariable("email") String requestEmail,
+            @RequestBody @Valid EmailVerifyRequestDto code) throws AuthenticationFailedException {
 
         Email email = emailService.findByEmail(requestEmail);
 
@@ -107,11 +109,11 @@ public class EmailController {
         LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
 
         if(!(email.getCode().equals(code.getCode()))) {
-            throw new ConflictException("잘못된 인증번호입니다.");
+            throw new AuthenticationFailedException("잘못된 인증번호입니다.");
         }
 
         if(LocalDateTime.now().isAfter(expiredDateTime)) {
-            throw new NotFoundException("인증번호가 만료되었습니다.");
+            throw new AuthenticationFailedException("인증번호가 만료되었습니다.");
         }
 
 

@@ -119,7 +119,7 @@ public class MatchingInfoService {
 
         try {
             matchingInfoRepository.delete(matchingInfo);
-        } catch(Exception e) {
+        } catch(InternalServerErrorException e) {
             throw new InternalServerErrorException("MatchingInfo 삭제 중 서버 에러 발생", e);
         }
         log.info("COMPLETE | MatchingInfo 삭제 At " + LocalDateTime.now());
@@ -142,7 +142,7 @@ public class MatchingInfoService {
         try {
             updateMatchingInfo.get().updateMatchingInfo(requestDto);
             matchingInfoRepository.save(updateMatchingInfo.get());
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("MatchingInfo 수정 중 서버 에러 발생", e);
         }
 

@@ -30,7 +30,6 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -92,11 +91,7 @@ public class MemberController {
             @RequestBody @Valid MemberSaveRequestDto request
     ) {
 
-        Optional<Email> emailOp = emailService.findByEmailOp(request.getEmail());
-
-        if(emailOp.isEmpty()) {
-            throw new NotFoundException("등록하지 않은 이메일입니다.");
-        }
+        Email foundEmail = emailService.findByEmail(request.getEmail());
 
         passwordValidator(request.getPassword());
         nicknameValidator(request.getNickname());
@@ -106,12 +101,9 @@ public class MemberController {
                 request.getNickname());
 
         Member newMember = memberService.findById(createdMemberId);
-        emailService.updateIsJoined(emailOp.get().getEmail());
+        emailService.updateIsJoined(foundEmail.getEmail());
 
-        MemberDefaultResponseDto response = MemberDefaultResponseDto.builder()
-                .id(newMember.getId())
-                .email(newMember.getEmail())
-                .build();
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(newMember);
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -361,7 +353,6 @@ public class MemberController {
         List<Member> members = memberService.findAll();
         List<MemberDefaultResponseDto> collect = members.stream()
                 .map(o -> new MemberDefaultResponseDto(o)).collect(Collectors.toList());
-
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
