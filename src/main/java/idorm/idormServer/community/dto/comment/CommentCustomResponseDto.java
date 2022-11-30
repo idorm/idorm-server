@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @ApiModel(value = "Comment 게시글 내 모든 댓글 대댓글 커스텀 응답")
 public class CommentCustomResponseDto {
+
     @ApiModelProperty(position = 1, value="댓글 식별자")
     private Long commentId;
 

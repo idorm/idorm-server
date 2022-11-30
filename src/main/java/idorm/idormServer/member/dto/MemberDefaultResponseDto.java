@@ -9,7 +9,6 @@ import lombok.*;
 @Getter
 @ApiModel(value = "Member 응답")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @AllArgsConstructor
 public class MemberDefaultResponseDto {
 

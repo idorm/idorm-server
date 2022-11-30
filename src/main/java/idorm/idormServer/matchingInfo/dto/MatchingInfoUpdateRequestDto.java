@@ -28,24 +28,31 @@ public class MatchingInfoUpdateRequestDto {
     @ApiModelProperty(position = 3, required = true, dataType = "String", value = "성별", example = "FEMALE")
     private String gender;
 
+    @NotNull(message = "나이 입력은 필수입니다.")
     @ApiModelProperty(position = 4, required = true, dataType = "Integer", example = "20")
     private Integer age;
 
+    @NotNull(message = "코골이 여부 입력은 필수입니다.")
     @ApiModelProperty(position = 5, required = true, dataType = "Boolean", example = "true")
     private Boolean isSnoring;
 
+    @NotNull(message = "이갈이 여부 입력은 필수입니다.")
     @ApiModelProperty(position = 6, required = true, dataType = "Boolean", example = "true")
     private Boolean isGrinding;
 
+    @NotNull(message = "흡연 여부 입력은 필수입니다.")
     @ApiModelProperty(position = 7, required = true, dataType = "Boolean", example = "true")
     private Boolean isSmoking;
 
+    @NotNull(message = "실내 음식 섭취 여부 입력은 필수입니다.")
     @ApiModelProperty(position = 8, required = true, dataType = "Boolean", example = "true")
     private Boolean isAllowedFood;
 
+    @NotNull(message = "이어폰 착용 여부 입력은 필수입니다.")
     @ApiModelProperty(position = 9, required = true, dataType = "Boolean", example = "true")
     private Boolean isWearEarphones;
 
+    @NotNull(message = "기상 시간 입력은 필수입니다.")
     @ApiModelProperty(position = 10, required = true, dataType = "String", example = "오전 9시에 기상합니다.")
     private String wakeUpTime;
 
@@ -57,7 +64,7 @@ public class MatchingInfoUpdateRequestDto {
     @ApiModelProperty(position = 12, required = true, dataType = "String", example = "아침 8시, 밤 12시에 주로 씻어요.")
     private String showerTime;
 
-    @NotBlank(message = "오픈 채팅 링크를 입력해 주세요.")
+    @NotBlank(message = "오픈 채팅 링크 입력은 필수입니다.")
     @ApiModelProperty(position = 13, required = true, dataType = "String", example = "https://open.kakao.com/o/szaIN6ze")
     private String openKakaoLink;
 

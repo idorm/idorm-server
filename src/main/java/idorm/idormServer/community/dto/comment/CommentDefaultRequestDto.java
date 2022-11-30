@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @ApiModel(value = "Comment 저장 요청")
@@ -12,13 +13,13 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class CommentDefaultRequestDto {
 
-    @NotBlank(message = "내용을 입력해 주세요.")
+    @NotBlank(message = "내용을 입력 해주세요.")
     @ApiModelProperty(position = 1, required = true, dataType = "String", value = "내용", example = "내용내용")
     private String content;
 
     @ApiModelProperty(position = 2, required = true, dataType = "Boolean", value = "익명 여부", example = "true")
     private Boolean isAnonymous;
 
-    @ApiModelProperty(position = 3, required = false, dataType = "Long", value = "대댓글이라면 부모 댓글 식별자", example = "1")
+    @ApiModelProperty(position = 3, required = false, dataType = "Long", value = "대댓글일 시 부모 댓글 식별자", example = "1")
     private Long parentCommentId;
 }

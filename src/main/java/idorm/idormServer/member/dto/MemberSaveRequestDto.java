@@ -13,16 +13,16 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class MemberSaveRequestDto {
 
-    @Email
+    @Email(message = "이메일 형식이 올바르지 않습니다.")
     @NotBlank(message = "이메일 입력은 필수입니다.")
     @ApiModelProperty(position = 1, required = true, dataType = "String", value = "이메일", example = "aaa@inu.ac.kr")
     private String email;
 
     @NotBlank(message = "비밀번호 입력은 필수입니다.")
-    @ApiModelProperty(position = 2, required = true, dataType = "String", value = "비밀번호", example = "aaa")
+    @ApiModelProperty(position = 2, required = true, dataType = "String", value = "비밀번호", example = "aaaaaaa7!")
     private String password;
 
     @NotBlank(message = "닉네임 입력은 필수입니다.")
-    @ApiModelProperty(position = 3, required = true, dataType = "String", value = "닉네임", example = "응철이")
+    @ApiModelProperty(position = 3, required = true, dataType = "String", value = "닉네임", example = "귀염둥이 응철이")
     private String nickname;
 }
