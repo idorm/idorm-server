@@ -180,7 +180,7 @@ public class MatchingController {
             @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다."),
             @ApiResponse(code = 500, message = "LikedMember save 중 서버 에러 발생")
     })
-    @PostMapping("/member/matching/like{liked-member-id}")
+    @PostMapping("/member/matching/like/{liked-member-id}")
     public ResponseEntity<DefaultResponseDto<Object>> addLikedMatchingMembers(
             HttpServletRequest request, @PathVariable(value = "liked-member-id") Long selectedLikedMemberId
     ) {
