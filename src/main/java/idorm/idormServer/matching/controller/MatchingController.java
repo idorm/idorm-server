@@ -20,10 +20,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -93,7 +90,7 @@ public class MatchingController {
     })
     @GetMapping("/member/matching/filter")
     public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(
-            HttpServletRequest request, @Valid MatchingFilteredMatchingInfoRequestDto filteringRequest
+            HttpServletRequest request, @RequestBody @Valid MatchingFilteredMatchingInfoRequestDto filteringRequest
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
@@ -184,14 +181,13 @@ public class MatchingController {
             @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다."),
             @ApiResponse(code = 500, message = "LikedMember save 중 서버 에러 발생")
     })
-    @PostMapping("/member/matching/like")
+    @PostMapping("/member/matching/like{liked-member-id}")
     public ResponseEntity<DefaultResponseDto<Object>> addLikedMatchingMembers(
-            HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
+            HttpServletRequest request, @PathVariable(value = "liked-member-id") Long selectedLikedMemberId
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
-        Long selectedLikedMemberId = requestDto.getSelectedMemberId();
         if(selectedLikedMemberId == loginMemberId || selectedLikedMemberId == 1) {
             throw new ConflictException("관리자 혹은 본인을 좋아요한 멤버로 설정할 수 없습니다.");
         }
@@ -226,14 +222,13 @@ public class MatchingController {
             @ApiResponse(code = 404, message = "좋아요한 멤버의 id가 존재하지 않습니다."),
             @ApiResponse(code = 500, message = "Matching 좋아요한 매칭멤버 삭제 중 서버 에러 발생")
     })
-    @DeleteMapping("/member/matching/like")
+    @DeleteMapping("/member/matching/like/{liked-member-id}")
     public ResponseEntity<DefaultResponseDto<Object>> deleteLikedMatchingMembers(
-            HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
+            HttpServletRequest request, @PathVariable(value = "liked-member-id") Long likedMemberId
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
-        Long likedMemberId = requestDto.getSelectedMemberId();
         likedMemberService.deleteLikedMember(loginMemberId, likedMemberId);
 
         Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
@@ -298,14 +293,12 @@ public class MatchingController {
             @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다."),
             @ApiResponse(code = 500, message = "DislikedMember save 중 서버 에러 발생")
     })
-    @PostMapping("/member/matching/dislike")
+    @PostMapping("/member/matching/dislike/{disliked-member-id}")
     public ResponseEntity<DefaultResponseDto<Object>> addDislikedMatchingMembers(
-            HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
+            HttpServletRequest request, @PathVariable(value = "disliked-member-id") Long selectedDislikedMemberId
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-
-        Long selectedDislikedMemberId = requestDto.getSelectedMemberId();
 
         if(selectedDislikedMemberId == loginMemberId || selectedDislikedMemberId == 1) {
             throw new ConflictException("관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다.");
@@ -341,14 +334,13 @@ public class MatchingController {
             @ApiResponse(code = 404, message = "싫어요한 멤버의 id가 존재하지 않습니다."),
             @ApiResponse(code = 500, message = "Matching 싫어요한 매칭멤버 삭제 중 서버 에러 발생")
     })
-    @DeleteMapping("/member/matching/dislike")
+    @DeleteMapping("/member/matching/dislike/{disliked-member-id}")
     public ResponseEntity<DefaultResponseDto<Object>> deleteDislikedMatchingMembers(
-            HttpServletRequest request, @Valid MatchingSelectedMemberIdRequestDto requestDto
+        HttpServletRequest request, @PathVariable(value = "disliked-member-id") Long dislikedMemberId
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
-        Long dislikedMemberId = requestDto.getSelectedMemberId();
         dislikedMemberService.deleteDislikedMember(loginMemberId, dislikedMemberId);
 
         Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
