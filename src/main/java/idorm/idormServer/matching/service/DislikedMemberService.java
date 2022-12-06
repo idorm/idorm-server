@@ -1,9 +1,9 @@
 package idorm.idormServer.matching.service;
 
-import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exceptions.ErrorCode;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.matching.domain.DislikedMember;
-import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.repository.DislikedMemberRepository;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
@@ -40,7 +40,7 @@ public class DislikedMemberService {
             List<Long> DislikedMembers = dislikedMemberRepository.findDislikedMembersByMemberId(memberId);
             log.info("COMPLETE | LikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return DislikedMembers;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("DislikedMembers 싫어요한 멤버 전체 조회 중 서버 에러 발생", e);
         }
     }
@@ -55,7 +55,7 @@ public class DislikedMemberService {
             List<DislikedMember> dislikedMembers = dislikedMemberRepository.findAllByMemberId(memberId);
             log.info("COMPLETE | DislikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return dislikedMembers;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("LikedMember 좋아요한 멤버 전체 조회 중 서버 에러 발생", e);
         }
     }
@@ -65,12 +65,17 @@ public class DislikedMemberService {
      * 멤버 식별자와 싫어요한 멤버 식별자를 인자로 받아서 이미 등록되어있다면 true로 반환한다.
      */
     public boolean isRegisteredDislikedMemberIdByMemberId(Long memberId, Long selectedMemberId) {
-        log.info("IN PROGRESS | DislikedMember 싫어요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
-        Optional<Long> registeredDislikedMemberId = dislikedMemberRepository.isRegisteredDislikedMemberIdByMemberId(memberId, selectedMemberId);
+        log.info("IN PROGRESS | DislikedMember 싫어요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
+                memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
+
+        Optional<Long> registeredDislikedMemberId =
+                dislikedMemberRepository.isRegisteredDislikedMemberIdByMemberId(memberId, selectedMemberId);
+
         if(registeredDislikedMemberId.isPresent()) {
             return true;
         }
-        log.info("COMPLETE | DislikedMember 싫어요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
+        log.info("COMPLETE | DislikedMember 싫어요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
+                memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
         return false;
     }
 
@@ -98,7 +103,7 @@ public class DislikedMemberService {
             dislikedMemberRepository.save(DislikedMember);
             log.info("COMPLETE | DislikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return DislikedMember.getId();
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("DislikedMember save 중 서버 에러 발생", e);
         }
     }
@@ -116,7 +121,7 @@ public class DislikedMemberService {
 
         for(Long id : dislikedMemberIds) {
             if(id == dislikedMemberId) {
-                throw new ConflictException("이미 싫어요한 멤버입니다.");
+                throw new CustomException(ErrorCode.DUPLICATE_DISLIKED_MEMBER);
             }
         }
 
@@ -135,23 +140,11 @@ public class DislikedMemberService {
         memberService.findById(loginMemberId);
         List<Long> dislikedMemberIds = dislikedMemberRepository.findDislikedMembersByMemberId(loginMemberId);
 
-        boolean isExistDislikedMember = false;
-
-        for(Long id : dislikedMemberIds) {
-            if(id == dislikedMemberId) {
-                isExistDislikedMember = true;
-            }
-        }
-
-        if(isExistDislikedMember == false) {
-            throw new ConflictException("해당 아이디의 싫어요한 멤버는 존재하지 않기 때문에 삭제할 수 없습니다.");
-        }
-
         try {
             dislikedMemberRepository.deleteDislikedMember(loginMemberId, dislikedMemberId);
             log.info("COMPLETE | DislikedMember 싫어요한 멤버 삭제 At " + LocalDateTime.now()
                     + " | 로그인 멤버 식별자: " + loginMemberId + " | 싫어요한 멤버 식별자 : " + dislikedMemberId);
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("DislikedMember 싫어요한 멤버 삭제 중 서버 에러 발생", e);
         }
     }
@@ -167,7 +160,7 @@ public class DislikedMemberService {
 
         try {
             dislikedMemberRepository.deleteDislikedMembers(memberId);
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("DislikedMember 싫어요한 멤버 삭제들 중 서버 에러 발생", e);
         }
 

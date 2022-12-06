@@ -2,8 +2,7 @@ package idorm.idormServer.matching.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.exceptions.http.ConflictException;
-import idorm.idormServer.exceptions.http.NotFoundException;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.matching.domain.DislikedMember;
 import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
@@ -25,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -97,12 +98,12 @@ public class MatchingController {
         if(!filteringRequest.getDormNum().equals("DORM1") &&
                 !filteringRequest.getDormNum().equals("DORM2") &&
                 !filteringRequest.getDormNum().equals("DORM3")) {
-            throw new NotFoundException("올바른 기숙사 분류가 아닙니다.");
+            throw new CustomException(ILLEGAL_ARGUMENT_DORM_CATEGORY);
         }
 
         if(!filteringRequest.getJoinPeriod().equals("WEEK16") &&
                 !filteringRequest.getJoinPeriod().equals("WEEK24")) {
-            throw new NotFoundException("올바른 기숙사 분류가 아닙니다.");
+            throw new CustomException(ILLEGAL_ARGUMENT_JOIN_PERIOD);
         }
 
         List<Long> filteredMatchingInfoId = matchingService.findFilteredMatchingMembers(loginMemberId, filteringRequest);
@@ -187,18 +188,21 @@ public class MatchingController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
-        if(selectedLikedMemberId == loginMemberId || selectedLikedMemberId == 1) {
-            throw new ConflictException("관리자 혹은 본인을 좋아요한 멤버로 설정할 수 없습니다.");
+        if(selectedLikedMemberId == loginMemberId) {
+            throw new CustomException(ILLEGAL_ARGUMENT_SELF);
+        }
+        if(selectedLikedMemberId == 1) {
+            throw new CustomException(ILLEGAL_ARGUMENT_ADMIN);
         }
 
         // 싫어요한 멤버로 등록되어있는지 확인, 되어있다면 true 반환
-        boolean isRegisteredDislikedMember = dislikedMemberService.isRegisteredDislikedMemberIdByMemberId(loginMemberId, selectedLikedMemberId);
+        boolean isRegisteredDislikedMember =
+                dislikedMemberService.isRegisteredDislikedMemberIdByMemberId(loginMemberId, selectedLikedMemberId);
 
         //  등록되어있다면 싫어요한 멤버 삭제 처리 필요
         if(isRegisteredDislikedMember == true) {
             dislikedMemberService.deleteDislikedMember(loginMemberId, selectedLikedMemberId);
         }
-
         likedMemberService.saveLikedMember(loginMemberId, selectedLikedMemberId);
 
         Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
@@ -299,18 +303,21 @@ public class MatchingController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
-        if(selectedDislikedMemberId == loginMemberId || selectedDislikedMemberId == 1) {
-            throw new ConflictException("관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다.");
+        if(selectedDislikedMemberId == loginMemberId) {
+            throw new CustomException(ILLEGAL_ARGUMENT_SELF);
+        }
+        if(selectedDislikedMemberId == 1) {
+            throw new CustomException(ILLEGAL_ARGUMENT_ADMIN);
         }
 
         // 좋아요한 멤버로 등록되어있는지 확인, 되어있다면 true 반환
-        boolean isRegisteredLikedMember = likedMemberService.isRegisteredlikedMemberIdByMemberId(loginMemberId, selectedDislikedMemberId);
+        boolean isRegisteredLikedMember =
+                likedMemberService.isRegisteredlikedMemberIdByMemberId(loginMemberId, selectedDislikedMemberId);
 
         //  등록되어있다면 좋아요한 멤버 삭제 처리 필요
         if(isRegisteredLikedMember == true) {
             likedMemberService.deleteLikedMember(loginMemberId, selectedDislikedMemberId);
         }
-
         dislikedMemberService.saveDislikedMember(loginMemberId, selectedDislikedMemberId);
 
         Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);

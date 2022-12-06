@@ -3,12 +3,9 @@ package idorm.idormServer.community.service;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.CommentRepository;
-import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
-import idorm.idormServer.exceptions.http.NotFoundException;
-import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exceptions.ErrorCode.ILLEGAL_ARGUMENT_SAME_PK;
 
 @Slf4j
 @Service
@@ -65,12 +64,14 @@ public class CommentService {
         Comment foundSubComment = findById(subCommentId);
 
         if (foundSubComment.getId() == parentCommentId) {
-            throw new ConflictException("부모 댓글과 대댓글 식별자가 같을 수 없습니다.");
+            throw new CustomException(ILLEGAL_ARGUMENT_SAME_PK);
         }
+
         foundSubComment.updateParentCommentId(parentCommentId);
         commentRepository.save(foundSubComment);
 
-        log.info("COMPLETE | Comment 부모 댓글 식별자 저장 At " + LocalDateTime.now() + " | Parent Comment 식별자: " + parentCommentId);
+        log.info("COMPLETE | Comment 부모 댓글 식별자 저장 At " + LocalDateTime.now() + " | Parent Comment 식별자: "
+                + parentCommentId);
     }
 
     /**
@@ -78,42 +79,28 @@ public class CommentService {
      */
     public Comment findById(Long commentId) {
         log.info("IN PROGRESS | Comment 단건 조회 At " + LocalDateTime.now() + " | " + commentId);
-        Optional<Comment> foundComment = commentRepository.findById(commentId);
 
-        if(foundComment.isEmpty()) {
-            throw new NotFoundException("조회할 댓글이 존재하지 않습니다.");
-        }
+        Comment foundComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
 
         log.info("COMPLETE | Comment 단건 조회 At " + LocalDateTime.now() + " | " + commentId);
-        return foundComment.get();
-    }
-
-    /**
-     * Comment 단건 조회 (게시글 식별자, 댓글 식별자로 이중 체크)
-     */
-    public Comment findByPostIdAndCommentId(Long postId, Long commentId) {
-        log.info("IN PROGRESS | Comment 단건 조회 At " + LocalDateTime.now() + " | " + commentId);
-        Optional<Comment> foundComment = commentRepository.findCommentByPostIdAndCommentId(postId, commentId);
-
-        if(foundComment.isEmpty()) {
-            throw new NotFoundException("조회할 댓글이 존재하지 않습니다.");
-        }
-
-        log.info("COMPLETE | Comment 단건 조회 At " + LocalDateTime.now() + " | " + commentId);
-        return foundComment.get();
+        return foundComment;
     }
 
     /**
      * Comment 부모 댓글 식별자를 받아서 해당 대댓글 리스트 반환
      */
     public List<Comment> findSubCommentsByParentCommentId(Long postId, Long parentCommentId) {
-        log.info("IN PROGRESS | Comment 부모 식별자를 통한 대댓글들 조회 At " + LocalDateTime.now() + " | 부모 댓글 식별자 " + parentCommentId);
+        log.info("IN PROGRESS | Comment 부모 식별자를 통한 대댓글들 조회 At " + LocalDateTime.now() + " | 부모 댓글 식별자 " +
+                parentCommentId);
 
         try {
-            List<Comment> foundSubComments = commentRepository.findSubCommentsByParentCommentId(parentCommentId, postId);
-            log.info("COMPLETE | Comment 부모 식별자를 통한 대댓글들 조회 At " + LocalDateTime.now() + " | 부모 댓글 식별자 " + parentCommentId);
+            List<Comment> foundSubComments =
+                    commentRepository.findSubCommentsByParentCommentId(parentCommentId, postId);
+            log.info("COMPLETE | Comment 부모 식별자를 통한 대댓글들 조회 At " + LocalDateTime.now() + " | 부모 댓글 식별자 " +
+                    parentCommentId);
             return foundSubComments;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Comment 부모 댓글 식별자를 통한 자식 댓글들 조회 중 서버 에러 발생", e);
         }
     }
@@ -122,13 +109,15 @@ public class CommentService {
      * Comment 로그인한 멤버가 작성한 모든 댓글들 조회
      */
     public List<Comment> findCommentsByMember(Member member) {
-        log.info("IN PROGRESS | Comment 로그인한 멤버가 작성한 댓글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
+        log.info("IN PROGRESS | Comment 로그인한 멤버가 작성한 댓글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
+                member.getId());
 
         try {
             List<Comment> commentsByMemberId = commentRepository.findCommentsByMemberId(member.getId());
-            log.info("COMPLETE | Comment 로그인한 멤버가 작성한 댓글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
+            log.info("COMPLETE | Comment 로그인한 멤버가 작성한 댓글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
+                    member.getId());
             return commentsByMemberId;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("멤버가 작성한 댓글 전체 조회 중 서버 에러가 발생했습니다.", e);
         }
     }
@@ -155,7 +144,7 @@ public class CommentService {
                 comment.deleteComment();
                 commentRepository.save(comment);
             }
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Comment 게시글 내 모든 댓글 삭제 중 서버 에러 발생", e);
         }
         log.info("COMPLETE | Comment 게시글 내 모든 댓글 삭제 At " + LocalDateTime.now() + " | 게시글 식별자: " + postId);
@@ -171,13 +160,13 @@ public class CommentService {
         Comment foundComment = findById(commentId);
 
         if (foundComment.getMember().getId() != member.getId()) {
-            throw new UnauthorizedException("본인이 작성한 댓글만 삭제할 수 있습니다.");
+            throw new CustomException(UNAUTHORIZED_DELETE);
         }
 
         try {
             foundComment.deleteComment();
             commentRepository.save(foundComment);
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Comment 삭제 중 서버 에러 발생", e);
         }
         log.info("COMPLETE | Comment 삭제 At " + LocalDateTime.now() + " | " + commentId);

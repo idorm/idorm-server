@@ -9,7 +9,8 @@ import idorm.idormServer.community.service.PostLikedMemberService;
 import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.community.vo.post.SavePostVo;
 import idorm.idormServer.community.vo.post.UpdatePostVo;
-import idorm.idormServer.exceptions.http.NotFoundException;
+import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exceptions.ErrorCode;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
@@ -27,6 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -55,7 +58,7 @@ public class PostController {
     public ResponseEntity<DefaultResponseDto<Object>> updatePost(
             @PathVariable("post-id") Long updatePostId,
             @ModelAttribute @Valid UpdatePostVo updateRequest
-    ) throws IOException {
+    ) {
 
         Member member = memberService.findById(updateRequest.getMemberId());
         Post foundPost = postService.findById(updatePostId);
@@ -90,7 +93,7 @@ public class PostController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> savePost(
             @ModelAttribute @Valid SavePostVo postRequest
-    ) throws IOException {
+    ) {
 
         // TODO: 로그인한 멤버 받아올 수 있는 방법 찾아야 함 (security multipart csrf)
         // TODO: 로그인한 멤버 식별자와 입력받은 멤버 식별자가 다른지 확인 필요
@@ -99,7 +102,7 @@ public class PostController {
         if(!postRequest.getDormNum().equals("DORM1") &&
                 !postRequest.getDormNum().equals("DORM2") &&
                 !postRequest.getDormNum().equals("DORM3")) {
-            throw new NotFoundException("올바른 기숙사 분류가 아닙니다.");
+            throw new CustomException(ILLEGAL_ARGUMENT_DORM_CATEGORY);
         }
 
         Member member = memberService.findById(postRequest.getMemberId());
@@ -136,7 +139,7 @@ public class PostController {
     ) {
 
         if(!dormNum.equals("DORM1") && !dormNum.equals("DORM2") && !dormNum.equals("DORM3")) {
-            throw new NotFoundException("올바른 기숙사 분류가 아닙니다.");
+            throw new CustomException(ILLEGAL_ARGUMENT_DORM_CATEGORY);
         }
 
         List<Post> posts = postService.findManyPostsByDormCategory(dormNum);
@@ -195,7 +198,7 @@ public class PostController {
     ) {
 
         if(!dormNum.equals("DORM1") && !dormNum.equals("DORM2") && !dormNum.equals("DORM3")) {
-            throw new NotFoundException("올바른 기숙사 분류가 아닙니다.");
+            throw new CustomException(ILLEGAL_ARGUMENT_DORM_CATEGORY);
         }
 
         List<Post> posts = postService.findTopPosts(dormNum);
@@ -271,7 +274,7 @@ public class PostController {
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(loginMemberId);
+        memberService.findById(loginMemberId);
 
         List<Long> foundPostIds = postLikedMemberService.findLikedPostIdsByMemberId(loginMemberId);
 

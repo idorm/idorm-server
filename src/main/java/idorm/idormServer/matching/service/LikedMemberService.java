@@ -1,6 +1,7 @@
 package idorm.idormServer.matching.service;
 
-import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exceptions.ErrorCode;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.repository.LikedMemberRepository;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -62,12 +65,17 @@ public class LikedMemberService {
      * 멤버 식별자와 선택한 멤버 식별자를 인자로 받아서 이미 좋아요한 멤버로 등록되어있다면 true로 반환한다.
      */
     public boolean isRegisteredlikedMemberIdByMemberId(Long memberId, Long selectedMemberId) {
-        log.info("IN PROGRESS | LikedMember 좋아요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
-        Optional<Long> registeredLikedMemberId = likedMemberRepository.isRegisteredLikedMemberIdByMemberId(memberId, selectedMemberId);
+        log.info("IN PROGRESS | LikedMember 좋아요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
+                memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
+
+        Optional<Long> registeredLikedMemberId =
+                likedMemberRepository.isRegisteredLikedMemberIdByMemberId(memberId, selectedMemberId);
+
         if(registeredLikedMemberId.isPresent()) {
             return true;
         }
-        log.info("COMPLETE | LikedMember 좋아요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " + memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
+        log.info("COMPLETE | LikedMember 좋아요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
+                memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
         return false;
     }
 
@@ -96,7 +104,7 @@ public class LikedMemberService {
             likedMemberRepository.save(likedMember);
             log.info("COMPLETE | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return likedMember.getId();
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("LikedMember save 중 서버 에러 발생", e);
         }
     }
@@ -114,7 +122,7 @@ public class LikedMemberService {
 
         for(Long id : likedMemberIds) {
             if(id == likedMemberId) {
-                throw new ConflictException("이미 좋아요한 멤버입니다.");
+                throw new CustomException(DUPLICATE_LIKED_MEMBER);
             }
         }
 
@@ -130,27 +138,13 @@ public class LikedMemberService {
         log.info("IN PROGRESS | LikedMember 좋아요한 멤버 삭제 At " + LocalDateTime.now()
                 + " | 로그인 멤버 식별자: " + loginMemberId + " | 좋아요한 멤버 식별자 : " + likedMemberId);
 
-        // 삭제할 좋아요한 멤버가 존재하는지 확인하기 위한 코드
         memberService.findById(loginMemberId);
-        List<Long> likedMemberIds = likedMemberRepository.findLikedMembersByMemberId(loginMemberId);
-
-        boolean isExistLikedMember = false;
-
-        for(Long id : likedMemberIds) {
-            if(id == likedMemberId) {
-                isExistLikedMember = true;
-            }
-        }
-
-        if(isExistLikedMember == false) {
-            throw new ConflictException("해당 아이디의 좋아요한 멤버는 존재하지 않기 때문에 삭제할 수 없습니다.");
-        }
 
         try {
             likedMemberRepository.deleteLikedMember(loginMemberId, likedMemberId);
             log.info("COMPLETE | LikedMember 좋아요한 멤버 삭제 At " + LocalDateTime.now()
                     + " | 로그인 멤버 식별자: " + loginMemberId + " | 좋아요한 멤버 식별자 : " + likedMemberId);
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("LikedMember 좋아요한 멤버 삭제 중 서버 에러 발생", e);
         }
     }
@@ -166,7 +160,7 @@ public class LikedMemberService {
 
         try {
             likedMemberRepository.deleteLikedMembers(memberId);
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("LikedMember 좋아요한 멤버 삭제들 중 서버 에러 발생", e);
         }
 

@@ -4,9 +4,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
-import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.repository.PhotoRepository;
@@ -23,6 +22,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static idorm.idormServer.exceptions.ErrorCode.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,6 @@ public class PhotoService {
 
     /**
      * Photo 파일이름으로 사진 조회 |
-     * 프로필 사진의 파일이름으로 포토를 조회한다. 조회되지 않는다면 404(Not Found)를 던진다.
      */
     public Optional<Photo> findOneByFileName(String fileName) {
         log.info("IN PROGRESS | Photo 조회 At " + LocalDateTime.now() +
@@ -75,7 +75,7 @@ public class PhotoService {
             log.info("COMPLETE | Photo 프로필 사진 저장 At " + LocalDateTime.now() +
                     " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
             return savedPhoto;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Photo 프로필 사진 save 중 에러 발생", e);
         }
     }
@@ -86,13 +86,11 @@ public class PhotoService {
      */
     @Transactional
     public List<Photo> savePostPhotos(Post post, Member member, List<String> fileNames, List<MultipartFile> files) {
+
         log.info("IN PROGRESS | Photo 커뮤니티 게시글 사진 저장 At " + LocalDateTime.now() +
                 " | 게시글 아이디 = " + post.getId() + " 멤버 아이디 = "  + member.getId() + " 파일 사이즈 = " + files.size());
 
         String folderName = "community/" + post.getDormNum() + "/" + "post-" + post.getId();
-
-        List<String> urls = new ArrayList<>();
-
         List<Photo> photos = new ArrayList<>();
 
         if(post.getPhotos() != null) {
@@ -101,14 +99,14 @@ public class PhotoService {
             }
         }
 
-        try {
-            int fileNameIndex = 0;
-            for (MultipartFile file : files) {
-                String fileName = fileNames.get(fileNameIndex);
+        int fileNameIndex = 0;
+        for (MultipartFile file : files) {
+            String fileName = fileNames.get(fileNameIndex);
 
-                String url = insertFileToS3(folderName, fileName, file);
-                urls.add(url);
+            String url = insertFileToS3(folderName, fileName, file);
 
+            Photo savedPhoto = null;
+            try {
                 Photo photo = Photo.builder()
                         .folderName(folderName)
                         .fileName(fileName)
@@ -117,12 +115,13 @@ public class PhotoService {
                         .post(post)
                         .build();
 
-                Photo savedPhoto = photoRepository.save(photo);
-                photos.add(savedPhoto);
-                fileNameIndex += 1;
+                savedPhoto = photoRepository.save(photo);
+            } catch (InternalServerErrorException e) {
+                throw new InternalServerErrorException("Photo savePostPhotos 중 서버 에러 발생", e);
             }
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Photo 커뮤니티 사진 save 중 서버 에러 발생", e);
+
+            photos.add(savedPhoto);
+            fileNameIndex += 1;
         }
 
         log.info("COMPLETE | Photo 커뮤니티 게시글 사진 저장 At " + LocalDateTime.now() +
@@ -185,18 +184,16 @@ public class PhotoService {
                 " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
 
         String folderName = member.getEmail() + "-" + member.getId();
-        String url = insertFileToS3(folderName, fileName, file);
+        insertFileToS3(folderName, fileName, file);
 
-        Optional<Photo> savedPhoto = findOneByFileName(fileName);
+        Photo savedPhoto = photoRepository.findByFileName(fileName)
+                .orElseThrow(() -> new CustomException(FILE_NOT_FOUND));
 
-        if(savedPhoto.isEmpty()) {
-            throw new ConflictException("저장된 멤버 프로필 사진이 없습니다.");
-        }
-        savedPhoto.get().modifyUpdatedAt(LocalDateTime.now());
+        savedPhoto.modifyUpdatedAt(LocalDateTime.now());
 
         log.info("COMPLETE | Photo 업데이트 At " + LocalDateTime.now() +
                 " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
-        return savedPhoto.get();
+        return savedPhoto;
     }
 
     /**
@@ -209,25 +206,22 @@ public class PhotoService {
         log.info("IN PROGRESS | Photo 프로필 사진 삭제 At " + LocalDateTime.now());
 
         String folderName = "profile-photo/" + member.getEmail() + "-" + member.getId();
+
         List<Photo> profilePhotos = photoRepository.findByFolderName(folderName);
 
         if(profilePhotos.isEmpty()) {
-            throw new ConflictException("삭제할 프로필 사진이 존재하지 않습니다.");
+            throw new CustomException(FILE_NOT_FOUND);
         }
 
-        try {
-            for(Photo photo : profilePhotos) {
-                String deleteFileName = photo.getFileName();
-                deleteFileFromS3(folderName, deleteFileName);
-                Optional<Photo> foundPhoto = photoRepository.findByFileName(deleteFileName);
-                if (foundPhoto.isEmpty()) {
-                    throw new ConflictException("삭제할 프로필 사진이 존재하지 않습니다.");
-                }
-                photoRepository.delete(foundPhoto.get());
-            }
+        for(Photo photo : profilePhotos) {
+            String deleteFileName = photo.getFileName();
+            deleteFileFromS3(folderName, deleteFileName);
 
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Photo 프로필사진 삭제 중 서버 에러 발생", e);
+            try {
+                photoRepository.delete(photo);
+            } catch (InternalServerErrorException e) {
+                throw new InternalServerErrorException("Photo deleteProfilePhotos 중 서버 에러 발생", e);
+            }
         }
 
         log.info("COMPLETE | Photo 프로필 사진 삭제 At " + LocalDateTime.now());
@@ -248,9 +242,12 @@ public class PhotoService {
 
         for(Photo photo : foundPhotos) {
             deleteFileFromS3(folderName, photo.getFileName());
-            photoRepository.delete(photo);
+            try {
+                photoRepository.delete(photo);
+            } catch (InternalServerErrorException e) {
+                throw new InternalServerErrorException("Photo deletePostFullPhotos 중 서버 에러 발생", e);
+            }
         }
-
         log.info("COMPLETE | Photo 커뮤니티 게시글 폴더 전체 삭제 At " + LocalDateTime.now());
     }
 

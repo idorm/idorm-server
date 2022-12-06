@@ -1,8 +1,6 @@
 package idorm.idormServer.exceptions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -13,11 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import static idorm.idormServer.exceptions.ErrorCode.UNAUTHORIZED_MEMBER;
+import static org.springframework.http.HttpStatus.*;
+
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private static DefaultExceptionResponseDto exceptionResponse =
-            new DefaultExceptionResponseDto("UNAUTHORIZED", "인증에 실패하였습니다.");
+    private static ErrorResponse errorResponse =
+            new ErrorResponse(UNAUTHORIZED.name(),
+                    UNAUTHORIZED_MEMBER.name(),
+                    UNAUTHORIZED_MEMBER.getDetail());
 
     @Override
     public void commence(HttpServletRequest request,
@@ -31,7 +34,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         try (OutputStream os = response.getOutputStream()) {
-            objectMapper.writeValue(os, exceptionResponse);
+            objectMapper.writeValue(os, errorResponse);
             os.flush();
         }
     }

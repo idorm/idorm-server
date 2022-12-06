@@ -93,8 +93,8 @@ public class CommentController {
             @PathVariable("post-id") Long postId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
-        Post post = postService.findById(postId);
+        memberService.findById(loginMemberId);
+        postService.findById(postId);
 
         List<Comment> foundComments = commentService.findCommentsByPostId(postId);
 
@@ -113,7 +113,8 @@ public class CommentController {
             if(comment.getParentCommentId() == null) { // 대댓글이 아닌 댓글임
 
                 // TODO: foundComments에서 가져와서 바꾸기
-                List<Comment> foundSubComments = commentService.findSubCommentsByParentCommentId(postId, comment.getId());
+                List<Comment> foundSubComments =
+                        commentService.findSubCommentsByParentCommentId(postId, comment.getId());
 
                 List<CommentDefaultResponseDto> defaultResponseDtos = new ArrayList<>();
                 for (Comment subComment : foundSubComments) {

@@ -14,5 +14,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE m.email = :email", nativeQuery = true)
     Optional<Long> findMemberIdByEmail(@Param("email") String email);
 
+    Optional<Member> findByEmail(@Param("email") String email);
+
     Optional<Member> findByNickname(String nickname);
 }

@@ -1,12 +1,10 @@
 package idorm.idormServer.matchingInfo.service;
 
-import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
-import idorm.idormServer.exceptions.http.NotFoundException;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -49,17 +48,14 @@ public class MatchingInfoService {
 
         log.info("IN PROGRESS | MatchingInfo 매칭이미지 공개여부 변경 At " + LocalDateTime.now() + " | " + member.getEmail());
 
-        Optional<MatchingInfo> foundMatchingInfo = matchingInfoRepository.findByMemberId(member.getId());
+        MatchingInfo foundMatchingInfo = matchingInfoRepository.findByMemberId(member.getId())
+                .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
 
-        if(foundMatchingInfo.isEmpty()) {
-            throw new ConflictException("등록된 매칭정보가 없습니다.");
-        }
-
-        foundMatchingInfo.get().updateIsMatchingInfoPublic(isMatchingInfoPublic);
-        matchingInfoRepository.save(foundMatchingInfo.get());
+        foundMatchingInfo.updateIsMatchingInfoPublic(isMatchingInfoPublic);
+        matchingInfoRepository.save(foundMatchingInfo);
 
         log.info("COMPLETE | MatchingInfo 매칭이미지 공개여부 변경 At " + LocalDateTime.now() + " | " + member.getEmail());
-        return foundMatchingInfo.get();
+        return foundMatchingInfo;
     }
 
     /**
@@ -70,14 +66,11 @@ public class MatchingInfoService {
 
         log.info("IN PROGRESS | MatchingInfo 단건 조회 At " + LocalDateTime.now());
 
-        Optional<MatchingInfo> foundMatchingInfo = matchingInfoRepository.findById(matchingInfoId);
-
-        if(foundMatchingInfo.isEmpty()) {
-            throw new NotFoundException("조회할 매칭정보가 존재하지 않습니다.");
-        }
+        MatchingInfo foundMatchingInfo = matchingInfoRepository.findById(matchingInfoId)
+                .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
 
         log.info("COMPLETE | MatchingInfo 단건 조회 At " + LocalDateTime.now());
-        return foundMatchingInfo.get();
+        return foundMatchingInfo;
     }
 
     /**
@@ -99,14 +92,11 @@ public class MatchingInfoService {
     public Long findByMemberId(Long memberId) {
         log.info("IN PROGRESS | MatchingInfo Member 식별자로 단건 조회 At " + LocalDateTime.now());
 
-        Optional<Long> matchingInfoId = matchingInfoRepository.findMatchingInfoIdByMemberId(memberId); // query did not return a unique result: 2
-
-        if(matchingInfoId.isEmpty()) {
-            throw new NotFoundException("조회할 매칭정보가 존재하지 않습니다.");
-        }
+        Long matchingInfoId = matchingInfoRepository.findMatchingInfoIdByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
 
         log.info("COMPLETE | MatchingInfo Member 식별자로 단건 조회 At " + LocalDateTime.now());
-        return matchingInfoId.get();
+        return matchingInfoId;
     }
 
     /**
@@ -133,15 +123,12 @@ public class MatchingInfoService {
 
         log.info("IN PROGRESS | MatchingInfo 수정 At " + LocalDateTime.now());
 
-        Optional<MatchingInfo> updateMatchingInfo = matchingInfoRepository.findById(matchingInfoId);
-
-        if(updateMatchingInfo.isEmpty()) {
-            throw new NotFoundException("등록된 매칭정보가 존재하지 않습니다.");
-        }
+        MatchingInfo updateMatchingInfo = matchingInfoRepository.findById(matchingInfoId)
+                .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
 
         try {
-            updateMatchingInfo.get().updateMatchingInfo(requestDto);
-            matchingInfoRepository.save(updateMatchingInfo.get());
+            updateMatchingInfo.updateMatchingInfo(requestDto);
+            matchingInfoRepository.save(updateMatchingInfo);
         } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("MatchingInfo 수정 중 서버 에러 발생", e);
         }

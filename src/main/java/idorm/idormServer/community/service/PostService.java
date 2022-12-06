@@ -3,10 +3,8 @@ package idorm.idormServer.community.service;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.repository.PostRepository;
-import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
-import idorm.idormServer.exceptions.http.NotFoundException;
-import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.photo.domain.Photo;
@@ -20,8 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import static idorm.idormServer.exceptions.ErrorCode.*;
 import static java.lang.Integer.parseInt;
 
 @Slf4j
@@ -107,12 +105,14 @@ public class PostService {
                     .build();
 
             Post savedPost = postRepository.save(createdPost);
-            log.info(savedPost.getId().toString());
             List<Photo> savedPhotos = savePhotos(savedPost, member, files);
             savedPost.addPhotos(savedPhotos);
-            log.info("COMPLETE | Post 저장 At " + LocalDateTime.now() + " | Post 식별자: " + createdPost.getId() + " | " + title);
+
+            log.info("COMPLETE | Post 저장 At " + LocalDateTime.now() + " | Post 식별자: " + createdPost.getId() + " | " +
+                    title);
+
             return createdPost;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Post 저장 중 서버 에러 발생", e);
         }
     }
@@ -135,26 +135,25 @@ public class PostService {
         log.info("IN PROGRESS | Post 수정 At " + LocalDateTime.now() + " | " + title + " | 수정 사진 개수 : " + files.size());
 
         Post foundPost = findById(postId);
+        photoService.deletePostFullPhotos(foundPost, member);
 
         try {
             foundPost.updatePost(title, content, isAnonymous);
 
-            photoService.deletePostFullPhotos(foundPost, member);
-
             List<Photo> updatedPhotos = savePhotos(foundPost, member, files);
-            foundPost.addPhotos(updatedPhotos);
+                foundPost.addPhotos(updatedPhotos);
+
             Post updatedPost = postRepository.save(foundPost);
 
             log.info("COMPLETE | Post 수정 At " + LocalDateTime.now() + " | Post 식별자: " + updatedPost.getId()
                     + " | 저장된 사진 개수 " + foundPost.getPhotos().size());
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Post 수정 중 서버 에러 발생", e);
         }
     }
 
     /**
      * Post 삭제 |
-     * TODO: 댓글 / 대댓글도 삭제 처리
      */
     @Transactional
     public void deletePost(Long postId, Member member) {
@@ -162,16 +161,17 @@ public class PostService {
         Post foundPost = findById(postId);
 
         if(foundPost.getMember().getId() != member.getId()) {
-            throw new UnauthorizedException("본인이 작성한 게시글만 삭제할 수 있습니다.");
+            throw new CustomException(UNAUTHORIZED_DELETE);
         }
 
+        // 게시글 내 모든 댓글 삭제
+        commentService.deleteCommentsByPostId(postId);
+
         try {
-            // 게시글 내 모든 댓글 삭제
-            commentService.deleteCommentsByPostId(postId);
             // 게시글 삭제
             foundPost.deletePost();
             postRepository.save(foundPost);
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Post 삭제 중 서버 에러 발생", e);
         }
 
@@ -184,14 +184,12 @@ public class PostService {
      */
     public Post findById(Long postId) {
         log.info("IN PROGRESS | Post 단건 조회 At " + LocalDateTime.now() + " | " + postId);
-        Optional<Post> foundPost = postRepository.findById(postId);
-        // TODO: 댓글, 대댓글까지 조회
 
-        if(foundPost.isEmpty()) {
-            throw new NotFoundException("조회할 게시글이 존재하지 않습니다.");
-        }
+        Post foundPost = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
         log.info("COMPLETE | Post 단건 조회 At " + LocalDateTime.now() + " | " + postId);
-        return foundPost.get();
+        return foundPost;
     }
 
     /**
@@ -217,9 +215,10 @@ public class PostService {
         log.info("IN PROGRESS | Post 기숙사 카테고리 별 인기 게시글 조회 At " + LocalDateTime.now() + " | " + dormNum);
         try {
             List<Post> foundPosts = postRepository.findTopPostsByDormCategory(dormNum);
-            log.info("COMPLETE | Post 기숙사 카테고리 별 인기 게시글 조회 At " + LocalDateTime.now() + " | 조회된 게시글 수: " + foundPosts.size());
+            log.info("COMPLETE | Post 기숙사 카테고리 별 인기 게시글 조회 At " + LocalDateTime.now() + " | 조회된 게시글 수: " +
+                    foundPosts.size());
             return foundPosts;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("인기 게시글 조회 중 서버 에러가 발생했습니다.", e);
         }
     }
@@ -229,12 +228,14 @@ public class PostService {
      */
     public List<Post> findPostsByMember(Member member) {
         log.info("IN PROGRESS | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | " + member.getId());
+
         memberService.findById(member.getId());
         try {
             List<Post> postsByMemberId = postRepository.findPostsByMemberId(member.getId());
-            log.info("COMPLETE | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 게시글 수 " + postsByMemberId.size());
+            log.info("COMPLETE | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 게시글 수 " +
+                    postsByMemberId.size());
             return postsByMemberId;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("멤버가 작성한 게시글 전체 조회 중 서버 에러가 발생했습니다.", e);
         }
     }
@@ -249,7 +250,8 @@ public class PostService {
         Long savedPostLikedMemberId = postLikedMemberService.save(member, post);
         try {
             post.plusPostLikesCount();
-        } catch (Exception e) {
+            postRepository.save(post);
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("게시글 공감 수 추가 중 서버 에러가 발생했습니다.", e);
         }
         return savedPostLikedMemberId;
@@ -261,18 +263,20 @@ public class PostService {
      */
     @Transactional
     public void deletePostLikes(Member member, Post post) {
-        PostLikedMember foundPostLikedMember = postLikedMemberService.findOneByMemberIdAndPostId(member.getId(), post.getId());
+        PostLikedMember foundPostLikedMember =
+                postLikedMemberService.findOneByMemberIdAndPostId(member.getId(), post.getId());
+
         postLikedMemberService.deleteById(foundPostLikedMember.getId());
 
         if(post.getLikesCount() <= 0) {
-            throw new ConflictException("취소할 수 있는 공감이 없습니다.");
+            throw new CustomException(LIKED_NOT_FOUND);
         }
 
         try {
             post.minusPostLikesCount();
-        } catch (Exception e) {
+            postRepository.save(post);
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("게시글 공감 수 삭제 중 서버 에러가 발생했습니다.", e);
         }
     }
-
 }

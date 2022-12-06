@@ -2,10 +2,8 @@ package idorm.idormServer.member.service;
 
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
-import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
-import idorm.idormServer.exceptions.http.NotFoundException;
-import idorm.idormServer.exceptions.http.UnauthorizedException;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
@@ -14,6 +12,7 @@ import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
 
 
 @Slf4j
@@ -33,6 +34,9 @@ public class MemberService {
     private final EmailService emailService;
     private final PhotoService photoService;
     private final MatchingInfoService matchingInfoService;
+
+    @Value("${DB_USERNAME}")
+    private String ENV_USERNAME;
 
     /**
      * Member 저장 |
@@ -59,17 +63,17 @@ public class MemberService {
             log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
             return member.getId();
         } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Member 저장 중 서버 에러 발생", e);
+            throw new InternalServerErrorException("Member save 중 서버 에러 발생", e);
         }
     }
 
     /**
      * Member 닉네임 중복 여부 체크 |
      */
-    public void isDuplicateNickname(String nickname) {
+    private void isDuplicateNickname(String nickname) {
         Optional<Member> foundMember = memberRepository.findByNickname(nickname);
         if(foundMember.isPresent()) {
-            throw new ConflictException("이미 존재하는 닉네임입니다.");
+            throw new CustomException(DUPLICATE_NICKNAME);
         }
     }
 
@@ -123,7 +127,7 @@ public class MemberService {
         Optional<Long> foundMember = memberRepository.findMemberIdByEmail(email);
 
         if (foundMember.isPresent()) {
-            throw new ConflictException("이미 가입된 이메일입니다.");
+            throw new CustomException(DUPLICATE_EMAIL);
         }
 
         log.info("COMPLETE | Member 중복 여부 확인 At " + LocalDateTime.now() + " | " + email);
@@ -137,14 +141,11 @@ public class MemberService {
 
         log.info("IN PROGRESS | Member 단건 조회 At " + LocalDateTime.now() + " | " + memberId);
 
-        Optional<Member> member = memberRepository.findById(memberId);
+        Member foundMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        if(member.isEmpty()) {
-            throw new UnauthorizedException("해당 id의 멤버가 존재하지 않습니다.");
-        }
-
-        log.info("COMPLETE | Member 단건 조회 At " + LocalDateTime.now() + " | " + member.get().getEmail());
-        return member.get();
+        log.info("COMPLETE | Member 단건 조회 At " + LocalDateTime.now() + " | " + foundMember.getEmail());
+        return foundMember;
     }
 
     /**
@@ -155,14 +156,14 @@ public class MemberService {
 
         log.info("IN PROGRESS | Member 전체 조회 At " + LocalDateTime.now());
 
-        List<Member> foundAllMembers = memberRepository.findAll();
+        List<Member> foundMembers = memberRepository.findAll();
 
-        if(foundAllMembers.isEmpty()) {
-            throw new NotFoundException("조회할 멤버가 존재하지 않습니다.");
+        if(foundMembers.isEmpty()) {
+            throw new CustomException(MEMBER_NOT_FOUND);
         }
 
-        log.info("COMPLETE | Member 전체 조회 At " + LocalDateTime.now() + " | Member 수: " + foundAllMembers.size());
-        return foundAllMembers;
+        log.info("COMPLETE | Member 전체 조회 At " + LocalDateTime.now() + " | Member 수: " + foundMembers.size());
+        return foundMembers;
     }
 
     /**
@@ -172,22 +173,18 @@ public class MemberService {
 
         log.info("IN PROGRESS | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
 
-        if(email.equals("idorm")) {
+        if(email.equals(ENV_USERNAME)) {
             Optional<Member> adminMember = memberRepository.findById(1L);
             return adminMember.get();
         }
 
         emailService.findByEmail(email);
 
-        Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
+        Member foundMember = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        if(foundMemberId.isEmpty()) {
-            throw new NotFoundException("가입되지 않은 이메일입니다.");
-        }
-
-        Member member = findById(foundMemberId.get());
         log.info("COMPLETE | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
-        return member;
+        return foundMember;
     }
 
     /**
@@ -224,8 +221,8 @@ public class MemberService {
         emailService.deleteById(foundEmail.getId());
 
         try {
-            // 프로필 사진 삭제
-            // 작성한 게시글, 댓글 (커뮤니티 관련) - 탈퇴한 회원입니다 로 메시지 전달
+            // TODO: 프로필 사진 삭제
+            // TODO: 작성한 게시글, 댓글 (커뮤니티 관련) - 탈퇴한 회원입니다 로 메시지 전달
             memberRepository.delete(member);
             log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now());
         } catch (InternalServerErrorException e) {
@@ -274,7 +271,7 @@ public class MemberService {
             LocalDateTime possibleUpdateTime = updatedDateTime.plusMonths(1);
 
             if(possibleUpdateTime.isAfter(LocalDateTime.now())) {
-                throw new IllegalStateException("닉네임 변경 후 30일 동안 변경이 불가합니다.");
+                throw new CustomException(CANNOT_UPDATE_NICKNAME);
             }
         }
     }
@@ -288,7 +285,7 @@ public class MemberService {
         log.info("IN PROGRESS | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
 
         if(member.getNickname().equals(nickname)) {
-            throw new ConflictException("기존의 닉네임과 같습니다.");
+            throw new CustomException(DUPLICATE_SAME_NICKNAME);
         }
 
         isDuplicateNickname(nickname);
@@ -312,7 +309,7 @@ public class MemberService {
         log.info("IN PROGRESS | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
 
         if(member.getNickname().equals(nickname)) {
-            throw new ConflictException("기존의 닉네임과 같습니다.");
+            throw new CustomException(DUPLICATE_SAME_NICKNAME);
         }
 
         isDuplicateNickname(nickname);

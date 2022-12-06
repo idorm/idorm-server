@@ -7,9 +7,7 @@ import idorm.idormServer.email.dto.EmailDefaultResponseDto;
 import idorm.idormServer.email.dto.EmailVerifyRequestDto;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.service.EmailService;
-import idorm.idormServer.exceptions.http.ConflictException;
-import idorm.idormServer.exceptions.http.NotFoundException;
-import idorm.idormServer.exceptions.http.UnauthorizedException;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
@@ -26,12 +24,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -64,14 +65,14 @@ public class EmailController {
             Optional<Long> foundMemberId = memberService.findByEmailOp(requestEmail);
 
             if(foundMemberId.isPresent()) {
-                throw new ConflictException("이미 가입된 이메일입니다.");
+                throw new CustomException(DUPLICATE_EMAIL);
             }
         }
 
         String[] mailSplit = requestEmail.split("@");
 
         if(!(mailSplit.length == 2) || !mailSplit[1].equals("inu.ac.kr")) {
-            throw new UnauthorizedException("올바른 이메일 형식이 아닙니다.");
+            throw new CustomException(ILLEGAL_ARGUMENT_EMAIL);
         }
 
         sendSimpleMessage(requestEmail);
@@ -101,7 +102,7 @@ public class EmailController {
     @PostMapping("/verifyCode/{email}")
     public ResponseEntity<DefaultResponseDto<Object>> verifyCode(
             @PathVariable("email") String requestEmail,
-            @RequestBody @Valid EmailVerifyRequestDto code) throws AuthenticationFailedException {
+            @RequestBody @Valid EmailVerifyRequestDto code) {
 
         Email email = emailService.findByEmail(requestEmail);
 
@@ -109,30 +110,22 @@ public class EmailController {
         LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
 
         if(!(email.getCode().equals(code.getCode()))) {
-            throw new AuthenticationFailedException("잘못된 인증번호입니다.");
+            throw new CustomException(INVALID_CODE);
         }
 
         if(LocalDateTime.now().isAfter(expiredDateTime)) {
-            throw new AuthenticationFailedException("인증번호가 만료되었습니다.");
+            throw new CustomException(EXPIRED_CODE);
         }
 
+        emailService.isChecked(requestEmail);
+        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email);
 
-        if(email.getCode().equals(code.getCode())) {
-
-            emailService.isChecked(requestEmail);
-
-            EmailDefaultResponseDto response = new EmailDefaultResponseDto(email);
-
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
-                            .responseMessage("Email 인증코드 검증 완료")
-                            .data(response)
-                            .build());
-        }
-        else{
-            throw new UnauthorizedException("잘못된 인증번호입니다.");
-        }
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("OK")
+                        .responseMessage("Email 인증코드 검증 완료")
+                        .data(response)
+                        .build());
     }
 
     @ApiOperation(value = "비밀번호 수정용 Email 인증")
@@ -144,7 +137,7 @@ public class EmailController {
     )
     @PostMapping("/email/password")
     public ResponseEntity<DefaultResponseDto<Object>> findPassword(
-            @RequestBody @Valid EmailAuthRequestDto request) throws Exception {
+            @RequestBody @Valid EmailAuthRequestDto request) throws MessagingException, UnsupportedEncodingException {
 
         String requestEmail = request.getEmail();
 
@@ -184,13 +177,12 @@ public class EmailController {
         LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
 
         if(!(email.get().getCode().equals(code.getCode()))) {
-            throw new ConflictException("잘못된 인증번호입니다.");
+            throw new CustomException(INVALID_CODE);
         }
 
         if(LocalDateTime.now().isAfter(expiredDateTime)) {
-            throw new NotFoundException("인증번호가 만료되었습니다.");
+            throw new CustomException(EXPIRED_CODE);
         }
-
 
         Iterator<String> iter = member.getRoles().iterator();
         List<String> roles = new ArrayList<>();
@@ -200,7 +192,6 @@ public class EmailController {
         }
 
         jwtTokenProvider.createToken(member.getUsername(), roles);
-
         EmailDefaultResponseDto response = new EmailDefaultResponseDto(email.get());
 
         return ResponseEntity.status(200)
@@ -217,7 +208,7 @@ public class EmailController {
      */
 
     //이메일,인증번호로그/DB 저장
-    private MimeMessage createMessage(String to) throws Exception{
+    private MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
         log.info("보내는 대상 : " + to);
 
         MimeMessage  message = emailSender.createMimeMessage();
@@ -267,15 +258,15 @@ public class EmailController {
     }
 
     //전송
-    public void sendSimpleMessage(String to) throws Exception {
+    public void sendSimpleMessage(String to) throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage message = createMessage(to);
 
         try{
             emailSender.send(message);
-        } catch(MailException es){
-            es.printStackTrace();
-            throw new ConflictException("가입되지 않은 이메일입니다.");
+        } catch(MailException e){
+            log.info(e.getMessage());
+            throw new CustomException(EMAIL_NOT_FOUND);
         }
     }
 }

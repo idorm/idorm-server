@@ -2,8 +2,8 @@ package idorm.idormServer.email.service;
 
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.repository.EmailRepository;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
-import idorm.idormServer.exceptions.http.NotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -34,7 +36,7 @@ public class EmailService {
 
         try {
             emailRepository.save(certifiedEmail);
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Email save 중 서버 에러 발생", e);
         }
 
@@ -51,14 +53,11 @@ public class EmailService {
 
         log.info("START | Email 인증코드 저장 At " + LocalDateTime.now() + " | " + email);
 
-        Optional<Email> nonCertifiedEmail = emailRepository.findByEmail(email);
+        Email nonCertifiedEmail = emailRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
 
-        if(nonCertifiedEmail.isEmpty()) {
-            throw new NotFoundException("인증코드를 저장할 email을 찾을 수 없습니다.");
-        }
-
-        nonCertifiedEmail.get().setCode(code);
-        log.info("COMPLETE | Email 인증코드 저장 At " + LocalDateTime.now() + " | " + nonCertifiedEmail.get().getCode());
+        nonCertifiedEmail.setCode(code);
+        log.info("COMPLETE | Email 인증코드 저장 At " + LocalDateTime.now() + " | " + email);
     }
 
     /**
@@ -79,14 +78,11 @@ public class EmailService {
 
         log.info("START | Email 조회 At " + LocalDateTime.now() + " | " + email);
 
-        Optional<Email> foundEmail = emailRepository.findByEmail(email);
+        Email foundEmail = emailRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
 
-        if(foundEmail.isEmpty()) {
-            throw new NotFoundException("등록되지 않은 이메일입니다.");
-        }
-
-        log.info("COMPLETE | Email 조회 At " + LocalDateTime.now() + " | " + foundEmail.get().getEmail());
-        return foundEmail.get();
+        log.info("COMPLETE | Email 조회 At " + LocalDateTime.now() + " | " + email);
+        return foundEmail;
     }
 
     /**
@@ -97,21 +93,18 @@ public class EmailService {
     @Transactional
     public void deleteById(Long emailId){
 
-        log.info("START | Email 삭제 At " + LocalDateTime.now() + " | " + emailId);
+        log.info("START | Email 삭제 At " + LocalDateTime.now() + " | 이메일 식별자 : " + emailId);
 
-        Optional<Email> email = emailRepository.findById(emailId);
-
-        if(email.isEmpty()) {
-            throw new NotFoundException("이메일을 찾을 수 없습니다.");
-        }
+        Email email = emailRepository.findById(emailId)
+                .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
 
         try {
-            emailRepository.delete(email.get());
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Email 삭제 중 서버 에러 발생", e);
+            emailRepository.delete(email);
+        } catch (InternalServerErrorException e) {
+            throw new InternalServerErrorException("Email deleteById 중 서버 에러 발생", e);
         }
 
-        log.info("COMPLETE | Email 삭제 At " + LocalDateTime.now() + " | " + email.get().getEmail());
+        log.info("COMPLETE | Email 삭제 At " + LocalDateTime.now() + " | 이메일 : " + email.getEmail());
     }
 
     /**
@@ -123,14 +116,16 @@ public class EmailService {
 
         log.info("START | Email 인증여부 체크 At " + LocalDateTime.now() + " | " + email);
 
-        Optional<Email> foundEmail = emailRepository.findByEmail(email);
+        Email foundEmail = emailRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
 
-        if(foundEmail.isEmpty()) {
-            throw new NotFoundException("이메일을 찾을 수 없습니다.");
+        try {
+            foundEmail.isChecked();
+            emailRepository.save(foundEmail);
+        } catch (InternalServerErrorException e) {
+            throw new InternalServerErrorException("Email isChecked 중 서버 에러 발생", e);
         }
-
-        foundEmail.get().isChecked();
-        log.info("COMPLETE | Email 인증여부 체크 At " + LocalDateTime.now() + " | " + foundEmail.get().getEmail());
+        log.info("COMPLETE | Email 인증여부 체크 At " + LocalDateTime.now() + " | " + email);
     }
 
     /**
@@ -140,13 +135,16 @@ public class EmailService {
     @Transactional
     public void updateIsJoined(String email) {
         log.info("START | Email 가입여부 수정 At " + LocalDateTime.now() + " | " + email);
-        Optional<Email> foundEmail = emailRepository.findByEmail(email);
 
-        if(foundEmail.isEmpty()) {
-            throw new NotFoundException("이메일을 찾을 수 없습니다.");
+        Email foundEmail = emailRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
+
+        try {
+            foundEmail.isJoined();
+            emailRepository.save(foundEmail);
+        } catch (InternalServerErrorException e) {
+            throw new InternalServerErrorException("Email updateIsJoined 중 서버 에러 발생", e);
         }
-        foundEmail.get().isJoined();
-        emailRepository.save(foundEmail.get());
         log.info("COMPLETE | Email 가입여부 수정 At " + LocalDateTime.now() + " | " + email);
     }
 
@@ -157,8 +155,13 @@ public class EmailService {
     @Transactional
     public void updateUpdatedAt(Email email) {
         log.info("START | Email updatedAt 수정 At " + LocalDateTime.now() + " | " + email);
-        email.modifyUpdatedAt(LocalDateTime.now());
-        emailRepository.save(email);
+
+        try {
+            email.modifyUpdatedAt(LocalDateTime.now());
+            emailRepository.save(email);
+        } catch (InternalServerErrorException e) {
+            throw new InternalServerErrorException("Email updateUpdatedAt 중 서버 에러 발생", e);
+        }
         log.info("COMPLETE | Email updatedAt 수정 At " + LocalDateTime.now() + " | " + email);
     }
 

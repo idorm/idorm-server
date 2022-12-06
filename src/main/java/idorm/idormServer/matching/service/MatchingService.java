@@ -1,6 +1,6 @@
 package idorm.idormServer.matching.service;
 
-import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -42,11 +44,11 @@ public class MatchingService {
         Member loginMember = memberService.findById(memberId);
 
         if (loginMember.getMatchingInfo() == null) {
-            throw new ConflictException("매칭정보가 존재하지 않습니다.");
+            throw new CustomException(MATCHING_INFO_NOT_FOUND);
         }
 
         if (loginMember.getMatchingInfo().getIsMatchingInfoPublic() == false) {
-            throw new ConflictException("매칭이미지가 비공개 입니다.");
+            throw new CustomException(ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC);
         }
 
         List<Long> filteredMatchingInfoId = new ArrayList<>();
@@ -69,13 +71,12 @@ public class MatchingService {
                 Long filteredMemberId = matchingInfoService.findById(matchingInfoId).getMember().getId();
 
                 for (Long dislikedMemberId : dislikedMembersId) {
-
                     if (filteredMemberId == dislikedMemberId) {
                         iterator.remove();
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Matching 매칭멤버 전체 조회 중 서버 에러 발생", e);
         }
 
@@ -93,14 +94,13 @@ public class MatchingService {
         Member loginMember = memberService.findById(memberId);
 
         if(loginMember.getMatchingInfo() == null) {
-            throw new ConflictException("매칭정보가 존재하지 않습니다.");
+            throw new CustomException(MATCHING_INFO_NOT_FOUND);
         }
 
         if(loginMember.getMatchingInfo().getIsMatchingInfoPublic() == false) {
-            throw new ConflictException("매칭이미지가 비공개 입니다.");
+            throw new CustomException(ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC);
         }
 
-        // TODO: true일 경우 false,true 모두 괜찮은 경우이므로 둘 다 조회되어야함
         int isSnoring = (filteringRequest.getIsSnoring() == true) ? 1 : 0; // true:1 , false: 0 / false 무조건 조회
         int isSmoking = (filteringRequest.getIsSmoking() == true) ? 1 : 0; // false 무조건 조회
         int isGrinding = (filteringRequest.getIsGrinding() == true) ? 1 : 0; // false 무조건 조회
@@ -130,7 +130,6 @@ public class MatchingService {
                 Long filteredMemberId = matchingInfoService.findById(matchingInfoId).getMember().getId();
 
                 for (Long dislikedMemberId : dislikedMembersId) {
-
                     if (filteredMemberId == dislikedMemberId) {
                         iterator.remove();
                     }
@@ -139,7 +138,7 @@ public class MatchingService {
 
             log.info("COMPLETE | Matching 필터링된 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return filteredMatchingInfoId;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Matching 필터링된 매칭멤버 조회 중 서버 에러 발생", e);
         }
     }

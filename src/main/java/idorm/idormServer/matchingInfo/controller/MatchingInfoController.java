@@ -1,7 +1,8 @@
 package idorm.idormServer.matchingInfo.controller;
 
 import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.exceptions.http.ConflictException;
+import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exceptions.ErrorCode;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultResponseDto;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,8 +45,9 @@ public class MatchingInfoController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        if(member.getMatchingInfo() != null) // 등록된 매칭정보가 있다면
-            throw new ConflictException("이미 등록된 매칭정보가 있습니다.");
+        if(member.getMatchingInfo() != null) { // 등록된 매칭정보가 있다면
+            throw new CustomException(DUPLICATE_MATCHING_INFO);
+        }
 
         MatchingInfo createdMatchingInfo = matchingInfoService.save(request, member);
         MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(createdMatchingInfo);
@@ -72,13 +76,13 @@ public class MatchingInfoController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
-            throw new ConflictException("등록된 매칭정보가 없습니다.");
+        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
+            throw new CustomException(MATCHING_INFO_NOT_FOUND);
+        }
 
         MatchingInfo updateMatchingInfo = member.getMatchingInfo();
 
         matchingInfoService.updateMatchingInfo(updateMatchingInfo.getId(), updateRequestDto);
-
         MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(updateMatchingInfo);
 
         return ResponseEntity.status(200)
@@ -105,8 +109,9 @@ public class MatchingInfoController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
-            throw new ConflictException("등록된 매칭정보가 없습니다.");
+        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
+            throw new CustomException(MATCHING_INFO_NOT_FOUND);
+        }
 
         MatchingInfo updatedMatchingInfo = matchingInfoService.updateMatchingInfoIsPublic(
                 member,
@@ -135,8 +140,9 @@ public class MatchingInfoController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없다면
-            throw new ConflictException("등록된 매칭정보가 없습니다.");
+        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
+            throw new CustomException(MATCHING_INFO_NOT_FOUND);
+        }
 
         Long matchingInfoId = member.getMatchingInfo().getId();
         MatchingInfo foundMatchingInfo = matchingInfoService.findById(matchingInfoId);
@@ -165,8 +171,9 @@ public class MatchingInfoController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        if(member.getMatchingInfo() == null) // 등록된 매칭정보가 없는 경우
-            throw new ConflictException("등록된 매칭정보가 없습니다.");
+        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없는 경우
+            throw new CustomException(MATCHING_INFO_NOT_FOUND);
+        }
 
         MatchingInfo matchingInfo = member.getMatchingInfo();
         matchingInfoService.deleteMatchingInfo(matchingInfo);

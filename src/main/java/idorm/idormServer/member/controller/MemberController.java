@@ -4,8 +4,7 @@ import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
-import idorm.idormServer.exceptions.http.ConflictException;
-import idorm.idormServer.exceptions.http.NotFoundException;
+import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.matching.service.DislikedMemberService;
 import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.member.domain.Member;
@@ -33,6 +32,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exceptions.ErrorCode.FILE_NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
@@ -129,7 +131,7 @@ public class MemberController {
         Member loginMember = memberService.findById(loginMemberId);
 
         if(photo == null) {
-            throw new NotFoundException("업로드한 파일이 존재하지 않습니다.");
+            throw new CustomException(FILE_NOT_FOUND);
         }
 
         memberService.savePhoto(loginMemberId, photo);
@@ -304,14 +306,14 @@ public class MemberController {
 
         if(request.getEmail().equals(ENV_USERNAME)) {
             if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
-                throw new ConflictException("올바르지 않은 비밀번호입니다.");
+                throw new CustomException(UNAUTHORIZED_PASSWORD);
             }
             loginMember = memberService.findById(1L);
         } else {
             loginMember = memberService.findByEmail(request.getEmail());
 
             if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
-                throw new ConflictException("올바르지 않은 비밀번호입니다.");
+                throw new CustomException(UNAUTHORIZED_PASSWORD);
             }
         }
 
@@ -323,7 +325,6 @@ public class MemberController {
         }
 
         String createdToken = jwtTokenProvider.createToken(loginMember.getUsername(), roles);
-
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember, createdToken);
 
         return ResponseEntity.status(200)
@@ -446,7 +447,7 @@ public class MemberController {
         Matcher matcher_symbol = pattern_symbol.matcher(password);
 
         if(!matcher.find() || !matcher_symbol.find()) { // wrong regex
-            throw new ConflictException("비밀번호는 숫자, 특수문자가 포함되어야 하며 8자 이상 15자 이하 여야 합니다.");
+            throw new CustomException(ILLEGAL_ARGUMENT_PASSWORD);
         }
     }
 
@@ -456,13 +457,13 @@ public class MemberController {
          * 한글 / 영어 / 숫자 입력 가능
          * 2 - 8자, 공백 불가
          */
-        final String REGEX = "^[A-Za-z0-9ㄱ-ㅎ가-힣]{2,8}$";
+        final String REGEX = "^[A-Za-z0-9ㄱ-ㅎ가-힣]{2,9}$";
 
         Pattern pattern = Pattern.compile(REGEX);
         Matcher matcher = pattern.matcher(nickname);
 
         if (!matcher.find()) {
-            throw new ConflictException("닉네임은 한글, 영문, 숫자 중 입력해야 하며, 2자 이상 8자 이하여야 합니다.");
+            throw new CustomException(ILLEGAL_ARGUMENT_NICKNAME);
         }
 
     }
