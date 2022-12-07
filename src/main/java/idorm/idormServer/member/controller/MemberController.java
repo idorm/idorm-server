@@ -22,6 +22,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -186,9 +187,8 @@ public class MemberController {
     @ApiOperation(value = "Member 프로필 사진 삭제")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -200,6 +200,7 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/profile-photo")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMemberProfilePhoto(
             HttpServletRequest request2) {
@@ -209,13 +210,10 @@ public class MemberController {
 
         memberService.deleteMemberProfilePhoto(loginMember);
 
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
-
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NO_CONTENT")
                         .responseMessage("Member 프로필 사진 삭제 완료")
-                        .data(response)
                         .build());
     }
 
@@ -342,8 +340,8 @@ public class MemberController {
     @ApiOperation(value = "Member 삭제")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "OK"),
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -352,6 +350,7 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMember(
             HttpServletRequest request
@@ -366,7 +365,7 @@ public class MemberController {
 
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NO_CONTENT")
                         .responseMessage("Member 삭제 완료")
                         .build());
     }

@@ -88,7 +88,8 @@ public class MatchingInfoService {
      * MatchingInfo 단건 조회 |
      * 매칭인포 식별자로 매칭인포를 단건 조회한다. 저장된 매칭정보가 없다면 404(Not Found)를 던진다.
      */
-    public MatchingInfo findById(Long matchingInfoId) {
+    public MatchingInfo
+    findById(Long matchingInfoId) {
 
         log.info("IN PROGRESS | MatchingInfo 단건 조회 At " + LocalDateTime.now());
 

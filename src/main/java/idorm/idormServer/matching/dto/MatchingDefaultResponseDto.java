@@ -14,58 +14,58 @@ import java.time.LocalDateTime;
 @ApiModel(value = "Matching 응답")
 public class MatchingDefaultResponseDto {
 
-    @ApiModelProperty(position = 1, value="멤버 식별자")
+    @ApiModelProperty(position = 1, value="멤버 식별자", example = "2")
     private Long memberId;
 
-    @ApiModelProperty(position = 2, value="매칭정보 식별자")
+    @ApiModelProperty(position = 2, value="매칭정보 식별자", example = "1")
     private Long matchingInfoId;
 
-    @ApiModelProperty(position = 3, example = "DORM1, DORM2, DORM3")
+    @ApiModelProperty(position = 3, value = "기숙사 분류",example = "DORM1, DORM2, DORM3")
     private String dormNum;
 
-    @ApiModelProperty(position = 4, example = "WEEK16, WEEK24")
+    @ApiModelProperty(position = 4, value = "입사 기간", example = "WEEK16, WEEK24")
     private String joinPeriod;
 
-    @ApiModelProperty(position = 5, example = "FEMALE, MALE")
+    @ApiModelProperty(position = 5, value = "성별", example = "FEMALE, MALE")
     private String gender;
 
-    @ApiModelProperty(position = 6, value = "나이")
+    @ApiModelProperty(position = 6, value = "나이", example = "20")
     private Integer age;
 
-    @ApiModelProperty(position = 7, value = "코골이 여부")
+    @ApiModelProperty(position = 7, value = "코골이 여부", example = "false")
     private Boolean isSnoring;
 
-    @ApiModelProperty(position = 8, value = "이갈이 여부")
+    @ApiModelProperty(position = 8, value = "이갈이 여부", example = "false")
     private Boolean isGrinding;
 
-    @ApiModelProperty(position = 9, value = "흡연 여부")
+    @ApiModelProperty(position = 9, value = "흡연 여부", example = "false")
     private Boolean isSmoking;
 
-    @ApiModelProperty(position = 10, value = "실내 음식 허용 여부")
+    @ApiModelProperty(position = 10, value = "실내 음식 허용 여부", example = "false")
     private Boolean isAllowedFood;
 
-    @ApiModelProperty(position = 11, value = "이어폰 착용 여부")
+    @ApiModelProperty(position = 11, value = "이어폰 착용 여부", example = "false")
     private Boolean isWearEarphones;
 
-    @ApiModelProperty(position = 12, value = "기상 시간")
+    @ApiModelProperty(position = 12, value = "기상 시간", example = "아침 7시 기상")
     private String wakeUpTime;
 
-    @ApiModelProperty(position = 13, value = "정리 정돈 상태")
+    @ApiModelProperty(position = 13, value = "정리 정돈 상태", example = "더러워용")
     private String cleanUpStatus;
 
-    @ApiModelProperty(position = 14, value = "샤워 시간")
+    @ApiModelProperty(position = 14, value = "샤워 시간", example = "아침7시, 밤 12시에 주로 씻어요")
     private String showerTime;
 
-    @ApiModelProperty(position = 15, value = "오픈 채팅 링크")
+    @ApiModelProperty(position = 15, value = "오픈 채팅 링크", example = "링크~")
     private String openKakaoLink;
 
-    @ApiModelProperty(position = 16, value = "ISTP")
+    @ApiModelProperty(position = 16, value = "mbti", example = "ISTP")
     private String mbti;
 
-    @ApiModelProperty(position = 17, value = "룸메에게 하고싶은 말")
+    @ApiModelProperty(position = 17, value = "룸메에게 하고싶은 말", example = "즐거운 한 학기를 보내보아요~")
     private String wishText;
 
-    @ApiModelProperty(position = 18, value = "좋아요 혹은 싫어요한 멤버로 추가한 시간")
+    @ApiModelProperty(position = 18, value = "좋아요 혹은 싫어요한 멤버로 추가한 시간", example = "시간")
     private LocalDateTime addedAt;
 
     public MatchingDefaultResponseDto(MatchingInfo matchingInfo) {

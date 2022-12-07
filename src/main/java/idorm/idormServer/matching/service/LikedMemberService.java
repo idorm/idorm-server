@@ -31,22 +31,6 @@ public class LikedMemberService {
 
     /**
      * LikedMember 좋아요한 멤버 조회 |
-     * Member 식별자에 의해 조회되는 좋아요한 멤버의 전체 식별자를 조회합니다.
-     */
-    public List<Long> findLikedMembers(Long memberId) {
-        log.info("IN PROGRESS | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
-
-        try {
-            List<Long> likedMembers = likedMemberRepository.findLikedMembersByMemberId(memberId);
-            log.info("COMPLETE | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
-            return likedMembers;
-        } catch (Exception e) {
-            throw new InternalServerErrorException("LikedMember 좋아요한 멤버 전체 조회 중 서버 에러 발생", e);
-        }
-    }
-
-    /**
-     * LikedMember 좋아요한 멤버 조회 |
      */
     public List<LikedMember> findLikedMembersByMemberId(Long memberId) {
         log.info("IN PROGRESS | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
@@ -55,7 +39,7 @@ public class LikedMemberService {
             List<LikedMember> likedMembers = likedMemberRepository.findAllByMemberId(memberId);
             log.info("COMPLETE | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return likedMembers;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("LikedMember 좋아요한 멤버 전체 조회 중 서버 에러 발생", e);
         }
     }
@@ -133,7 +117,8 @@ public class LikedMemberService {
      * 좋아요한 멤버 삭제
      */
     @Transactional
-    public void deleteLikedMember(Long loginMemberId, Long likedMemberId) {
+    public void
+    deleteLikedMember(Long loginMemberId, Long likedMemberId) {
 
         log.info("IN PROGRESS | LikedMember 좋아요한 멤버 삭제 At " + LocalDateTime.now()
                 + " | 로그인 멤버 식별자: " + loginMemberId + " | 좋아요한 멤버 식별자 : " + likedMemberId);

@@ -3,6 +3,7 @@ package idorm.idormServer.matching.controller;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exceptions.ErrorResponse;
 import idorm.idormServer.matching.domain.DislikedMember;
 import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
@@ -14,9 +15,12 @@ import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,11 +45,25 @@ public class MatchingController {
 
     @ApiOperation(value = "Matching 매칭멤버 조회")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Matching 매칭멤버 조회 완료"),
-            @ApiResponse(code = 204, message = "매칭되는 멤버가 없습니다."),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 매칭이미지가 비공개 상태입니다."),
-            @ApiResponse(code = 500, message = "Matching 매칭멤버 조회 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "400",
+                    description = "ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/member/matching")
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingMembers(
@@ -81,12 +99,26 @@ public class MatchingController {
 
     @ApiOperation(value = "Matching 필터링된 매칭멤버 조회")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Matching 필터링된 매칭멤버 조회 완료"),
-            @ApiResponse(code = 204, message = "매칭되는 멤버가 없습니다."),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 404, message = "올바른 기숙사 분류 혹은 입사기간이 아닙니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 매칭이미지가 비공개 입니다."),
-            @ApiResponse(code = 500, message = "Matching 매칭멤버 조회 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / DORM_CATEGORY_FORMAT_INVALID / " +
+                            "JOIN_PERIOD_FORMAT_INVALID / ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/member/matching/filter")
     public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(
@@ -94,17 +126,6 @@ public class MatchingController {
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-
-        if(!filteringRequest.getDormNum().equals("DORM1") &&
-                !filteringRequest.getDormNum().equals("DORM2") &&
-                !filteringRequest.getDormNum().equals("DORM3")) {
-            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
-        }
-
-        if(!filteringRequest.getJoinPeriod().equals("WEEK16") &&
-                !filteringRequest.getJoinPeriod().equals("WEEK24")) {
-            throw new CustomException(JOIN_PERIOD_FORMAT_INVALID);
-        }
 
         List<Long> filteredMatchingInfoId = matchingService.findFilteredMatchingMembers(loginMemberId, filteringRequest);
 
@@ -133,11 +154,22 @@ public class MatchingController {
 
     @ApiOperation(value = "Matching 좋아요한 매칭멤버 조회")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Matching 좋아요한 매칭멤버 조회 완료"),
-            @ApiResponse(code = 204, message = "Matching 좋아요한 매칭멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "Matching 좋아요한 매칭멤버 조회 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/member/matching/like")
     public ResponseEntity<DefaultResponseDto<Object>> findLikedMatchingMembers(
@@ -163,7 +195,8 @@ public class MatchingController {
             Long likedMemberMatchingInfoId = matchingInfoService.findByMemberId(likedMember.getSelectedLikedMemberId());
             MatchingInfo likedMemberMatchingInfo = matchingInfoService.findById(likedMemberMatchingInfoId);
 
-            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(likedMemberMatchingInfo, likedMember.getCreatedAt());
+            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(likedMemberMatchingInfo,
+                    likedMember.getCreatedAt());
             response.add(matchingOneDto);
         }
         return ResponseEntity.status(200)
@@ -176,13 +209,25 @@ public class MatchingController {
 
     @ApiOperation(value = "Matching 좋아요한 매칭멤버 추가")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Matching 좋아요한 매칭멤버 추가 완료"),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다."),
-            @ApiResponse(code = 500, message = "LikedMember save 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / ILLEGAL_ARGUMENT_SELF / ILLEGAL_ARGUMENT_ADMIN",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND / MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/member/matching/like/{liked-member-id}")
-    public ResponseEntity<DefaultResponseDto<Object>> addLikedMatchingMembers(
+    public ResponseEntity<DefaultResponseDto<Object>> addLikedMatchingMember(
             HttpServletRequest request, @PathVariable(value = "liked-member-id") Long selectedLikedMemberId
     ) {
 
@@ -210,23 +255,31 @@ public class MatchingController {
 
         MatchingDefaultResponseDto response = new MatchingDefaultResponseDto(loginMemberMatchingInfo);
 
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NO_CONTENT")
                         .responseMessage("Matching 좋아요한 매칭멤버 추가 완료")
-                        .data(response)
                         .build());
     }
 
     @ApiOperation(value = "Matching 좋아요한 매칭멤버 삭제")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Matching 좋아요한 매칭멤버 삭제 완료"),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 404, message = "좋아요한 멤버의 id가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "Matching 좋아요한 매칭멤버 삭제 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/matching/like/{liked-member-id}")
-    public ResponseEntity<DefaultResponseDto<Object>> deleteLikedMatchingMembers(
+    public ResponseEntity<DefaultResponseDto<Object>> deleteLikedMatchingMember(
             HttpServletRequest request, @PathVariable(value = "liked-member-id") Long likedMemberId
     ) {
 
@@ -238,21 +291,31 @@ public class MatchingController {
         MatchingInfo loginMemberMatchingInfo = matchingInfoService.findById(loginMemberMatchingInfoId);
         MatchingDefaultResponseDto response = new MatchingDefaultResponseDto(loginMemberMatchingInfo);
 
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NO_CONTENT")
                         .responseMessage("Matching 좋아요한 매칭멤버 삭제 완료")
-                        .data(response)
                         .build());
     }
 
     @ApiOperation(value = "Matching 싫어요한 매칭멤버 조회")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Matching 싫어요한 매칭멤버 조회 완료"),
-            @ApiResponse(code = 204, message = "Matching 싫어요한 매칭멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "Matching 싫어요한 매칭멤버 조회 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/member/matching/dislike")
     public ResponseEntity<DefaultResponseDto<Object>> findDislikedMatchingMembers(
@@ -275,10 +338,13 @@ public class MatchingController {
 
         for(DislikedMember dislikedMember : dislikedMembers) {
 
-            Long dislikedMemberMatchingInfoId = matchingInfoService.findByMemberId(dislikedMember.getSelectedDislikedMemberId());
+            Long dislikedMemberMatchingInfoId =
+                    matchingInfoService.findByMemberId(dislikedMember.getSelectedDislikedMemberId());
+
             MatchingInfo dislikedMemberMatchingInfo = matchingInfoService.findById(dislikedMemberMatchingInfoId);
 
-            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(dislikedMemberMatchingInfo, dislikedMember.getCreatedAt());
+            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(dislikedMemberMatchingInfo,
+                    dislikedMember.getCreatedAt());
             response.add(matchingOneDto);
         }
         return ResponseEntity.status(200)
@@ -291,13 +357,28 @@ public class MatchingController {
 
     @ApiOperation(value = "Matching 싫어요한 매칭멤버 추가")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Matching 싫어요한 매칭멤버 추가 완료"),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 409, message = "매칭정보가 존재하지 않습니다. 혹은 관리자 혹은 본인을 싫어요한 멤버로 설정할 수 없습니다."),
-            @ApiResponse(code = 500, message = "DislikedMember save 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / ILLEGAL_ARGUMENT_SELF / ILLEGAL_ARGUMENT_ADMIN",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND / MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409",
+                    description = "DUPLICATE_DISLIKED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/member/matching/dislike/{disliked-member-id}")
-    public ResponseEntity<DefaultResponseDto<Object>> addDislikedMatchingMembers(
+    public ResponseEntity<DefaultResponseDto<Object>> addDislikedMatchingMember(
             HttpServletRequest request, @PathVariable(value = "disliked-member-id") Long selectedDislikedMemberId
     ) {
 
@@ -320,44 +401,41 @@ public class MatchingController {
         }
         dislikedMemberService.saveDislikedMember(loginMemberId, selectedDislikedMemberId);
 
-        Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
-        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findById(loginMemberMatchingInfoId);
-
-        MatchingDefaultResponseDto response = new MatchingDefaultResponseDto(loginMemberMatchingInfo);
-
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NO_CONTENT")
                         .responseMessage("Matching 싫어요한 매칭멤버 추가 완료")
-                        .data(response)
                         .build());
     }
 
     @ApiOperation(value = "Matching 싫어요한 매칭멤버 삭제")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Matching 싫어요한 매칭멤버 삭제 완료"),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 404, message = "싫어요한 멤버의 id가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "Matching 싫어요한 매칭멤버 삭제 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/matching/dislike/{disliked-member-id}")
-    public ResponseEntity<DefaultResponseDto<Object>> deleteDislikedMatchingMembers(
+    public ResponseEntity<DefaultResponseDto<Object>> deleteDislikedMatchingMember(
         HttpServletRequest request, @PathVariable(value = "disliked-member-id") Long dislikedMemberId
     ) {
-
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         dislikedMemberService.deleteDislikedMember(loginMemberId, dislikedMemberId);
 
-        Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
-        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findById(loginMemberMatchingInfoId);
-        MatchingDefaultResponseDto response = new MatchingDefaultResponseDto(loginMemberMatchingInfo);
-
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NO_CONTENT")
                         .responseMessage("Matching 싫어요한 매칭멤버 삭제 완료")
-                        .data(response)
                         .build());
     }
 }

@@ -62,26 +62,41 @@ public class MatchingService {
                     loginMemberMatchingInfo.getJoinPeriod(),
                     loginMemberMatchingInfo.getGender()
             );
-
-            List<Long> dislikedMembersId = dislikedMemberService.findDislikedMembers(memberId);
-
-            Iterator<Long> iterator = filteredMatchingInfoId.iterator();
-            while (iterator.hasNext()) {
-                Long matchingInfoId = iterator.next();
-                Long filteredMemberId = matchingInfoService.findById(matchingInfoId).getMember().getId();
-
-                for (Long dislikedMemberId : dislikedMembersId) {
-                    if (filteredMemberId == dislikedMemberId) {
-                        iterator.remove();
-                    }
-                }
-            }
         } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Matching 매칭멤버 전체 조회 중 서버 에러 발생", e);
         }
 
+        List<Long> dislikedMembersId = dislikedMemberService.findDislikedMembers(memberId);
+
+        Iterator<Long> iterator = filteredMatchingInfoId.iterator();
+        while (iterator.hasNext()) {
+            Long matchingInfoId = iterator.next();
+            Long filteredMemberId = matchingInfoService.findById(matchingInfoId).getMember().getId();
+
+            for (Long dislikedMemberId : dislikedMembersId) {
+                if (filteredMemberId == dislikedMemberId) {
+                    iterator.remove();
+                }
+            }
+        }
+
         log.info("COMPLETE | Matching 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
         return filteredMatchingInfoId;
+    }
+
+    private void dormNumValidator(String dormNum) {
+        if(dormNum.equals("DORM1") &&
+                dormNum.equals("DORM2") &&
+                dormNum.equals("DORM3")) {
+            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
+        }
+    }
+
+    private void joinPeriodValidator(String joinPeriod) {
+        if(joinPeriod.equals("WEEK16") &&
+                joinPeriod.equals("WEEK24")) {
+            throw new CustomException(JOIN_PERIOD_FORMAT_INVALID);
+        }
     }
 
     /**
@@ -101,14 +116,19 @@ public class MatchingService {
             throw new CustomException(ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC);
         }
 
+        dormNumValidator(filteringRequest.getDormNum());
+        joinPeriodValidator(filteringRequest.getJoinPeriod());
+
         int isSnoring = (filteringRequest.getIsSnoring() == true) ? 1 : 0; // true:1 , false: 0 / false 무조건 조회
         int isSmoking = (filteringRequest.getIsSmoking() == true) ? 1 : 0; // false 무조건 조회
         int isGrinding = (filteringRequest.getIsGrinding() == true) ? 1 : 0; // false 무조건 조회
         int isWearEarphones = (filteringRequest.getIsWearEarphones() == true) ? 1 : 0; // true 이면 무조건 조회
         int isAllowedFood = (filteringRequest.getIsAllowedFood() == true) ? 1 : 0; // false 이면 무조건 조회
 
+        List<Long> filteredMatchingInfoId = new ArrayList<>();
+
         try {
-            List<Long> filteredMatchingInfoId = matchingInfoRepository.findFilteredMatchingMembers(
+            filteredMatchingInfoId = matchingInfoRepository.findFilteredMatchingMembers(
                     memberId,
                     filteringRequest.getDormNum(),
                     filteringRequest.getJoinPeriod(),
@@ -121,25 +141,25 @@ public class MatchingService {
                     filteringRequest.getMinAge(),
                     filteringRequest.getMaxAge()
             );
-
-            List<Long> dislikedMembersId = dislikedMemberService.findDislikedMembers(memberId);
-
-            Iterator<Long> iterator = filteredMatchingInfoId.iterator();
-            while (iterator.hasNext()) {
-                Long matchingInfoId = iterator.next();
-                Long filteredMemberId = matchingInfoService.findById(matchingInfoId).getMember().getId();
-
-                for (Long dislikedMemberId : dislikedMembersId) {
-                    if (filteredMemberId == dislikedMemberId) {
-                        iterator.remove();
-                    }
-                }
-            }
-
-            log.info("COMPLETE | Matching 필터링된 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
-            return filteredMatchingInfoId;
         } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Matching 필터링된 매칭멤버 조회 중 서버 에러 발생", e);
         }
+
+        List<Long> dislikedMembersId = dislikedMemberService.findDislikedMembers(memberId);
+
+        Iterator<Long> iterator = filteredMatchingInfoId.iterator();
+        while (iterator.hasNext()) {
+            Long matchingInfoId = iterator.next();
+            Long filteredMemberId = matchingInfoService.findById(matchingInfoId).getMember().getId();
+
+            for (Long dislikedMemberId : dislikedMembersId) {
+                if (filteredMemberId == dislikedMemberId) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        log.info("COMPLETE | Matching 필터링된 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
+        return filteredMatchingInfoId;
     }
 }

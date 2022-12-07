@@ -3,6 +3,7 @@ package idorm.idormServer.config;
 import com.fasterxml.classmate.TypeResolver;
 import idorm.idormServer.email.dto.EmailDefaultResponseDto;
 import idorm.idormServer.exceptions.ErrorResponse;
+import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultResponseDto;
 import idorm.idormServer.member.dto.MemberDefaultResponseDto;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,8 @@ public class SwaggerConfiguration {
                         typeResolver.resolve(ErrorResponse.class),
                         typeResolver.resolve(EmailDefaultResponseDto.class),
                         typeResolver.resolve(MemberDefaultResponseDto.class),
-                        typeResolver.resolve(MatchingInfoDefaultResponseDto.class)
+                        typeResolver.resolve(MatchingInfoDefaultResponseDto.class),
+                        typeResolver.resolve(MatchingDefaultResponseDto.class)
                         )
                 .useDefaultResponseMessages(false)
                 .select()

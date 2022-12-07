@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -122,13 +123,11 @@ public class MatchingInfoController {
                 );
     }
 
-    @PatchMapping("/member/matchinginfo")
     @ApiOperation(value = "MatchingInfo 공개여부 수정")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -142,6 +141,8 @@ public class MatchingInfoController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @PatchMapping("/member/matchinginfo")
     public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfoIsPublic(
             HttpServletRequest request2,
             MatchingInfoUpdateIsPublicRequestDto requestDto) {
@@ -153,17 +154,14 @@ public class MatchingInfoController {
             throw new CustomException(MATCHING_INFO_NOT_FOUND);
         }
 
-        MatchingInfo updatedMatchingInfo = matchingInfoService.updateMatchingInfoIsPublic(
+        matchingInfoService.updateMatchingInfoIsPublic(
                 member,
                 requestDto.getIsMatchingInfoPublic());
 
-        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(updatedMatchingInfo);
-
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NO_CONTENT")
                         .responseMessage("MatchingInfo 공개여부 수정 완료")
-                        .data(response)
                         .build()
                 );
     }
@@ -224,6 +222,7 @@ public class MatchingInfoController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingInfo(HttpServletRequest request2) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));

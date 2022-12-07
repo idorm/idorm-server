@@ -48,7 +48,8 @@ public class DislikedMemberService {
     /**
      * DislikedMember 싫어요한 멤버 조회 |
      */
-    public List<DislikedMember> findDislikedMembersByMemberId(Long memberId) {
+    public List<DislikedMember>
+    findDislikedMembersByMemberId(Long memberId) {
         log.info("IN PROGRESS | DislikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
 
         try {
