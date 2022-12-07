@@ -2,6 +2,7 @@ package idorm.idormServer.exceptions;
 
 import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintDeclarationException;
@@ -62,7 +64,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ((Objects.requireNonNull(exception.getFieldError().getRejectedValue()).toString() == null) ?
                         "null" : exception.getFieldError().getRejectedValue().toString()));
 
-
         return ResponseEntity
                 .status(status)
                 .body(ErrorResponse.builder()
@@ -73,6 +74,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 );
     }
 
+    /**
+     * 400 SizeLimitExceededException
+     */
+    @ExceptionHandler(value = { MaxUploadSizeExceededException.class })
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+    protected ResponseEntity<ErrorResponse> handleFileSizeLimitExceeded() {
+        log.error("[CustomException 발생] Exception : {}", FILE_SIZE_EXCEEDED);
+        return ErrorResponse.toResponseEntity(FILE_SIZE_EXCEEDED);
+    }
 
     /**
      * 500 Internal Server Error |

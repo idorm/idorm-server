@@ -2,7 +2,7 @@ package idorm.idormServer.matchingInfo.controller;
 
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.ErrorCode;
+import idorm.idormServer.exceptions.ErrorResponse;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultResponseDto;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
@@ -11,7 +11,12 @@ import idorm.idormServer.matchingInfo.dto.MatchingInfoUpdateIsPublicRequestDto;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,15 +35,26 @@ public class MatchingInfoController {
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping("/member/matchinginfo")
     @ApiOperation(value = "MatchingInfo 저장", notes = "최초로 온보딩 정보를 저장할 경우만 사용 가능합니다.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "MatchingInfo 저장 완료"),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 404, message = "멤버를 찾을 수 없습니다."),
-            @ApiResponse(code = 409, message = "이미 등록된 매칭정보가 있습니다."),
-            @ApiResponse(code = 500, message = "MatchingInfo save 중 서버 에러 발생"),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / DORM_CATEGORY_FORMAT_INVALID / JOIN_PERIOD_FORMAT_INVALID",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409",
+                    description = "DUPLICATE_MATCHING_INFO",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @PostMapping("/member/matchinginfo")
     public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(
             HttpServletRequest request2, @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 
@@ -64,10 +80,22 @@ public class MatchingInfoController {
     @PutMapping("/member/matchinginfo")
     @ApiOperation(value = "MatchingInfo 수정")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "MatchingInfo 수정 완료"),
-            @ApiResponse(code = 400, message = "등록된 매칭정보가 없습니다."),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "MatchingInfo 수정 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / DORM_CATEGORY_FORMAT_INVALID / JOIN_PERIOD_FORMAT_INVALID",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(
             HttpServletRequest request2,
@@ -97,10 +125,22 @@ public class MatchingInfoController {
     @PatchMapping("/member/matchinginfo")
     @ApiOperation(value = "MatchingInfo 공개여부 수정")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "MatchingInfo 공개여부 수정 완료"),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 409, message = "등록된 매칭정보가 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "MatchingInfo 매칭이미지 공개 여부 변경 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfoIsPublic(
             HttpServletRequest request2,
@@ -131,9 +171,19 @@ public class MatchingInfoController {
     @GetMapping("/member/matchinginfo")
     @ApiOperation(value = "MatchingInfo 단건 조회")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "MatchingInfo 단건 조회"),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 409, message = "등록된 매칭정보가 없습니다."),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingInfo(HttpServletRequest request2) {
 
@@ -161,10 +211,18 @@ public class MatchingInfoController {
     @DeleteMapping("/member/matchinginfo")
     @ApiOperation(value = "MatchingInfo 삭제")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "MatchingInfo 삭제 완료"),
-            @ApiResponse(code = 401, message = "로그인한 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 409, message = "등록된 매칭정보가 없습니다."),
-            @ApiResponse(code = 500, message = "MatchingInfo 삭제 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHING_INFO_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingInfo(HttpServletRequest request2) {
 
@@ -180,7 +238,7 @@ public class MatchingInfoController {
 
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NO_CONTENT")
                         .responseMessage("MatchingInfo 삭제 완료")
                         .build()
                 );

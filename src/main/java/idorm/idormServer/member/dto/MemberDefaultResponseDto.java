@@ -1,7 +1,6 @@
 package idorm.idormServer.member.dto;
 
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.photo.domain.Photo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -12,19 +11,19 @@ import lombok.*;
 @AllArgsConstructor
 public class MemberDefaultResponseDto {
 
-    @ApiModelProperty(position = 1, required = true, dataType = "Long", value = "식별자", example = "1")
+    @ApiModelProperty(position = 1, required = true, dataType = "Long", value = "멤버 식별자", example = "1")
     private Long id;
 
     @ApiModelProperty(position = 2, required = true, dataType = "String", value = "이메일", example = "aaa@inu.ac.kr")
     private String email;
 
-    @ApiModelProperty(position = 3, dataType = "String", value = "닉네임", example = "현")
+    @ApiModelProperty(position = 3, dataType = "String", value = "닉네임", example = "애교쟁이응철이")
     private String nickname;
 
     @ApiModelProperty(position = 5, dataType = "String", value = "프로필사진 주소", example = "aws S3 저장 url")
     private String profilePhotoUrl;
 
-    @ApiModelProperty(position = 6, dataType = "Long", value = "매칭정보 식별자")
+    @ApiModelProperty(position = 6, dataType = "Long", value = "매칭정보 식별자", example = "3")
     private Long matchingInfoId;
 
     @ApiModelProperty(position = 7, dataType = "String", value = "로그인 토큰")

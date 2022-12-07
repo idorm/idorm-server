@@ -5,6 +5,7 @@ import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exceptions.ErrorResponse;
 import idorm.idormServer.matching.service.DislikedMemberService;
 import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.member.domain.Member;
@@ -12,8 +13,10 @@ import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +37,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static idorm.idormServer.exceptions.ErrorCode.*;
-import static idorm.idormServer.exceptions.ErrorCode.FILE_NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,14 +61,24 @@ public class MemberController {
 
     @ApiOperation(value = "Member 단건 조회")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 단건 조회 완료"),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다.")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> findOneMember(
             HttpServletRequest request
     ) {
-
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
@@ -82,10 +94,23 @@ public class MemberController {
 
     @ApiOperation(value = "Member 회원가입", notes = "회원가입은 이메일 인증이 완료된 후 가능합니다.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 회원가입 완료"),
-            @ApiResponse(code = 400, message = "올바른 형식의 이메일 주소여야 합니다."),
-            @ApiResponse(code = 404, message = "등록하지 않은 이메일입니다."),
-            @ApiResponse(code = 409, message = "이미 가입된 이메일 혹은 닉네임입니다. 혹은 비밀번호 정규식 검증 실패")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / PASSWORD_FORMAT_INVALID / " +
+                            "NICKNAME_FORMAT_INVALID",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "EMAIL_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409",
+                    description = "DUPLICATE_NICKNAME",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PostMapping("/register")
@@ -117,10 +142,22 @@ public class MemberController {
 
     @ApiOperation(value = "Member 프로필 사진 저장")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 프로필 사진 저장 완료"),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 404, message = "업로드한 파일이 존재하지 않습니다."),
-            @ApiResponse(code = 500, message = "Member 프로필 사진 저장 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FILE_SIZE_EXCEEDED",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "FILE_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PostMapping("/member/profile-photo")
@@ -148,10 +185,19 @@ public class MemberController {
 
     @ApiOperation(value = "Member 프로필 사진 삭제")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 프로필 사진 삭제 완료"),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 409, message = "삭제할 프로필 사진이 없습니다."),
-            @ApiResponse(code = 500, message = "Member 프로필 사진 삭제 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "FILE_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @DeleteMapping("/member/profile-photo")
@@ -175,10 +221,19 @@ public class MemberController {
 
     @ApiOperation(value = "로그인 가능 시, Member 비밀번호 변경")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 로그인 상태에서 비밀번호 변경 완료"),
-            @ApiResponse(code = 400, message = "비밀번호 입력은 필수입니다."),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 500, message = "Member 비밀번호 변경 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / PASSWORD_FORMAT_INVALID",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PatchMapping("/member/password")
@@ -205,10 +260,19 @@ public class MemberController {
 
     @ApiOperation(value = "로그인 불가 시, Member 비밀번호 변경")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 로그아웃 상태에서 비밀번호 변경 완료"),
-            @ApiResponse(code = 400, message = "올바른 형식의 이메일 주소여야 합니다."),
-            @ApiResponse(code = 404, message = "등록 혹은 가입되지 않은 이메일입니다."),
-            @ApiResponse(code = 500, message = "Member 비밀번호 변경 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / PASSWORD_FORMAT_INVALID",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "EMAIL_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PatchMapping("/password")
@@ -238,11 +302,22 @@ public class MemberController {
 
     @ApiOperation(value = "Member 닉네임 변경")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 닉네임 변경 완료"),
-            @ApiResponse(code = 400, message = "닉네임 입력은 필수입니다."),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 409, message = "기존의 닉네임과 같음 / 이미 존재하는 닉네임 / 닉네임 변경은 30일 이후 가능"),
-            @ApiResponse(code = 500, message = "Member 비밀번호 변경 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / NICKNAME_FORMAT_INVALID",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409",
+                    description = "DUPLICATE_NICKNAME / CANNOT_UPDATE_NICKNAME",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PatchMapping("/member/nickname")
@@ -266,9 +341,15 @@ public class MemberController {
 
     @ApiOperation(value = "Member 삭제")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 삭제 완료"),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 500, message = "사용자를 찾을 수 없습니다.")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @DeleteMapping("/member")
@@ -290,12 +371,25 @@ public class MemberController {
                         .build());
     }
 
+
     @ApiOperation(value = "Member 로그인", notes = "로그인 후 토큰을 던져줍니다.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 로그인 완료, 토큰을 반환합니다."),
-            @ApiResponse(code = 400, message = "이메일 입력은 필수입니다."),
-            @ApiResponse(code = 404, message = "등록 혹은 가입되지 않은 이메일입니다."),
-            @ApiResponse(code = 409, message = "올바르지 않은 비밀번호입니다.")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "PASSWORD_FORMAT_INVALID / EMAIL_FORMAT_INVALID / FIELD_REQUIRED",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409",
+                    description = "UNAUTHORIZED_PASSWORD",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PostMapping("/login")
@@ -303,6 +397,8 @@ public class MemberController {
             @RequestBody @Valid MemberLoginRequestDto request) {
 
         Member loginMember = null;
+
+        passwordValidator(request.getPassword());
 
         if(request.getEmail().equals(ENV_USERNAME)) {
             if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
@@ -335,17 +431,28 @@ public class MemberController {
                         .build());
     }
 
-
     /**
      * admin role
      */
 
     @ApiOperation(value = "관리자용 / Member 전체 조회", notes = "가입된 전체 멤버에 대한 데이터를 조회할 수 있습니다.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 전체 조회 완료"),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다."),
-            @ApiResponse(code = 403, message = "일반 유저 로그인이 아닌 관리자 로그인이 필요합니다."),
-            @ApiResponse(code = 500, message = "Member 전체 조회 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403",
+                    description = "FORBIDDEN_AUTHORIZATION",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @GetMapping("/admin/members")
@@ -365,12 +472,28 @@ public class MemberController {
 
     @ApiOperation(value = "관리자용 / 특정 Member 정보 수정 (비밀번호, 닉네임)")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 정보 수정 완료"),
-            @ApiResponse(code = 400, message = "닉네임 혹은 비밀번호 입력은 필수입니다."),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다. 혹은 수정할 id의 멤버가 존재하지 않습니다."),
-            @ApiResponse(code = 403, message = "일반 유저 로그인이 아닌 관리자 로그인이 필요합니다."),
-            @ApiResponse(code = 409, message = "비밀번호 정규식 검증 실패"),
-            @ApiResponse(code = 500, message = "Member 닉네임 혹은 비밀번호 변경 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "PASSWORD_FORMAT_INVALID / NICKNAME_FORMAT_INVALID / FIELD_REQUIRED",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403",
+                    description = "FORBIDDEN_AUTHORIZATION",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409",
+                    description = "DUPLICATE_NICKNAME",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PatchMapping("/admin/member/{id}")
@@ -380,6 +503,7 @@ public class MemberController {
         Member updateMember = memberService.findById(updateMemberId);
 
         passwordValidator(request.getPassword());
+        nicknameValidator(request.getNickname());
 
         memberService.updatePassword(updateMember, request.getPassword());
         memberService.updateNicknameByAdmin(updateMember, request.getNickname());
@@ -396,10 +520,22 @@ public class MemberController {
 
     @ApiOperation(value = "관리자용 / 특정 Member 삭제")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Member 삭제 완료"),
-            @ApiResponse(code = 401, message = "로그인이 필요합니다. 혹은 삭제할 id의 멤버를 찾을 수 없습니다."),
-            @ApiResponse(code = 403, message = "일반 유저 로그인이 아닌 관리자 로그인이 필요합니다."),
-            @ApiResponse(code = 500, message = "Member 삭제 중 서버 에러 발생")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403",
+                    description = "FORBIDDEN_AUTHORIZATION",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @DeleteMapping("/admin/member/{id}")
@@ -447,7 +583,7 @@ public class MemberController {
         Matcher matcher_symbol = pattern_symbol.matcher(password);
 
         if(!matcher.find() || !matcher_symbol.find()) { // wrong regex
-            throw new CustomException(ILLEGAL_ARGUMENT_PASSWORD);
+            throw new CustomException(PASSWORD_FORMAT_INVALID);
         }
     }
 
@@ -457,13 +593,13 @@ public class MemberController {
          * 한글 / 영어 / 숫자 입력 가능
          * 2 - 8자, 공백 불가
          */
-        final String REGEX = "^[A-Za-z0-9ㄱ-ㅎ가-힣]{2,9}$";
+        final String REGEX = "^[A-Za-z0-9ㄱ-ㅎ가-힣]{2,10}$";
 
         Pattern pattern = Pattern.compile(REGEX);
         Matcher matcher = pattern.matcher(nickname);
 
         if (!matcher.find()) {
-            throw new CustomException(ILLEGAL_ARGUMENT_NICKNAME);
+            throw new CustomException(NICKNAME_FORMAT_INVALID);
         }
 
     }

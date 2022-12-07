@@ -102,7 +102,7 @@ public class PostController {
         if(!postRequest.getDormNum().equals("DORM1") &&
                 !postRequest.getDormNum().equals("DORM2") &&
                 !postRequest.getDormNum().equals("DORM3")) {
-            throw new CustomException(ILLEGAL_ARGUMENT_DORM_CATEGORY);
+            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
         }
 
         Member member = memberService.findById(postRequest.getMemberId());
@@ -139,7 +139,7 @@ public class PostController {
     ) {
 
         if(!dormNum.equals("DORM1") && !dormNum.equals("DORM2") && !dormNum.equals("DORM3")) {
-            throw new CustomException(ILLEGAL_ARGUMENT_DORM_CATEGORY);
+            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
         }
 
         List<Post> posts = postService.findManyPostsByDormCategory(dormNum);
@@ -198,7 +198,7 @@ public class PostController {
     ) {
 
         if(!dormNum.equals("DORM1") && !dormNum.equals("DORM2") && !dormNum.equals("DORM3")) {
-            throw new CustomException(ILLEGAL_ARGUMENT_DORM_CATEGORY);
+            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
         }
 
         List<Post> posts = postService.findTopPosts(dormNum);

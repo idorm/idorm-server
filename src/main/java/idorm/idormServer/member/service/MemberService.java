@@ -49,9 +49,8 @@ public class MemberService {
         log.info("IN PROGRESS | Member 저장 At " + LocalDateTime.now() + " | " + email);
 
         isExistingEmail(email);
-
+        isDuplicateNickname(nickname);
         try {
-            isDuplicateNickname(nickname);
 
             Member member = Member.builder()
                     .email(email)
@@ -89,24 +88,23 @@ public class MemberService {
 
         Member foundMember = findById(memberId);
 
+        String[] memberEmail = foundMember.getEmail().split("[@]");
+        String memberEmailSplit = memberEmail[0];
+        String fileName = memberEmailSplit + photo.getContentType().replace("image/", ".");
+
+        Optional<Photo> foundPhoto = photoService.findOneByFileName(fileName);
+
+        if(foundPhoto.isPresent()) {
+            Photo updatedPhoto = photoService.update(foundMember, fileName, photo);
+            foundMember.updatePhoto(updatedPhoto);
+        }
+
+        Photo savedPhoto = photoService.save(foundMember, fileName, photo);
+
         try {
-            String[] memberEmail = foundMember.getEmail().split("[@]");
-            String memberEmailSplit = memberEmail[0];
-            String fileName = memberEmailSplit + photo.getContentType().replace("image/", ".");
-
-            Optional<Photo> foundPhoto = photoService.findOneByFileName(fileName);
-
-            if(foundPhoto.isPresent()) {
-                Photo updatedPhoto = photoService.update(foundMember, fileName, photo);
-                foundMember.updatePhoto(updatedPhoto);
-            }
-
             if(foundPhoto.isEmpty()) {
-                Photo savedPhoto = photoService.save(foundMember, fileName, photo);
                 foundMember.updatePhoto(savedPhoto);
             }
-
-
         } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Member 프로필 사진 저장 중 서버 에러 발생", e);
         }

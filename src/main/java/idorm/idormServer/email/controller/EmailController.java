@@ -8,12 +8,15 @@ import idorm.idormServer.email.dto.EmailVerifyRequestDto;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exceptions.ErrorResponse;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -48,20 +51,29 @@ public class EmailController {
 
     @ApiOperation(value = "Email 인증")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Email 인증코드 전송 완료"),
-            @ApiResponse(code = 400, message = "이메일을 입력해 주세요."),
-            @ApiResponse(code = 401, message = "올바른 이메일 형식이 아닙니다."),
-            @ApiResponse(code = 409, message = "이미 가입된 이메일입니다.")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "EMAIL_FORMAT_INVALID / FIELD_REQUIRED",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409",
+                    description = "DUPLICATE_EMAIL",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PostMapping("/email")
     public ResponseEntity<DefaultResponseDto<Object>> emailAuth(
-            @RequestBody @Valid EmailAuthRequestDto request) throws Exception {
+            @RequestBody @Valid EmailAuthRequestDto request) throws MessagingException, UnsupportedEncodingException {
 
         String requestEmail = request.getEmail();
         Optional<Email> email = emailService.findByEmailOp(request.getEmail());
 
-        if(!email.isEmpty()) {
+        if(email.isPresent()) {
             Optional<Long> foundMemberId = memberService.findByEmailOp(requestEmail);
 
             if(foundMemberId.isPresent()) {
@@ -72,7 +84,7 @@ public class EmailController {
         String[] mailSplit = requestEmail.split("@");
 
         if(!(mailSplit.length == 2) || !mailSplit[1].equals("inu.ac.kr")) {
-            throw new CustomException(ILLEGAL_ARGUMENT_EMAIL);
+            throw new CustomException(EMAIL_FORMAT_INVALID);
         }
 
         sendSimpleMessage(requestEmail);
@@ -91,12 +103,24 @@ public class EmailController {
 
     }
 
+
     @ApiOperation(value = "Email 인증코드 검증", notes = "/email 인증코드 확인 용도")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Email 인증코드 검증 완료"),
-            @ApiResponse(code = 401, message = "인증에 실패했습니다."),
-            @ApiResponse(code = 404, message = "인증번호가 만료되었습니다."),
-            @ApiResponse(code = 409, message = "잘못된 인증번호입니다.")
+            @ApiResponse(responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "INVALID_CODE / EXPIRED_CODE",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "EMAIL_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PostMapping("/verifyCode/{email}")
@@ -130,9 +154,18 @@ public class EmailController {
 
     @ApiOperation(value = "비밀번호 수정용 Email 인증")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Email 인증코드 전송 완료"),
-            @ApiResponse(code = 400, message = "올바른 이메일 형식이 아닙니다."),
-            @ApiResponse(code = 404, message = "등록 혹은 가입되지 않은 이메일입니다.")
+            @ApiResponse(responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "EMAIL_FORMAT_INVALID",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PostMapping("/email/password")
@@ -160,10 +193,18 @@ public class EmailController {
 
     @ApiOperation(value = "비밀번호 수정용 Email 인증코드 검증", notes = "/email/password 인증코드 확인 용도")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Email 인증코드 검증 완료"),
-            @ApiResponse(code = 401, message = "인증번호가 만료되었습니다."),
-            @ApiResponse(code = 404, message = "등록 혹은 가입되지 않은 이메일입니다."),
-            @ApiResponse(code = 409, message = "잘못된 인증번호입니다."),
+            @ApiResponse(responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "INVALID_CODE / EXPIRED_CODE",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     }
     )
     @PostMapping("/verifyCode/password/{email}")
@@ -206,7 +247,6 @@ public class EmailController {
     /**
      *함수
      */
-
     //이메일,인증번호로그/DB 저장
     private MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
         log.info("보내는 대상 : " + to);

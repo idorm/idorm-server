@@ -25,12 +25,34 @@ public class MatchingInfoService {
     private final MatchingInfoRepository matchingInfoRepository;
 
     /**
+     * 기숙사 분류 체크
+     */
+    private void validateDormNum(String dormNum) {
+        if(!dormNum.equals("DORM1") && !dormNum.equals("DORM2") && !dormNum.equals("DORM3")) {
+            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
+        }
+    }
+
+    /**
+     * 입사 기간 체크
+     */
+    private void validateJoinPeriod(String joinPeriod) {
+        if(!joinPeriod.equals("WEEK16") &&
+                !joinPeriod.equals("WEEK24")) {
+            throw new CustomException(JOIN_PERIOD_FORMAT_INVALID);
+        }
+    }
+
+    /**
      * MatchingInfo 저장 |
      */
     @Transactional
     public MatchingInfo save(MatchingInfoDefaultRequestDto requestDto, Member member) {
 
         log.info("IN PROGRESS | MatchingInfo 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
+
+        validateDormNum(requestDto.getDormNum());
+        validateJoinPeriod(requestDto.getJoinPeriod());
 
         MatchingInfo matchingInfo = requestDto.toEntity(member);
         matchingInfoRepository.save(matchingInfo);
@@ -51,8 +73,12 @@ public class MatchingInfoService {
         MatchingInfo foundMatchingInfo = matchingInfoRepository.findByMemberId(member.getId())
                 .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
 
-        foundMatchingInfo.updateIsMatchingInfoPublic(isMatchingInfoPublic);
-        matchingInfoRepository.save(foundMatchingInfo);
+        try {
+            foundMatchingInfo.updateIsMatchingInfoPublic(isMatchingInfoPublic);
+            matchingInfoRepository.save(foundMatchingInfo);
+        } catch (InternalServerErrorException e) {
+            throw new InternalServerErrorException("MatchingInfo updateMatchingInfoIsPublic 중 서버 에러 발생", e);
+        }
 
         log.info("COMPLETE | MatchingInfo 매칭이미지 공개여부 변경 At " + LocalDateTime.now() + " | " + member.getEmail());
         return foundMatchingInfo;
@@ -123,8 +149,13 @@ public class MatchingInfoService {
 
         log.info("IN PROGRESS | MatchingInfo 수정 At " + LocalDateTime.now());
 
+
+
         MatchingInfo updateMatchingInfo = matchingInfoRepository.findById(matchingInfoId)
                 .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
+
+        validateDormNum(requestDto.getDormNum());
+        validateJoinPeriod(requestDto.getJoinPeriod());
 
         try {
             updateMatchingInfo.updateMatchingInfo(requestDto);

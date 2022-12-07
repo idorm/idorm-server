@@ -10,17 +10,20 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public enum ErrorCode {
 
-
     /**
      * 400 BAD_REQUEST : 잘못된 요청
      */
-    ILLEGAL_ARGUMENT(BAD_REQUEST, "올바른 형식의 입력값이 아닙니다."),
+//    ILLEGAL_ARGUMENT(BAD_REQUEST, "올바른 형식의 입력값이 아닙니다."),
 
-    ILLEGAL_ARGUMENT_EMAIL(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
-    ILLEGAL_ARGUMENT_PASSWORD(BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
-    ILLEGAL_ARGUMENT_NICKNAME(BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
-    ILLEGAL_ARGUMENT_DORM_CATEGORY(BAD_REQUEST, "올바른 형식의 기숙사 분류가 아닙니다."),
-    ILLEGAL_ARGUMENT_JOIN_PERIOD(BAD_REQUEST, "올바른 형식의 입사 기간이 아닙니다."),
+    FIELD_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
+    FILE_SIZE_EXCEEDED(BAD_REQUEST, "파일 사이즈 초과 입니다."),
+
+    EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
+    PASSWORD_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
+    NICKNAME_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
+    DORM_CATEGORY_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 기숙사 분류가 아닙니다."),
+    JOIN_PERIOD_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 입사 기간이 아닙니다."),
+    
     ILLEGAL_ARGUMENT_ADMIN(BAD_REQUEST, "관리자는 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SAME_PK(BAD_REQUEST, "부모 식별자와 자식 식별자가 같을 수 없습니다."),
@@ -30,7 +33,7 @@ public enum ErrorCode {
     /**
      * 401 UNAUTHORIZED : 인증되지 않은 사용자
      */
-    INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한이 없는 토큰입니다."),
+//    INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한이 없는 토큰입니다."),
 
     INVALID_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
     EXPIRED_CODE(UNAUTHORIZED, "이메일 인증 유효시간이 초과되었습니다."),
@@ -77,7 +80,7 @@ public enum ErrorCode {
     /**
      * 500 INTERNAL_SERVER_ERROR : 서버 에러
      */
-    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.")
+//    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.")
     ;
 
 

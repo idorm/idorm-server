@@ -98,12 +98,12 @@ public class MatchingController {
         if(!filteringRequest.getDormNum().equals("DORM1") &&
                 !filteringRequest.getDormNum().equals("DORM2") &&
                 !filteringRequest.getDormNum().equals("DORM3")) {
-            throw new CustomException(ILLEGAL_ARGUMENT_DORM_CATEGORY);
+            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
         }
 
         if(!filteringRequest.getJoinPeriod().equals("WEEK16") &&
                 !filteringRequest.getJoinPeriod().equals("WEEK24")) {
-            throw new CustomException(ILLEGAL_ARGUMENT_JOIN_PERIOD);
+            throw new CustomException(JOIN_PERIOD_FORMAT_INVALID);
         }
 
         List<Long> filteredMatchingInfoId = matchingService.findFilteredMatchingMembers(loginMemberId, filteringRequest);
