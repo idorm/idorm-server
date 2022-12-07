@@ -120,7 +120,7 @@ public class MatchingController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
-    @GetMapping("/member/matching/filter")
+    @PostMapping("/member/matching/filter")
     public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(
             HttpServletRequest request, @RequestBody @Valid MatchingFilteredMatchingInfoRequestDto filteringRequest
     ) {
