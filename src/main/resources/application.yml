@@ -12,7 +12,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create # DDL 기능 사용 여부(create/update/create-drop/validate/none)
+      ddl-auto: none # DDL 기능 사용 여부(create/update/create-drop/validate/none)
       use-new-id-generator-mappings: false
     properties:
       hibernate:
