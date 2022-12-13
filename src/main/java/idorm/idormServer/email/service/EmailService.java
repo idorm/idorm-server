@@ -3,10 +3,12 @@ package idorm.idormServer.email.service;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.repository.EmailRepository;
 import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
+
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +38,9 @@ public class EmailService {
 
         try {
             emailRepository.save(certifiedEmail);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Email save 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] EmailService save {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
 
         log.info("COMPLETE | Email 저장 At " + LocalDateTime.now() + " | " + certifiedEmail.toString());
@@ -100,8 +103,9 @@ public class EmailService {
 
         try {
             emailRepository.delete(email);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Email deleteById 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] EmailService deleteById {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
 
         log.info("COMPLETE | Email 삭제 At " + LocalDateTime.now() + " | 이메일 : " + email.getEmail());
@@ -122,8 +126,9 @@ public class EmailService {
         try {
             foundEmail.isChecked();
             emailRepository.save(foundEmail);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Email isChecked 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] EmailService isChecked {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
         log.info("COMPLETE | Email 인증여부 체크 At " + LocalDateTime.now() + " | " + email);
     }
@@ -142,8 +147,9 @@ public class EmailService {
         try {
             foundEmail.isJoined();
             emailRepository.save(foundEmail);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Email updateIsJoined 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] EmailService updateIsJoined {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
         log.info("COMPLETE | Email 가입여부 수정 At " + LocalDateTime.now() + " | " + email);
     }
@@ -159,8 +165,9 @@ public class EmailService {
         try {
             email.modifyUpdatedAt(LocalDateTime.now());
             emailRepository.save(email);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Email updateUpdatedAt 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] EmailService updateUpdatedAt {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
         log.info("COMPLETE | Email updatedAt 수정 At " + LocalDateTime.now() + " | " + email);
     }

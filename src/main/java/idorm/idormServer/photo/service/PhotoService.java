@@ -5,13 +5,15 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
+
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.repository.PhotoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,8 +77,9 @@ public class PhotoService {
             log.info("COMPLETE | Photo 프로필 사진 저장 At " + LocalDateTime.now() +
                     " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
             return savedPhoto;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Photo 프로필 사진 save 중 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PhotoService save {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -116,8 +119,9 @@ public class PhotoService {
                         .build();
 
                 savedPhoto = photoRepository.save(photo);
-            } catch (InternalServerErrorException e) {
-                throw new InternalServerErrorException("Photo savePostPhotos 중 서버 에러 발생", e);
+            } catch (DataAccessException | ConstraintViolationException e) {
+                log.info("[서버 에러 발생] PhotoService savePostPhotos {} {}", e.getCause(), e.getMessage());
+                throw new CustomException(SERVER_ERROR);
             }
 
             photos.add(savedPhoto);
@@ -156,7 +160,8 @@ public class PhotoService {
             log.info("COMPLETE | S3에 파일 저장 At " + LocalDateTime.now() + " | " + url);
             return url;
         } catch (IOException e) {
-            throw new InternalServerErrorException("Photo insertFileToS3 중 에러 발생", e);
+            log.info("[서버 에러 발생] PhotoService insertFileToS3 {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -219,8 +224,9 @@ public class PhotoService {
 
             try {
                 photoRepository.delete(photo);
-            } catch (InternalServerErrorException e) {
-                throw new InternalServerErrorException("Photo deleteProfilePhotos 중 서버 에러 발생", e);
+            } catch (DataAccessException | ConstraintViolationException e) {
+                log.info("[서버 에러 발생] PhotoService deleteProfilePhotos {} {}", e.getCause(), e.getMessage());
+                throw new CustomException(SERVER_ERROR);
             }
         }
 
@@ -244,8 +250,9 @@ public class PhotoService {
             deleteFileFromS3(folderName, photo.getFileName());
             try {
                 photoRepository.delete(photo);
-            } catch (InternalServerErrorException e) {
-                throw new InternalServerErrorException("Photo deletePostFullPhotos 중 서버 에러 발생", e);
+            } catch (DataAccessException | ConstraintViolationException e) {
+                log.info("[서버 에러 발생] PhotoService deletePostFullPhotos {} {}", e.getCause(), e.getMessage());
+                throw new CustomException(SERVER_ERROR);
             }
         }
         log.info("COMPLETE | Photo 커뮤니티 게시글 폴더 전체 삭제 At " + LocalDateTime.now());
@@ -267,7 +274,8 @@ public class PhotoService {
         try {
             amazonS3Client.deleteObject(bucketName, deletingFileName);
         } catch (Exception e) {
-            throw new InternalServerErrorException("Photo deleteFileFromS3 중 에러 발생", e);
+            log.info("[서버 에러 발생] PhotoService deleteFileFromS3 {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 }

@@ -6,6 +6,7 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.exceptions.ErrorResponse;
+
 import idorm.idormServer.matching.service.DislikedMemberService;
 import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.member.domain.Member;
@@ -20,8 +21,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,6 +42,7 @@ import java.util.stream.Collectors;
 
 import static idorm.idormServer.exceptions.ErrorCode.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "Member API")

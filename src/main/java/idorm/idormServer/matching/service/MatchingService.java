@@ -1,7 +1,7 @@
 package idorm.idormServer.matching.service;
 
 import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
+
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
@@ -10,6 +10,8 @@ import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,8 +64,9 @@ public class MatchingService {
                     loginMemberMatchingInfo.getJoinPeriod(),
                     loginMemberMatchingInfo.getGender()
             );
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Matching 매칭멤버 전체 조회 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MatchingService findMatchingMembers {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
 
         List<Long> dislikedMembersId = dislikedMemberService.findDislikedMembers(memberId);
@@ -141,8 +144,9 @@ public class MatchingService {
                     filteringRequest.getMinAge(),
                     filteringRequest.getMaxAge()
             );
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Matching 필터링된 매칭멤버 조회 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MatchingService findFilteredMatchingMembers {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
 
         List<Long> dislikedMembersId = dislikedMemberService.findDislikedMembers(memberId);

@@ -13,7 +13,6 @@ public enum ErrorCode {
     /**
      * 400 BAD_REQUEST : 잘못된 요청
      */
-//    ILLEGAL_ARGUMENT(BAD_REQUEST, "올바른 형식의 입력값이 아닙니다."),
 
     FIELD_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
     FILE_SIZE_EXCEEDED(BAD_REQUEST, "파일 사이즈 초과 입니다."),
@@ -33,7 +32,6 @@ public enum ErrorCode {
     /**
      * 401 UNAUTHORIZED : 인증되지 않은 사용자
      */
-//    INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한이 없는 토큰입니다."),
 
     INVALID_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
     EXPIRED_CODE(UNAUTHORIZED, "이메일 인증 유효시간이 초과되었습니다."),
@@ -80,7 +78,7 @@ public enum ErrorCode {
     /**
      * 500 INTERNAL_SERVER_ERROR : 서버 에러
      */
-//    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.")
+    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.")
     ;
 
 

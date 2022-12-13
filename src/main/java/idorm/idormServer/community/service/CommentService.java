@@ -4,10 +4,12 @@ import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.CommentRepository;
 import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
+
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +49,9 @@ public class CommentService {
             Comment savedComment = commentRepository.save(createdComment);
             log.info("COMPLETE | Comment 저장 At " + LocalDateTime.now() + " | Comment 식별자: " + savedComment.getId());
             return savedComment;
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Comment 저장 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] CommentService saveComment {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -100,8 +103,9 @@ public class CommentService {
             log.info("COMPLETE | Comment 부모 식별자를 통한 대댓글들 조회 At " + LocalDateTime.now() + " | 부모 댓글 식별자 " +
                     parentCommentId);
             return foundSubComments;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Comment 부모 댓글 식별자를 통한 자식 댓글들 조회 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] CommentService findSubCommentsByParentCommentId {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -117,8 +121,9 @@ public class CommentService {
             log.info("COMPLETE | Comment 로그인한 멤버가 작성한 댓글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
                     member.getId());
             return commentsByMemberId;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("멤버가 작성한 댓글 전체 조회 중 서버 에러가 발생했습니다.", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] CommentService findCommentsByMember {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -144,8 +149,9 @@ public class CommentService {
                 comment.deleteComment();
                 commentRepository.save(comment);
             }
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Comment 게시글 내 모든 댓글 삭제 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] CommentService deleteCommentsByPostId {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
         log.info("COMPLETE | Comment 게시글 내 모든 댓글 삭제 At " + LocalDateTime.now() + " | 게시글 식별자: " + postId);
     }
@@ -166,8 +172,9 @@ public class CommentService {
         try {
             foundComment.deleteComment();
             commentRepository.save(foundComment);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Comment 삭제 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] CommentService deleteComment {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
         log.info("COMPLETE | Comment 삭제 At " + LocalDateTime.now() + " | " + commentId);
     }

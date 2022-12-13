@@ -2,7 +2,7 @@ package idorm.idormServer.matching.service;
 
 import idorm.idormServer.exceptions.CustomException;
 import idorm.idormServer.exceptions.ErrorCode;
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
+
 import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.repository.LikedMemberRepository;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
@@ -10,6 +10,8 @@ import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +41,9 @@ public class LikedMemberService {
             List<LikedMember> likedMembers = likedMemberRepository.findAllByMemberId(memberId);
             log.info("COMPLETE | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return likedMembers;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("LikedMember 좋아요한 멤버 전체 조회 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] LikedMemberService findLikedMembersByMemberId {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -88,8 +91,9 @@ public class LikedMemberService {
             likedMemberRepository.save(likedMember);
             log.info("COMPLETE | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return likedMember.getId();
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("LikedMember save 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] LikedMemberService saveLikedMember {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -117,8 +121,7 @@ public class LikedMemberService {
      * 좋아요한 멤버 삭제
      */
     @Transactional
-    public void
-    deleteLikedMember(Long loginMemberId, Long likedMemberId) {
+    public void deleteLikedMember(Long loginMemberId, Long likedMemberId) {
 
         log.info("IN PROGRESS | LikedMember 좋아요한 멤버 삭제 At " + LocalDateTime.now()
                 + " | 로그인 멤버 식별자: " + loginMemberId + " | 좋아요한 멤버 식별자 : " + likedMemberId);
@@ -129,8 +132,9 @@ public class LikedMemberService {
             likedMemberRepository.deleteLikedMember(loginMemberId, likedMemberId);
             log.info("COMPLETE | LikedMember 좋아요한 멤버 삭제 At " + LocalDateTime.now()
                     + " | 로그인 멤버 식별자: " + loginMemberId + " | 좋아요한 멤버 식별자 : " + likedMemberId);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("LikedMember 좋아요한 멤버 삭제 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] LikedMemberService deleteLikedMember {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -145,8 +149,9 @@ public class LikedMemberService {
 
         try {
             likedMemberRepository.deleteLikedMembers(memberId);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("LikedMember 좋아요한 멤버 삭제들 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] LikedMemberService deleteLikedMembers {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
 
         log.info("COMPLETE | LikedMember 좋아요한 멤버들 삭제 At " + LocalDateTime.now()

@@ -4,13 +4,15 @@ import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.repository.PostRepository;
 import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
+
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -112,8 +114,9 @@ public class PostService {
                     title);
 
             return createdPost;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Post 저장 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService savePost {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -147,8 +150,9 @@ public class PostService {
 
             log.info("COMPLETE | Post 수정 At " + LocalDateTime.now() + " | Post 식별자: " + updatedPost.getId()
                     + " | 저장된 사진 개수 " + foundPost.getPhotos().size());
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Post 수정 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService updatePost {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -171,8 +175,9 @@ public class PostService {
             // 게시글 삭제
             foundPost.deletePost();
             postRepository.save(foundPost);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Post 삭제 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService deletePost {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
 
         log.info("COMPLETE | Post 삭제 At " + LocalDateTime.now() + " | " + postId);
@@ -218,8 +223,9 @@ public class PostService {
             log.info("COMPLETE | Post 기숙사 카테고리 별 인기 게시글 조회 At " + LocalDateTime.now() + " | 조회된 게시글 수: " +
                     foundPosts.size());
             return foundPosts;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("인기 게시글 조회 중 서버 에러가 발생했습니다.", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService findTopPosts {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -235,8 +241,9 @@ public class PostService {
             log.info("COMPLETE | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 게시글 수 " +
                     postsByMemberId.size());
             return postsByMemberId;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("멤버가 작성한 게시글 전체 조회 중 서버 에러가 발생했습니다.", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService findPostsByMember {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -251,8 +258,9 @@ public class PostService {
         try {
             post.plusPostLikesCount();
             postRepository.save(post);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("게시글 공감 수 추가 중 서버 에러가 발생했습니다.", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService addPostLikes {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
         return savedPostLikedMemberId;
     }
@@ -275,8 +283,9 @@ public class PostService {
         try {
             post.minusPostLikesCount();
             postRepository.save(post);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("게시글 공감 수 삭제 중 서버 에러가 발생했습니다.", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService deletePostLikes {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 }

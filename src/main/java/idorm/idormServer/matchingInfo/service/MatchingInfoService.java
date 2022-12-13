@@ -1,13 +1,15 @@
 package idorm.idormServer.matchingInfo.service;
 
 import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
+
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,8 +78,9 @@ public class MatchingInfoService {
         try {
             foundMatchingInfo.updateIsMatchingInfoPublic(isMatchingInfoPublic);
             matchingInfoRepository.save(foundMatchingInfo);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("MatchingInfo updateMatchingInfoIsPublic 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MatchingInfoService updateMatchingInfoIsPublic {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
 
         log.info("COMPLETE | MatchingInfo 매칭이미지 공개여부 변경 At " + LocalDateTime.now() + " | " + member.getEmail());
@@ -136,8 +139,9 @@ public class MatchingInfoService {
 
         try {
             matchingInfoRepository.delete(matchingInfo);
-        } catch(InternalServerErrorException e) {
-            throw new InternalServerErrorException("MatchingInfo 삭제 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MatchingInfoService deleteMatchingInfo {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
         log.info("COMPLETE | MatchingInfo 삭제 At " + LocalDateTime.now());
     }
@@ -161,8 +165,9 @@ public class MatchingInfoService {
         try {
             updateMatchingInfo.updateMatchingInfo(requestDto);
             matchingInfoRepository.save(updateMatchingInfo);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("MatchingInfo 수정 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MatchingInfoService updateMatchingInfo {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
 
         log.info("COMPLETE | MatchingInfo 수정 At " + LocalDateTime.now());

@@ -3,7 +3,7 @@ package idorm.idormServer.member.service;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
+
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
@@ -12,7 +12,9 @@ import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,8 +63,9 @@ public class MemberService {
             memberRepository.save(member);
             log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
             return member.getId();
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Member save 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MemberService save {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -105,8 +108,9 @@ public class MemberService {
             if(foundPhoto.isEmpty()) {
                 foundMember.updatePhoto(savedPhoto);
             }
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Member 프로필 사진 저장 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MemberService savePhoto {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
 
         log.info("COMPLETE | Member 프로필 사진 저장 At " + LocalDateTime.now() + " | " + memberId);
@@ -196,8 +200,9 @@ public class MemberService {
             Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
             log.info("COMPLETE | Member 이메일로 Optional 조회 At " + LocalDateTime.now() + " | " + email);
             return foundMemberId;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Member 이메일로 Optional 조회 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MemberService findByEmailOp {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -223,8 +228,9 @@ public class MemberService {
             // TODO: 작성한 게시글, 댓글 (커뮤니티 관련) - 탈퇴한 회원입니다 로 메시지 전달
             memberRepository.delete(member);
             log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now());
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Member 삭제 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MemberService deleteMember {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -253,8 +259,9 @@ public class MemberService {
         try {
             memberRepository.save(member);
             log.info("COMPLETE | Member 비밀번호 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Member 비밀번호 변경 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MemberService updatePassword {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -293,8 +300,9 @@ public class MemberService {
             memberRepository.save(member);
 
             log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Member 닉네임 변경 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MemberService updateNicknameByAdmin {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -318,8 +326,9 @@ public class MemberService {
         try {
             memberRepository.save(member);
             log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("Member 닉네임 변경 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] MemberService updateNickname {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 }

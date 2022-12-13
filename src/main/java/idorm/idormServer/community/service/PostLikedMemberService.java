@@ -4,10 +4,12 @@ import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.repository.PostLikedMemberRepository;
 import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
+
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,8 +52,9 @@ public class PostLikedMemberService {
 
             log.info("COMPLETE | PostLikedMember 저장 At " + LocalDateTime.now() + " | post " + post.getId());
             return postLikedMember.getId();
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("PostLikedMember 저장 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostLikedMemberService save {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -65,8 +68,9 @@ public class PostLikedMemberService {
         try {
             postLikedMemberRepository.deleteById(postLikedMemberId);
             log.info("COMPLETE | PostLikedMember 삭제 At " + LocalDateTime.now() + " | post 식별자: " + postLikedMemberId);
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("PostLikedMember 삭제 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostLikedMemberService deleteById {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -97,8 +101,9 @@ public class PostLikedMemberService {
             log.info("IN PROGRESS | PostLikedMember 멤버 식별자로 좋아요한 게시글 조회 At " + LocalDateTime.now() +
                     " | 게시글 개수 " + foundLikedPosts.size());
             return foundLikedPosts;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("PostLikedMemberService 멤버 식별자로 좋아요한 게시글 조회 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostLikedMemberService findLikedPostIdsByMemberId {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -114,8 +119,9 @@ public class PostLikedMemberService {
             log.info("COMPLETE | PostLikedMember 게시글 식별자로 좋아요한 멤버 카운트 조회 At " + LocalDateTime.now() +
                     " | 게시글 식별자 " + postId);
             return likedCounts;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException("PostLikedMemberService 게시글 식별자로 좋아요한 멤버 카운트 조회 중 서버 에러 발생", e);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostLikedMemberService countLikedMemberByPostId {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
         }
     }
 

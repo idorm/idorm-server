@@ -1,8 +1,6 @@
 package idorm.idormServer.exceptions;
 
-import idorm.idormServer.exceptions.http.InternalServerErrorException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -82,30 +80,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleFileSizeLimitExceeded() {
         log.error("[CustomException 발생] Exception : {}", FILE_SIZE_EXCEEDED);
         return ErrorResponse.toResponseEntity(FILE_SIZE_EXCEEDED);
-    }
-
-    /**
-     * 500 Internal Server Error |
-     * 서버에 문제가 있음을 의미하지만 서버는 정확한 무제에 대해 더 구체적으로 설명할 수 없습니다.
-     */
-    @ExceptionHandler(InternalServerErrorException.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<Object> handleInternalServerException(InternalServerErrorException exception,
-                                                                HttpStatus status) {
-        String responseMessage = "서버 에러가 발생했습니다";
-        String responseCode = "INTERNAL_SERVER_ERROR";
-        LocalDateTime timestamp = LocalDateTime.now();
-
-        log.error("ERROR | " + responseMessage + " At " + timestamp + " | "
-                + exception.getMessage() + " = " + exception.getCause());
-
-        return ResponseEntity
-                .status(status)
-                .body(ErrorResponse.builder()
-                        .error(status.name())
-                        .code(responseCode)
-                        .message(responseMessage)
-                        .build()
-                );
     }
 }
