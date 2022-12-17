@@ -58,7 +58,7 @@ public class MemberController {
     @Value("${DB_USERNAME}")
     private String ENV_USERNAME;
 
-    @Value("${DB_PASSWORD}")
+    @Value("${ADMIN_PASSWORD}")
     private String ENV_PASSWORD;
 
     @Autowired
@@ -404,7 +404,7 @@ public class MemberController {
 
         passwordValidator(request.getPassword());
 
-        if(request.getEmail().equals(ENV_USERNAME)) {
+        if(request.getEmail().equals(ENV_USERNAME + "@inu.ac.kr")) {
             if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
                 throw new CustomException(UNAUTHORIZED_PASSWORD);
             }
