@@ -20,6 +20,6 @@ public class MemberLoginRequestDto {
     private String email;
 
     @NotBlank(message = "비밀번호 입력은 필수입니다.")
-    @ApiModelProperty(position = 2, required = true, dataType = "String", value = "비밀번호", example = "aaa")
+    @ApiModelProperty(position = 2, required = true, dataType = "String", value = "비밀번호", example = "aaaaaaa7!")
     private String password;
 }

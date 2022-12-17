@@ -14,6 +14,6 @@ import javax.validation.constraints.NotBlank;
 public class MemberUpdateNicknameRequestDto {
 
     @NotBlank(message = "닉네임 입력은 필수입니다.")
-    @ApiModelProperty(position = 1, required = true, dataType = "String", value = "닉네임", example = "종강하고싶은 응철이")
+    @ApiModelProperty(position = 1, required = true, dataType = "String", value = "닉네임", example = "에러고친응철이")
     private String nickname;
 }

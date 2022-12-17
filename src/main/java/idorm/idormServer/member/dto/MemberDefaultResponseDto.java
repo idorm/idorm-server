@@ -17,7 +17,7 @@ public class MemberDefaultResponseDto {
     @ApiModelProperty(position = 2, required = true, dataType = "String", value = "이메일", example = "aaa@inu.ac.kr")
     private String email;
 
-    @ApiModelProperty(position = 3, dataType = "String", value = "닉네임", example = "애교쟁이응철이")
+    @ApiModelProperty(position = 3, dataType = "String", value = "닉네임", example = "즐거운응철이")
     private String nickname;
 
     @ApiModelProperty(position = 5, dataType = "String", value = "프로필사진 주소", example = "aws S3 저장 url")
