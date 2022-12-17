@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import static idorm.idormServer.exceptions.ErrorCode.UNAUTHORIZED_MEMBER;
 import static org.springframework.http.HttpStatus.*;
 
-@Component
+@Component("customAuthenticationEntryPoint")
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private static ErrorResponse errorResponse =

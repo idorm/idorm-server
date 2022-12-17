@@ -329,6 +329,7 @@ public class MemberController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
+        nicknameValidator(request.getNickname());
         memberService.updateNickname(loginMember, request.getNickname());
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);

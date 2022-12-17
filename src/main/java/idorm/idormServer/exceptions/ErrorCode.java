@@ -48,6 +48,7 @@ public enum ErrorCode {
     /**
      * 404 NOT_FOUND : Resource 를 찾을 수 없음
      */
+
     EMAIL_NOT_FOUND(NOT_FOUND, "등록된 이메일이 없습니다."),
     MEMBER_NOT_FOUND(NOT_FOUND, "등록된 멤버가 없습니다."),
     FILE_NOT_FOUND(NOT_FOUND, "등록된 파일이 없습니다."),
@@ -78,10 +79,11 @@ public enum ErrorCode {
     /**
      * 500 INTERNAL_SERVER_ERROR : 서버 에러
      */
-    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.")
+    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다."),
+    USERNAME_NOT_FOUND(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.")
     ;
 
 
     private final HttpStatus httpStatus;
-    private  final String detail;
+    private final String detail;
 }
