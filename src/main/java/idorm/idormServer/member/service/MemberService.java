@@ -215,17 +215,14 @@ public class MemberService {
     public void deleteMember(Member member) {
         log.info("IN PROGRESS | Member 삭제 At " + LocalDateTime.now() + " | " + member.getId());
 
-        Optional<MatchingInfo> foundMatchingInfo = matchingInfoService.findOpByMemberId(member.getId());
-        if(foundMatchingInfo.isPresent()) {
-            matchingInfoService.deleteMatchingInfo(foundMatchingInfo.get());
-        }
-
         Email foundEmail = emailService.findByEmail(member.getEmail());
         emailService.deleteById(foundEmail.getId());
 
+        if(member.getPhoto() != null){
+            deleteMemberProfilePhoto(member);
+        }
+
         try {
-            // TODO: 프로필 사진 삭제
-            // TODO: 작성한 게시글, 댓글 (커뮤니티 관련) - 탈퇴한 회원입니다 로 메시지 전달
             memberRepository.delete(member);
             log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now());
         } catch (DataAccessException | ConstraintViolationException e) {
