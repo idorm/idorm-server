@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -202,12 +204,18 @@ public class PostService {
      * 기숙사 카테고리를 사용한 쿼리를 통해 해당되는 기숙사의 게시글들을 조회합니다.
      * TODO: 페이징 처리
      */
-    public List<Post> findManyPostsByDormCategory(String dormNum) {
+    public Page<Post> findManyPostsByDormCategory(String dormNum) {
         log.info("IN PROGRESS | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
 
-        List<Post> foundPosts = postRepository.findManyByDormCategory(dormNum);
-        log.info("COMPLETE | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
-        return foundPosts;
+        try {
+            Page<Post> foundPosts =
+                    postRepository.findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(dormNum, false, PageRequest.of(0, 10));
+            log.info("COMPLETE | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
+            return foundPosts;
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService findManyPostsByDormCategory {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
+        }
     }
 
     /**
@@ -235,9 +243,10 @@ public class PostService {
     public List<Post> findPostsByMember(Member member) {
         log.info("IN PROGRESS | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | " + member.getId());
 
-        memberService.findById(member.getId());
         try {
-            List<Post> postsByMemberId = postRepository.findPostsByMemberId(member.getId());
+            List<Post> postsByMemberId =
+                    postRepository.findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(member.getId(), false);
+
             log.info("COMPLETE | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 게시글 수 " +
                     postsByMemberId.size());
             return postsByMemberId;
@@ -256,7 +265,7 @@ public class PostService {
 
         Long savedPostLikedMemberId = postLikedMemberService.save(member, post);
         try {
-            post.plusPostLikesCount();
+            post.addLikesCount();
             postRepository.save(post);
         } catch (DataAccessException | ConstraintViolationException e) {
             log.info("[서버 에러 발생] PostService addPostLikes {} {}", e.getCause(), e.getMessage());
@@ -281,7 +290,7 @@ public class PostService {
         }
 
         try {
-            post.minusPostLikesCount();
+            post.subtractLikesCount();
             postRepository.save(post);
         } catch (DataAccessException | ConstraintViolationException e) {
             log.info("[서버 에러 발생] PostService deletePostLikes {} {}", e.getCause(), e.getMessage());

@@ -13,10 +13,6 @@ import java.util.List;
 @Schema(title = "게시글 수정 VO")
 public class UpdatePostVo {
 
-    @ApiModelProperty(position = 1, required = true, dataType = "Long", value = "멤버 식별자", example = "2")
-    @Schema(title = "멤버 식별자")
-    private Long memberId;
-
     @NotBlank(message = "제목을 입력해 주세요.")
     @ApiModelProperty(position = 2, required = true, dataType = "String", value = "제목", example = "제에목")
     private String title;

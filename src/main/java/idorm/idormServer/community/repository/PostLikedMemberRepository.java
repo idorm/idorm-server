@@ -17,10 +17,12 @@ public interface PostLikedMemberRepository extends JpaRepository<PostLikedMember
 
     int countByPostId(@Param("postId") Long postId);
 
-    @Query(value = "SELECT * " +
-            "FROM post_liked_member plm " +
-            "WHERE plm.post_id = :postId AND " +
-            "plm.member_id = :memberId", nativeQuery = true)
-    Optional<PostLikedMember> findOneByMemberIdAndPostId(@Param("postId") Long postId,
-                                                         @Param("memberId") Long memberId);
+//    @Query(value = "SELECT * " +
+//            "FROM post_liked_member plm " +
+//            "WHERE plm.post_id = :postId AND " +
+//            "plm.member_id = :memberId", nativeQuery = true)
+//    Optional<PostLikedMember> findOneByMemberIdAndPostId(@Param("postId") Long postId,
+//                                                         @Param("memberId") Long memberId);
+
+    Optional<PostLikedMember> findByMemberIdAndPostId(Long postId, Long memberId);
 }

@@ -22,7 +22,7 @@ public class Comment extends BaseEntity {
 
     private Boolean isAnonymous; // 익명 여부
 
-    private Boolean isVisible; // 댓글 삭제 여부
+    private Boolean isDeleted; // 댓글 삭제 여부
 
     private Long parentCommentId; // 부모 댓글 식별자
 
@@ -38,7 +38,7 @@ public class Comment extends BaseEntity {
     public Comment(String content, Boolean isAnonymous, Post post, Member member) {
         this.content = content;
         this.isAnonymous = isAnonymous;
-        this.isVisible = true;
+        this.isDeleted = false;
         this.member = member;
         this.post = post;
     }
@@ -48,6 +48,6 @@ public class Comment extends BaseEntity {
     }
 
     public void deleteComment() {
-        this.isVisible = false;
+        this.isDeleted = true;
     }
 }

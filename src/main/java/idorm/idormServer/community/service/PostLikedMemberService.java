@@ -36,7 +36,7 @@ public class PostLikedMemberService {
         }
 
         Optional<PostLikedMember> foundOne =
-                postLikedMemberRepository.findOneByMemberIdAndPostId(post.getId(), member.getId());
+                postLikedMemberRepository.findByMemberIdAndPostId(post.getId(), member.getId());
 
         if (foundOne.isPresent()) {
             throw new CustomException(DUPLICATE_LIKED);
@@ -82,7 +82,7 @@ public class PostLikedMemberService {
                 " | 게시글 식별자 : " + postId);
 
         PostLikedMember foundPostLikedMember =
-                postLikedMemberRepository.findOneByMemberIdAndPostId(postId, memberId)
+                postLikedMemberRepository.findByMemberIdAndPostId(postId, memberId)
                 .orElseThrow(() -> new CustomException(POST_LIKED_MEMBER_NOT_FOUND));
 
         log.info("COMPLETE | PostLikedMember 단건 조회 At " + LocalDateTime.now() + " | 멤버 식별자 :  " + memberId +

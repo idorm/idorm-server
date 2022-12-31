@@ -1,6 +1,9 @@
 package idorm.idormServer.config;
 
 import com.fasterxml.classmate.TypeResolver;
+import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
+import idorm.idormServer.community.dto.post.PostDefaultResponseDto;
+import idorm.idormServer.community.dto.post.PostOneResponseDto;
 import idorm.idormServer.email.dto.EmailDefaultResponseDto;
 import idorm.idormServer.exceptions.ErrorResponse;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
@@ -38,7 +41,10 @@ public class SwaggerConfiguration {
                         typeResolver.resolve(EmailDefaultResponseDto.class),
                         typeResolver.resolve(MemberDefaultResponseDto.class),
                         typeResolver.resolve(MatchingInfoDefaultResponseDto.class),
-                        typeResolver.resolve(MatchingDefaultResponseDto.class)
+                        typeResolver.resolve(MatchingDefaultResponseDto.class),
+                        typeResolver.resolve(PostDefaultResponseDto.class),
+                        typeResolver.resolve(PostOneResponseDto.class),
+                        typeResolver.resolve(CommentDefaultResponseDto.class)
                         )
                 .useDefaultResponseMessages(false)
                 .select()

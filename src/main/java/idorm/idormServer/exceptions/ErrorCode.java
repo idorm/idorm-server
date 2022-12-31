@@ -16,6 +16,7 @@ public enum ErrorCode {
 
     FIELD_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
     FILE_SIZE_EXCEEDED(BAD_REQUEST, "파일 사이즈 초과 입니다."),
+    FILE_COUNT_EXCEEDED(BAD_REQUEST, "파일 개수 초과 입니다."),
 
     EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
     PASSWORD_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
@@ -58,6 +59,8 @@ public enum ErrorCode {
     POST_NOT_FOUND(NOT_FOUND, "등록된 게시글이 없습니다."),
     LIKED_NOT_FOUND(NOT_FOUND, "등록된 공감이 없습니다."),
     CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 캘린더 정보가 없습니다."),
+
+    DELETED_POST(NOT_FOUND, "삭제된 게시글 입니다."),
 
     /**
      * 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재

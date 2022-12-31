@@ -1,19 +1,26 @@
 package idorm.idormServer.community.repository;
 
 import idorm.idormServer.community.domain.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @Query(value = "SELECT * " +
-            "FROM post p " +
-            "WHERE p.dorm_num = :dormNum AND " +
-            "p.is_visible = 1", nativeQuery = true)
-    List<Post> findManyByDormCategory(@Param("dormNum") String dormNum);
+//    @Query(value = "SELECT * " +
+//            "FROM post p " +
+//            "WHERE p.dorm_num = :dormNum AND " +
+//            "p.is_deleted = 0", nativeQuery = true)
+//    List<Post> findManyByDormCategory(@Param("dormNum") String dormNum);
+
+//    List<Post> findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(String dormNum, Boolean isDeleted);
+    Page<Post> findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(String dormNum, Boolean isDeleted, Pageable pageable);
+
 
     /**
      * 인기 게시글 찾는 로직
@@ -26,7 +33,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "FROM post p " +
             "WHERE p.dorm_num = :dormNum AND " +
             "p.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -1 WEEK) AND NOW() AND " +
-            "p.is_visible = 1 " +
+            "p.is_deleted = 0 " +
             "ORDER BY p.likes_count DESC " +
             "LIMIT 10", nativeQuery = true)
     List<Post> findTopPostsByDormCategory(@Param("dormNum") String dormNum);
@@ -34,10 +41,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /**
      * 멤버 아이디를 통해서 멤버가 작성한 게시글 반환
      */
-    @Query(value = "SELECT * " +
-            "FROM post p " +
-            "WHERE p.member_id = :memberId AND " +
-            "p.is_visible = 1 " +
-            "ORDER BY p.updated_at", nativeQuery = true)
-    List<Post> findPostsByMemberId(@Param("memberId") Long memberId);
+//    @Query(value = "SELECT * " +
+//            "FROM post p " +
+//            "WHERE p.member_id = :memberId AND " +
+//            "p.is_deleted = 0 " +
+//            "ORDER BY p.updated_at", nativeQuery = true)
+//    List<Post> findPostsByMemberId(@Param("memberId") Long memberId);
+
+    List<Post> findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(Long memberId, Boolean isDeleted);
 }

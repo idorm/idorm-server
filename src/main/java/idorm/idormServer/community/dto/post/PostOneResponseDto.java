@@ -2,6 +2,7 @@ package idorm.idormServer.community.dto.post;
 
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
 import idorm.idormServer.photo.domain.Photo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,8 +18,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ApiModel(value = "Post 응답")
-public class PostDefaultResponseDto {
+@ApiModel(value = "Post 단건 응답")
+public class PostOneResponseDto {
 
     @ApiModelProperty(position = 1, value="게시글 식별자")
     private Long postId;
@@ -44,7 +45,16 @@ public class PostDefaultResponseDto {
     @ApiModelProperty(position = 10, value = "생성일자")
     private LocalDateTime createdAt;
 
-    public PostDefaultResponseDto(Post post) {
+    @ApiModelProperty(position = 11, value = "수정일자")
+    private LocalDateTime updatedAt;
+
+    @ApiModelProperty(position = 9, value = "업로드한 사진 주소 목록")
+    private List<String> photoUrls = new ArrayList<>();
+
+    @ApiModelProperty(position = 10, value = "댓글/대댓글 목록")
+    private List<CommentDefaultResponseDto> comments = new ArrayList<>();
+
+    public PostOneResponseDto(Post post) {
         this.postId = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
@@ -53,6 +63,7 @@ public class PostDefaultResponseDto {
         this.commentsCount = post.getCommentsCount();
         this.imagesCount = post.getImagesCount();
         this.createdAt = post.getCreatedAt();
+        this.updatedAt = post.getUpdatedAt();
 
         if(post.getMember() == null) { // 회원 탈퇴의 경우
             this.nickname = null;
@@ -65,18 +76,19 @@ public class PostDefaultResponseDto {
         if(post.getIsAnonymous() == true) { // 익명일 경우
             this.nickname = "anonymous";
         }
+
+        if(post.getPhotos() != null) {
+            for(Photo photo : post.getPhotos()) {
+                this.photoUrls.add(photo.getUrl());
+            }
+        }
+
+        if(post.getComments() != null) {
+            for(Comment comment : post.getComments()) {
+
+                CommentDefaultResponseDto commentDto = new CommentDefaultResponseDto(comment);
+                this.comments.add(commentDto);
+            }
+        }
     }
-
-    public PostDefaultResponseDto(Post post, String myNickname) {
-        this.postId = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-
-        this.likesCount = post.getLikesCount();
-        this.commentsCount = post.getCommentsCount();
-        this.imagesCount = post.getImagesCount();
-        this.createdAt = post.getCreatedAt();
-        this.nickname = myNickname;
-    }
-
 }

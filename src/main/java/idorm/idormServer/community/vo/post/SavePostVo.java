@@ -13,10 +13,6 @@ import java.util.List;
 @Schema(title = "게시글 저장 VO")
 public class SavePostVo {
 
-    @ApiModelProperty(position = 1, required = true, dataType = "Long", value = "멤버 식별자", example = "2")
-    @Schema(title = "멤버 식별자")
-    private Long memberId;
-
     @NotBlank(message = "기숙사 분류를 입력해 주세요.")
     @ApiModelProperty(position = 2, required = true, dataType = "String", value = "커뮤니티 기숙사 분류", example = "DORM1")
     @Schema(title = "기숙사 분류")
