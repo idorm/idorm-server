@@ -1,12 +1,12 @@
 package idorm.idormServer.community.service;
 
+import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.repository.PostRepository;
 import idorm.idormServer.exceptions.CustomException;
 
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static idorm.idormServer.exceptions.ErrorCode.*;
-import static java.lang.Integer.parseInt;
 
 @Slf4j
 @Service
@@ -34,18 +33,51 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PhotoService photoService;
-    private final MemberService memberService;
     private final PostLikedMemberService postLikedMemberService;
     private final CommentService commentService;
 
     /**
+     * 멤버 삭제 시 Post 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
+     */
+    @Transactional
+    public void updateMemberIdFromPost(Member member) {
+        List<Post> foundPosts = findPostsByMember(member);
+
+        try {
+            for(Post post : foundPosts) {
+                post.updateMember();
+            }
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService updateMemberIdFromPost {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
+        }
+        updateMemberIdFromComment(member);
+    }
+
+    /**
+     * 멤버 삭제 시 Comment 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
+     */
+    private void updateMemberIdFromComment(Member member) {
+        List<Comment> foundComments = commentService.findCommentsByMember(member);
+
+        try {
+            for(Comment comment : foundComments) {
+                comment.updateMember();
+            }
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService updateMemberIdFromComment {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
+        }
+    }
+
+
+    /**
      * Post 게시글 사진 추가 메소드 |
-     * TODO: 사진 최대 개수 10개로 넘으면 exception handling이 필요함
      */
     private List<Photo> savePhotos(Post post, Member member, List<MultipartFile> files) {
         log.info("IN PROGRESS | Post 게시글 사진 저장 At " + LocalDateTime.now() + " | 게시글 식별자: " + post.getId());
 
-        int index = fileNumbering(post.getPhotos());
+        int index = 1;
         List<String> fileNames = new ArrayList<>();
 
         for(MultipartFile file : files) {
@@ -65,25 +97,25 @@ public class PostService {
      * 현재 게시글에 저장되어 있는 사진들의 파일 이름을 확인하여 가장 마지막으로 부여한 인덱스에 1을 더하여 리턴합니다. 이 번호는 새로 추가할 다음 파일 이름을
      * 부여하는데 사용합니다.
      */
-    private int fileNumbering(List<Photo> photos) {
-        log.info("IN PROGRESS | 파일 번호 부여 At " + LocalDateTime.now() + " | " + photos.size());
-        int index = 1;
-
-        if(photos.isEmpty()) {
-            return index;
-        } else {
-            for(Photo photo : photos) {
-                String[] fileName = photo.getFileName().split("[.]");
-                int fileNameIndex = parseInt(fileName[0]);
-                if(fileNameIndex > index) {
-                    index = fileNameIndex;
-                }
-            }
-            index += 1;
-        }
-        log.info("COMPLETE | 파일 번호 부여 At " + LocalDateTime.now() + " | " + index);
-        return index;
-    }
+//    private int fileNumbering(List<Photo> photos) {
+//        log.info("IN PROGRESS | 파일 번호 부여 At " + LocalDateTime.now() + " | " + photos.size());
+//        int index = 1;
+//
+//        if(photos.isEmpty()) {
+//            return index;
+//        } else {
+//            for(Photo photo : photos) {
+//                String[] fileName = photo.getFileName().split("[.]");
+//                int fileNameIndex = parseInt(fileName[0]);
+//                if(fileNameIndex > index) {
+//                    index = fileNameIndex;
+//                }
+//            }
+//            index += 1;
+//        }
+//        log.info("COMPLETE | 파일 번호 부여 At " + LocalDateTime.now() + " | " + index);
+//        return index;
+//    }
 
     /**
      * Post 저장 |
@@ -108,6 +140,7 @@ public class PostService {
                     .isAnonymous(isAnonymous)
                     .build();
 
+            createdPost.updateImagesCount(files.size());
             Post savedPost = postRepository.save(createdPost);
             List<Photo> savedPhotos = savePhotos(savedPost, member, files);
             savedPost.addPhotos(savedPhotos);
@@ -146,12 +179,14 @@ public class PostService {
             foundPost.updatePost(title, content, isAnonymous);
 
             List<Photo> updatedPhotos = savePhotos(foundPost, member, files);
-                foundPost.addPhotos(updatedPhotos);
+            foundPost.addPhotos(updatedPhotos);
+
+            foundPost.updateImagesCount(files.size());
 
             Post updatedPost = postRepository.save(foundPost);
 
             log.info("COMPLETE | Post 수정 At " + LocalDateTime.now() + " | Post 식별자: " + updatedPost.getId()
-                    + " | 저장된 사진 개수 " + foundPost.getPhotos().size());
+                    + " | 저장된 사진 개수 " + foundPost.getImagesCount());
         } catch (DataAccessException | ConstraintViolationException e) {
             log.info("[서버 에러 발생] PostService updatePost {} {}", e.getCause(), e.getMessage());
             throw new CustomException(SERVER_ERROR);
@@ -166,17 +201,18 @@ public class PostService {
         log.info("IN PROGRESS | Post 삭제 At " + LocalDateTime.now() + " | " + postId);
         Post foundPost = findById(postId);
 
-        if(foundPost.getMember().getId() != member.getId()) {
+        if(foundPost.getMember() == null || foundPost.getMember().getId() != member.getId()) {
             throw new CustomException(UNAUTHORIZED_DELETE);
         }
 
-        // 게시글 내 모든 댓글 삭제
         commentService.deleteCommentsByPostId(postId);
+        postLikedMemberService.deleteAllLikesFromPost(foundPost);
 
         try {
-            // 게시글 삭제
             foundPost.deletePost();
+            foundPost.deleteLikesCount();
             postRepository.save(foundPost);
+            photoService.deletePhotoDeletingPost(postId);
         } catch (DataAccessException | ConstraintViolationException e) {
             log.info("[서버 에러 발생] PostService deletePost {} {}", e.getCause(), e.getMessage());
             throw new CustomException(SERVER_ERROR);
@@ -194,6 +230,10 @@ public class PostService {
 
         Post foundPost = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
+        if(foundPost.getIsDeleted() == true) {
+            throw new CustomException(DELETED_POST);
+        }
 
         log.info("COMPLETE | Post 단건 조회 At " + LocalDateTime.now() + " | " + postId);
         return foundPost;
@@ -238,16 +278,16 @@ public class PostService {
     }
 
     /**
-     * 로그인한 멤버가 작성한 모든 게시글 리스트 조회 |
+     * 특정 멤버가 작성한 모든 게시글 리스트 조회 |
      */
     public List<Post> findPostsByMember(Member member) {
-        log.info("IN PROGRESS | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | " + member.getId());
+        log.info("IN PROGRESS | Post 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | " + member.getId());
 
         try {
             List<Post> postsByMemberId =
                     postRepository.findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(member.getId(), false);
 
-            log.info("COMPLETE | Post 로그인한 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 게시글 수 " +
+            log.info("COMPLETE | Post 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 게시글 수 " +
                     postsByMemberId.size());
             return postsByMemberId;
         } catch (DataAccessException | ConstraintViolationException e) {
@@ -280,14 +320,11 @@ public class PostService {
      */
     @Transactional
     public void deletePostLikes(Member member, Post post) {
-        PostLikedMember foundPostLikedMember =
-                postLikedMemberService.findOneByMemberIdAndPostId(member.getId(), post.getId());
-
-        postLikedMemberService.deleteById(foundPostLikedMember.getId());
 
         if(post.getLikesCount() <= 0) {
             throw new CustomException(LIKED_NOT_FOUND);
         }
+        postLikedMemberService.deleteById(member, post);
 
         try {
             post.subtractLikesCount();
@@ -297,4 +334,5 @@ public class PostService {
             throw new CustomException(SERVER_ERROR);
         }
     }
+
 }

@@ -31,14 +31,12 @@ public class PostLikedMemberService {
     public Long save(Member member, Post post) {
         log.info("IN PROGRESS | PostLikedMember 저장 At " + LocalDateTime.now() + " | post " + post.getId());
 
-        if(post.getMember().getId() == member.getId()) {
+        if(post.getMember() != null && post.getMember().getId() == member.getId()) {
             throw new CustomException(CANNOT_LIKED_SELF);
         }
 
-        Optional<PostLikedMember> foundOne =
-                postLikedMemberRepository.findByMemberIdAndPostId(post.getId(), member.getId());
-
-        if (foundOne.isPresent()) {
+        boolean postLikedYn = isMemberLikedPost(member, post);
+        if (postLikedYn == true) {
             throw new CustomException(DUPLICATE_LIKED);
         }
 
@@ -58,16 +56,23 @@ public class PostLikedMemberService {
         }
     }
 
-    @Transactional
-    public void deleteById(Long postLikedMemberId) {
-        log.info("IN PROGRESS | PostLikedMember 삭제 At " + LocalDateTime.now() + " | post 식별자: " + postLikedMemberId);
+    public boolean isMemberLikedPost(Member member, Post post) {
+        return postLikedMemberRepository.existsByMemberIdAndPostId(member.getId(), post.getId());
+    }
 
-        postLikedMemberRepository.findById(postLikedMemberId)
-                .orElseThrow(() -> new CustomException(POST_LIKED_MEMBER_NOT_FOUND));
+    @Transactional
+    public void deleteById(Member member, Post post) {
+        log.info("IN PROGRESS | PostLikedMember deleteById At " + LocalDateTime.now());
+
+        boolean likedYn = isMemberLikedPost(member, post);
+
+        if(likedYn == false) {
+            throw new CustomException(POST_LIKED_MEMBER_NOT_FOUND);
+        }
 
         try {
-            postLikedMemberRepository.deleteById(postLikedMemberId);
-            log.info("COMPLETE | PostLikedMember 삭제 At " + LocalDateTime.now() + " | post 식별자: " + postLikedMemberId);
+            postLikedMemberRepository.deleteByMemberIdAndPostId(member.getId(), post.getId());
+            log.info("COMPLETE | PostLikedMember deleteById At " + LocalDateTime.now());
         } catch (DataAccessException | ConstraintViolationException e) {
             log.info("[서버 에러 발생] PostLikedMemberService deleteById {} {}", e.getCause(), e.getMessage());
             throw new CustomException(SERVER_ERROR);
@@ -75,23 +80,7 @@ public class PostLikedMemberService {
     }
 
     /**
-     * 멤버 식별자와 게시글 식별자로 PostLikedMember 단건 조회
-     */
-    public PostLikedMember findOneByMemberIdAndPostId(Long memberId, Long postId) {
-        log.info("IN PROGRESS | PostLikedMember 단건 조회 At " + LocalDateTime.now() + " | 멤버 식별자 :  " + memberId +
-                " | 게시글 식별자 : " + postId);
-
-        PostLikedMember foundPostLikedMember =
-                postLikedMemberRepository.findByMemberIdAndPostId(postId, memberId)
-                .orElseThrow(() -> new CustomException(POST_LIKED_MEMBER_NOT_FOUND));
-
-        log.info("COMPLETE | PostLikedMember 단건 조회 At " + LocalDateTime.now() + " | 멤버 식별자 :  " + memberId +
-                " | 게시글 식별자 : " + postId);
-        return foundPostLikedMember;
-    }
-
-    /**
-     * 멤버 식별자로 멤버가 좋아요한 Post 식별자 리스트 조회
+     * 멤버가 공감한 게시글 식별자 목록 조회
      */
     public List<Long> findLikedPostIdsByMemberId(Long memberId) {
         log.info("IN PROGRESS | PostLikedMember 멤버 식별자로 좋아요한 게시글 조회 At " + LocalDateTime.now() + " | 멤버 식별자 " +
@@ -108,21 +97,17 @@ public class PostLikedMemberService {
     }
 
     /**
-     * 게시글 식별자로 게시글을 공감한 Member 명 수 카운트 조회
+     * 게시글 삭제 시 해당 공감 전부 삭제
      */
-    public int countLikedMemberByPostId(Long postId) {
-        log.info("IN PROGRESS | PostLikedMember 게시글 식별자로 좋아요한 멤버 카운트 조회 At " + LocalDateTime.now() +
-                " | 게시글 식별자 " + postId);
-
+    @Transactional
+    public void deleteAllLikesFromPost(Post post) {
         try {
-            int likedCounts = postLikedMemberRepository.countByPostId(postId);
-            log.info("COMPLETE | PostLikedMember 게시글 식별자로 좋아요한 멤버 카운트 조회 At " + LocalDateTime.now() +
-                    " | 게시글 식별자 " + postId);
-            return likedCounts;
+            postLikedMemberRepository.deleteAllByPostId(post.getId());
         } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostLikedMemberService countLikedMemberByPostId {} {}", e.getCause(), e.getMessage());
+            log.info("[서버 에러 발생] PostLikedMemberService deleteAllLikesFromPost {} {}", e.getCause(), e.getMessage());
             throw new CustomException(SERVER_ERROR);
         }
     }
+
 
 }

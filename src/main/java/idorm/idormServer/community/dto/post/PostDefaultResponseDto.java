@@ -56,13 +56,9 @@ public class PostDefaultResponseDto {
 
         if(post.getMember() == null) { // 회원 탈퇴의 경우
             this.nickname = null;
-        }
-
-        if(post.getIsAnonymous() == false) { // 익명이 아닌 경우
+        } else if(post.getIsAnonymous() == false) { // 익명이 아닌 경우
             this.nickname = post.getMember().getNickname();
-        }
-
-        if(post.getIsAnonymous() == true) { // 익명일 경우
+        } else if(post.getIsAnonymous() == true) { // 익명일 경우
             this.nickname = "anonymous";
         }
     }

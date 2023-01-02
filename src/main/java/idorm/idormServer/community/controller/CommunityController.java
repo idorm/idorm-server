@@ -179,7 +179,6 @@ public class CommunityController {
             }
         }
 
-
         PostOneResponseDto response = new PostOneResponseDto(foundPost);
 
         return ResponseEntity.status(200)

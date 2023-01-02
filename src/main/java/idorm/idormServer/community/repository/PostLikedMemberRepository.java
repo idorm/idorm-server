@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PostLikedMemberRepository extends JpaRepository<PostLikedMember, Long> {
 
@@ -24,5 +23,11 @@ public interface PostLikedMemberRepository extends JpaRepository<PostLikedMember
 //    Optional<PostLikedMember> findOneByMemberIdAndPostId(@Param("postId") Long postId,
 //                                                         @Param("memberId") Long memberId);
 
-    Optional<PostLikedMember> findByMemberIdAndPostId(Long postId, Long memberId);
+//    Optional<PostLikedMember> findByMemberIdAndPostId(Long memberId, Long postId);
+
+    void deleteByMemberIdAndPostId(Long memberId, Long postId);
+
+    void deleteAllByPostId(Long postId);
+
+    boolean existsByMemberIdAndPostId(Long memberId, Long postId);
 }

@@ -46,13 +46,9 @@ public class CommentDefaultResponseDto {
 
         if (comment.getMember() == null) {
             this.nickname = null;
-        }
-
-        if(comment.getIsAnonymous() == true) {
+        } else if(comment.getIsAnonymous() == true) {
             this.nickname = "anonymous";
-        }
-
-        if(comment.getIsAnonymous() == false) {
+        } else if(comment.getIsAnonymous() == false) {
             this.nickname = comment.getMember().getNickname();
         }
     }

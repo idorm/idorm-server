@@ -7,18 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-//    @Query(value = "SELECT * " +
-//            "FROM post p " +
-//            "WHERE p.dorm_num = :dormNum AND " +
-//            "p.is_deleted = 0", nativeQuery = true)
-//    List<Post> findManyByDormCategory(@Param("dormNum") String dormNum);
-
-//    List<Post> findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(String dormNum, Boolean isDeleted);
+    /**
+     * 기숙사 카테고리로 필터링한 게시글들 조회
+     */
     Page<Post> findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(String dormNum, Boolean isDeleted, Pageable pageable);
 
 
@@ -41,12 +36,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /**
      * 멤버 아이디를 통해서 멤버가 작성한 게시글 반환
      */
-//    @Query(value = "SELECT * " +
-//            "FROM post p " +
-//            "WHERE p.member_id = :memberId AND " +
-//            "p.is_deleted = 0 " +
-//            "ORDER BY p.updated_at", nativeQuery = true)
-//    List<Post> findPostsByMemberId(@Param("memberId") Long memberId);
-
     List<Post> findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(Long memberId, Boolean isDeleted);
 }

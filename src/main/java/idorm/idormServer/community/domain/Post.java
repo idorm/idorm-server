@@ -38,7 +38,7 @@ public class Post extends BaseEntity {
     private int reportedCount; // 신고 건수
 
     @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
-    @JoinColumn(name = "member_id", updatable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "post")
@@ -70,11 +70,14 @@ public class Post extends BaseEntity {
         this.isAnonymous = isAnonymous;
     }
 
+    public void updateImagesCount(int cnt) {
+        this.imagesCount = cnt;
+    }
+
     public void addPhotos(List<Photo> photos) {
         for (Photo photo : photos) {
             this.photos.add(photo);
         }
-        this.imagesCount += photos.size();
     }
 
     public void deletePost() {
@@ -85,7 +88,15 @@ public class Post extends BaseEntity {
         this.likesCount += 1;
     }
 
+    public void deleteLikesCount() {
+        this.likesCount = 0;
+    }
+
     public void subtractLikesCount() {
         this.likesCount -= 1;
+    }
+
+    public void updateMember() {
+        this.member = null;
     }
 }

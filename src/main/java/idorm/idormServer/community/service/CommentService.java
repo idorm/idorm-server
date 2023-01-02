@@ -99,7 +99,8 @@ public class CommentService {
 
         try {
             List<Comment> foundSubComments =
-                    commentRepository.findSubCommentsByParentCommentId(parentCommentId, postId);
+                    commentRepository.findAllByPostIdAndParentCommentIdOrderByCreatedAt(postId, parentCommentId);
+
             log.info("COMPLETE | Comment 부모 식별자를 통한 대댓글들 조회 At " + LocalDateTime.now() + " | 부모 댓글 식별자 " +
                     parentCommentId);
             return foundSubComments;
@@ -117,7 +118,8 @@ public class CommentService {
                 member.getId());
 
         try {
-            List<Comment> commentsByMemberId = commentRepository.findCommentsByMemberId(member.getId());
+            List<Comment> commentsByMemberId =
+                    commentRepository.findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(member.getId(), false);
             log.info("COMPLETE | Comment 로그인한 멤버가 작성한 댓글 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
                     member.getId());
             return commentsByMemberId;
@@ -132,7 +134,8 @@ public class CommentService {
      */
     public List<Comment> findCommentsByPostId(Long postId) {
         log.info("IN PROGRESS | Comment 게시글 내 모든 댓글 조회 At " + LocalDateTime.now() + " | 게시글 식별자: " + postId);
-        List<Comment> foundComments = commentRepository.findCommentsByPostId(postId);
+        List<Comment> foundComments =
+                commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
         log.info("COMPLETE | Comment 게시글 내 모든 댓글 조회 At " + LocalDateTime.now() + " | 게시글 식별자: " + postId);
         return foundComments;
     }
