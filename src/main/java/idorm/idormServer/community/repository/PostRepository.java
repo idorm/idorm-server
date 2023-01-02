@@ -21,14 +21,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      * 기숙사 분류를 통한 일차 필터링
      * 생성일자 기준으로 7일 이내의 글 중에서만 조회
      * 공감 순으로 상위 10개 조회
-     * TODO: 만약 동일 공감이 많다면 더 빠른 최신 날짜가 우선순위
+     * 만약 동일 공감이 많다면 더 빠른 최신 날짜가 우선순위
      */
     @Query(value = "SELECT *" +
             "FROM post p " +
             "WHERE p.dorm_num = :dormNum AND " +
             "p.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -1 WEEK) AND NOW() AND " +
             "p.is_deleted = 0 " +
-            "ORDER BY p.likes_count DESC " +
+            "ORDER BY p.likes_count DESC, p.created_at DESC " +
             "LIMIT 10", nativeQuery = true)
     List<Post> findTopPostsByDormCategory(@Param("dormNum") String dormNum);
 
