@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -205,6 +206,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(value = "/member/post",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -415,6 +417,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PutMapping("/member/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> savePostLikes(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
@@ -448,6 +451,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> deletePostLikes(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
@@ -478,6 +482,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> deletePost(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
@@ -606,9 +611,8 @@ public class CommunityController {
     @ApiOperation(value = "댓글 삭제")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = CommentDefaultResponseDto.class))),
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -622,6 +626,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<DefaultResponseDto<Object>> deleteComment(
             HttpServletRequest request,
             @PathVariable("post-id") Long postId,
@@ -632,9 +637,9 @@ public class CommunityController {
         postService.findById(postId);
         commentService.deleteComment(commentId, loginMember);
 
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NO_CONTENT")
                         .responseMessage("Comment 삭제 완료")
                         .build()
                 );
