@@ -15,6 +15,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -244,12 +245,16 @@ public class PostService {
      * 기숙사 카테고리를 사용한 쿼리를 통해 해당되는 기숙사의 게시글들을 조회합니다.
      * TODO: 페이징 처리
      */
-    public Page<Post> findManyPostsByDormCategory(String dormNum) {
+    public Page<Post> findManyPostsByDormCategory(String dormNum, int pageNum) {
         log.info("IN PROGRESS | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
 
         try {
             Page<Post> foundPosts =
-                    postRepository.findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(dormNum, false, PageRequest.of(0, 10));
+                    postRepository.findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(
+                            dormNum,
+                            false,
+                            PageRequest.of(pageNum, 10));
+
             log.info("COMPLETE | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
             return foundPosts;
         } catch (DataAccessException | ConstraintViolationException e) {

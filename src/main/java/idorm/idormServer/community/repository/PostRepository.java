@@ -16,14 +16,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      */
     Page<Post> findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(String dormNum, Boolean isDeleted, Pageable pageable);
 
-
     /**
      * 인기 게시글 찾는 로직
      * 기숙사 분류를 통한 일차 필터링
      * 생성일자 기준으로 7일 이내의 글 중에서만 조회
-     * 공감 순으로 상위 10개 조회 (만약 동일 공감이 많다면 더 빠른 최신 날짜로)
+     * 공감 순으로 상위 10개 조회
+     * TODO: 만약 동일 공감이 많다면 더 빠른 최신 날짜가 우선순위
      */
-    // TODO: SQL syntax err 발생
     @Query(value = "SELECT *" +
             "FROM post p " +
             "WHERE p.dorm_num = :dormNum AND " +

@@ -50,14 +50,15 @@ public class CommunityController {
     private final PostLikedMemberService postLikedMemberService;
     private final CommentService commentService;
 
-    @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회")
+    @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "페이징 적용으로 page는 페이지 번호를 의미합니다. " +
+            "0부터 시작하며 10개 단위로 페이징해서 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "OK",
                     content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "DORM_CATEGORY_FORMAT_INVALID",
+                    description = "DORM_CATEGORY_FORMAT_INVALID, FIELD_REQUIRED",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
@@ -68,12 +69,13 @@ public class CommunityController {
     })
     @GetMapping("/member/posts/{dormitory-category}")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsFilteredByCategory(
-            @PathVariable(value = "dormitory-category") String dormNum
+            @PathVariable(value = "dormitory-category") String dormNum,
+            @RequestParam(value = "page") int pageNum
     ) {
 
         validateDormCategory(dormNum);
 
-        Page<Post> posts = postService.findManyPostsByDormCategory(dormNum);
+        Page<Post> posts = postService.findManyPostsByDormCategory(dormNum, pageNum);
 
         List<PostDefaultResponseDto> response = posts.stream()
                 .map(post -> new PostDefaultResponseDto(post)).collect(Collectors.toList());
