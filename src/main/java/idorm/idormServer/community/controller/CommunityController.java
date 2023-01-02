@@ -163,8 +163,6 @@ public class CommunityController {
         for(Comment comment : foundComments) {
             // 부모 식별자를 가지고 있지 않다면, 해당 부모 식별자를 가지고 있는 댓글 리스트와 함께 dto 생성
             if(comment.getParentCommentId() == null) { // 대댓글이 아닌 댓글임
-
-                // TODO: foundComments에서 가져와서 바꾸기
                 List<Comment> foundSubComments =
                         commentService.findSubCommentsByParentCommentId(postId, comment.getId());
 
@@ -256,7 +254,7 @@ public class CommunityController {
                     description = "UNAUTHORIZED_MEMBER",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404",
-                    description = "DELETED_POST",
+                    description = "DELETED_POST / POST_NOT_FOUND",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
@@ -351,7 +349,7 @@ public class CommunityController {
             @ApiResponse(
                     responseCode = "200",
                     description = "OK",
-                    content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
             @ApiResponse(
                     responseCode = "204",
                     description = "NO CONTENT"),
