@@ -175,7 +175,7 @@ public class MemberController {
             throw new CustomException(FILE_NOT_FOUND);
         }
 
-        memberService.savePhoto(loginMemberId, photo);
+        memberService.saveProfilePhoto(loginMemberId, photo);
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
 

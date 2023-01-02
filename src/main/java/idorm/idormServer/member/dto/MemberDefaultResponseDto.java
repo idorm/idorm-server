@@ -38,7 +38,7 @@ public class MemberDefaultResponseDto {
             this.matchingInfoId = member.getMatchingInfo().getId();
         }
 
-        if(member.getPhoto() != null) {
+        if(member.getPhoto() != null && member.getPhoto().getPost() == null) {
             this.profilePhotoUrl = member.getPhoto().getUrl();
         }
     }
@@ -49,7 +49,7 @@ public class MemberDefaultResponseDto {
         this.nickname = member.getNickname();
         this.loginToken = token;
 
-        if(member.getPhoto() != null) {
+        if(member.getPhoto() != null && member.getPhoto().getPost() == null) {
             this.profilePhotoUrl = member.getPhoto().getUrl();
         }
 

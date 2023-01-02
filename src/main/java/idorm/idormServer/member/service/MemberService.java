@@ -1,10 +1,10 @@
 package idorm.idormServer.member.service;
 
+import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exceptions.CustomException;
 
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
@@ -35,7 +35,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final EmailService emailService;
     private final PhotoService photoService;
-    private final MatchingInfoService matchingInfoService;
+    private final PostService postService;
 
     @Value("${DB_USERNAME}")
     private String ENV_USERNAME;
@@ -85,7 +85,7 @@ public class MemberService {
      * 생성하지 않고, 업데이트 하도록 한다.
      */
     @Transactional
-    public Long savePhoto(Long memberId, MultipartFile photo) {
+    public Long saveProfilePhoto(Long memberId, MultipartFile photo) {
 
         log.info("IN PROGRESS | Member 프로필 사진 저장 At " + LocalDateTime.now() + " | " + memberId);
 
@@ -98,16 +98,13 @@ public class MemberService {
         Optional<Photo> foundPhoto = photoService.findOneByFileName(fileName);
 
         if(foundPhoto.isPresent()) {
-            Photo updatedPhoto = photoService.update(foundMember, fileName, photo);
-            foundMember.updatePhoto(updatedPhoto);
+            photoService.deleteProfilePhotos(foundMember);
         }
 
-        Photo savedPhoto = photoService.save(foundMember, fileName, photo);
+        Photo savedPhoto = photoService.saveProfilePhoto(foundMember, fileName, photo);
 
         try {
-            if(foundPhoto.isEmpty()) {
-                foundMember.updatePhoto(savedPhoto);
-            }
+            foundMember.updatePhoto(savedPhoto);
         } catch (DataAccessException | ConstraintViolationException e) {
             log.info("[서버 에러 발생] MemberService savePhoto {} {}", e.getCause(), e.getMessage());
             throw new CustomException(SERVER_ERROR);
@@ -217,11 +214,8 @@ public class MemberService {
 
         Email foundEmail = emailService.findByEmail(member.getEmail());
         emailService.deleteById(foundEmail.getId());
-
-        if(member.getPhoto() != null){
-            deleteMemberProfilePhoto(member);
-        }
-
+        photoService.deleteProfilePhotos(member);
+        postService.updateMemberIdFromPost(member);
         try {
             memberRepository.delete(member);
             log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now());
@@ -233,12 +227,13 @@ public class MemberService {
 
     /**
      * Member 프로필 포토 삭제 |
-     * 멤버 식별자를 통해 관련된 멤버 정보를 조회하여 멤버 프로필 사진을 삭제한다.
+     * 멤버 식별자를 통해 관련된 멤버 정보를 조회하여 멤버 프로필 사진을 삭제한다.저장된 프로필 사진이 존재하지 않는다면 FILE_NOT_FOUND 예외를 던진다.
      */
     @Transactional
     public void deleteMemberProfilePhoto(Member member) {
         log.info("IN PROGRESS | Member 사진 삭제 At " + LocalDateTime.now() + " | 멤버 식별자 " + member.getId());
 
+        photoService.isExistProfilePhoto(member);
         photoService.deleteProfilePhotos(member);
 
         log.info("COMPLETE | Member 사진 삭제 At " + LocalDateTime.now() + " | 멤버 식별자 " + member.getId());
