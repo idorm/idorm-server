@@ -9,8 +9,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Photo extends BaseEntity {
 
@@ -24,6 +22,7 @@ public class Photo extends BaseEntity {
     private String folderName;
 
     private String url;
+    private Boolean isDeleted; // 게시글 사진용
 
     @OneToOne
     @JoinColumn(name = "member_id")
@@ -33,18 +32,26 @@ public class Photo extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post; // 커뮤니티 게시글
 
+
+    @Builder(builderClassName = "ProfilePhotoBuilder", builderMethodName = "ProfilePhotoBuilder")
     public Photo(String folderName, String fileName, String url, Member member) {
         this.folderName = folderName;
         this.fileName = fileName;
         this.url = url;
         this.member = member;
+        this.isDeleted = null;
     }
 
-    public Photo(String folderName, String fileName, String url, Member member, Post post) {
+    @Builder(builderClassName = "PostPhotoBuilder", builderMethodName = "PostPhotoBuilder")
+    public Photo(String folderName, String fileName, String url, Post post) {
         this.folderName = folderName;
         this.fileName = fileName;
         this.url = url;
-        this.member = member;
         this.post = post;
+        this.isDeleted = false;
+    }
+
+    public void updateIsDeleted() {
+        this.isDeleted = true;
     }
 }

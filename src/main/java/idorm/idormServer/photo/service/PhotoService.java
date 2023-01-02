@@ -1,5 +1,7 @@
 package idorm.idormServer.photo.service;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -57,7 +59,7 @@ public class PhotoService {
      * 사진을 S3에 저장한 후에 디비에 관련 정보를 입력한다. 저장 중 오류가 발생하면 500(Internal Server Error)을 던진다.
      */
     @Transactional
-    public Photo save(Member member, String fileName, MultipartFile file) {
+    public Photo saveProfilePhoto(Member member, String fileName, MultipartFile file) {
         log.info("IN PROGRESS | Photo 프로필 사진 저장 At " + LocalDateTime.now() +
                 " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
 
@@ -65,7 +67,7 @@ public class PhotoService {
         String url = insertFileToS3(folderName, fileName, file);
 
         try {
-            Photo photo = Photo.builder()
+            Photo photo = Photo.ProfilePhotoBuilder()
                     .folderName(folderName)
                     .fileName(fileName)
                     .url(url)
@@ -85,7 +87,8 @@ public class PhotoService {
 
     /**
      * Photo 커뮤니티 게시글 사진 저장 |
-     * 사진을 S3에 저장한 후에 디비에 관련 정보를 입력한다. 저장 중 오류가 발생하면 500(Internal Server Error)을 던진다.
+     * 기존에 저장되어있는 사진이 있다면 해당 게시글의 모든 사진을 aws와 DB에서 삭제한 후 다시 사진을 저장한다.
+     * 저장 중 오류가 발생하면 500(Internal Server Error)을 던진다.
      */
     @Transactional
     public List<Photo> savePostPhotos(Post post, Member member, List<String> fileNames, List<MultipartFile> files) {
@@ -97,24 +100,22 @@ public class PhotoService {
         List<Photo> photos = new ArrayList<>();
 
         if(post.getPhotos() != null) {
-            for(Photo photo : post.getPhotos()) {
-                photos.add(photo);
-            }
+            deletePostFullPhotos(post, member);
         }
 
-        int fileNameIndex = 0;
+        int fileIndex = 0;
         for (MultipartFile file : files) {
-            String fileName = fileNames.get(fileNameIndex);
+            String fileName = fileNames.get(fileIndex);
 
             String url = insertFileToS3(folderName, fileName, file);
 
             Photo savedPhoto = null;
             try {
-                Photo photo = Photo.builder()
+
+                Photo photo = Photo.PostPhotoBuilder()
                         .folderName(folderName)
                         .fileName(fileName)
                         .url(url)
-                        .member(member)
                         .post(post)
                         .build();
 
@@ -125,7 +126,7 @@ public class PhotoService {
             }
 
             photos.add(savedPhoto);
-            fileNameIndex += 1;
+            fileIndex += 1;
         }
 
         log.info("COMPLETE | Photo 커뮤니티 게시글 사진 저장 At " + LocalDateTime.now() +
@@ -180,25 +181,15 @@ public class PhotoService {
     }
 
     /**
-     * Photo 멤버 프로필 사진 수정 |
-     * 사진을 S3에 저장한 후에 디비에 관련 정보를 입력한다. 저장 중 오류가 발생하면 500(Internal Server Error)을 던진다.
+     * 프로필 사진이 존재하는지 확인한다. 멤버 삭제할 때의 경우에는 프로필 사진 등록여부를 확인 할 필요가 없기 때문이다.
+     * 그러나 프로필 사진 삭제 api로 요청을 하는 경우에는 사진이 저장되어 있지 않다면 FILE_NOT_FOUND 예외를 던져야 한다.
      */
-    @Transactional
-    public Photo update(Member member, String fileName, MultipartFile file) {
-        log.info("IN PROGRESS | Photo 업데이트 At " + LocalDateTime.now() +
-                " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
+    public void isExistProfilePhoto(Member member) {
+        boolean result = photoRepository.existsByMemberId(member.getId());
 
-        String folderName = member.getEmail() + "-" + member.getId();
-        insertFileToS3(folderName, fileName, file);
-
-        Photo savedPhoto = photoRepository.findByFileName(fileName)
-                .orElseThrow(() -> new CustomException(FILE_NOT_FOUND));
-
-        savedPhoto.modifyUpdatedAt(LocalDateTime.now());
-
-        log.info("COMPLETE | Photo 업데이트 At " + LocalDateTime.now() +
-                " | 멤버 아이디 = "  + member.getId() + " 파일명 = " + fileName);
-        return savedPhoto;
+        if(result == false) {
+            throw new CustomException(FILE_NOT_FOUND);
+        }
     }
 
     /**
@@ -213,10 +204,6 @@ public class PhotoService {
         String folderName = "profile-photo/" + member.getEmail() + "-" + member.getId();
 
         List<Photo> profilePhotos = photoRepository.findByFolderName(folderName);
-
-        if(profilePhotos.isEmpty()) {
-            throw new CustomException(FILE_NOT_FOUND);
-        }
 
         for(Photo photo : profilePhotos) {
             String deleteFileName = photo.getFileName();
@@ -259,6 +246,17 @@ public class PhotoService {
     }
 
     /**
+     * 게시글 삭제 시 커뮤니티 게시글 사진 isDeleted true로 변경
+     */
+    @Transactional
+    public void deletePhotoDeletingPost(Long postId) {
+        List<Photo> foundPhotos = photoRepository.findByPostId(postId);
+        for (Photo photo : foundPhotos) {
+            photo.updateIsDeleted();
+        }
+    }
+
+    /**
      * Photo 캘린더 사진 삭제 |
      */
     public void deleteImage(String fileName) {
@@ -273,7 +271,7 @@ public class PhotoService {
         String deletingFileName = folderName + "/" + fileName;
         try {
             amazonS3Client.deleteObject(bucketName, deletingFileName);
-        } catch (Exception e) {
+        } catch (SdkClientException e) {
             log.info("[서버 에러 발생] PhotoService deleteFileFromS3 {} {}", e.getCause(), e.getMessage());
             throw new CustomException(SERVER_ERROR);
         }
