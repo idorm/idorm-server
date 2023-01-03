@@ -96,7 +96,7 @@ public class Post extends BaseEntity {
         this.likesCount -= 1;
     }
 
-    public void updateMember() {
+    public void updateMemberNull() {
         this.member = null;
     }
 }

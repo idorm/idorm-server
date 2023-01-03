@@ -31,19 +31,19 @@ public class Comment extends BaseEntity {
     private Post post; // 게시글
 
     @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
-    @JoinColumn(name = "member_id", updatable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
     public Comment(String content, Boolean isAnonymous, Post post, Member member) {
         this.content = content;
         this.isAnonymous = isAnonymous;
-        this.isDeleted = false;
         this.member = member;
         this.post = post;
+        this.isDeleted = false;
     }
 
-    public void updateParentCommentId(Long parentCommentId) {
+    public void setParentCommentId(Long parentCommentId) {
         this.parentCommentId = parentCommentId;
     }
 
@@ -51,7 +51,7 @@ public class Comment extends BaseEntity {
         this.isDeleted = true;
     }
 
-    public void updateMember() {
+    public void updateMemberNull() {
         this.member = null;
     }
 }

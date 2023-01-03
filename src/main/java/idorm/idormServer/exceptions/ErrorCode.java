@@ -26,7 +26,6 @@ public enum ErrorCode {
     
     ILLEGAL_ARGUMENT_ADMIN(BAD_REQUEST, "관리자는 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
-    ILLEGAL_ARGUMENT_SAME_PK(BAD_REQUEST, "부모 식별자와 자식 식별자가 같을 수 없습니다."),
 
     ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC(BAD_REQUEST, "매칭정보가 비공개 입니다."),
 
@@ -61,6 +60,7 @@ public enum ErrorCode {
     CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 캘린더 정보가 없습니다."),
 
     DELETED_POST(NOT_FOUND, "삭제된 게시글 입니다."),
+    DELETED_COMMENT(NOT_FOUND, "삭제된 댓글 입니다."),
 
     /**
      * 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재
@@ -82,9 +82,7 @@ public enum ErrorCode {
     /**
      * 500 INTERNAL_SERVER_ERROR : 서버 에러
      */
-    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다."),
-    USERNAME_NOT_FOUND(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.")
-    ;
+    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.");
 
 
     private final HttpStatus httpStatus;

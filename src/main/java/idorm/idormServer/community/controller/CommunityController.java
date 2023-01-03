@@ -4,7 +4,7 @@ import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.dto.comment.CommentCustomResponseDto;
+import idorm.idormServer.community.dto.comment.CommentParentResponseDto;
 import idorm.idormServer.community.dto.comment.CommentDefaultRequestDto;
 import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
 import idorm.idormServer.community.dto.post.PostDefaultResponseDto;
@@ -51,7 +51,7 @@ public class CommunityController {
     private final CommentService commentService;
 
     @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "페이징 적용으로 page는 페이지 번호를 의미합니다. " +
-            "page는 0부터 시작하며 서버에서 10개 단위로 페이징해서 반환합니다.")
+            "page는 0부터 시작하며 서버에서 10개 단위로 페이징해서 반환합니다. 서버에서 최신순으로 정렬하여 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -88,7 +88,7 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "기숙사별 인기 게시글 목록 조회")
+    @ApiOperation(value = "기숙사별 인기 게시글 목록 조회", notes = "서버에서 최신순으로 정렬하여 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -161,7 +161,7 @@ public class CommunityController {
         validateDeletedPost(foundPost);
 
         List<Comment> foundComments = commentService.findCommentsByPostId(postId);
-        List<CommentCustomResponseDto> customResponseDtos = new ArrayList<>();
+        List<CommentParentResponseDto> customResponseDtos = new ArrayList<>();
         for(Comment comment : foundComments) {
             // 부모 식별자를 가지고 있지 않다면, 해당 부모 식별자를 가지고 있는 댓글 리스트와 함께 dto 생성
             if(comment.getParentCommentId() == null) { // 대댓글이 아닌 댓글임
@@ -174,7 +174,7 @@ public class CommunityController {
                     defaultResponseDtos.add(commentDefaultResponseDto);
                 }
 
-                CommentCustomResponseDto customResponseDto = new CommentCustomResponseDto(comment, defaultResponseDtos);
+                CommentParentResponseDto customResponseDto = new CommentParentResponseDto(comment, defaultResponseDtos);
                 customResponseDtos.add(customResponseDto);
             }
         }
@@ -300,7 +300,8 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "내가 쓴 글 목록 조회")
+    @ApiOperation(value = "내가 쓴 글 목록 조회", notes = "서버에서 최신순으로 정렬하여 응답힙니다. 이 API의 경우에는 게시글 생성일자가 아닌 " +
+            "수정일자로 정렬합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -347,7 +348,7 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "내가 공감한 게시글 목록 조회")
+    @ApiOperation(value = "내가 공감한 게시글 목록 조회", notes = "서버에서 최신순으로 정렬하여 응답힙니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -505,7 +506,100 @@ public class CommunityController {
     /**
      * Comment
      */
-    @ApiOperation(value = "내가 작성한 댓글 목록 조회")
+    @ApiOperation(value = "댓글/대댓글 저장",
+            notes = "대댓글인 경우, 부모 댓글이 조회되지 않는다면 COMMENT_NOT_FOUND(404)를 반환합니다. 이 때, 부모 댓글이 삭제된 경우도 DB에 " +
+                    "저장되어있으므로 문제 없습니다.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "CREATED",
+                    content = @Content(schema = @Schema(implementation = CommentDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "POST_NOT_FOUND / DELETED_POST / COMMENT_NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @PostMapping(value = "/member/post/{post-id}/comment")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ResponseEntity<DefaultResponseDto<Object>> saveComment(
+            HttpServletRequest request,
+            @PathVariable("post-id") Long postId,
+            @RequestBody @Valid CommentDefaultRequestDto requestDto
+    ) {
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
+        Post post = postService.findById(postId);
+
+        if(requestDto.getParentCommentId() != null) {
+            commentService.isExistParentCommentFromPost(postId, requestDto.getParentCommentId());
+        }
+
+        Comment createdComment = commentService.saveComment(
+                requestDto.getContent(),
+                requestDto.getIsAnonymous(),
+                post,
+                loginMember);
+
+        if(requestDto.getParentCommentId() != null) {
+            commentService.saveParentCommentId(requestDto.getParentCommentId(), createdComment);
+        }
+
+        CommentDefaultResponseDto response = new CommentDefaultResponseDto(createdComment);
+
+        return ResponseEntity.status(201)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("CREATED")
+                        .responseMessage("Comment 저장 완료")
+                        .data(response)
+                        .build()
+                );
+    }
+
+    @DeleteMapping(value = "/member/post/{post-id}/comment/{comment-id}")
+    @ApiOperation(value = "댓글 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_DELETE",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "POST_NOT_FOUND / DELETED_POST / COMMENT_NOT_FOUND / DELETED_COMMENT",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public ResponseEntity<DefaultResponseDto<Object>> deleteComment(
+            HttpServletRequest request,
+            @PathVariable("post-id") Long postId,
+            @PathVariable("comment-id") Long commentId
+    ) {
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
+        postService.findById(postId);
+        commentService.deleteComment(commentId, loginMember);
+
+        return ResponseEntity.status(204)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("NO_CONTENT")
+                        .responseMessage("Comment 삭제 완료")
+                        .build()
+                );
+    }
+
+    @ApiOperation(value = "내가 작성한 댓글 목록 조회", notes = "서버에서 최신순으로 정렬하여 응답합니다. 이 API의 경우에는 댓글 생성일자가 아닌 " +
+            "수정일자로 정렬합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -533,7 +627,7 @@ public class CommunityController {
         if(foundComments.isEmpty()) {
             return ResponseEntity.status(204)
                     .body(DefaultResponseDto.builder()
-                            .responseCode("OK")
+                            .responseCode("NO_CONTENT")
                             .responseMessage("조회할 댓글이 없습니다.")
                             .build()
                     );
@@ -547,101 +641,6 @@ public class CommunityController {
                         .responseCode("OK")
                         .responseMessage("Comment 로그인한 멤버가 작성한 모든 댓글 조회 완료")
                         .data(response)
-                        .build()
-                );
-    }
-
-    /**
-     * TODO: Comment 저장
-     */
-    @PostMapping(value = "/member/post/{post-id}/comment")
-    @ApiOperation(value = "댓글/대댓글 저장")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = CommentDefaultResponseDto.class))),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "404",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "409",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-    })
-    public ResponseEntity<DefaultResponseDto<Object>> saveComment(
-            HttpServletRequest request,
-            @PathVariable("post-id") Long postId,
-            @RequestBody @Valid CommentDefaultRequestDto requestDto
-    ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
-        Post post = postService.findById(postId);
-
-        Comment createdComment = commentService.saveComment(
-                requestDto.getContent(),
-                requestDto.getIsAnonymous(),
-                post,
-                loginMember);
-
-        // 대댓글이라면 댓글에 부모 댓글 식별자를 저장합니다.
-        if(requestDto.getParentCommentId() != null) {
-            commentService.saveParentCommentId(requestDto.getParentCommentId(), createdComment.getId());
-        }
-
-        CommentDefaultResponseDto response = new CommentDefaultResponseDto(createdComment);
-
-        return ResponseEntity.status(201)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Comment 저장 완료")
-                        .data(response)
-                        .build()
-                );
-    }
-
-    /**
-     * TODO: comment 삭제
-     */
-    @DeleteMapping(value = "/member/post/{post-id}/comment/{comment-id}")
-    @ApiOperation(value = "댓글 삭제")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "404",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "409",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-    })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<DefaultResponseDto<Object>> deleteComment(
-            HttpServletRequest request,
-            @PathVariable("post-id") Long postId,
-            @PathVariable("comment-id") Long commentId
-    ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
-        postService.findById(postId);
-        commentService.deleteComment(commentId, loginMember);
-
-        return ResponseEntity.status(204)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
-                        .responseMessage("Comment 삭제 완료")
                         .build()
                 );
     }

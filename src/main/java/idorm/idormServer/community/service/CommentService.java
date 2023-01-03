@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static idorm.idormServer.exceptions.ErrorCode.*;
-import static idorm.idormServer.exceptions.ErrorCode.ILLEGAL_ARGUMENT_SAME_PK;
 
 @Slf4j
 @Service
@@ -56,29 +55,36 @@ public class CommentService {
     }
 
     /**
-     * 대댓글이라면 부모 댓글 식별자 저장하기
+     * 대댓글일 때 해당 게시글에 부모 댓글이 저장되어 있는지 확인하기
      */
-    @Transactional
-    public void saveParentCommentId(Long parentCommentId, Long subCommentId) {
-        log.info("IN PROGRESS | Comment 부모 댓글 식별자 저장 At " + LocalDateTime.now() +
-                " | Parent Comment 식별자: " + parentCommentId + " | Sub Comment 식별자 : " + subCommentId);
-
-        findById(parentCommentId);
-        Comment foundSubComment = findById(subCommentId);
-
-        if (foundSubComment.getId() == parentCommentId) {
-            throw new CustomException(ILLEGAL_ARGUMENT_SAME_PK);
+    public void isExistParentCommentFromPost(Long postId, Long commentId) {
+        boolean isExistParentComment = commentRepository.existsByIdAndPostId(commentId, postId);
+        if(isExistParentComment == false) {
+            throw new CustomException(COMMENT_NOT_FOUND);
         }
-
-        foundSubComment.updateParentCommentId(parentCommentId);
-        commentRepository.save(foundSubComment);
-
-        log.info("COMPLETE | Comment 부모 댓글 식별자 저장 At " + LocalDateTime.now() + " | Parent Comment 식별자: "
-                + parentCommentId);
     }
 
     /**
-     * Comment 단건 조회 (해당 댓글의 전체 대댓글까지 조회되게)
+     * 대댓글이라면 부모 댓글 식별자 저장하기
+     */
+    @Transactional
+    public void saveParentCommentId(Long parentCommentId, Comment subComment) {
+        log.info("IN PROGRESS | CommentService saveParentCommentId At " + LocalDateTime.now());
+
+        try {
+            subComment.setParentCommentId(parentCommentId);
+            commentRepository.save(subComment);
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] CommentService saveParentCommentId {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
+        }
+
+        log.info("COMPLETE | CommentService saveParentCommentId At " + LocalDateTime.now());
+    }
+
+    /**
+     * Comment 단건 조회
+     * 삭제된 부모 댓글도 조회해야 하므로 DELETED_COMMENT(404)에 대한 예외처리는 하지 않는다.
      */
     public Comment findById(Long commentId) {
         log.info("IN PROGRESS | Comment 단건 조회 At " + LocalDateTime.now() + " | " + commentId);
@@ -161,7 +167,6 @@ public class CommentService {
 
     /**
      * Comment 댓글 단건 삭제 |
-     * 대댓글은 살아있어야 함
      */
     @Transactional
     public void deleteComment(Long commentId, Member member) {
@@ -172,6 +177,10 @@ public class CommentService {
             throw new CustomException(UNAUTHORIZED_DELETE);
         }
 
+        if (foundComment.getIsDeleted() == true) {
+            throw new CustomException(DELETED_COMMENT);
+        }
+
         try {
             foundComment.deleteComment();
             commentRepository.save(foundComment);
@@ -180,5 +189,21 @@ public class CommentService {
             throw new CustomException(SERVER_ERROR);
         }
         log.info("COMPLETE | Comment 삭제 At " + LocalDateTime.now() + " | " + commentId);
+    }
+
+    /**
+     * 멤버 삭제 시 Comment 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
+     */
+    public void updateMemberNullFromComment(Member member) {
+        List<Comment> foundComments = commentRepository.findAllByMemberId(member.getId());
+
+        try {
+            for(Comment comment : foundComments) {
+                comment.updateMemberNull();
+            }
+        } catch (DataAccessException | ConstraintViolationException e) {
+            log.info("[서버 에러 발생] PostService updateMemberIdFromComment {} {}", e.getCause(), e.getMessage());
+            throw new CustomException(SERVER_ERROR);
+        }
     }
 }

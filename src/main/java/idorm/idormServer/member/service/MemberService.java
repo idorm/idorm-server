@@ -215,7 +215,7 @@ public class MemberService {
         Email foundEmail = emailService.findByEmail(member.getEmail());
         emailService.deleteById(foundEmail.getId());
         photoService.deleteProfilePhotos(member);
-        postService.updateMemberIdFromPost(member);
+        postService.updateMemberNullFromPost(member);
         try {
             memberRepository.delete(member);
             log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now());

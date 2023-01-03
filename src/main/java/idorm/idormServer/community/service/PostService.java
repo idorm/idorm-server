@@ -1,8 +1,6 @@
 package idorm.idormServer.community.service;
 
-import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.repository.PostRepository;
 import idorm.idormServer.exceptions.CustomException;
 
@@ -15,7 +13,6 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,39 +35,22 @@ public class PostService {
     private final CommentService commentService;
 
     /**
-     * 멤버 삭제 시 Post 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
+     * 멤버 삭제 시 Post, Comment 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
      */
     @Transactional
-    public void updateMemberIdFromPost(Member member) {
-        List<Post> foundPosts = findPostsByMember(member);
+    public void updateMemberNullFromPost(Member member) {
+        List<Post> foundPosts = postRepository.findAllByMemberId(member.getId());
 
         try {
             for(Post post : foundPosts) {
-                post.updateMember();
+                post.updateMemberNull();
             }
         } catch (DataAccessException | ConstraintViolationException e) {
             log.info("[서버 에러 발생] PostService updateMemberIdFromPost {} {}", e.getCause(), e.getMessage());
             throw new CustomException(SERVER_ERROR);
         }
-        updateMemberIdFromComment(member);
+        commentService.updateMemberNullFromComment(member);
     }
-
-    /**
-     * 멤버 삭제 시 Comment 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
-     */
-    private void updateMemberIdFromComment(Member member) {
-        List<Comment> foundComments = commentService.findCommentsByMember(member);
-
-        try {
-            for(Comment comment : foundComments) {
-                comment.updateMember();
-            }
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService updateMemberIdFromComment {} {}", e.getCause(), e.getMessage());
-            throw new CustomException(SERVER_ERROR);
-        }
-    }
-
 
     /**
      * Post 게시글 사진 추가 메소드 |
@@ -92,31 +72,6 @@ public class PostService {
         log.info("COMPLETE | Post 게시글 사진 저장 At " + LocalDateTime.now() + " | 사진 크기: " + savedPhotos.size());
         return savedPhotos;
     }
-
-    /**
-     * 파일 번호 부여 |
-     * 현재 게시글에 저장되어 있는 사진들의 파일 이름을 확인하여 가장 마지막으로 부여한 인덱스에 1을 더하여 리턴합니다. 이 번호는 새로 추가할 다음 파일 이름을
-     * 부여하는데 사용합니다.
-     */
-//    private int fileNumbering(List<Photo> photos) {
-//        log.info("IN PROGRESS | 파일 번호 부여 At " + LocalDateTime.now() + " | " + photos.size());
-//        int index = 1;
-//
-//        if(photos.isEmpty()) {
-//            return index;
-//        } else {
-//            for(Photo photo : photos) {
-//                String[] fileName = photo.getFileName().split("[.]");
-//                int fileNameIndex = parseInt(fileName[0]);
-//                if(fileNameIndex > index) {
-//                    index = fileNameIndex;
-//                }
-//            }
-//            index += 1;
-//        }
-//        log.info("COMPLETE | 파일 번호 부여 At " + LocalDateTime.now() + " | " + index);
-//        return index;
-//    }
 
     /**
      * Post 저장 |

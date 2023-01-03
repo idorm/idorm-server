@@ -36,4 +36,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      * 멤버 아이디를 통해서 멤버가 작성한 게시글 반환
      */
     List<Post> findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(Long memberId, Boolean isDeleted);
+
+    /**
+     * 멤버가 작성한 삭제된 게시글을 포함한 모든 게시글 반환
+     */
+    List<Post> findAllByMemberId(Long memberId);
 }
