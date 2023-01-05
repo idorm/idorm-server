@@ -10,13 +10,13 @@ spring:
 #    password: lsmi81
 
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
-      ddl-auto: none # DDL 기능 사용 여부(create/update/create-drop/validate/none)
+      ddl-auto: create # DDL 기능 사용 여부(create/update/create-drop/validate/none)
       use-new-id-generator-mappings: false
-    properties:
-      hibernate:
-        format_sql: true # SQL 가독성 높여주는 formatting 여부
+#    properties:
+#      hibernate:
+#        format_sql: true # SQL 가독성 높여주는 formatting 여부
 
   mvc:
     pathmatch:
