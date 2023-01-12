@@ -198,7 +198,6 @@ public class PostService {
     /**
      * Post 기숙사 카테고리 별 다건 조회 |
      * 기숙사 카테고리를 사용한 쿼리를 통해 해당되는 기숙사의 게시글들을 조회합니다.
-     * TODO: 페이징 처리
      */
     public Page<Post> findManyPostsByDormCategory(String dormNum, int pageNum) {
         log.info("IN PROGRESS | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
@@ -208,7 +207,7 @@ public class PostService {
                     postRepository.findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(
                             dormNum,
                             false,
-                            PageRequest.of(pageNum, 10));
+                            PageRequest.of(pageNum, 20));
 
             log.info("COMPLETE | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
             return foundPosts;

@@ -51,7 +51,7 @@ public class CommunityController {
     private final CommentService commentService;
 
     @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "페이징 적용으로 page는 페이지 번호를 의미합니다. " +
-            "page는 0부터 시작하며 서버에서 10개 단위로 페이징해서 반환합니다. 서버에서 최신순으로 정렬하여 응답합니다.")
+            "page는 0부터 시작하며 서버에서 20개 단위로 페이징해서 반환합니다. 서버에서 최신순으로 정렬하여 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
