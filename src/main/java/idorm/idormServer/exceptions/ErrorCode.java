@@ -63,6 +63,11 @@ public enum ErrorCode {
     DELETED_COMMENT(NOT_FOUND, "삭제된 댓글 입니다."),
 
     /**
+     * 405 METHOD_NOT_ALLOWED : 대상 리소스가 해당 메서드를 지원하지 않음
+     */
+//    UNACCEPTABLE_METHOD(METHOD_NOT_ALLOWED, "지원하지 않는 메서드입니다."),
+
+    /**
      * 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재
      */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다."),

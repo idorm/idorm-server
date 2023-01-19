@@ -47,6 +47,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
 
                 .and()
                 .authorizeRequests()
+                .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/email/**", "/verifyCode/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/member/**").hasRole("USER")

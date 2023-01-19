@@ -50,7 +50,8 @@ public class SwaggerConfiguration {
                         )
                 .useDefaultResponseMessages(false)
                 .select()
-                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class)) // Swagger를 적용할 패키지 설정
+                .apis(RequestHandlerSelectors
+                        .withClassAnnotation(RestController.class)) // Swagger를 적용할 패키지 설정
                 .paths(PathSelectors.any()) // Swagger를 적용할 주소 패턴을 세팅
                 .build()
                 .apiInfo(apiInfo()).securityContexts(Arrays.asList(securityContext())) // Swagger UI로 노출할 정보
