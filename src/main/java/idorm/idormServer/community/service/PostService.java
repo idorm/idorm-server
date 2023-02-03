@@ -8,22 +8,17 @@ import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -45,8 +40,7 @@ public class PostService {
             for(Post post : foundPosts) {
                 post.updateMemberNull();
             }
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService updateMemberIdFromPost {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
         commentService.updateMemberNullFromComment(member);
@@ -56,7 +50,6 @@ public class PostService {
      * Post 게시글 사진 추가 메소드 |
      */
     private List<Photo> savePhotos(Post post, Member member, List<MultipartFile> files) {
-        log.info("IN PROGRESS | Post 게시글 사진 저장 At " + LocalDateTime.now() + " | 게시글 식별자: " + post.getId());
 
         int index = 1;
         List<String> fileNames = new ArrayList<>();
@@ -69,7 +62,6 @@ public class PostService {
 
         List<Photo> savedPhotos = photoService.savePostPhotos(post, member, fileNames, files);
 
-        log.info("COMPLETE | Post 게시글 사진 저장 At " + LocalDateTime.now() + " | 사진 크기: " + savedPhotos.size());
         return savedPhotos;
     }
 
@@ -85,7 +77,6 @@ public class PostService {
                      String content,
                      Boolean isAnonymous
     ) {
-        log.info("IN PROGRESS | Post 저장 At " + LocalDateTime.now() + " | " + title);
 
         try {
             Post createdPost = Post.builder()
@@ -101,12 +92,8 @@ public class PostService {
             List<Photo> savedPhotos = savePhotos(savedPost, member, files);
             savedPost.addPhotos(savedPhotos);
 
-            log.info("COMPLETE | Post 저장 At " + LocalDateTime.now() + " | Post 식별자: " + createdPost.getId() + " | " +
-                    title);
-
             return createdPost;
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService savePost {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -126,7 +113,6 @@ public class PostService {
             Boolean isAnonymous,
             List<MultipartFile> files
     ) {
-        log.info("IN PROGRESS | Post 수정 At " + LocalDateTime.now() + " | " + title + " | 수정 사진 개수 : " + files.size());
 
         Post foundPost = findById(postId);
         photoService.deletePostFullPhotos(foundPost, member);
@@ -141,10 +127,7 @@ public class PostService {
 
             Post updatedPost = postRepository.save(foundPost);
 
-            log.info("COMPLETE | Post 수정 At " + LocalDateTime.now() + " | Post 식별자: " + updatedPost.getId()
-                    + " | 저장된 사진 개수 " + foundPost.getImagesCount());
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService updatePost {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -154,7 +137,6 @@ public class PostService {
      */
     @Transactional
     public void deletePost(Long postId, Member member) {
-        log.info("IN PROGRESS | Post 삭제 At " + LocalDateTime.now() + " | " + postId);
         Post foundPost = findById(postId);
 
         if(foundPost.getMember() == null || foundPost.getMember().getId() != member.getId()) {
@@ -169,12 +151,9 @@ public class PostService {
             foundPost.deleteLikesCount();
             postRepository.save(foundPost);
             photoService.deletePhotoDeletingPost(postId);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService deletePost {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-
-        log.info("COMPLETE | Post 삭제 At " + LocalDateTime.now() + " | " + postId);
     }
 
     /**
@@ -182,16 +161,12 @@ public class PostService {
      * 게시글 식별자를 통해 조회합니다.
      */
     public Post findById(Long postId) {
-        log.info("IN PROGRESS | Post 단건 조회 At " + LocalDateTime.now() + " | " + postId);
-
         Post foundPost = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
         if(foundPost.getIsDeleted() == true) {
             throw new CustomException(DELETED_POST);
         }
-
-        log.info("COMPLETE | Post 단건 조회 At " + LocalDateTime.now() + " | " + postId);
         return foundPost;
     }
 
@@ -200,19 +175,14 @@ public class PostService {
      * 기숙사 카테고리를 사용한 쿼리를 통해 해당되는 기숙사의 게시글들을 조회합니다.
      */
     public Page<Post> findManyPostsByDormCategory(String dormNum, int pageNum) {
-        log.info("IN PROGRESS | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
-
         try {
             Page<Post> foundPosts =
                     postRepository.findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(
                             dormNum,
                             false,
                             PageRequest.of(pageNum, 20));
-
-            log.info("COMPLETE | Post 기숙사 카테고리 별 다건 조회 At " + LocalDateTime.now() + " | " + dormNum);
             return foundPosts;
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService findManyPostsByDormCategory {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -224,14 +194,11 @@ public class PostService {
      * 공감 순으로 상위 10개 조회 (만약 동일 공감이 많다면 더 빠른 최신 날짜로)
      */
     public List<Post> findTopPosts(String dormNum) {
-        log.info("IN PROGRESS | Post 기숙사 카테고리 별 인기 게시글 조회 At " + LocalDateTime.now() + " | " + dormNum);
         try {
             List<Post> foundPosts = postRepository.findTopPostsByDormCategory(dormNum);
-            log.info("COMPLETE | Post 기숙사 카테고리 별 인기 게시글 조회 At " + LocalDateTime.now() + " | 조회된 게시글 수: " +
-                    foundPosts.size());
+
             return foundPosts;
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService findTopPosts {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -240,17 +207,12 @@ public class PostService {
      * 특정 멤버가 작성한 모든 게시글 리스트 조회 |
      */
     public List<Post> findPostsByMember(Member member) {
-        log.info("IN PROGRESS | Post 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | " + member.getId());
-
         try {
             List<Post> postsByMemberId =
                     postRepository.findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(member.getId(), false);
 
-            log.info("COMPLETE | Post 멤버가 작성한 게시글 조회 At " + LocalDateTime.now() + " | 게시글 수 " +
-                    postsByMemberId.size());
             return postsByMemberId;
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService findPostsByMember {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -266,8 +228,7 @@ public class PostService {
         try {
             post.addLikesCount();
             postRepository.save(post);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService addPostLikes {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
         return savedPostLikedMemberId;
@@ -288,8 +249,7 @@ public class PostService {
         try {
             post.subtractLikesCount();
             postRepository.save(post);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] PostService deletePostLikes {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }

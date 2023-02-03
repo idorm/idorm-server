@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -37,10 +36,9 @@ import java.util.*;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-@Slf4j
+@Api(tags = "이메일 인증")
 @RequiredArgsConstructor
 @RestController
-@Api(tags = "Email API")
 public class EmailController {
 
     private final EmailService emailService;
@@ -249,11 +247,9 @@ public class EmailController {
      */
     //이메일,인증번호로그/DB 저장
     private MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
-        log.info("보내는 대상 : " + to);
 
         MimeMessage  message = emailSender.createMimeMessage();
         String ePw = createKey();
-        log.info("인증 번호 : " + ePw);
         String code = createCode(ePw);
         message.addRecipients(MimeMessage.RecipientType.TO, to); //보내는 대상
         message.setSubject("IDORM 확인 코드: " + code,"UTF-8"); //제목
@@ -305,7 +301,6 @@ public class EmailController {
         try{
             emailSender.send(message);
         } catch(MailException e){
-            log.info(e.getMessage());
             throw new CustomException(EMAIL_NOT_FOUND);
         }
     }

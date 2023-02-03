@@ -27,9 +27,9 @@ import javax.validation.Valid;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
+@Api(tags = "온보딩 매칭 정보")
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "MatchingInfo API")
 public class MatchingInfoController {
 
     private final MatchingInfoService matchingInfoService;

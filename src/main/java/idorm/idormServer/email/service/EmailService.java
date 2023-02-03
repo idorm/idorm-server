@@ -6,9 +6,6 @@ import idorm.idormServer.exception.CustomException;
 
 import lombok.RequiredArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +14,6 @@ import java.util.Optional;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -32,18 +28,13 @@ public class EmailService {
     @Transactional
     public Long save(String email, String code){
 
-        log.info("START | Email 저장 At " + LocalDateTime.now() + " | " + email);
-
         Email certifiedEmail = new Email(email, code);
 
         try {
             emailRepository.save(certifiedEmail);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] EmailService save {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-
-        log.info("COMPLETE | Email 저장 At " + LocalDateTime.now() + " | " + certifiedEmail.toString());
         return certifiedEmail.getId();
     }
 
@@ -54,13 +45,10 @@ public class EmailService {
     @Transactional
     public void setCode(String email, String code){
 
-        log.info("START | Email 인증코드 저장 At " + LocalDateTime.now() + " | " + email);
-
         Email nonCertifiedEmail = emailRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
 
         nonCertifiedEmail.setCode(code);
-        log.info("COMPLETE | Email 인증코드 저장 At " + LocalDateTime.now() + " | " + email);
     }
 
     /**
@@ -68,8 +56,6 @@ public class EmailService {
      * 이메일로 Email을 조회한다.
      */
     public Optional<Email> findByEmailOp(String email){
-
-        log.info("COMPLETE | Email Optional 조회 At " + LocalDateTime.now() + " | " + email);
         return emailRepository.findByEmail(email);
     }
 
@@ -79,12 +65,8 @@ public class EmailService {
      */
     public Email findByEmail(String email){
 
-        log.info("START | Email 조회 At " + LocalDateTime.now() + " | " + email);
-
         Email foundEmail = emailRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
-
-        log.info("COMPLETE | Email 조회 At " + LocalDateTime.now() + " | " + email);
         return foundEmail;
     }
 
@@ -96,19 +78,14 @@ public class EmailService {
     @Transactional
     public void deleteById(Long emailId){
 
-        log.info("START | Email 삭제 At " + LocalDateTime.now() + " | 이메일 식별자 : " + emailId);
-
         Email email = emailRepository.findById(emailId)
                 .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
 
         try {
             emailRepository.delete(email);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] EmailService deleteById {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-
-        log.info("COMPLETE | Email 삭제 At " + LocalDateTime.now() + " | 이메일 : " + email.getEmail());
     }
 
     /**
@@ -118,19 +95,15 @@ public class EmailService {
     @Transactional
     public void isChecked(String email){
 
-        log.info("START | Email 인증여부 체크 At " + LocalDateTime.now() + " | " + email);
-
         Email foundEmail = emailRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
 
         try {
             foundEmail.isChecked();
             emailRepository.save(foundEmail);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] EmailService isChecked {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-        log.info("COMPLETE | Email 인증여부 체크 At " + LocalDateTime.now() + " | " + email);
     }
 
     /**
@@ -139,7 +112,6 @@ public class EmailService {
      */
     @Transactional
     public void updateIsJoined(String email) {
-        log.info("START | Email 가입여부 수정 At " + LocalDateTime.now() + " | " + email);
 
         Email foundEmail = emailRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
@@ -147,11 +119,9 @@ public class EmailService {
         try {
             foundEmail.isJoined();
             emailRepository.save(foundEmail);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] EmailService updateIsJoined {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-        log.info("COMPLETE | Email 가입여부 수정 At " + LocalDateTime.now() + " | " + email);
     }
 
     /**
@@ -160,16 +130,12 @@ public class EmailService {
      */
     @Transactional
     public void updateUpdatedAt(Email email) {
-        log.info("START | Email updatedAt 수정 At " + LocalDateTime.now() + " | " + email);
-
         try {
             email.modifyUpdatedAt(LocalDateTime.now());
             emailRepository.save(email);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] EmailService updateUpdatedAt {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-        log.info("COMPLETE | Email updatedAt 수정 At " + LocalDateTime.now() + " | " + email);
     }
 
 }

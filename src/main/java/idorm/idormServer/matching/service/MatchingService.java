@@ -9,20 +9,16 @@ import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataAccessException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -40,8 +36,6 @@ public class MatchingService {
      * 필터링된 MatchingInfo 식별자를 반환합니다.
      */
     public List<Long> findMatchingMembers(Long memberId) {
-
-        log.info("IN PROGRESS | Matching 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
 
         Member loginMember = memberService.findById(memberId);
 
@@ -64,8 +58,7 @@ public class MatchingService {
                     loginMemberMatchingInfo.getJoinPeriod(),
                     loginMemberMatchingInfo.getGender()
             );
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] MatchingService findMatchingMembers {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
 
@@ -82,8 +75,6 @@ public class MatchingService {
                 }
             }
         }
-
-        log.info("COMPLETE | Matching 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
         return filteredMatchingInfoId;
     }
 
@@ -107,7 +98,6 @@ public class MatchingService {
      */
     public List<Long> findFilteredMatchingMembers(Long memberId,
                                                   MatchingFilteredMatchingInfoRequestDto filteringRequest) {
-        log.info("IN PROGRESS | Matching 필터링된 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
 
         Member loginMember = memberService.findById(memberId);
 
@@ -144,8 +134,7 @@ public class MatchingService {
                     filteringRequest.getMinAge(),
                     filteringRequest.getMaxAge()
             );
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] MatchingService findFilteredMatchingMembers {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
 
@@ -162,8 +151,6 @@ public class MatchingService {
                 }
             }
         }
-
-        log.info("COMPLETE | Matching 필터링된 매칭멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
         return filteredMatchingInfoId;
     }
 }

@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("calendar")
 @RequiredArgsConstructor
-@Api(tags = "Calendar API")
+@Api(tags = "캘린더")
 public class CalendarController {
     // TODO : Authentication 추가
 

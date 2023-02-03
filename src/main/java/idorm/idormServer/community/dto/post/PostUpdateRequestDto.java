@@ -1,4 +1,4 @@
-package idorm.idormServer.community.vo.post;
+package idorm.idormServer.community.dto.post;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Schema(title = "게시글 수정 VO")
-public class UpdatePostVo {
+@Schema(title = "Post 수정 요청")
+public class PostUpdateRequestDto {
 
     @NotBlank(message = "제목을 입력해 주세요.")
     @ApiModelProperty(position = 2, required = true, dataType = "String", value = "제목", example = "제에목")

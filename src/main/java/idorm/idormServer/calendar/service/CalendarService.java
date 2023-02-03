@@ -5,6 +5,7 @@ import idorm.idormServer.calendar.dto.DateFilterDto;
 import idorm.idormServer.calendar.repository.CalendarRepository;
 import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.photo.service.PhotoService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class CalendarService {
 
     private final CalendarRepository calendarRepository;

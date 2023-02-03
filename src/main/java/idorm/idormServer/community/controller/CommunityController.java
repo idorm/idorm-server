@@ -12,8 +12,8 @@ import idorm.idormServer.community.dto.post.PostOneResponseDto;
 import idorm.idormServer.community.service.CommentService;
 import idorm.idormServer.community.service.PostLikedMemberService;
 import idorm.idormServer.community.service.PostService;
-import idorm.idormServer.community.vo.post.SavePostVo;
-import idorm.idormServer.community.vo.post.UpdatePostVo;
+import idorm.idormServer.community.dto.post.PostSaveRequestDto;
+import idorm.idormServer.community.dto.post.PostUpdateRequestDto;
 import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.exception.DefaultExceptionResponseDto;
 import idorm.idormServer.member.domain.Member;
@@ -39,9 +39,10 @@ import java.util.stream.Collectors;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-@RequiredArgsConstructor
+@Api(tags = "커뮤니티")
 @RestController
-@Api(tags = "Community API")
+@RequiredArgsConstructor
+@RequestMapping("/member")
 public class CommunityController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -67,7 +68,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
-    @GetMapping("/member/posts/{dormitory-category}")
+    @GetMapping("/posts/{dormitory-category}")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsFilteredByCategory(
             @PathVariable(value = "dormitory-category") String dormNum,
             @RequestParam(value = "page") int pageNum
@@ -107,7 +108,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
-    @GetMapping("/member/posts/{dormitory-category}/top")
+    @GetMapping("/posts/{dormitory-category}/top")
     public ResponseEntity<DefaultResponseDto<Object>> findTopPostsFilteredByCategory(
             @PathVariable("dormitory-category") String dormNum
     ) {
@@ -152,7 +153,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
-    @GetMapping("/member/post/{post-id}")
+    @GetMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> findOnePost(
             @PathVariable("post-id") Long postId
     ) {
@@ -208,12 +209,12 @@ public class CommunityController {
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping(value = "/member/post",
+    @PostMapping(value = "/post",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DefaultResponseDto<Object>> savePost(
             HttpServletRequest request,
-            @ModelAttribute @Valid SavePostVo postRequest
+            @ModelAttribute @Valid PostSaveRequestDto postRequest
     ) {
 
         validateDormCategory(postRequest.getDormNum());
@@ -263,13 +264,13 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
-    @PostMapping(value = "/member/post/{post-id}",
+    @PostMapping(value = "/post/{post-id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DefaultResponseDto<Object>> updatePost(
             HttpServletRequest request,
             @PathVariable("post-id") Long updatePostId,
-            @ModelAttribute @Valid UpdatePostVo updateRequest
+            @ModelAttribute @Valid PostUpdateRequestDto updateRequest
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
@@ -317,7 +318,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
-    @GetMapping("/member/posts/write")
+    @GetMapping("/posts/write")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsByMember(
             HttpServletRequest request2
     ) {
@@ -364,7 +365,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
-    @GetMapping("/member/posts/like")
+    @GetMapping("/posts/like")
     public ResponseEntity<DefaultResponseDto<Object>> findLikedPostsByMember(
             HttpServletRequest request2
     ) {
@@ -420,7 +421,7 @@ public class CommunityController {
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @PutMapping("/member/post/{post-id}/like")
+    @PutMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> savePostLikes(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
@@ -454,7 +455,7 @@ public class CommunityController {
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/member/post/{post-id}/like")
+    @DeleteMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> deletePostLikes(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
@@ -485,7 +486,7 @@ public class CommunityController {
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/member/post/{post-id}")
+    @DeleteMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> deletePost(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
@@ -527,7 +528,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
-    @PostMapping(value = "/member/post/{post-id}/comment")
+    @PostMapping(value = "/post/{post-id}/comment")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<DefaultResponseDto<Object>> saveComment(
             HttpServletRequest request,
@@ -563,7 +564,7 @@ public class CommunityController {
                 );
     }
 
-    @DeleteMapping(value = "/member/post/{post-id}/comment/{comment-id}")
+    @DeleteMapping(value = "/post/{post-id}/comment/{comment-id}")
     @ApiOperation(value = "댓글 삭제")
     @ApiResponses(value = {
             @ApiResponse(
@@ -615,7 +616,7 @@ public class CommunityController {
                     description = "INTERNAL_SERVER_ERROR",
                     content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
-    @GetMapping(value = "/member/comments")
+    @GetMapping(value = "/comments")
     public ResponseEntity<DefaultResponseDto<Object>> findCommentsByMember(
             HttpServletRequest request
     ) {

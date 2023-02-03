@@ -8,19 +8,14 @@ import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -34,14 +29,11 @@ public class LikedMemberService {
      * LikedMember 좋아요한 멤버 조회 |
      */
     public List<LikedMember> findLikedMembersByMemberId(Long memberId) {
-        log.info("IN PROGRESS | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
 
         try {
             List<LikedMember> likedMembers = likedMemberRepository.findAllByMemberId(memberId);
-            log.info("COMPLETE | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return likedMembers;
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] LikedMemberService findLikedMembersByMemberId {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -51,17 +43,12 @@ public class LikedMemberService {
      * 멤버 식별자와 선택한 멤버 식별자를 인자로 받아서 이미 좋아요한 멤버로 등록되어있다면 true로 반환한다.
      */
     public boolean isRegisteredlikedMemberIdByMemberId(Long memberId, Long selectedMemberId) {
-        log.info("IN PROGRESS | LikedMember 좋아요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
-                memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
-
         Optional<Long> registeredLikedMemberId =
                 likedMemberRepository.isRegisteredLikedMemberIdByMemberId(memberId, selectedMemberId);
 
         if(registeredLikedMemberId.isPresent()) {
             return true;
         }
-        log.info("COMPLETE | LikedMember 좋아요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
-                memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
         return false;
     }
 
@@ -73,8 +60,6 @@ public class LikedMemberService {
      */
     @Transactional
     public Long saveLikedMember(Long memberId, Long likedMemberId) {
-        log.info("IN PROGRESS | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
-
         isExistingLikedMember(memberId, likedMemberId);
 
         Member loginMember = memberService.findById(memberId);
@@ -88,10 +73,8 @@ public class LikedMemberService {
                     .build();
 
             likedMemberRepository.save(likedMember);
-            log.info("COMPLETE | LikedMember 좋아요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return likedMember.getId();
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] LikedMemberService saveLikedMember {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -103,8 +86,6 @@ public class LikedMemberService {
      */
     private void isExistingLikedMember(Long memberId, Long likedMemberId) {
 
-        log.info("IN PROGRESS | LikedMember 중복 여부 확인 At " + LocalDateTime.now() + " | " + memberId);
-
         List<Long> likedMemberIds = likedMemberRepository.findLikedMembersByMemberId(memberId);
 
         for(Long id : likedMemberIds) {
@@ -112,8 +93,6 @@ public class LikedMemberService {
                 throw new CustomException(DUPLICATE_LIKED_MEMBER);
             }
         }
-
-        log.info("COMPLETE | LikedMember 중복 여부 확인 At " + LocalDateTime.now() + " | " + memberId);
     }
 
     /**
@@ -121,18 +100,11 @@ public class LikedMemberService {
      */
     @Transactional
     public void deleteLikedMember(Long loginMemberId, Long likedMemberId) {
-
-        log.info("IN PROGRESS | LikedMember 좋아요한 멤버 삭제 At " + LocalDateTime.now()
-                + " | 로그인 멤버 식별자: " + loginMemberId + " | 좋아요한 멤버 식별자 : " + likedMemberId);
-
         memberService.findById(loginMemberId);
 
         try {
             likedMemberRepository.deleteLikedMember(loginMemberId, likedMemberId);
-            log.info("COMPLETE | LikedMember 좋아요한 멤버 삭제 At " + LocalDateTime.now()
-                    + " | 로그인 멤버 식별자: " + loginMemberId + " | 좋아요한 멤버 식별자 : " + likedMemberId);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] LikedMemberService deleteLikedMember {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -143,17 +115,10 @@ public class LikedMemberService {
      */
     @Transactional
     public void deleteLikedMembers(Long memberId) {
-        log.info("IN PROGRESS | LikedMember 좋아요한 멤버들 삭제 At " + LocalDateTime.now()
-                + " | 로그인 멤버 식별자: " + memberId);
-
         try {
             likedMemberRepository.deleteLikedMembers(memberId);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] LikedMemberService deleteLikedMembers {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-
-        log.info("COMPLETE | LikedMember 좋아요한 멤버들 삭제 At " + LocalDateTime.now()
-                + " | 로그인 멤버 식별자: " + memberId);
     }
 }

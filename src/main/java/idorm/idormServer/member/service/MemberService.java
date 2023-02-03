@@ -10,10 +10,8 @@ import idorm.idormServer.member.repository.MemberRepository;
 import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +22,6 @@ import java.util.Optional;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -47,8 +43,6 @@ public class MemberService {
     @Transactional
     public Long save(String email, String password, String nickname) {
 
-        log.info("IN PROGRESS | Member 저장 At " + LocalDateTime.now() + " | " + email);
-
         isExistingEmail(email);
         isDuplicateNickname(nickname);
         try {
@@ -60,10 +54,8 @@ public class MemberService {
                     .build();
 
             memberRepository.save(member);
-            log.info("COMPLETE | Member 저장 At " + LocalDateTime.now() + " | " + member.getEmail());
             return member.getId();
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] MemberService save {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -86,8 +78,6 @@ public class MemberService {
     @Transactional
     public Long saveProfilePhoto(Long memberId, MultipartFile photo) {
 
-        log.info("IN PROGRESS | Member 프로필 사진 저장 At " + LocalDateTime.now() + " | " + memberId);
-
         Member foundMember = findById(memberId);
 
         String[] memberEmail = foundMember.getEmail().split("[@]");
@@ -104,12 +94,9 @@ public class MemberService {
 
         try {
             foundMember.updatePhoto(savedPhoto);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] MemberService savePhoto {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-
-        log.info("COMPLETE | Member 프로필 사진 저장 At " + LocalDateTime.now() + " | " + memberId);
         return foundMember.getId();
     }
 
@@ -120,15 +107,11 @@ public class MemberService {
      */
     private void isExistingEmail(String email) {
 
-        log.info("IN PROGRESS | Member 중복 여부 확인 At " + LocalDateTime.now() + " | " + email);
-
         Optional<Long> foundMember = memberRepository.findMemberIdByEmail(email);
 
         if (foundMember.isPresent()) {
             throw new CustomException(DUPLICATE_EMAIL);
         }
-
-        log.info("COMPLETE | Member 중복 여부 확인 At " + LocalDateTime.now() + " | " + email);
     }
 
     /**
@@ -137,12 +120,9 @@ public class MemberService {
      */
     public Member findById(Long memberId) {
 
-        log.info("IN PROGRESS | Member 단건 조회 At " + LocalDateTime.now() + " | " + memberId);
-
         Member foundMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        log.info("COMPLETE | Member 단건 조회 At " + LocalDateTime.now() + " | " + foundMember.getEmail());
         return foundMember;
     }
 
@@ -152,15 +132,11 @@ public class MemberService {
      */
     public List<Member> findAll() {
 
-        log.info("IN PROGRESS | Member 전체 조회 At " + LocalDateTime.now());
-
         List<Member> foundMembers = memberRepository.findAll();
 
         if(foundMembers.isEmpty()) {
             throw new CustomException(MEMBER_NOT_FOUND);
         }
-
-        log.info("COMPLETE | Member 전체 조회 At " + LocalDateTime.now() + " | Member 수: " + foundMembers.size());
         return foundMembers;
     }
 
@@ -168,8 +144,6 @@ public class MemberService {
      * Member 이메일로 조회 |
      */
     public Member findByEmail(String email) {
-
-        log.info("IN PROGRESS | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
 
         if(email.equals(ENV_USERNAME)) {
             Optional<Member> adminMember = memberRepository.findById(1L);
@@ -181,7 +155,6 @@ public class MemberService {
         Member foundMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        log.info("COMPLETE | Member 이메일로 조회 At " + LocalDateTime.now() + " | " + email);
         return foundMember;
     }
 
@@ -190,14 +163,10 @@ public class MemberService {
      */
     public Optional<Long> findByEmailOp(String email) {
 
-        log.info("IN PROGRESS | Member 이메일로 Optional 조회 At " + LocalDateTime.now() + " | " + email);
-
         try {
             Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
-            log.info("COMPLETE | Member 이메일로 Optional 조회 At " + LocalDateTime.now() + " | " + email);
             return foundMemberId;
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] MemberService findByEmailOp {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -209,7 +178,6 @@ public class MemberService {
      */
     @Transactional
     public void deleteMember(Member member) {
-        log.info("IN PROGRESS | Member 삭제 At " + LocalDateTime.now() + " | " + member.getId());
 
         Email foundEmail = emailService.findByEmail(member.getEmail());
         emailService.deleteById(foundEmail.getId());
@@ -217,9 +185,7 @@ public class MemberService {
         postService.updateMemberNullFromPost(member);
         try {
             memberRepository.delete(member);
-            log.info("COMPLETE | Member 삭제 At " + LocalDateTime.now());
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] MemberService deleteMember {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -230,12 +196,9 @@ public class MemberService {
      */
     @Transactional
     public void deleteMemberProfilePhoto(Member member) {
-        log.info("IN PROGRESS | Member 사진 삭제 At " + LocalDateTime.now() + " | 멤버 식별자 " + member.getId());
 
         photoService.isExistProfilePhoto(member);
         photoService.deleteProfilePhotos(member);
-
-        log.info("COMPLETE | Member 사진 삭제 At " + LocalDateTime.now() + " | 멤버 식별자 " + member.getId());
     }
 
     /**
@@ -244,14 +207,10 @@ public class MemberService {
     @Transactional
     public void updatePassword(Member member, String password) {
 
-        log.info("IN PROGRESS | Member 비밀번호 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-
         member.updatePassword(password);
         try {
             memberRepository.save(member);
-            log.info("COMPLETE | Member 비밀번호 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] MemberService updatePassword {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -278,8 +237,6 @@ public class MemberService {
     @Transactional
     public void updateNicknameByAdmin(Member member, String nickname) {
 
-        log.info("IN PROGRESS | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-
         if(member.getNickname().equals(nickname)) {
             throw new CustomException(DUPLICATE_SAME_NICKNAME);
         }
@@ -289,10 +246,7 @@ public class MemberService {
         try {
             member.updateNickname(nickname);
             memberRepository.save(member);
-
-            log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] MemberService updateNicknameByAdmin {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -302,8 +256,6 @@ public class MemberService {
      */
     @Transactional
     public void updateNickname(Member member, String nickname) {
-
-        log.info("IN PROGRESS | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
 
         if(member.getNickname().equals(nickname)) {
             throw new CustomException(DUPLICATE_SAME_NICKNAME);
@@ -316,9 +268,7 @@ public class MemberService {
         member.updateNicknameUpdatedAt(LocalDateTime.now());
         try {
             memberRepository.save(member);
-            log.info("COMPLETE | Member 닉네임 변경 At " + LocalDateTime.now() + " | 멤버 식별자: " + member.getId());
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] MemberService updateNickname {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }

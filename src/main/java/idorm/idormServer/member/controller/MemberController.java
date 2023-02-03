@@ -41,10 +41,9 @@ import java.util.stream.Collectors;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-@Slf4j
+@Api(tags = "회원")
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "Member API")
 public class MemberController {
 
     private final MemberService memberService;

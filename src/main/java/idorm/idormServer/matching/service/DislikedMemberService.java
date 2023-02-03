@@ -9,20 +9,16 @@ import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataAccessException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
+import static idorm.idormServer.exception.ExceptionCode.*;
 import static idorm.idormServer.matching.domain.DislikedMember.*;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -37,14 +33,11 @@ public class DislikedMemberService {
      * Member 식별자에 의해 조회되는 싫어요한 멤버의 전체 식별자를 조회합니다.
      */
     public List<Long> findDislikedMembers(Long memberId) {
-        log.info("IN PROGRESS | DislikedMember 싫어요 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
 
         try {
             List<Long> DislikedMembers = dislikedMemberRepository.findDislikedMembersByMemberId(memberId);
-            log.info("COMPLETE | LikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return DislikedMembers;
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] DislikedMemberService findDislikedMembers {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -53,14 +46,11 @@ public class DislikedMemberService {
      * DislikedMember 싫어요한 멤버 조회 |
      */
     public List<DislikedMember> findDislikedMembersByMemberId(Long memberId) {
-        log.info("IN PROGRESS | DislikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
 
         try {
             List<DislikedMember> dislikedMembers = dislikedMemberRepository.findAllByMemberId(memberId);
-            log.info("COMPLETE | DislikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return dislikedMembers;
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] DislikedMemberService findDislikedMembersByMemberId {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -70,8 +60,6 @@ public class DislikedMemberService {
      * 멤버 식별자와 싫어요한 멤버 식별자를 인자로 받아서 이미 등록되어있다면 true로 반환한다.
      */
     public boolean isRegisteredDislikedMemberIdByMemberId(Long memberId, Long selectedMemberId) {
-        log.info("IN PROGRESS | DislikedMember 싫어요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
-                memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
 
         Optional<Long> registeredDislikedMemberId =
                 dislikedMemberRepository.isRegisteredDislikedMemberIdByMemberId(memberId, selectedMemberId);
@@ -79,8 +67,6 @@ public class DislikedMemberService {
         if(registeredDislikedMemberId.isPresent()) {
             return true;
         }
-        log.info("COMPLETE | DislikedMember 싫어요한 멤버로 등록 여부 조회 At " + LocalDateTime.now() + " | 멤버 식별자: " +
-                memberId + " | 선택한 멤버 식별자 : " + selectedMemberId);
         return false;
     }
 
@@ -91,8 +77,6 @@ public class DislikedMemberService {
      */
     @Transactional
     public Long saveDislikedMember(Long memberId, Long DislikedMemberId) {
-        log.info("IN PROGRESS | DislikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
-
         isExistingDislikedMember(memberId, DislikedMemberId);
 
         Member loginMember = memberService.findById(memberId);
@@ -106,10 +90,8 @@ public class DislikedMemberService {
                     .build();
 
             dislikedMemberRepository.save(DislikedMember);
-            log.info("COMPLETE | DislikedMember 싫어요한 멤버 전체 조회 At " + LocalDateTime.now() + " | " + memberId);
             return DislikedMember.getId();
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] DislikedMemberService saveDislikedMember {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -121,8 +103,6 @@ public class DislikedMemberService {
      */
     private void isExistingDislikedMember(Long memberId, Long dislikedMemberId) {
 
-        log.info("IN PROGRESS | DislikedMember 중복 여부 확인 At " + LocalDateTime.now() + " | " + memberId);
-
         List<Long> dislikedMemberIds = dislikedMemberRepository.findDislikedMembersByMemberId(memberId);
 
         for(Long id : dislikedMemberIds) {
@@ -130,8 +110,6 @@ public class DislikedMemberService {
                 throw new CustomException(ExceptionCode.DUPLICATE_DISLIKED_MEMBER);
             }
         }
-
-        log.info("COMPLETE | DislikedMember 중복 여부 확인 At " + LocalDateTime.now() + " | " + memberId);
     }
 
     /**
@@ -139,18 +117,11 @@ public class DislikedMemberService {
      */
     @Transactional
     public void deleteDislikedMember(Long loginMemberId, Long dislikedMemberId) {
-
-        log.info("IN PROGRESS | DislikedMember 싫어요한 멤버 삭제 At " + LocalDateTime.now()
-                + " | 로그인 멤버 식별자: " + loginMemberId + " | 싫어요한 멤버 식별자 : " + dislikedMemberId);
-
         memberService.findById(loginMemberId);
 
         try {
             dislikedMemberRepository.deleteDislikedMember(loginMemberId, dislikedMemberId);
-            log.info("COMPLETE | DislikedMember 싫어요한 멤버 삭제 At " + LocalDateTime.now()
-                    + " | 로그인 멤버 식별자: " + loginMemberId + " | 싫어요한 멤버 식별자 : " + dislikedMemberId);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] DislikedMemberService deleteDislikedMember {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -161,17 +132,10 @@ public class DislikedMemberService {
      */
     @Transactional
     public void deleteDislikedMembers(Long memberId) {
-        log.info("IN PROGRESS | DislikedMember 싫어요한 멤버들 삭제 At " + LocalDateTime.now()
-                + " | 로그인 멤버 식별자: " + memberId);
-
         try {
             dislikedMemberRepository.deleteDislikedMembers(memberId);
-        } catch (DataAccessException | ConstraintViolationException e) {
-            log.info("[서버 에러 발생] DislikedMemberService deleteDislikedMembers {} {}", e.getCause(), e.getMessage());
+        } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-
-        log.info("COMPLETE | DislikedMember 싫어요한 멤버들 삭제 At " + LocalDateTime.now()
-                + " | 로그인 멤버 식별자: " + memberId);
     }
 }

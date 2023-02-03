@@ -31,9 +31,9 @@ import java.util.List;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
+@Api(tags = "매칭")
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "Matching API")
 public class MatchingController {
 
     private final MatchingService matchingService;
