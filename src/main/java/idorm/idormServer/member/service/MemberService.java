@@ -6,8 +6,8 @@ import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.dto.MemberSaveRequestDto;
 import idorm.idormServer.member.repository.MemberRepository;
-import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,36 +36,37 @@ public class MemberService {
     private String ENV_USERNAME;
 
     /**
-     * Member 저장 |
-     * 멤버를 저장한다. 중복여부를 확인하고 중복 시 409(Conflict)를 던진다.
-     * 멤버를 저장 중에 문제가 발생하면 500(Internal Server Error)을 던진다.
+     * 회원 DB에 저장 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
-    public Long save(String email, String password, String nickname) {
-
-        isExistingEmail(email);
-        isDuplicateNickname(nickname);
+    public Member save(Member member) {
         try {
-
-            Member member = Member.builder()
-                    .email(email)
-                    .password(password)
-                    .nickname(nickname)
-                    .build();
-
-            memberRepository.save(member);
-            return member.getId();
+            Member savedMember = memberRepository.save(member);
+            return savedMember;
         } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
     }
 
     /**
-     * Member 닉네임 중복 여부 체크 |
+     * 회원 생성 |
      */
-    private void isDuplicateNickname(String nickname) {
-        Optional<Member> foundMember = memberRepository.findByNickname(nickname);
-        if(foundMember.isPresent()) {
+
+    @Transactional
+    public Member createMember(MemberSaveRequestDto request) {
+
+        Member createdMember = request.toEntity();
+        return save(createdMember);
+    }
+
+    /**
+     * 닉네임 중복 검사 |
+     * 409(DUPLICATE_NICKNAME)
+     */
+    public void isExistingNickname(String nickname) {
+        boolean isExistNicknameResult = memberRepository.existsByNickname(nickname);
+        if(isExistNicknameResult) {
             throw new CustomException(DUPLICATE_NICKNAME);
         }
     }
@@ -77,40 +77,25 @@ public class MemberService {
      * 생성하지 않고, 업데이트 하도록 한다.
      */
     @Transactional
-    public Long saveProfilePhoto(Long memberId, MultipartFile photo) {
+    public void saveProfilePhoto(Member member, MultipartFile file) {
 
-        Member foundMember = findById(memberId);
+        String fileName = member.getId() + file.getContentType().replace("image/", ".");
 
-        String[] memberEmail = foundMember.getEmail().split("[@]");
-        String memberEmailSplit = memberEmail[0];
-        String fileName = memberEmailSplit + photo.getContentType().replace("image/", ".");
-
-        Optional<Photo> foundPhoto = photoService.findOneByFileName(fileName);
-
-        if(foundPhoto.isPresent()) {
-            photoService.deleteProfilePhotos(foundMember);
+        if (member.getProfilePhoto() != null) {
+            photoService.deleteProfilePhotos(member);
         }
 
-        Photo savedPhoto = photoService.saveProfilePhoto(foundMember, fileName, photo);
-
-        try {
-            foundMember.updatePhoto(savedPhoto);
-        } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
-        }
-        return foundMember.getId();
+        photoService.createProfilePhoto(member, file);
     }
 
     /**
-     * 중복 멤버메일 존재 여부 확인 |
-     * 멤버메일의 존재 여부를 확인하고, 이미 사용 중인 멤버메일이라면 409(Conflict)를 던진다. 만약 조회 중에 에러가 발생하면
-     * 500(Internal Server Error)을 던진다.
+     * 가입 메일 중복 검사 |
+     * 409(DUPLICATE_EMAIL)
      */
-    private void isExistingEmail(String email) {
+    public void isExistingEmail(String email) {
 
-        Optional<Long> foundMember = memberRepository.findMemberIdByEmail(email);
-
-        if (foundMember.isPresent()) {
+        boolean isExistEmailResult = memberRepository.existsByEmail(email);
+        if (isExistEmailResult) {
             throw new CustomException(DUPLICATE_EMAIL);
         }
     }
@@ -151,8 +136,6 @@ public class MemberService {
             return adminMember.get();
         }
 
-        emailService.findByEmail(email);
-
         Member foundMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
@@ -160,28 +143,14 @@ public class MemberService {
     }
 
     /**
-     * Member 식별자를 이메일로 조회 Optional
-     */
-    public Optional<Long> findByEmailOp(String email) {
-
-        try {
-            Optional<Long> foundMemberId = memberRepository.findMemberIdByEmail(email);
-            return foundMemberId;
-        } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
-        }
-    }
-
-    /**
      * Member 삭제 |
-     * 식별자로 삭제할 멤버를 조회한다. 멤버를 찾지 못하면 404(Not Found)를 던진다.
-     * 멤버 삭제 중 에러가 발생하면 500(Internal Server Error)을 던진다.
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void deleteMember(Member member) {
 
         Email foundEmail = emailService.findByEmail(member.getEmail());
-        emailService.deleteById(foundEmail.getId());
+        emailService.deleteEmail(foundEmail);
         photoService.deleteProfilePhotos(member);
         postService.updateMemberNullFromPost(member);
         try {
@@ -193,7 +162,6 @@ public class MemberService {
 
     /**
      * Member 프로필 포토 삭제 |
-     * 멤버 식별자를 통해 관련된 멤버 정보를 조회하여 멤버 프로필 사진을 삭제한다.저장된 프로필 사진이 존재하지 않는다면 FILE_NOT_FOUND 예외를 던진다.
      */
     @Transactional
     public void deleteMemberProfilePhoto(Member member) {
@@ -204,13 +172,13 @@ public class MemberService {
 
     /**
      * Member 비밀번호 수정 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void updatePassword(Member member, String password) {
 
-        member.updatePassword(password);
         try {
-            memberRepository.save(member);
+            member.updatePassword(password);
         } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
@@ -218,9 +186,10 @@ public class MemberService {
 
     /**
      * Member 닉네임 수정 시간 확인 |
-     * 닉네임 변경은 30일 이후로만 가능합니다.
+     * 닉네임 변경은 30일 이후로만 가능합니다. |
+     * 409(CANNOT_UPDATE_NICKNAME)
      */
-    private void checkNicknameUpdatedAt(Member member) {
+    private void validateNicknameUpdatedAt(Member member) {
 
         if(member.getNicknameUpdatedAt() != null) { // 닉네임이 한 번이라도 변경 되었다면
             LocalDate updatedDate = member.getNicknameUpdatedAt();
@@ -242,7 +211,7 @@ public class MemberService {
             throw new CustomException(DUPLICATE_SAME_NICKNAME);
         }
 
-        isDuplicateNickname(nickname);
+        isExistingNickname(nickname);
 
         try {
             member.updateNickname(nickname);
@@ -254,6 +223,7 @@ public class MemberService {
 
     /**
      * Member 닉네임 수정 |
+     * 409(DUPLICATE_SAME_NICKNAME)
      */
     @Transactional
     public void updateNickname(Member member, String nickname) {
@@ -262,15 +232,12 @@ public class MemberService {
             throw new CustomException(DUPLICATE_SAME_NICKNAME);
         }
 
-        isDuplicateNickname(nickname);
-        checkNicknameUpdatedAt(member);
+        isExistingNickname(nickname);
+        validateNicknameUpdatedAt(member);
 
         member.updateNickname(nickname);
         member.updateNicknameUpdatedAt(LocalDate.now());
-        try {
-            memberRepository.save(member);
-        } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
-        }
+
+        save(member);
     }
 }

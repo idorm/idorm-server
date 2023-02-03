@@ -38,6 +38,9 @@ public class Email extends BaseEntity {
     public void isChecked() {
         this.isCheck = true;
     }
+    public void isUnChecked() {
+        this.isCheck = false;
+    }
 
     /**
      * 가입 여부

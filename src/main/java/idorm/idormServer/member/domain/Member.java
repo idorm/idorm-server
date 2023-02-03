@@ -35,7 +35,7 @@ public class Member extends BaseEntity implements UserDetails {
     private MatchingInfo matchingInfo;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Photo photo;
+    private Photo profilePhoto;
 
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
@@ -65,8 +65,10 @@ public class Member extends BaseEntity implements UserDetails {
         this.nickname = nickname;
     }
 
-    public void updatePhoto(Photo photo) {
-        this.photo = photo;
+    public void updateProfilePhoto(Photo profilePhoto) {
+        if (!profilePhoto.getIsDeleted()) {
+            this.profilePhoto = profilePhoto;
+        }
     }
 
     public void updateNicknameUpdatedAt(LocalDate updatedAt) {

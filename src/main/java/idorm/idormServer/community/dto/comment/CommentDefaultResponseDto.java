@@ -51,8 +51,8 @@ public class CommentDefaultResponseDto {
             this.nickname = "anonymous";
         } else if(comment.getIsAnonymous() == false) {
             this.nickname = comment.getMember().getNickname();
-            if(comment.getMember().getPhoto() != null) {
-                this.profileUrl = comment.getMember().getPhoto().getUrl();
+            if(comment.getMember().getProfilePhoto() != null) {
+                this.profileUrl = comment.getMember().getProfilePhoto().getPhotoUrl();
             }
         }
     }

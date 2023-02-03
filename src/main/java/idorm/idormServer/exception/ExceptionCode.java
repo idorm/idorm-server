@@ -37,6 +37,7 @@ public enum ExceptionCode {
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "로그인이 필요합니다."),
     UNAUTHORIZED_DELETE(UNAUTHORIZED, "삭제 권한이 없습니다."),
     UNAUTHORIZED_PASSWORD(UNAUTHORIZED, "올바르지 않은 비밀번호 입니다."),
+    UNAUTHORIZED_EMAIL(UNAUTHORIZED, "인증이 되지 않은 이메일입니다."),
 
     /**
      * 403 FORBIDDEN : 권한이 없는 사용자

@@ -5,7 +5,6 @@ import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.exception.DefaultExceptionResponseDto;
 
 import idorm.idormServer.matching.service.DislikedMemberService;
 import idorm.idormServer.matching.service.LikedMemberService;
@@ -21,7 +20,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -35,21 +33,19 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Api(tags = "회원")
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
 
+    private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final EmailService emailService;
-    private final JwtTokenProvider jwtTokenProvider;
-
     private final LikedMemberService likedMemberService;
     private final DislikedMemberService dislikedMemberService;
 
@@ -62,21 +58,18 @@ public class MemberController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @ApiOperation(value = "Member 단건 조회")
+    @ApiOperation(value = "회원 단건 조회")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "MEMBER_FOUND",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     })
     @GetMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> findOneMember(
@@ -89,31 +82,29 @@ public class MemberController {
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("MEMBER_FOUND")
                         .responseMessage("Member 단건 조회 완료")
                         .data(response)
                         .build());
     }
 
-    @ApiOperation(value = "Member 회원가입", notes = "회원가입은 이메일 인증이 완료된 후 가능합니다.")
+    @ApiOperation(value = "회원 가입", notes = "회원 가입은 이메일 인증이 완료된 후 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
+                    responseCode = "201",
+                    description = "MEMBER_REGISTERED",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / PASSWORD_FORMAT_INVALID / " +
-                            "NICKNAME_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / NICKNAME_FORMAT_INVALID / " +
+                            "PASSWORD_FORMAT_INVALID"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_EMAIL"),
             @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "EMAIL_NOT_FOUND"),
             @ApiResponse(responseCode = "409",
-                    description = "DUPLICATE_NICKNAME",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "DUPLICATE_EMAIL / DUPLICATE_NICKNAME"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PostMapping("/register")
@@ -123,201 +114,148 @@ public class MemberController {
 
         Email foundEmail = emailService.findByEmail(request.getEmail());
 
-        passwordValidator(request.getPassword());
-        nicknameValidator(request.getNickname());
+        if (!foundEmail.isCheck()) {
+            throw new CustomException(UNAUTHORIZED_EMAIL);
+        }
 
-        Long createdMemberId = memberService.save(request.getEmail(),
-                passwordEncoder.encode(request.getPassword()),
-                request.getNickname());
+        memberService.isExistingEmail(request.getEmail());
+        memberService.isExistingNickname(request.getNickname());
 
-        Member newMember = memberService.findById(createdMemberId);
-        emailService.updateIsJoined(foundEmail.getEmail());
+        Member createdMember = memberService.createMember(request);
 
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(newMember);
+        emailService.updateIsJoined(foundEmail);
+
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(createdMember);
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("MEMBER_REGISTERED")
                         .responseMessage("Member 회원가입 완료")
                         .data(response)
                         .build());
     }
 
-    @ApiOperation(value = "Member 프로필 사진 저장")
+    @ApiOperation(value = "프로필 사진 저장")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+                    description = "PROFILE_PHOTO_SAVED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FILE_SIZE_EXCEEDED",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FILE_SIZE_EXCEEDED"),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "FILE_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FILE_NOT_FOUND"),
+            @ApiResponse(responseCode = "413",
+                    description = "FILE_SIZE_EXCEED"),
+            @ApiResponse(responseCode = "415",
+                    description = "FILE_TYPE_UNSUPPORTED"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PostMapping("/member/profile-photo")
     public ResponseEntity<DefaultResponseDto<Object>> saveMemberProfilePhoto(
-            HttpServletRequest request2, @RequestPart(value = "file", required = false) MultipartFile photo) {
+            HttpServletRequest request, @RequestPart(value = "file", required = false) MultipartFile file) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
-        if(photo == null) {
+        if(file == null) {
             throw new CustomException(FILE_NOT_FOUND);
         }
 
-        memberService.saveProfilePhoto(loginMemberId, photo);
+        memberService.saveProfilePhoto(loginMember, file);
 
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
-
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("PROFILE_PHOTO_SAVED")
                         .responseMessage("Member 프로필 사진 저장 완료")
-                        .data(response)
                         .build());
     }
 
-    @ApiOperation(value = "Member 프로필 사진 삭제")
+    @ApiOperation(value = "프로필 사진 삭제")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
+                    responseCode = "200",
+                    description = "PROFILE_PHOTO_DELETED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "FILE_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FILE_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/profile-photo")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMemberProfilePhoto(
-            HttpServletRequest request2) {
+            HttpServletRequest request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
         memberService.deleteMemberProfilePhoto(loginMember);
 
-        return ResponseEntity.status(204)
+        return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
+                        .responseCode("PROFILE_PHOTO_DELETED")
                         .responseMessage("Member 프로필 사진 삭제 완료")
                         .build());
     }
 
-    @ApiOperation(value = "로그인 가능 시, Member 비밀번호 변경")
+    @ApiOperation(value = "비밀번호 변경")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+                    description = "PASSWORD_UPDATED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / PASSWORD_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / PASSWORD_FORMAT_INVALID"),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
-            @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
-    }
-    )
-    @PatchMapping("/member/password")
-    public ResponseEntity<DefaultResponseDto<Object>> updateMemberPasswordLogin(
-            HttpServletRequest request2, @RequestBody @Valid MemberUpdatePasswordStatusLoginRequestDto request) {
-
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(loginMemberId);
-
-        passwordValidator(request.getPassword());
-
-        memberService.updatePassword(member, passwordEncoder.encode(request.getPassword()));
-        emailService.updateIsJoined(member.getEmail());
-
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
-
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Member 로그인 상태에서 비밀번호 변경 완료")
-                        .data(response)
-                        .build());
-    }
-
-    @ApiOperation(value = "로그인 불가 시, Member 비밀번호 변경")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / PASSWORD_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_EMAIL"),
             @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PatchMapping("/password")
-    public ResponseEntity<DefaultResponseDto<Object>> updateMemberPasswordLogout(
-            @RequestBody @Valid MemberUpdatePasswordStatusLogoutRequestDto request) {
+    public ResponseEntity<DefaultResponseDto<Object>> updatePassword(
+            @RequestBody @Valid MemberUpdatePasswordRequestDto request) {
 
+        Email email = emailService.findByEmail(request.getEmail());
 
-        emailService.findByEmail(request.getEmail());
-
+        if (!email.isCheck()) {
+            throw new CustomException(UNAUTHORIZED_EMAIL);
+        }
+        
         Member foundMember = memberService.findByEmail(request.getEmail());
-
-        passwordValidator(request.getPassword());
-
         memberService.updatePassword(foundMember, passwordEncoder.encode(request.getPassword()));
-        emailService.updateIsJoined(foundMember.getEmail());
-
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(foundMember);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Member 로그아웃 상태에서 비밀번호 변경 완료")
-                        .data(response)
+                        .responseCode("PASSWORD_UPDATED")
+                        .responseMessage("Member 비밀번호 변경 완료")
                         .build());
 
     }
 
-    @ApiOperation(value = "Member 닉네임 변경")
+    @ApiOperation(value = "닉네임 변경")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+                    description = "NICKNAME_UPDATED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / NICKNAME_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FIELD_REQUIRED / NICKNAME_FORMAT_INVALID"),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "409",
-                    description = "DUPLICATE_NICKNAME / CANNOT_UPDATE_NICKNAME",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "DUPLICATE_SAME_NICKNAME / DUPLICATE_NICKNAME / CANNOT_UPDATE_NICKNAME"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PatchMapping("/member/nickname")
@@ -327,33 +265,27 @@ public class MemberController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
-        nicknameValidator(request.getNickname());
         memberService.updateNickname(loginMember, request.getNickname());
-
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("NICKNAME_UPDATED")
                         .responseMessage("Member 닉네임 변경 완료")
-                        .data(response)
                         .build());
     }
 
-    @ApiOperation(value = "Member 삭제")
+    @ApiOperation(value = "회원 탈퇴")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
+                    responseCode = "200",
+                    description = "MEMBER_DELETED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMember(
             HttpServletRequest request
@@ -366,32 +298,30 @@ public class MemberController {
         dislikedMemberService.deleteDislikedMembers(foundMember.getId());
         memberService.deleteMember(foundMember);
 
-        return ResponseEntity.status(204)
+        return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
+                        .responseCode("MEMBER_DELETED")
                         .responseMessage("Member 삭제 완료")
                         .build());
     }
 
 
-    @ApiOperation(value = "Member 로그인", notes = "로그인 후 토큰을 던져줍니다.")
+    @ApiOperation(value = "로그인", notes = "헤더에 토큰을 담아 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "MEMBER_LOGIN",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "PASSWORD_FORMAT_INVALID / EMAIL_FORMAT_INVALID / FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "PASSWORD_FORMAT_INVALID / EMAIL_FORMAT_INVALID / FIELD_REQUIRED"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_PASSWORD"),
             @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "409",
-                    description = "UNAUTHORIZED_PASSWORD",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_PASSWORD"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PostMapping("/login")
@@ -399,8 +329,6 @@ public class MemberController {
             @RequestBody @Valid MemberLoginRequestDto request) {
 
         Member loginMember = null;
-
-        passwordValidator(request.getPassword());
 
         if(request.getEmail().equals(ENV_USERNAME + "@inu.ac.kr")) {
             if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
@@ -422,13 +350,14 @@ public class MemberController {
             roles.add(iter.next());
         }
 
-        String createdToken = jwtTokenProvider.createToken(loginMember.getUsername(), roles);
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember, createdToken);
+        String token = jwtTokenProvider.createToken(loginMember.getUsername(), roles);
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
 
         return ResponseEntity.status(200)
+                .header(AUTHORIZATION, token)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Member 로그인 완료, 토큰을 반환합니다.")
+                        .responseCode("MEMBER_LOGIN")
+                        .responseMessage("회원 로그인 완료")
                         .data(response)
                         .build());
     }
@@ -444,17 +373,13 @@ public class MemberController {
                     description = "OK",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_AUTHORIZATION",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FORBIDDEN_AUTHORIZATION"),
             @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @GetMapping("/admin/members")
@@ -479,23 +404,17 @@ public class MemberController {
                     description = "OK",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "PASSWORD_FORMAT_INVALID / NICKNAME_FORMAT_INVALID / FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "PASSWORD_FORMAT_INVALID / NICKNAME_FORMAT_INVALID / FIELD_REQUIRED"),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_AUTHORIZATION",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FORBIDDEN_AUTHORIZATION"),
             @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "409",
-                    description = "DUPLICATE_NICKNAME",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "DUPLICATE_NICKNAME"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PatchMapping("/admin/member/{id}")
@@ -503,9 +422,6 @@ public class MemberController {
             @PathVariable("id") Long updateMemberId, @RequestBody @Valid MemberUpdateStatusAdminRequestDto request) {
 
         Member updateMember = memberService.findById(updateMemberId);
-
-        passwordValidator(request.getPassword());
-        nicknameValidator(request.getNickname());
 
         memberService.updatePassword(updateMember, request.getPassword());
         memberService.updateNicknameByAdmin(updateMember, request.getNickname());
@@ -527,17 +443,13 @@ public class MemberController {
                     description = "OK",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_AUTHORIZATION",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FORBIDDEN_AUTHORIZATION"),
             @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @DeleteMapping("/admin/member/{id}")
@@ -561,55 +473,9 @@ public class MemberController {
                         .build());
     }
 
-    private void passwordValidator(String password) {
-
-        /**
-         * 비밀번호 포맷 확인
-         * 8 - 15자, 필수 영소문자, 숫자, 특수문자
-         * optional 대문자
-         */
-        final int MIN = 8;
-        final int MAX = 20;
-
-        final String REGEX =
-                "^((?=.*\\d)(?=.*[a-zA-Z])(?=.*[\\W]).{" + MIN + "," + MAX + "})$";
-
-        // 숫자, 특수문자가 포함되어야 한다.
-        final String REGEX_SYMBOL =
-                "([0-9].*[!,@,#,^,&,*,(,)])|([!,@,#,^,&,*,(,)].*[0-9])";
-
-        Pattern pattern = Pattern.compile(REGEX);
-        Pattern pattern_symbol = Pattern.compile(REGEX_SYMBOL);
-
-        Matcher matcher = pattern.matcher(password);
-        Matcher matcher_symbol = pattern_symbol.matcher(password);
-
-        if(!matcher.find() || !matcher_symbol.find()) { // wrong regex
-            throw new CustomException(PASSWORD_FORMAT_INVALID);
-        }
-    }
-
-    private void nicknameValidator(String nickname) {
-        /**
-         * 닉네임 포맷 확인
-         * 한글 / 영어 / 숫자 입력 가능
-         * 2 - 8자, 공백 불가
-         */
-        final String REGEX = "^[A-Za-z0-9ㄱ-ㅎ가-힣]{2,10}$";
-
-        Pattern pattern = Pattern.compile(REGEX);
-        Matcher matcher = pattern.matcher(nickname);
-
-        if (!matcher.find()) {
-            throw new CustomException(NICKNAME_FORMAT_INVALID);
-        }
-
-    }
-
     @Data
     @AllArgsConstructor
     static class Result<T> {
         private T data;
     }
-
 }

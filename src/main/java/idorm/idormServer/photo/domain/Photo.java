@@ -17,11 +17,9 @@ public class Photo extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String fileName;
-
     private String folderName;
-
-    private String url;
+    private String fileName;
+    private String photoUrl;
     private Boolean isDeleted; // 게시글 사진용
 
     @OneToOne
@@ -34,24 +32,30 @@ public class Photo extends BaseEntity {
 
 
     @Builder(builderClassName = "ProfilePhotoBuilder", builderMethodName = "ProfilePhotoBuilder")
-    public Photo(String folderName, String fileName, String url, Member member) {
+    public Photo(String folderName, Member member) {
         this.folderName = folderName;
-        this.fileName = fileName;
-        this.url = url;
         this.member = member;
-        this.isDeleted = null;
+        this.isDeleted = false;
     }
 
     @Builder(builderClassName = "PostPhotoBuilder", builderMethodName = "PostPhotoBuilder")
-    public Photo(String folderName, String fileName, String url, Post post) {
+    public Photo(String folderName, String url, String fileName, Post post) {
         this.folderName = folderName;
         this.fileName = fileName;
-        this.url = url;
+        this.photoUrl = url;
         this.post = post;
         this.isDeleted = false;
     }
 
-    public void updateIsDeleted() {
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void removePhoto() {
         this.isDeleted = true;
     }
 }

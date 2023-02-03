@@ -54,8 +54,8 @@ public class CommentParentResponseDto {
             this.nickname = "anonymous";
         } else if(parentComment.getIsAnonymous() == false) {
             this.nickname = parentComment.getMember().getNickname();
-            if(parentComment.getMember().getPhoto() != null) {
-                this.profileUrl = parentComment.getMember().getPhoto().getUrl();
+            if(parentComment.getMember().getProfilePhoto() != null) {
+                this.profileUrl = parentComment.getMember().getProfilePhoto().getPhotoUrl();
             }
         }
 

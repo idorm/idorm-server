@@ -7,19 +7,18 @@ import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-@Getter
 @ApiModel(value = "Member 로그인 요청")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @AllArgsConstructor
 public class MemberLoginRequestDto {
 
-    @Email(message = "이메일 형식이 올바르지 않습니다.")
+    @ApiModelProperty(position = 1, required = true, value = "이메일", example = "aaa@inu.ac.kr")
     @NotBlank(message = "이메일 입력은 필수입니다.")
-    @ApiModelProperty(position = 1, required = true, dataType = "String", value = "이메일", example = "aaa@inu.ac.kr")
+    @Email(message = "이메일 형식이 올바르지 않습니다.")
     private String email;
 
+    @ApiModelProperty(position = 2, required = true, value = "비밀번호", example = "aaaaaaa7!")
     @NotBlank(message = "비밀번호 입력은 필수입니다.")
-    @ApiModelProperty(position = 2, required = true, dataType = "String", value = "비밀번호", example = "aaaaaaa7!")
     private String password;
 }

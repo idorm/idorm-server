@@ -3,13 +3,10 @@ package idorm.idormServer.email.controller;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.dto.EmailAuthRequestDto;
-import idorm.idormServer.email.dto.EmailDefaultResponseDto;
 import idorm.idormServer.email.dto.EmailVerifyRequestDto;
-import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.exception.DefaultExceptionResponseDto;
-import idorm.idormServer.member.domain.Member;
+
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,58 +42,39 @@ public class EmailController {
     private final MemberService memberService;
 
     private final JavaMailSender emailSender;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @ApiOperation(value = "Email 인증")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
+                    description = "SEND_EMAIL",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "EMAIL_FORMAT_INVALID / FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "EMAIL_FORMAT_INVALID / FIELD_REQUIRED"),
             @ApiResponse(responseCode = "409",
-                    description = "DUPLICATE_EMAIL",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "DUPLICATE_EMAIL"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PostMapping("/email")
     public ResponseEntity<DefaultResponseDto<Object>> emailAuth(
             @RequestBody @Valid EmailAuthRequestDto request) throws MessagingException, UnsupportedEncodingException {
 
-        String requestEmail = request.getEmail();
-        Optional<Email> email = emailService.findByEmailOp(request.getEmail());
-
-        if(email.isPresent()) {
-            Optional<Long> foundMemberId = memberService.findByEmailOp(requestEmail);
-
-            if(foundMemberId.isPresent()) {
-                throw new CustomException(DUPLICATE_EMAIL);
-            }
-        }
-
-        String[] mailSplit = requestEmail.split("@");
+        memberService.isExistingEmail(request.getEmail());
+  
+        String[] mailSplit = request.getEmail().split("@");
 
         if(!(mailSplit.length == 2) || !mailSplit[1].equals("inu.ac.kr")) {
             throw new CustomException(EMAIL_FORMAT_INVALID);
         }
 
-        sendSimpleMessage(requestEmail);
-
-        EmailDefaultResponseDto response = null;
-        if(!email.isEmpty()) {
-            response = new EmailDefaultResponseDto(email.get());
-        }
+        sendSimpleMessage(request.getEmail());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("SEND_EMAIL")
                         .responseMessage("Email 인증코드 전송 완료")
-                        .data(response)
                         .build());
 
     }
@@ -105,20 +83,16 @@ public class EmailController {
     @ApiOperation(value = "Email 인증코드 검증", notes = "/email 인증코드 확인 용도")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
+                    description = "EMAIL_VERIFIED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID"),
             @ApiResponse(responseCode = "401",
-                    description = "INVALID_CODE / EXPIRED_CODE",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INVALID_CODE / EXPIRED_CODE"),
             @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "EMAIL_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PostMapping("/verifyCode/{email}")
@@ -139,52 +113,44 @@ public class EmailController {
             throw new CustomException(EXPIRED_CODE);
         }
 
-        emailService.isChecked(requestEmail);
-        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email);
+        emailService.updateIsChecked(email);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("EMAIL_VERIFIED")
                         .responseMessage("Email 인증코드 검증 완료")
-                        .data(response)
                         .build());
     }
 
     @ApiOperation(value = "비밀번호 수정용 Email 인증")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
+                    description = "SEND_REGISTERED_EMAIL",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "EMAIL_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "EMAIL_FORMAT_INVALID"),
             @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PostMapping("/email/password")
     public ResponseEntity<DefaultResponseDto<Object>> findPassword(
             @RequestBody @Valid EmailAuthRequestDto request) throws MessagingException, UnsupportedEncodingException {
 
-        String requestEmail = request.getEmail();
+        Email email = emailService.findByEmail(request.getEmail());
 
-        memberService.findByEmail(requestEmail);
-        Email email = emailService.findByEmail(requestEmail);
+        memberService.findByEmail(request.getEmail());
+        emailService.updateIsUnChecked(email);
 
-        sendSimpleMessage(requestEmail);
+        sendSimpleMessage(email.getEmail());
         emailService.updateUpdatedAt(email);
-
-        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("SEND_REGISTERED_EMAIL")
                         .responseMessage("Email 인증코드 전송 완료")
-                        .data(response)
                         .build());
 
     }
@@ -192,30 +158,26 @@ public class EmailController {
     @ApiOperation(value = "비밀번호 수정용 Email 인증코드 검증", notes = "/email/password 인증코드 확인 용도")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
+                    description = "REGISTERED_EMAIL_VERIFIED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "401",
-                    description = "INVALID_CODE / EXPIRED_CODE",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INVALID_CODE / EXPIRED_CODE"),
             @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
+                    description = "INTERNAL_SERVER_ERROR"),
     }
     )
     @PostMapping("/verifyCode/password/{email}")
     public ResponseEntity<DefaultResponseDto<Object>> verifyCodePassword(
             @PathVariable("email") String requestEmail, @RequestBody EmailVerifyRequestDto code) {
 
-        Optional<Email> email = emailService.findByEmailOp(requestEmail);
-        Member member = memberService.findByEmail(requestEmail);
+        Email email = emailService.findByEmail(requestEmail);
 
-        LocalDateTime updateDateTime = email.get().getUpdatedAt();
+        LocalDateTime updateDateTime = email.getUpdatedAt();
         LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
 
-        if(!(email.get().getCode().equals(code.getCode()))) {
+        if(!(email.getCode().equals(code.getCode()))) {
             throw new CustomException(INVALID_CODE);
         }
 
@@ -223,21 +185,12 @@ public class EmailController {
             throw new CustomException(EXPIRED_CODE);
         }
 
-        Iterator<String> iter = member.getRoles().iterator();
-        List<String> roles = new ArrayList<>();
-
-        while (iter.hasNext()) {
-            roles.add(iter.next());
-        }
-
-        jwtTokenProvider.createToken(member.getUsername(), roles);
-        EmailDefaultResponseDto response = new EmailDefaultResponseDto(email.get());
+        emailService.updateIsChecked(email);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Email 인증코드 검증 완료")
-                        .data(response)
+                        .responseCode("REGISTERED_EMAIL_VERIFIED")
+                        .responseMessage("등록된 Email 인증코드 검증 완료")
                         .build());
 
     }
@@ -253,8 +206,8 @@ public class EmailController {
         String code = createCode(ePw);
         message.addRecipients(MimeMessage.RecipientType.TO, to); //보내는 대상
         message.setSubject("IDORM 확인 코드: " + code,"UTF-8"); //제목
-
-        if(emailService.findByEmailOp(to).isEmpty()) {
+        
+        if (!emailService.isExistingEmail(to)) {
             emailService.save(to, code);
         }
         else{
@@ -301,7 +254,7 @@ public class EmailController {
         try{
             emailSender.send(message);
         } catch(MailException e){
-            throw new CustomException(EMAIL_NOT_FOUND);
+            throw new CustomException(SERVER_ERROR);
         }
     }
 }

@@ -72,8 +72,8 @@ public class PostOneResponseDto {
             this.nickname = null;
         } else if(post.getIsAnonymous() == false) { // 익명이 아닌 경우
             this.nickname = post.getMember().getNickname();
-            if(post.getMember().getPhoto() != null) {
-                this.profileUrl = post.getMember().getPhoto().getUrl();
+            if(post.getMember().getProfilePhoto() != null) {
+                this.profileUrl = post.getMember().getProfilePhoto().getPhotoUrl();
             }
         } else if(post.getIsAnonymous() == true) { // 익명일 경우
             this.nickname = "anonymous";
@@ -81,7 +81,7 @@ public class PostOneResponseDto {
 
         if(post.getPhotos() != null) {
             for(Photo photo : post.getPhotos()) {
-                this.photoUrls.add(photo.getUrl());
+                this.photoUrls.add(photo.getPhotoUrl());
             }
         }
 

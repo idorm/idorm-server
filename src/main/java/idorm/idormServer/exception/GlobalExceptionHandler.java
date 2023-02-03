@@ -85,7 +85,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 413 Payload Too Large
-     * 파일 용량은 최대 8MB 까지 받는다.
+     * 파일 용량은 최대 5MB 까지 받는다.
      */
     @ExceptionHandler(value = { MaxUploadSizeExceededException.class })
     @ResponseStatus(PAYLOAD_TOO_LARGE)
