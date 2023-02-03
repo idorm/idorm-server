@@ -16,6 +16,6 @@ import javax.validation.constraints.NotNull;
 public class MatchingInfoUpdateIsPublicRequestDto {
 
     @NotNull(message = "매칭이미지 공개 여부 입력은 필수입니다.")
-    @ApiModelProperty(position = 1, required = true, dataType = "Boolean", example = "true")
+    @ApiModelProperty(position = 1, required = true, dataType = "boolean", example = "true")
     private Boolean isMatchingInfoPublic;
 }

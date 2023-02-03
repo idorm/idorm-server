@@ -1,7 +1,10 @@
 package idorm.idormServer.util;
 
 import idorm.idormServer.email.domain.Email;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matchingInfo.domain.JoinPeriod;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.domain.Gender;
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +24,11 @@ public class InitDB {
 
     private final InitService initService;
 
-    @PostConstruct // 스프링빈이 다 올라오면 스프링이 호출
+    @PostConstruct
     public void init() {
-        // 여기에 InitService를 넣어줘도 되지만 굳이 transaction을 따로 먹여서 호출하는 이유는
-        // spring life cycle이 있어서 transaction 등이 잘 작동이 안됨. 그래서 별도의 bean으로 등록하고 호출하는 방식으로 사용하는 것을 권장
-         initService.dbInit1();
-         initService.dbInit3();
-         initService.dbInit2();
+//         initService.dbInit1();
+//         initService.dbInit3();
+//         initService.dbInit2();
     }
 
     @Component
@@ -113,9 +114,9 @@ public class InitDB {
             em.persist(member25);
             em.persist(member26);
 
-            MatchingInfo matchingInfo1 = createMatchingInfo("DORM1",
-                    "WEEK16",
-                    "FEMALE",
+            MatchingInfo matchingInfo1 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK16,
+                    Gender.FEMALE,
                     23,
                     false,
                     false,
@@ -130,9 +131,9 @@ public class InitDB {
                     "https://open.kakao.com/o/s6vbnDXe",
                     member1);
 
-            MatchingInfo matchingInfo2 = createMatchingInfo("DORM1",
-                    "WEEK16",
-                    "FEMALE",
+            MatchingInfo matchingInfo2 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK16,
+                    Gender.FEMALE,
                     27,
                     false,
                     false,
@@ -147,9 +148,9 @@ public class InitDB {
                     "https://open.kakao.com/o/s6vbnDXe",
                     member2);
 
-            MatchingInfo matchingInfo3 = createMatchingInfo("DORM2",
-                    "WEEK16",
-                    "FEMALE",
+            MatchingInfo matchingInfo3 = createMatchingInfo(DormCategory.DORM2,
+                    JoinPeriod.WEEK16,
+                    Gender.FEMALE,
                     30,
                     false,
                     true,
@@ -164,9 +165,9 @@ public class InitDB {
                     "https://open.kakao.com/o/s6vbnDXe",
                     member3);
 
-            MatchingInfo matchingInfo4 = createMatchingInfo("DORM1",
-                    "WEEK16",
-                    "MALE",
+            MatchingInfo matchingInfo4 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK16,
+                    Gender.MALE,
                     22,
                     true,
                     true,
@@ -181,9 +182,9 @@ public class InitDB {
                     "https://open.kakao.com/o/s6vbnDXe",
                     member4);
 
-            MatchingInfo matchingInfo5 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo5 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -198,9 +199,9 @@ public class InitDB {
                     "https://open.kakao.com/o/s6vbnDXe",
                     member5);
 
-            MatchingInfo matchingInfo6 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo6 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -215,9 +216,9 @@ public class InitDB {
                     "https://open.kakao.com/o/s6vbnDXe",
                     member6);
 
-            MatchingInfo matchingInfo7 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo7 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -231,9 +232,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member7);
-            MatchingInfo matchingInfo8 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo8 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -247,9 +248,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member8);
-            MatchingInfo matchingInfo9 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo9 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -263,9 +264,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member9);
-            MatchingInfo matchingInfo10 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo10 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -279,9 +280,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member10);
-            MatchingInfo matchingInfo11 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo11 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -295,9 +296,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member11);
-            MatchingInfo matchingInfo12 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo12 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -311,9 +312,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member12);
-            MatchingInfo matchingInfo13 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo13 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -327,9 +328,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member13);
-            MatchingInfo matchingInfo14 = createMatchingInfo("DORM1",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo14 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -343,9 +344,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member14);
-            MatchingInfo matchingInfo15 = createMatchingInfo("DORM2",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo15 = createMatchingInfo(DormCategory.DORM2,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -359,9 +360,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member15);
-            MatchingInfo matchingInfo16 = createMatchingInfo("DORM3",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo16 = createMatchingInfo(DormCategory.DORM3,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -375,9 +376,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member16);
-            MatchingInfo matchingInfo17 = createMatchingInfo("DORM2",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo17 = createMatchingInfo(DormCategory.DORM2,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -391,9 +392,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member17);
-            MatchingInfo matchingInfo18 = createMatchingInfo("DORM3",
-                    "WEEK24",
-                    "MALE",
+            MatchingInfo matchingInfo18 = createMatchingInfo(DormCategory.DORM3,
+                    JoinPeriod.WEEK24,
+                    Gender.MALE,
                     20,
                     true,
                     true,
@@ -407,9 +408,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member18);
-            MatchingInfo matchingInfo19 = createMatchingInfo("DORM2",
-                    "WEEK24",
-                    "FEMALE",
+            MatchingInfo matchingInfo19 = createMatchingInfo(DormCategory.DORM2,
+                    JoinPeriod.WEEK24,
+                    Gender.FEMALE,
                     20,
                     true,
                     true,
@@ -423,9 +424,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member19);
-            MatchingInfo matchingInfo20 = createMatchingInfo("DORM3",
-                    "WEEK24",
-                    "FEMALE",
+            MatchingInfo matchingInfo20 = createMatchingInfo(DormCategory.DORM3,
+                    JoinPeriod.WEEK24,
+                    Gender.FEMALE,
                     20,
                     true,
                     true,
@@ -439,9 +440,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member20);
-            MatchingInfo matchingInfo21 = createMatchingInfo("DORM1",
-                    "WEEK16",
-                    "FEMALE",
+            MatchingInfo matchingInfo21 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK16,
+                    Gender.FEMALE,
                     20,
                     true,
                     false,
@@ -455,9 +456,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member21);
-            MatchingInfo matchingInfo22 = createMatchingInfo("DORM1",
-                    "WEEK16",
-                    "FEMALE",
+            MatchingInfo matchingInfo22 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK16,
+                    Gender.FEMALE,
                     22,
                     false,
                     true,
@@ -471,9 +472,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member22);
-            MatchingInfo matchingInfo23 = createMatchingInfo("DORM1",
-                    "WEEK16",
-                    "FEMALE",
+            MatchingInfo matchingInfo23 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK16,
+                    Gender.FEMALE,
                     27,
                     true,
                     true,
@@ -487,9 +488,9 @@ public class InitDB {
                     "예민하지 않은 사람이 좋아요",
                     "https://open.kakao.com/o/s6vbnDXe",
                     member23);
-            MatchingInfo matchingInfo24 = createMatchingInfo("DORM1",
-                    "WEEK16",
-                    "FEMALE",
+            MatchingInfo matchingInfo24 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK16,
+                    Gender.FEMALE,
                     24,
                     true,
                     true,
@@ -504,9 +505,9 @@ public class InitDB {
                     "https://open.kakao.com/o/s6vbnDXe",
                     member24);
 
-            MatchingInfo matchingInfo25 = createMatchingInfo("DORM1",
-                    "WEEK16",
-                    "FEMALE",
+            MatchingInfo matchingInfo25 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK16,
+                    Gender.FEMALE,
                     29,
                     true,
                     true,
@@ -521,9 +522,9 @@ public class InitDB {
                     "https://open.kakao.com/o/s6vbnDXe",
                     member25);
 
-            MatchingInfo matchingInfo26 = createMatchingInfo("DORM1",
-                    "WEEK16",
-                    "FEMALE",
+            MatchingInfo matchingInfo26 = createMatchingInfo(DormCategory.DORM1,
+                    JoinPeriod.WEEK16,
+                    Gender.FEMALE,
                     30,
                     true,
                     true,
@@ -641,9 +642,9 @@ public class InitDB {
             return mail;
         }
 
-        private MatchingInfo createMatchingInfo(String dormNum,
-                                                String joinPeriod,
-                                                String gender,
+        private MatchingInfo createMatchingInfo(DormCategory dormCategory,
+                                                JoinPeriod joinPeriod,
+                                                Gender gender,
                                                 Integer age,
                                                 Boolean isSnoring,
                                                 Boolean isSmoking,
@@ -659,22 +660,22 @@ public class InitDB {
                                                 Member member) {
 
             MatchingInfo matchingInfo = MatchingInfo.builder()
-                    .age(age)
-                    .cleanUpStatus(cleanUpStatus)
-                    .dormNum(dormNum)
+                    .dormCategory(dormCategory)
+                    .joinPeriod(joinPeriod)
                     .gender(gender)
+                    .age(age)
                     .isAllowedFood(isAllowedFood)
                     .isGrinding(isGrinding)
                     .isSmoking(isSmoking)
                     .isSnoring(isSnoring)
                     .isWearEarphones(isWearEarphones)
-                    .joinPeriod(joinPeriod)
-                    .mbti(mbti)
-                    .member(member)
-                    .openKakaoLink(openKakaoLink)
+                    .cleanUpStatus(cleanUpStatus)
                     .showerTime(showerTime)
                     .wakeUpTime(wakeUpTime)
                     .wishText(wishText)
+                    .mbti(mbti)
+                    .openKakaoLink(openKakaoLink)
+                    .member(member)
                     .build();
 
             matchingInfo.updateIsMatchingInfoPublic(true);

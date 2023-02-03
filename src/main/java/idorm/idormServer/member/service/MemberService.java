@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -222,10 +223,10 @@ public class MemberService {
     private void checkNicknameUpdatedAt(Member member) {
 
         if(member.getNicknameUpdatedAt() != null) { // 닉네임이 한 번이라도 변경 되었다면
-            LocalDateTime updatedDateTime = member.getNicknameUpdatedAt();
-            LocalDateTime possibleUpdateTime = updatedDateTime.plusMonths(1);
+            LocalDate updatedDate = member.getNicknameUpdatedAt();
+            LocalDate possibleUpdateTime = updatedDate.plusMonths(1);
 
-            if(possibleUpdateTime.isAfter(LocalDateTime.now())) {
+            if(possibleUpdateTime.isAfter(LocalDate.now())) {
                 throw new CustomException(CANNOT_UPDATE_NICKNAME);
             }
         }
@@ -265,7 +266,7 @@ public class MemberService {
         checkNicknameUpdatedAt(member);
 
         member.updateNickname(nickname);
-        member.updateNicknameUpdatedAt(LocalDateTime.now());
+        member.updateNicknameUpdatedAt(LocalDate.now());
         try {
             memberRepository.save(member);
         } catch (RuntimeException e) {

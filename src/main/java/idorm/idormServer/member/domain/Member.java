@@ -12,7 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,37 +27,55 @@ public class Member extends BaseEntity implements UserDetails {
     private Long id;
 
     private String email;
-
     private String password;
-
     private String nickname;
-
-    private LocalDateTime nicknameUpdatedAt;
-
-    /**
-     * 연관관계 매핑
-     */
-    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private MatchingInfo matchingInfo; // 매칭 정보
+    private LocalDate nicknameUpdatedAt;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Photo photo; // 프로필 사진
+    private MatchingInfo matchingInfo;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Photo photo;
 
     @OneToMany(mappedBy = "member")
-    private List<Post> posts = new ArrayList<>(); // 작성한 게시글
+    private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<PostLikedMember> postLikedMembers = new ArrayList<>(); // 멤버가 공감한 게시글들
+    private List<PostLikedMember> postLikedMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Comment> comments = new ArrayList<>(); // 작성한 댓글들
-    
-    /**
-     * security code
-     */
+    private List<Comment> comments = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
+
+    @Builder
+    public Member(String email, String password, String nickname) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.roles.add("ROLE_USER");
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updatePhoto(Photo photo) {
+        this.photo = photo;
+    }
+
+    public void updateNicknameUpdatedAt(LocalDate updatedAt) {
+        this.nicknameUpdatedAt = updatedAt;
+    }
+
+    public void setMatchingInfo(MatchingInfo matchingInfo) {
+        this.matchingInfo = matchingInfo;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -94,33 +112,5 @@ public class Member extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return false;
-    }
-
-    /**
-     * security code end
-     */
-
-    @Builder
-    public Member(String email, String password, String nickname) {
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.roles.add("ROLE_USER");
-    }
-
-    public void updatePassword(String password) {
-        this.password = password;
-    }
-
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void updatePhoto(Photo photo) {
-        this.photo = photo;
-    }
-
-    public void updateNicknameUpdatedAt(LocalDateTime updatedAt) {
-        this.nicknameUpdatedAt = updatedAt;
     }
 }

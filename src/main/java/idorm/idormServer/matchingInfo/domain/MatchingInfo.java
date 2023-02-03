@@ -20,39 +20,31 @@ public class MatchingInfo extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Boolean isMatchingInfoPublic; // 매칭이미지 공개 여부
-
-    private String dormNum; // 기숙사 선택 [DORM1,DORM2,DORM3]
-    private String joinPeriod; // 입사기간 [WEEK16,WEEK24]
-    private String gender; // 성별 [FEMALE, MALE]
+    private Character dormCategory;
+    private Character joinPeriod;
+    private Character gender;
     private Integer age;
-    private Boolean isSnoring;// 코골이 여부
-    private Boolean isGrinding; // 이갈이 여부
-    private Boolean isSmoking; // 흡연 여부
-    private Boolean isAllowedFood; // 실내 음식 허용 여부
-    private Boolean isWearEarphones; // 이어폰 착용 의사 여부
-    private String wakeUpTime; // 기상 시간
-    private String cleanUpStatus; // 정리정돈 상태
-    private String showerTime; // 샤워 시간
-    private String openKakaoLink; // 오픈채팅 링크
-
+    private Boolean isSnoring;
+    private Boolean isGrinding;
+    private Boolean isSmoking;
+    private Boolean isAllowedFood;
+    private Boolean isWearEarphones;
+    private String wakeUpTime;
+    private String cleanUpStatus;
+    private String showerTime;
+    private String openKakaoLink;
     private String mbti;
-    private String wishText; // 하고 싶은 말
+    private String wishText;
+    private Boolean isMatchingInfoPublic;
 
-    /**
-     * 연관관계 매핑
-     */
     @OneToOne
     @JoinColumn(name="member_id")
     private Member member;
 
-    /**
-     * 생성 메서드
-     */
     @Builder
-    public MatchingInfo(String dormNum,
-                        String joinPeriod,
-                        String gender,
+    public MatchingInfo(DormCategory dormCategory,
+                        JoinPeriod joinPeriod,
+                        Gender gender,
                         Integer age,
                         Boolean isSnoring,
                         Boolean isSmoking,
@@ -66,10 +58,9 @@ public class MatchingInfo extends BaseEntity {
                         String wishText,
                         String openKakaoLink,
                         Member member) {
-        this.isMatchingInfoPublic = false;
-        this.dormNum = dormNum;
-        this.joinPeriod = joinPeriod;
-        this.gender = gender;
+        this.dormCategory = dormCategory.getType();
+        this.joinPeriod = joinPeriod.getType();
+        this.gender = gender.getType();
         this.age = age;
         this.isSnoring = isSnoring;
         this.isSmoking = isSmoking;
@@ -82,20 +73,14 @@ public class MatchingInfo extends BaseEntity {
         this.mbti = mbti;
         this.wishText = wishText;
         this.openKakaoLink = openKakaoLink;
+        this.isMatchingInfoPublic = false;
         this.member = member;
     }
 
-    /**
-     * 핵심 비지니스 로직
-     */
-    public void updateIsMatchingInfoPublic(Boolean isMatchingInfoPublic) {
-        this.isMatchingInfoPublic = isMatchingInfoPublic;
-    }
-
     public void updateMatchingInfo(MatchingInfoDefaultRequestDto requestDto) {
-        this.dormNum = requestDto.getDormNum();
-        this.joinPeriod = requestDto.getJoinPeriod();
-        this.gender = requestDto.getGender();
+        this.dormCategory = requestDto.getDormCategory().getType();
+        this.joinPeriod = requestDto.getJoinPeriod().getType();
+        this.gender = requestDto.getGender().getType();
         this.age = requestDto.getAge();
         this.isSnoring = requestDto.getIsSnoring();
         this.isSmoking = requestDto.getIsSmoking();
@@ -110,4 +95,7 @@ public class MatchingInfo extends BaseEntity {
         this.openKakaoLink = requestDto.getOpenKakaoLink();
     }
 
+    public void updateIsMatchingInfoPublic(boolean isMatchingInfoPublic) {
+        this.isMatchingInfoPublic = isMatchingInfoPublic;
+    }
 }

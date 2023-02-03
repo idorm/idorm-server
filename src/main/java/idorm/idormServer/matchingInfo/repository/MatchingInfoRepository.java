@@ -20,19 +20,19 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
     @Query(value = "SELECT matching_info_id " +
             "FROM matching_info mi " +
             "WHERE mi.member_id != :memberId AND " +
-            "mi.dorm_num = :dormNum AND " +
+            "mi.dorm_category = :dormCategory AND " +
             "mi.join_period = :joinPeriod AND " +
             "mi.gender = :gender AND " +
             "mi.is_matching_info_public = 1", nativeQuery = true)
     List<Long> findMatchingMembers(@Param("memberId") Long memberId,
-                                   @Param("dormNum") String dormNum,
-                                   @Param("joinPeriod") String joinPeriod,
-                                   @Param("gender") String gender);
+                                   @Param("dormCategory") Character dormCategory,
+                                   @Param("joinPeriod") Character joinPeriod,
+                                   @Param("gender") Character gender);
 
     @Query(value = "SELECT matching_info_id " +
             "FROM matching_info mi " +
             "WHERE mi.member_id != :memberId AND " +
-            "mi.dorm_num = :dormNum AND " +
+            "mi.dorm_category = :dormCategory AND " +
             "mi.join_period = :joinPeriod AND " +
             "mi.gender = :gender AND " +
             "(mi.is_snoring = :isSnoring OR " +
@@ -48,9 +48,9 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
             "mi.age >= :minAge && mi.age <= :maxAge AND " +
             "mi.is_matching_info_public = 1", nativeQuery = true)
     List<Long> findFilteredMatchingMembers(@Param("memberId") Long memberId,
-                                           @Param("dormNum") String dormNum,
-                                           @Param("joinPeriod") String joinPeriod,
-                                           @Param("gender") String gender,
+                                           @Param("dormCategory") Character dormCategory,
+                                           @Param("joinPeriod") Character joinPeriod,
+                                           @Param("gender") Character gender,
                                            @Param("isSnoring") int isSnoring,
                                            @Param("isSmoking") int isSmoking,
                                            @Param("isGrinding") int isGrinding,

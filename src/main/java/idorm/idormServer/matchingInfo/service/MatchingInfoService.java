@@ -11,9 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Service
@@ -24,32 +21,10 @@ public class MatchingInfoService {
     private final MatchingInfoRepository matchingInfoRepository;
 
     /**
-     * 기숙사 분류 체크
-     */
-    private void validateDormNum(String dormNum) {
-        if(!dormNum.equals("DORM1") && !dormNum.equals("DORM2") && !dormNum.equals("DORM3")) {
-            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
-        }
-    }
-
-    /**
-     * 입사 기간 체크
-     */
-    private void validateJoinPeriod(String joinPeriod) {
-        if(!joinPeriod.equals("WEEK16") &&
-                !joinPeriod.equals("WEEK24")) {
-            throw new CustomException(JOIN_PERIOD_FORMAT_INVALID);
-        }
-    }
-
-    /**
      * MatchingInfo 저장 |
      */
     @Transactional
     public MatchingInfo save(MatchingInfoDefaultRequestDto requestDto, Member member) {
-
-        validateDormNum(requestDto.getDormNum());
-        validateJoinPeriod(requestDto.getJoinPeriod());
 
         MatchingInfo matchingInfo = requestDto.toEntity(member);
         matchingInfoRepository.save(matchingInfo);
@@ -89,15 +64,6 @@ public class MatchingInfoService {
     }
 
     /**
-     * MatchingInfo Optional 단건 조회 |
-     */
-    public Optional<MatchingInfo> findOpByMemberId(Long memberId) {
-        Optional<MatchingInfo> foundMatchingInfo = matchingInfoRepository.findByMemberId(memberId);
-
-        return foundMatchingInfo;
-    }
-
-    /**
      * MatchingInfo 단건 조회 |
      * 멤버 식별자로 매칭인포를 단건 조회한다. 저장된 매칭정보가 없다면 404(Not Found)를 던진다.
      */
@@ -130,9 +96,6 @@ public class MatchingInfoService {
 
         MatchingInfo updateMatchingInfo = matchingInfoRepository.findById(matchingInfoId)
                 .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
-
-        validateDormNum(requestDto.getDormNum());
-        validateJoinPeriod(requestDto.getJoinPeriod());
 
         try {
             updateMatchingInfo.updateMatchingInfo(requestDto);

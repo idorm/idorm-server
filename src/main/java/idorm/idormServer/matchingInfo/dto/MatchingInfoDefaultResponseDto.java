@@ -1,6 +1,9 @@
 package idorm.idormServer.matchingInfo.dto;
 
+import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matchingInfo.domain.JoinPeriod;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.domain.Gender;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -8,23 +11,25 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ApiModel(value = "MatchingInfo 응답")
 @AllArgsConstructor
 public class MatchingInfoDefaultResponseDto {
 
-    @ApiModelProperty(position = 1, value="식별자", example = "2")
+    @ApiModelProperty(position = 1, value="매칭정보 식별자", example = "2")
     private Long id;
 
-    @ApiModelProperty(position = 2, value = "기숙사 분류", example = "DORM1, DORM2, DORM3")
-    private String dormNum;
+    @ApiModelProperty(position = 2, required = true, value = "기숙사 분류: DORM1, DORM2, DORM3", example = "DORM1")
+    private DormCategory dormCategory;
 
-    @ApiModelProperty(position = 3, value = "입사 기간", example = "WEEK16, WEEK24")
-    private String joinPeriod;
+    @ApiModelProperty(position = 3, required = true, value = "입사기간: WEEK16, WEEK24", example = "WEEK16")
+    private JoinPeriod joinPeriod;
 
-    @ApiModelProperty(position = 4, value = "성별", example = "FEMALE, MALE")
-    private String gender;
+    @ApiModelProperty(position = 4, required = true, value = "성별: MALE, FEMALE", example = "MALE")
+    private Gender gender;
 
     @ApiModelProperty(position = 5, value = "나이", example = "20")
     private Integer age;
@@ -72,9 +77,9 @@ public class MatchingInfoDefaultResponseDto {
     public MatchingInfoDefaultResponseDto(MatchingInfo matchingInfo) {
 
         this.id = matchingInfo.getId();
-        this.dormNum = matchingInfo.getDormNum();
-        this.joinPeriod = matchingInfo.getJoinPeriod();
-        this.gender = matchingInfo.getGender();
+        this.dormCategory = DormCategory.valueOf(matchingInfo.getDormCategory());
+        this.joinPeriod = JoinPeriod.valueOf(matchingInfo.getJoinPeriod());
+        this.gender = Gender.valueOf(matchingInfo.getGender());
         this.age = matchingInfo.getAge();
         this.isSnoring = matchingInfo.getIsSnoring();
         this.isGrinding = matchingInfo.getIsGrinding();

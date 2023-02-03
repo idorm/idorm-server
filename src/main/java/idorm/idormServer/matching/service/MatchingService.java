@@ -54,7 +54,7 @@ public class MatchingService {
 
             filteredMatchingInfoId = matchingInfoRepository.findMatchingMembers(
                     memberId,
-                    loginMemberMatchingInfo.getDormNum(),
+                    loginMemberMatchingInfo.getDormCategory(),
                     loginMemberMatchingInfo.getJoinPeriod(),
                     loginMemberMatchingInfo.getGender()
             );
@@ -78,21 +78,6 @@ public class MatchingService {
         return filteredMatchingInfoId;
     }
 
-    private void dormNumValidator(String dormNum) {
-        if(dormNum.equals("DORM1") &&
-                dormNum.equals("DORM2") &&
-                dormNum.equals("DORM3")) {
-            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
-        }
-    }
-
-    private void joinPeriodValidator(String joinPeriod) {
-        if(joinPeriod.equals("WEEK16") &&
-                joinPeriod.equals("WEEK24")) {
-            throw new CustomException(JOIN_PERIOD_FORMAT_INVALID);
-        }
-    }
-
     /**
      * Matching 매칭멤버 필터링 조회 |
      */
@@ -109,9 +94,6 @@ public class MatchingService {
             throw new CustomException(ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC);
         }
 
-        dormNumValidator(filteringRequest.getDormNum());
-        joinPeriodValidator(filteringRequest.getJoinPeriod());
-
         int isSnoring = (filteringRequest.getIsSnoring() == true) ? 1 : 0; // true:1 , false: 0 / false 무조건 조회
         int isSmoking = (filteringRequest.getIsSmoking() == true) ? 1 : 0; // false 무조건 조회
         int isGrinding = (filteringRequest.getIsGrinding() == true) ? 1 : 0; // false 무조건 조회
@@ -123,8 +105,8 @@ public class MatchingService {
         try {
             filteredMatchingInfoId = matchingInfoRepository.findFilteredMatchingMembers(
                     memberId,
-                    filteringRequest.getDormNum(),
-                    filteringRequest.getJoinPeriod(),
+                    filteringRequest.getDormCategory().getType(),
+                    filteringRequest.getJoinPeriod().getType(),
                     loginMember.getMatchingInfo().getGender(),
                     isSnoring,
                     isSmoking,
