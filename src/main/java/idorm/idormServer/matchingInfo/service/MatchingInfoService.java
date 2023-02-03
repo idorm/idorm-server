@@ -1,6 +1,6 @@
 package idorm.idormServer.matchingInfo.service;
 
-import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Slf4j
 @Service

@@ -1,33 +1,30 @@
-package idorm.idormServer.exceptions;
+package idorm.idormServer.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static idorm.idormServer.exceptions.ErrorCode.UNAUTHORIZED_MEMBER;
-import static org.springframework.http.HttpStatus.*;
+import static idorm.idormServer.exception.ExceptionCode.UNAUTHORIZED_MEMBER;
 
 @Component("customAuthenticationEntryPoint")
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private static ErrorResponse errorResponse =
-            new ErrorResponse(UNAUTHORIZED.name(),
+    private static DefaultExceptionResponseDto errorResponse =
+            new DefaultExceptionResponseDto(
                     UNAUTHORIZED_MEMBER.name(),
-                    UNAUTHORIZED_MEMBER.getDetail());
+                    UNAUTHORIZED_MEMBER.getMessage());
 
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
-                         AuthenticationException ex) throws IOException, ServletException {
+                         AuthenticationException ex) throws IOException {
 
-        // [commence] 인증 실패로 response.sendError 발생
         ObjectMapper objectMapper = new ObjectMapper();
 
         response.setStatus(401);

@@ -3,7 +3,7 @@ package idorm.idormServer.community.service;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.repository.PostLikedMemberRepository;
-import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Slf4j
 @Service

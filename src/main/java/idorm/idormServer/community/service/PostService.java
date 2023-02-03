@@ -2,7 +2,7 @@ package idorm.idormServer.community.service;
 
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.PostRepository;
-import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.Photo;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Slf4j
 @Service

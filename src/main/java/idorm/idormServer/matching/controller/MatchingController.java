@@ -2,8 +2,8 @@ package idorm.idormServer.matching.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.ErrorResponse;
+import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.exception.DefaultExceptionResponseDto;
 import idorm.idormServer.matching.domain.DislikedMember;
 import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
@@ -29,7 +29,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,16 +54,16 @@ public class MatchingController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "400",
                     description = "ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping("/member/matching")
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingMembers(
@@ -109,16 +109,16 @@ public class MatchingController {
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / DORM_CATEGORY_FORMAT_INVALID / " +
                             "JOIN_PERIOD_FORMAT_INVALID / ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @PostMapping("/member/matching/filter")
     public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(
@@ -163,13 +163,13 @@ public class MatchingController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping("/member/matching/like")
     public ResponseEntity<DefaultResponseDto<Object>> findLikedMatchingMembers(
@@ -214,16 +214,16 @@ public class MatchingController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / ILLEGAL_ARGUMENT_SELF / ILLEGAL_ARGUMENT_ADMIN",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/member/matching/like/{liked-member-id}")
@@ -269,13 +269,13 @@ public class MatchingController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/matching/like/{liked-member-id}")
@@ -309,13 +309,13 @@ public class MatchingController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping("/member/matching/dislike")
     public ResponseEntity<DefaultResponseDto<Object>> findDislikedMatchingMembers(
@@ -362,19 +362,19 @@ public class MatchingController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / ILLEGAL_ARGUMENT_SELF / ILLEGAL_ARGUMENT_ADMIN",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_DISLIKED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/member/matching/dislike/{disliked-member-id}")
@@ -415,13 +415,13 @@ public class MatchingController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/matching/dislike/{disliked-member-id}")

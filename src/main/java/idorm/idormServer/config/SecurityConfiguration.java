@@ -1,7 +1,7 @@
 package idorm.idormServer.config;
 
-import idorm.idormServer.exceptions.CustomAccessDeniedHandler;
-import idorm.idormServer.exceptions.CustomAuthenticationEntryPoint;
+import idorm.idormServer.exception.CustomAccessDeniedHandler;
+import idorm.idormServer.exception.CustomAuthenticationEntryPoint;
 import idorm.idormServer.auth.JwtAuthenticationFilter;
 import idorm.idormServer.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;

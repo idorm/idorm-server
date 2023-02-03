@@ -1,6 +1,6 @@
 package idorm.idormServer.matching.service;
 
-import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Slf4j
 @Service

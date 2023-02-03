@@ -6,7 +6,7 @@ import idorm.idormServer.community.dto.comment.CommentParentResponseDto;
 import idorm.idormServer.community.dto.post.PostDefaultResponseDto;
 import idorm.idormServer.community.dto.post.PostOneResponseDto;
 import idorm.idormServer.email.dto.EmailDefaultResponseDto;
-import idorm.idormServer.exceptions.ErrorResponse;
+import idorm.idormServer.exception.DefaultExceptionResponseDto;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultResponseDto;
 import idorm.idormServer.member.dto.MemberDefaultResponseDto;
@@ -38,7 +38,7 @@ public class SwaggerConfiguration {
 
         return new Docket(DocumentationType.OAS_30)
                 .additionalModels(
-                        typeResolver.resolve(ErrorResponse.class),
+                        typeResolver.resolve(DefaultExceptionResponseDto.class),
                         typeResolver.resolve(EmailDefaultResponseDto.class),
                         typeResolver.resolve(MemberDefaultResponseDto.class),
                         typeResolver.resolve(MatchingInfoDefaultResponseDto.class),

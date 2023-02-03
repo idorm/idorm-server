@@ -1,7 +1,6 @@
 package idorm.idormServer.matching.service;
 
-import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.ErrorCode;
+import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.repository.LikedMemberRepository;
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Slf4j
 @Service

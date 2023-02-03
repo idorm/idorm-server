@@ -1,7 +1,7 @@
 package idorm.idormServer.matching.service;
 
-import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.ErrorCode;
+import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.exception.ExceptionCode;
 
 import idorm.idormServer.matching.domain.DislikedMember;
 import idorm.idormServer.matching.repository.DislikedMemberRepository;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static idorm.idormServer.exceptions.ErrorCode.SERVER_ERROR;
+import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 import static idorm.idormServer.matching.domain.DislikedMember.*;
 
 @Slf4j
@@ -127,7 +127,7 @@ public class DislikedMemberService {
 
         for(Long id : dislikedMemberIds) {
             if(id == dislikedMemberId) {
-                throw new CustomException(ErrorCode.DUPLICATE_DISLIKED_MEMBER);
+                throw new CustomException(ExceptionCode.DUPLICATE_DISLIKED_MEMBER);
             }
         }
 

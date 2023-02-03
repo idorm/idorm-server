@@ -4,8 +4,8 @@ import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
-import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.ErrorResponse;
+import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.exception.DefaultExceptionResponseDto;
 
 import idorm.idormServer.matching.service.DislikedMemberService;
 import idorm.idormServer.matching.service.LikedMemberService;
@@ -39,7 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Slf4j
 @RestController
@@ -71,13 +71,13 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> findOneMember(
@@ -105,16 +105,16 @@ public class MemberController {
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / PASSWORD_FORMAT_INVALID / " +
                             "NICKNAME_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_NICKNAME",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PostMapping("/register")
@@ -152,16 +152,16 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FILE_SIZE_EXCEEDED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "FILE_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PostMapping("/member/profile-photo")
@@ -194,13 +194,13 @@ public class MemberController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "FILE_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -228,13 +228,13 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / PASSWORD_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PatchMapping("/member/password")
@@ -267,13 +267,13 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / PASSWORD_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PatchMapping("/password")
@@ -309,16 +309,16 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / NICKNAME_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_NICKNAME / CANNOT_UPDATE_NICKNAME",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PatchMapping("/member/nickname")
@@ -348,10 +348,10 @@ public class MemberController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -383,16 +383,16 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "PASSWORD_FORMAT_INVALID / EMAIL_FORMAT_INVALID / FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "409",
                     description = "UNAUTHORIZED_PASSWORD",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PostMapping("/login")
@@ -446,16 +446,16 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "403",
                     description = "FORBIDDEN_AUTHORIZATION",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @GetMapping("/admin/members")
@@ -481,22 +481,22 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "PASSWORD_FORMAT_INVALID / NICKNAME_FORMAT_INVALID / FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "403",
                     description = "FORBIDDEN_AUTHORIZATION",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_NICKNAME",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PatchMapping("/admin/member/{id}")
@@ -529,16 +529,16 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "403",
                     description = "FORBIDDEN_AUTHORIZATION",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @DeleteMapping("/admin/member/{id}")

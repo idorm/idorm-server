@@ -1,8 +1,8 @@
 package idorm.idormServer.matchingInfo.controller;
 
 import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.ErrorResponse;
+import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.exception.DefaultExceptionResponseDto;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultResponseDto;
 import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,16 +44,16 @@ public class MatchingInfoController {
                     content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / DORM_CATEGORY_FORMAT_INVALID / JOIN_PERIOD_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_MATCHING_INFO",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @PostMapping("/member/matchinginfo")
     public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(
@@ -87,16 +87,16 @@ public class MatchingInfoController {
                     content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / DORM_CATEGORY_FORMAT_INVALID / JOIN_PERIOD_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(
             HttpServletRequest request2,
@@ -130,16 +130,16 @@ public class MatchingInfoController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PatchMapping("/member/matchinginfo")
@@ -175,13 +175,13 @@ public class MatchingInfoController {
                     content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingInfo(HttpServletRequest request2) {
 
@@ -214,13 +214,13 @@ public class MatchingInfoController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MATCHING_INFO_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingInfo(HttpServletRequest request2) {

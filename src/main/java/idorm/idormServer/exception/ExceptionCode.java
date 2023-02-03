@@ -1,4 +1,4 @@
-package idorm.idormServer.exceptions;
+package idorm.idormServer.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,15 +8,13 @@ import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode {
+public enum ExceptionCode {
 
     /**
      * 400 BAD_REQUEST : 잘못된 요청
      */
 
     FIELD_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
-    FILE_SIZE_EXCEEDED(BAD_REQUEST, "파일 사이즈 초과 입니다."),
-    FILE_COUNT_EXCEEDED(BAD_REQUEST, "파일 개수 초과 입니다."),
 
     EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
     PASSWORD_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
@@ -65,7 +63,7 @@ public enum ErrorCode {
     /**
      * 405 METHOD_NOT_ALLOWED : 대상 리소스가 해당 메서드를 지원하지 않음
      */
-//    UNACCEPTABLE_METHOD(METHOD_NOT_ALLOWED, "지원하지 않는 메서드입니다."),
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 메서드입니다."),
 
     /**
      * 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재
@@ -85,11 +83,21 @@ public enum ErrorCode {
     CANNOT_LIKED_SELF(CONFLICT, "본인의 글에 공감할 수 없습니다."),
 
     /**
+     * 413 PAYLOAD_TOO_LARGE
+     */
+    FILE_SIZE_EXCEED(PAYLOAD_TOO_LARGE, "파일 용량이 초과되었습니다"),
+    FILE_COUNT_EXCEED(PAYLOAD_TOO_LARGE, "파일 개수가 초과되었습니다"),
+
+    /**
+     * 415 UNSUPPORTED_MEDIA_TYPE
+     */
+    FILE_TYPE_UNSUPPORTED(UNSUPPORTED_MEDIA_TYPE, "파일 형식은 '.jpg', '.jpeg', '.png' 만 가능합니다."),
+
+    /**
      * 500 INTERNAL_SERVER_ERROR : 서버 에러
      */
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.");
 
-
     private final HttpStatus httpStatus;
-    private final String detail;
+    private final String message;
 }

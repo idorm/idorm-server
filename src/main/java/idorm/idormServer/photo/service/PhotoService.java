@@ -1,12 +1,11 @@
 package idorm.idormServer.photo.service;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.Photo;
@@ -26,7 +25,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Slf4j
 @Service

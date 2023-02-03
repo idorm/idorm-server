@@ -3,7 +3,7 @@ package idorm.idormServer.calendar.service;
 import idorm.idormServer.calendar.domain.Calendar;
 import idorm.idormServer.calendar.dto.DateFilterDto;
 import idorm.idormServer.calendar.repository.CalendarRepository;
-import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Service
 @Transactional(readOnly = true)

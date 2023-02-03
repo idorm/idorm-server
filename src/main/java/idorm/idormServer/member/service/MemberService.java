@@ -3,9 +3,8 @@ package idorm.idormServer.member.service;
 import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
-import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exception.CustomException;
 
-import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import idorm.idormServer.photo.domain.Photo;
@@ -23,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 
 @Slf4j

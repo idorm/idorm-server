@@ -14,8 +14,8 @@ import idorm.idormServer.community.service.PostLikedMemberService;
 import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.community.vo.post.SavePostVo;
 import idorm.idormServer.community.vo.post.UpdatePostVo;
-import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.ErrorResponse;
+import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.exception.DefaultExceptionResponseDto;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -59,13 +59,13 @@ public class CommunityController {
                     content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "DORM_CATEGORY_FORMAT_INVALID, FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping("/member/posts/{dormitory-category}")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsFilteredByCategory(
@@ -99,13 +99,13 @@ public class CommunityController {
                     description = "NO CONTENT"),
             @ApiResponse(responseCode = "400",
                     description = "DORM_CATEGORY_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping("/member/posts/{dormitory-category}/top")
     public ResponseEntity<DefaultResponseDto<Object>> findTopPostsFilteredByCategory(
@@ -144,13 +144,13 @@ public class CommunityController {
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping("/member/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> findOnePost(
@@ -199,13 +199,13 @@ public class CommunityController {
             @ApiResponse(responseCode = "400",
                     description = "FILE_SIZE_EXCEEDED / FILE_COUNT_EXCEEDED / DORM_CATEGORY_FORMAT_INVALID /" +
                             " FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(value = "/member/post",
@@ -222,7 +222,7 @@ public class CommunityController {
         Member member = memberService.findById(loginMemberId);
 
         if(postRequest.getFiles().size() > 10) {
-            throw new CustomException(FILE_COUNT_EXCEEDED);
+            throw new CustomException(FILE_COUNT_EXCEED);
         }
 
         Post createdPost = postService.savePost(
@@ -252,16 +252,16 @@ public class CommunityController {
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FILE_SIZE_EXCEEDED / FILE_COUNT_EXCEEDED / FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "DELETED_POST / POST_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @PostMapping(value = "/member/post/{post-id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -276,7 +276,7 @@ public class CommunityController {
         Member member = memberService.findById(loginMemberId);
 
         if(updateRequest.getFiles().size() > 10) {
-            throw new CustomException(FILE_COUNT_EXCEEDED);
+            throw new CustomException(FILE_COUNT_EXCEED);
         }
 
         Post foundPost = postService.findById(updatePostId);
@@ -312,10 +312,10 @@ public class CommunityController {
                     description = "NO CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping("/member/posts/write")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsByMember(
@@ -359,10 +359,10 @@ public class CommunityController {
                     description = "NO CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping("/member/posts/like")
     public ResponseEntity<DefaultResponseDto<Object>> findLikedPostsByMember(
@@ -408,16 +408,16 @@ public class CommunityController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_LIKED / CANNOT_LIKED_SELF",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PutMapping("/member/post/{post-id}/like")
@@ -445,13 +445,13 @@ public class CommunityController {
                     description = "NO CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "LIKED_NOT_FOUND / POST_LIKED_MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/post/{post-id}/like")
@@ -479,10 +479,10 @@ public class CommunityController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_DELETE",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/member/post/{post-id}")
@@ -516,16 +516,16 @@ public class CommunityController {
                     content = @Content(schema = @Schema(implementation = CommentDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST / COMMENT_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @PostMapping(value = "/member/post/{post-id}/comment")
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -571,13 +571,13 @@ public class CommunityController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_DELETE",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST / COMMENT_NOT_FOUND / DELETED_COMMENT",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<DefaultResponseDto<Object>> deleteComment(
@@ -610,10 +610,10 @@ public class CommunityController {
                     description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     })
     @GetMapping(value = "/member/comments")
     public ResponseEntity<DefaultResponseDto<Object>> findCommentsByMember(

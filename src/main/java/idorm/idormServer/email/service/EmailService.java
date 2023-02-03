@@ -2,7 +2,7 @@ package idorm.idormServer.email.service;
 
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.repository.EmailRepository;
-import idorm.idormServer.exceptions.CustomException;
+import idorm.idormServer.exception.CustomException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Slf4j
 @Service

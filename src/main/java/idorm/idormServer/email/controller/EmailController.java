@@ -7,8 +7,8 @@ import idorm.idormServer.email.dto.EmailDefaultResponseDto;
 import idorm.idormServer.email.dto.EmailVerifyRequestDto;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.email.service.EmailService;
-import idorm.idormServer.exceptions.CustomException;
-import idorm.idormServer.exceptions.ErrorResponse;
+import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.exception.DefaultExceptionResponseDto;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
@@ -35,7 +35,7 @@ import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static idorm.idormServer.exceptions.ErrorCode.*;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,13 +57,13 @@ public class EmailController {
                     content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "EMAIL_FORMAT_INVALID / FIELD_REQUIRED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_EMAIL",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PostMapping("/email")
@@ -111,16 +111,16 @@ public class EmailController {
                     content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "INVALID_CODE / EXPIRED_CODE",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PostMapping("/verifyCode/{email}")
@@ -159,13 +159,13 @@ public class EmailController {
                     content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "EMAIL_FORMAT_INVALID",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PostMapping("/email/password")
@@ -198,13 +198,13 @@ public class EmailController {
                     content = @Content(schema = @Schema(implementation = EmailDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "INVALID_CODE / EXPIRED_CODE",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = DefaultExceptionResponseDto.class))),
     }
     )
     @PostMapping("/verifyCode/password/{email}")

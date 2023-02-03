@@ -2,21 +2,30 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-#    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-#    username: nahyeon
-#    password: lsmi81
+#    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+
+    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+    username: nahyeon
+    password: lsmi81
 
   jpa:
-    show-sql: false
     hibernate:
-      ddl-auto: create # DDL 기능 사용 여부(create/update/create-drop/validate/none)
+      ddl-auto: ${DB_DDL_TYPE}
       use-new-id-generator-mappings: false
-#    properties:
-#      hibernate:
-#        format_sql: true # SQL 가독성 높여주는 formatting 여부
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  logging:
+    level:
+      org:
+        hibernate:
+          type:
+            descriptor:
+              sql: trace
 
   mvc:
     pathmatch:
@@ -31,12 +40,5 @@ spring:
 # S3
 s3.accessKey: ${S3_ACCESS_KEY}
 s3.secretKey: ${S3_SECRET_KEY}
-#s3.bucketName: idorm-local-bucket
 s3.bucketName: ${S3_BUCKET_NAME}
 s3.region: ${S3_REGION}
-
-#server:
-#  error:
-#    include-exception: true # Response에 Exception을 표시할지
-#    include-message: always # Response 에 Exception Message를 표시할지
-#    include-stacktrace: always # Response에 Stack Trace 를 표시할지, 운영 서버에는 X
