@@ -68,9 +68,9 @@ public class MatchingController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
-        List<Long> filteredMatchingInfoId = matchingService.findMatchingMembers(loginMemberId);
+        List<MatchingInfo> filteredMatchingInfo = matchingService.findMatchingMembers(loginMemberId);
 
-        if(filteredMatchingInfoId.isEmpty()) {
+        if(filteredMatchingInfo.isEmpty()) {
             return ResponseEntity.status(204)
                     .body(DefaultResponseDto.builder()
                             .responseCode("NO_CONTENT")
@@ -80,10 +80,8 @@ public class MatchingController {
 
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
-        for(Long matchingInfoId : filteredMatchingInfoId) {
-            MatchingInfo matchingInfo = matchingInfoService.findById(matchingInfoId);
-            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(matchingInfo);
-            response.add(matchingOneDto);
+        for(MatchingInfo matchingInfo : filteredMatchingInfo) {
+            response.add(new MatchingDefaultResponseDto(matchingInfo));
         }
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -119,9 +117,10 @@ public class MatchingController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
-        List<Long> filteredMatchingInfoId = matchingService.findFilteredMatchingMembers(loginMemberId, filteringRequest);
+        List<MatchingInfo> filteredMatchingInfo = matchingService.findFilteredMatchingMembers(loginMemberId,
+                filteringRequest);
 
-        if(filteredMatchingInfoId.isEmpty()) {
+        if(filteredMatchingInfo.isEmpty()) {
             return ResponseEntity.status(204)
                     .body(DefaultResponseDto.builder()
                             .responseCode("NO_CONTENT")
@@ -131,10 +130,8 @@ public class MatchingController {
 
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
-        for(Long matchingInfoId : filteredMatchingInfoId) {
-            MatchingInfo matchingInfo = matchingInfoService.findById(matchingInfoId);
-            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(matchingInfo);
-            response.add(matchingOneDto);
+        for(MatchingInfo matchingInfo : filteredMatchingInfo) {
+            response.add(new MatchingDefaultResponseDto(matchingInfo));
         }
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -180,9 +177,8 @@ public class MatchingController {
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
         for(LikedMember likedMember : likedMembers) {
-
-            Long likedMemberMatchingInfoId = matchingInfoService.findByMemberId(likedMember.getSelectedLikedMemberId());
-            MatchingInfo likedMemberMatchingInfo = matchingInfoService.findById(likedMemberMatchingInfoId);
+            MatchingInfo likedMemberMatchingInfo = matchingInfoService.findByMemberId(
+                    likedMember.getSelectedLikedMemberId());
 
             MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(likedMemberMatchingInfo,
                     likedMember.getCreatedAt());
@@ -235,11 +231,6 @@ public class MatchingController {
         }
         likedMemberService.saveLikedMember(loginMemberId, selectedLikedMemberId);
 
-        Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
-        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findById(loginMemberMatchingInfoId);
-
-        MatchingDefaultResponseDto response = new MatchingDefaultResponseDto(loginMemberMatchingInfo);
-
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
                         .responseCode("NO_CONTENT")
@@ -268,10 +259,7 @@ public class MatchingController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
 
         likedMemberService.deleteLikedMember(loginMemberId, likedMemberId);
-
-        Long loginMemberMatchingInfoId = matchingInfoService.findByMemberId(loginMemberId);
-        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findById(loginMemberMatchingInfoId);
-        MatchingDefaultResponseDto response = new MatchingDefaultResponseDto(loginMemberMatchingInfo);
+        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findByMemberId(loginMemberId);
 
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
@@ -317,10 +305,8 @@ public class MatchingController {
 
         for(DislikedMember dislikedMember : dislikedMembers) {
 
-            Long dislikedMemberMatchingInfoId =
-                    matchingInfoService.findByMemberId(dislikedMember.getSelectedDislikedMemberId());
-
-            MatchingInfo dislikedMemberMatchingInfo = matchingInfoService.findById(dislikedMemberMatchingInfoId);
+            MatchingInfo dislikedMemberMatchingInfo = matchingInfoService.findByMemberId(
+                    dislikedMember.getSelectedDislikedMemberId());
 
             MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(dislikedMemberMatchingInfo,
                     dislikedMember.getCreatedAt());

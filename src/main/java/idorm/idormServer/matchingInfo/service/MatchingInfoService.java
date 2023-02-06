@@ -21,42 +21,49 @@ public class MatchingInfoService {
     private final MatchingInfoRepository matchingInfoRepository;
 
     /**
-     * MatchingInfo 저장 |
+     * MatchingInfo DB에 저장 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
-    public MatchingInfo save(MatchingInfoDefaultRequestDto requestDto, Member member) {
+    public void saveMatchingInfo(MatchingInfo matchingInfo) {
+        try {
+            matchingInfoRepository.save(matchingInfo);
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
+    }
+
+    /**
+     * MatchingInfo 생성 |
+     */
+    @Transactional
+    public MatchingInfo createMatchingInfo(MatchingInfoDefaultRequestDto requestDto, Member member) {
 
         MatchingInfo matchingInfo = requestDto.toEntity(member);
-        matchingInfoRepository.save(matchingInfo);
+        saveMatchingInfo(matchingInfo);
 
         return matchingInfo;
     }
 
     /**
      * MatchingInfo 매칭이미지 공개여부 변경 |
-     * true일 경우만 매칭 시 조회한다.
+     * 404(MATCHING_INFO_NOT_FOUND)
      */
     @Transactional
-    public MatchingInfo updateMatchingInfoIsPublic(Member member, Boolean isMatchingInfoPublic) {
-
-        MatchingInfo foundMatchingInfo = matchingInfoRepository.findByMemberId(member.getId())
-                .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
+    public void updateMatchingInfoIsPublic(MatchingInfo updateMatchingInfo, boolean isMatchingInfoPublic) {
 
         try {
-            foundMatchingInfo.updateIsMatchingInfoPublic(isMatchingInfoPublic);
-            matchingInfoRepository.save(foundMatchingInfo);
+            updateMatchingInfo.updateIsMatchingInfoPublic(isMatchingInfoPublic);
         } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-        return foundMatchingInfo;
     }
 
     /**
      * MatchingInfo 단건 조회 |
-     * 매칭인포 식별자로 매칭인포를 단건 조회한다. 저장된 매칭정보가 없다면 404(Not Found)를 던진다.
+     * 404(MATCHING_INFO_NOT_FOUND)
      */
-    public MatchingInfo
-    findById(Long matchingInfoId) {
+    public MatchingInfo findById(Long matchingInfoId) {
 
         MatchingInfo foundMatchingInfo = matchingInfoRepository.findById(matchingInfoId)
                 .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
@@ -65,14 +72,14 @@ public class MatchingInfoService {
 
     /**
      * MatchingInfo 단건 조회 |
-     * 멤버 식별자로 매칭인포를 단건 조회한다. 저장된 매칭정보가 없다면 404(Not Found)를 던진다.
+     * 404(MATCHING_INFO_NOT_FOUND)
      */
-    public Long findByMemberId(Long memberId) {
+    public MatchingInfo findByMemberId(Long memberId) {
 
-        Long matchingInfoId = matchingInfoRepository.findMatchingInfoIdByMemberId(memberId)
-                .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
+        MatchingInfo foundMatchingInfo = matchingInfoRepository.findByMemberId(memberId).orElseThrow(
+                () -> new CustomException(MATCHING_INFO_NOT_FOUND));
 
-        return matchingInfoId;
+        return foundMatchingInfo;
     }
 
     /**
@@ -92,14 +99,10 @@ public class MatchingInfoService {
      * MatchingInfo 수정 |
      */
     @Transactional
-    public void updateMatchingInfo(Long matchingInfoId, MatchingInfoDefaultRequestDto requestDto) {
-
-        MatchingInfo updateMatchingInfo = matchingInfoRepository.findById(matchingInfoId)
-                .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
+    public void updateMatchingInfo(MatchingInfo updateMatchingInfo, MatchingInfoDefaultRequestDto request) {
 
         try {
-            updateMatchingInfo.updateMatchingInfo(requestDto);
-            matchingInfoRepository.save(updateMatchingInfo);
+            updateMatchingInfo.updateMatchingInfo(request);
         } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }

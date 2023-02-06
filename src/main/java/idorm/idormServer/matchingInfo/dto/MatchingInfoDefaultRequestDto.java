@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
         ValidationSequence.Size.class,
         ValidationSequence.Range.class
 })
-@ApiModel(value = "MatchingInfo 저장 요청")
+@ApiModel(value = "MatchingInfo 기본 요청")
 public class MatchingInfoDefaultRequestDto {
 
     @ApiModelProperty(position = 1, required = true, value = "기숙사 분류: DORM1, DORM2, DORM3", example = "DORM1")

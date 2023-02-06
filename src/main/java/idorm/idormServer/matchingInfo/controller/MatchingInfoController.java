@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,11 +38,11 @@ public class MatchingInfoController {
     @ApiOperation(value = "MatchingInfo 저장", notes = "최초로 온보딩 정보를 저장할 경우만 사용 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
+                    responseCode = "201",
+                    description = "MATCHINGINFO_SAVED",
                     content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / DORM_CATEGORY_FORMAT_INVALID / JOIN_PERIOD_FORMAT_INVALID"),
+                    description = "FIELD_REQUIRED / *_FORMAT_INVALID / *_LENGTH_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "409",
@@ -53,7 +52,8 @@ public class MatchingInfoController {
     })
     @PostMapping("/member/matchinginfo")
     public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(
-            HttpServletRequest request2, @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
+            HttpServletRequest request2,
+            @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
@@ -62,12 +62,12 @@ public class MatchingInfoController {
             throw new CustomException(DUPLICATE_MATCHING_INFO);
         }
 
-        MatchingInfo createdMatchingInfo = matchingInfoService.save(request, member);
+        MatchingInfo createdMatchingInfo = matchingInfoService.createMatchingInfo(request, member);
         MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(createdMatchingInfo);
 
-        return ResponseEntity.status(200)
+        return ResponseEntity.status(201)
             .body(DefaultResponseDto.builder()
-                    .responseCode("OK")
+                    .responseCode("MATCHINGINFO_SAVED")
                     .responseMessage("MatchingInfo 저장 완료")
                     .data(response)
                     .build()
@@ -79,10 +79,10 @@ public class MatchingInfoController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "MATCHINGINFO_UPDATED",
                     content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / DORM_CATEGORY_FORMAT_INVALID / JOIN_PERIOD_FORMAT_INVALID"),
+                    description = "FIELD_REQUIRED / *_FORMAT_INVALID / *_LENGTH_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
@@ -92,7 +92,7 @@ public class MatchingInfoController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(
             HttpServletRequest request2,
-            @RequestBody @Valid MatchingInfoDefaultRequestDto updateRequestDto) {
+            @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
@@ -101,14 +101,12 @@ public class MatchingInfoController {
             throw new CustomException(MATCHING_INFO_NOT_FOUND);
         }
 
-        MatchingInfo updateMatchingInfo = member.getMatchingInfo();
-
-        matchingInfoService.updateMatchingInfo(updateMatchingInfo.getId(), updateRequestDto);
-        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(updateMatchingInfo);
+        matchingInfoService.updateMatchingInfo(member.getMatchingInfo(), request);
+        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(member.getMatchingInfo());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("MATCHINGINFO_UPDATED")
                         .responseMessage("MatchingInfo 수정 완료")
                         .data(response)
                         .build()
@@ -118,8 +116,8 @@ public class MatchingInfoController {
     @ApiOperation(value = "MatchingInfo 공개여부 수정")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
+                    responseCode = "200",
+                    description = "ISMATCHINGINFOPUBLIC_UPDATED"),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED"),
             @ApiResponse(responseCode = "401",
@@ -129,9 +127,8 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PatchMapping("/member/matchinginfo")
-    public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfoIsPublic(
+    public ResponseEntity<DefaultResponseDto<Object>> updateisMatchingInfoPublic(
             HttpServletRequest request2,
             MatchingInfoUpdateIsPublicRequestDto requestDto) {
 
@@ -142,13 +139,11 @@ public class MatchingInfoController {
             throw new CustomException(MATCHING_INFO_NOT_FOUND);
         }
 
-        matchingInfoService.updateMatchingInfoIsPublic(
-                member,
-                requestDto.isMatchingInfoPublic());
+        matchingInfoService.updateMatchingInfoIsPublic(member.getMatchingInfo(), requestDto.isMatchingInfoPublic());
 
-        return ResponseEntity.status(204)
+        return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
+                        .responseCode("ISMATCHINGINFOPUBLIC_UPDATED")
                         .responseMessage("MatchingInfo 공개여부 수정 완료")
                         .build()
                 );
@@ -159,7 +154,7 @@ public class MatchingInfoController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "MATCHINGINFO_FOUND",
                     content = @Content(schema = @Schema(implementation = MatchingInfoDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
@@ -168,7 +163,8 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    public ResponseEntity<DefaultResponseDto<Object>> findMatchingInfo(HttpServletRequest request2) {
+    public ResponseEntity<DefaultResponseDto<Object>> findMatchingInfo(
+            HttpServletRequest request2) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
@@ -177,14 +173,13 @@ public class MatchingInfoController {
             throw new CustomException(MATCHING_INFO_NOT_FOUND);
         }
 
-        Long matchingInfoId = member.getMatchingInfo().getId();
-        MatchingInfo foundMatchingInfo = matchingInfoService.findById(matchingInfoId);
+        MatchingInfo foundMatchingInfo = matchingInfoService.findById(member.getMatchingInfo().getId());
 
         MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(foundMatchingInfo);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("MATCHINGINFO_FOUND")
                         .responseMessage("MatchingInfo 단건 조회")
                         .data(response)
                         .build()
@@ -195,8 +190,8 @@ public class MatchingInfoController {
     @ApiOperation(value = "MatchingInfo 삭제")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
+                    responseCode = "200",
+                    description = "MATCHINGINFO_DELETED"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
@@ -204,7 +199,6 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingInfo(HttpServletRequest request2) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
@@ -214,12 +208,11 @@ public class MatchingInfoController {
             throw new CustomException(MATCHING_INFO_NOT_FOUND);
         }
 
-        MatchingInfo matchingInfo = member.getMatchingInfo();
-        matchingInfoService.deleteMatchingInfo(matchingInfo);
+        matchingInfoService.deleteMatchingInfo(member.getMatchingInfo());
 
-        return ResponseEntity.status(204)
+        return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
+                        .responseCode("MATCHINGINFO_DELETED")
                         .responseMessage("MatchingInfo 삭제 완료")
                         .build()
                 );

@@ -12,50 +12,33 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
 
     Optional<MatchingInfo> findByMemberId(Long memberId);
 
-    @Query(value = "SELECT matching_info_id " +
-            "FROM matching_info mi " +
-            "WHERE mi.member_id = :memberId", nativeQuery = true)
-    Optional<Long> findMatchingInfoIdByMemberId(@Param("memberId") Long memberId);
+    List<MatchingInfo> findAllByMemberIdAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(Long memberId,
+                                                                              Character dormCategory,
+                                                                              Character joinPeriod,
+                                                                              Character gender);
 
-    @Query(value = "SELECT matching_info_id " +
-            "FROM matching_info mi " +
-            "WHERE mi.member_id != :memberId AND " +
-            "mi.dorm_category = :dormCategory AND " +
-            "mi.join_period = :joinPeriod AND " +
-            "mi.gender = :gender AND " +
-            "mi.is_matching_info_public = 1", nativeQuery = true)
-    List<Long> findMatchingMembers(@Param("memberId") Long memberId,
-                                   @Param("dormCategory") Character dormCategory,
-                                   @Param("joinPeriod") Character joinPeriod,
-                                   @Param("gender") Character gender);
-
-    @Query(value = "SELECT matching_info_id " +
-            "FROM matching_info mi " +
-            "WHERE mi.member_id != :memberId AND " +
-            "mi.dorm_category = :dormCategory AND " +
-            "mi.join_period = :joinPeriod AND " +
-            "mi.gender = :gender AND " +
-            "(mi.is_snoring = :isSnoring OR " +
-            "mi.is_snoring = 0) AND " +
-            "(mi.is_smoking = :isSmoking OR " +
-            "mi.is_smoking = 0) AND " +
-            "(mi.is_grinding = :isGrinding OR " +
-            "mi.is_grinding = 0) AND " +
-            "(mi.is_wear_earphones = :isWearEarphones OR " +
-            "mi.is_wear_earphones = 1) AND " +
-            "(mi.is_allowed_food = :isAllowedFood OR " +
-            "mi.is_allowed_food = 0) AND " +
-            "mi.age >= :minAge && mi.age <= :maxAge AND " +
-            "mi.is_matching_info_public = 1", nativeQuery = true)
-    List<Long> findFilteredMatchingMembers(@Param("memberId") Long memberId,
-                                           @Param("dormCategory") Character dormCategory,
-                                           @Param("joinPeriod") Character joinPeriod,
-                                           @Param("gender") Character gender,
-                                           @Param("isSnoring") int isSnoring,
-                                           @Param("isSmoking") int isSmoking,
-                                           @Param("isGrinding") int isGrinding,
-                                           @Param("isWearEarphones") int isWearEarphones,
-                                           @Param("isAllowedFood") int isAllowedFood,
-                                           @Param("minAge") Integer minAge,
-                                           @Param("maxAge") Integer maxAge);
+    @Query(value = "SELECT m FROM MatchingInfo m " +
+            "WHERE m.member.id = :memberId AND " +
+            "m.dormCategory = :dormCategory AND " +
+            "m.joinPeriod = :joinPeriod AND " +
+            "m.gender = :gender AND " +
+            "(m.isSnoring = :isSnoring OR m.isSnoring = false) AND " +
+            "(m.isSmoking = :isSmoking OR m.isSmoking = false) AND " +
+            "(m.isGrinding = :isGrinding OR m.isGrinding = false) AND " +
+            "m.isWearEarphones = :isWearEarphones AND " +
+            "m.isAllowedFood = :isAllowedFood AND " +
+            "m.age >= :minAge AND " +
+            "m.age <= :maxAge AND " +
+            "m.isMatchingInfoPublic = true")
+    List<MatchingInfo> findFilteredMatchingMembers(@Param("memberId") Long memberId,
+                                                   @Param("dormCategory") Character dormCategory,
+                                                   @Param("joinPeriod") Character joinPeriod,
+                                                   @Param("gender") Character gender,
+                                                   @Param("isSnoring") Boolean isSnoring,
+                                                   @Param("isSmoking") Boolean isSmoking,
+                                                   @Param("isGrinding") Boolean isGrinding,
+                                                   @Param("isWearEarphones") Boolean isWearEarphones,
+                                                   @Param("isAllowedFood") Boolean isAllowedFood,
+                                                   @Param("minAge") Integer minAge,
+                                                   @Param("maxAge") Integer maxAge);
 }
