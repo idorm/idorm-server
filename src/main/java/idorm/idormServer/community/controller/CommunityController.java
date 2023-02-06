@@ -512,7 +512,7 @@ public class CommunityController {
 
         Comment createdComment = commentService.saveComment(
                 requestDto.getContent(),
-                requestDto.getIsAnonymous(),
+                requestDto.isAnonymous(),
                 post,
                 loginMember);
 

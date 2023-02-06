@@ -94,11 +94,11 @@ public class MatchingService {
             throw new CustomException(ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC);
         }
 
-        int isSnoring = (filteringRequest.getIsSnoring() == true) ? 1 : 0; // true:1 , false: 0 / false 무조건 조회
-        int isSmoking = (filteringRequest.getIsSmoking() == true) ? 1 : 0; // false 무조건 조회
-        int isGrinding = (filteringRequest.getIsGrinding() == true) ? 1 : 0; // false 무조건 조회
-        int isWearEarphones = (filteringRequest.getIsWearEarphones() == true) ? 1 : 0; // true 이면 무조건 조회
-        int isAllowedFood = (filteringRequest.getIsAllowedFood() == true) ? 1 : 0; // false 이면 무조건 조회
+        int isSnoring = (filteringRequest.isSnoring() == true) ? 1 : 0; // true:1 , false: 0 / false 무조건 조회
+        int isSmoking = (filteringRequest.isSmoking() == true) ? 1 : 0; // false 무조건 조회
+        int isGrinding = (filteringRequest.isGrinding() == true) ? 1 : 0; // false 무조건 조회
+        int isWearEarphones = (filteringRequest.isWearEarphones() == true) ? 1 : 0; // true 이면 무조건 조회
+        int isAllowedFood = (filteringRequest.isAllowedFood() == true) ? 1 : 0; // false 이면 무조건 조회
 
         List<Long> filteredMatchingInfoId = new ArrayList<>();
 

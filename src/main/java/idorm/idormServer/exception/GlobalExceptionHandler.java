@@ -13,6 +13,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.Objects;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
@@ -56,6 +58,46 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("[ERROR] {} - {}", responseMessage, exception.getCause());
 
         return ResponseEntity.status(status)
+                .body(DefaultExceptionResponseDto.builder()
+                        .responseCode(responseCode)
+                        .responseMessage(responseMessage)
+                        .build());
+    }
+
+    @ExceptionHandler(value = { ConstraintViolationException.class })
+    protected ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException exception) {
+        String responseCode = null;
+        String responseMessage = null;
+        if (exception.getConstraintViolations().stream().findFirst().isPresent()) {
+            ConstraintViolation<?> constraintViolation = exception.getConstraintViolations().stream().findFirst().get();
+
+            int propertyPathSize = constraintViolation.getPropertyPath().toString().split("\\.").length;
+
+            responseCode = constraintViolation.getPropertyPath()
+                    .toString()
+                    .split("\\.")[propertyPathSize - 1]
+                    .toUpperCase();
+
+            responseMessage = constraintViolation.getMessageTemplate();
+
+            if (responseMessage.contains("입력")) {
+                responseCode = "FIELD_REQUIRED";
+            } else if (responseMessage.contains("~")) {
+                responseCode = responseCode.concat("_LENGTH_INVALID");
+            } else if (responseMessage.contains("형식")) {
+                responseCode = responseCode.concat("_FORMAT_INVALID");
+            } else if (responseMessage.contains("양수")) {
+                responseCode = responseCode.concat("_NEGATIVEORZERO_INVALID");
+            } else {
+                responseCode = responseCode.toUpperCase();
+            }
+        } else {
+            throw new CustomException(SERVER_ERROR);
+        }
+
+        log.error("[ERROR] {} - {}", responseMessage, exception.getCause());
+
+        return ResponseEntity.status(400)
                 .body(DefaultExceptionResponseDto.builder()
                         .responseCode(responseCode)
                         .responseMessage(responseMessage)

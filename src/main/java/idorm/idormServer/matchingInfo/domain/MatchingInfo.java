@@ -82,11 +82,11 @@ public class MatchingInfo extends BaseEntity {
         this.joinPeriod = requestDto.getJoinPeriod().getType();
         this.gender = requestDto.getGender().getType();
         this.age = requestDto.getAge();
-        this.isSnoring = requestDto.getIsSnoring();
-        this.isSmoking = requestDto.getIsSmoking();
-        this.isGrinding = requestDto.getIsGrinding();
-        this.isWearEarphones = requestDto.getIsWearEarphones();
-        this.isAllowedFood = requestDto.getIsAllowedFood();
+        this.isSnoring = requestDto.isSnoring();
+        this.isSmoking = requestDto.isSmoking();
+        this.isGrinding = requestDto.isGrinding();
+        this.isWearEarphones = requestDto.isWearEarphones();
+        this.isAllowedFood = requestDto.isAllowedFood();
         this.wakeUpTime = requestDto.getWakeupTime();
         this.cleanUpStatus = requestDto.getCleanUpStatus();
         this.showerTime = requestDto.getShowerTime();

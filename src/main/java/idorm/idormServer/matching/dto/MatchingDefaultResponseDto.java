@@ -12,9 +12,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ApiModel(value = "Matching 응답")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ApiModel(value = "Matching 기본 응답")
 public class MatchingDefaultResponseDto {
 
     @ApiModelProperty(position = 1, value="멤버 식별자", example = "2")

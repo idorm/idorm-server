@@ -11,16 +11,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ApiModel(value = "MatchingInfo 응답")
-@AllArgsConstructor
 public class MatchingInfoDefaultResponseDto {
 
     @ApiModelProperty(position = 1, value="매칭정보 식별자", example = "2")
-    private Long id;
+    private Long matchingInfoId;
 
     @ApiModelProperty(position = 2, required = true, value = "기숙사 분류: DORM1, DORM2, DORM3", example = "DORM1")
     private DormCategory dormCategory;
@@ -76,7 +74,7 @@ public class MatchingInfoDefaultResponseDto {
 
     public MatchingInfoDefaultResponseDto(MatchingInfo matchingInfo) {
 
-        this.id = matchingInfo.getId();
+        this.matchingInfoId = matchingInfo.getId();
         this.dormCategory = DormCategory.valueOf(matchingInfo.getDormCategory());
         this.joinPeriod = JoinPeriod.valueOf(matchingInfo.getJoinPeriod());
         this.gender = Gender.valueOf(matchingInfo.getGender());

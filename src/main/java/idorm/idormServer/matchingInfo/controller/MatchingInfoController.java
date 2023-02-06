@@ -144,7 +144,7 @@ public class MatchingInfoController {
 
         matchingInfoService.updateMatchingInfoIsPublic(
                 member,
-                requestDto.getIsMatchingInfoPublic());
+                requestDto.isMatchingInfoPublic());
 
         return ResponseEntity.status(204)
                 .body(DefaultResponseDto.builder()
