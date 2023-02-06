@@ -22,7 +22,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -95,8 +95,7 @@ public class MemberController {
                     description = "MEMBER_REGISTERED",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / NICKNAME_FORMAT_INVALID / " +
-                            "PASSWORD_FORMAT_INVALID"),
+                    description = "FIELD_REQUIRED / *_FORMAT_INVALID / *_LENGTH_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_EMAIL"),
             @ApiResponse(responseCode = "404",
@@ -138,11 +137,9 @@ public class MemberController {
     @ApiOperation(value = "프로필 사진 저장")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "PROFILE_PHOTO_SAVED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "FILE_SIZE_EXCEEDED"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
@@ -175,7 +172,7 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "프로필 사진 삭제")
+    @ApiOperation(value = "프로필 사진 삭제", notes = "삭제할 사진이 없다면 404(FILE_NOT_FOUND)를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -212,7 +209,7 @@ public class MemberController {
                     description = "PASSWORD_UPDATED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID / PASSWORD_FORMAT_INVALID"),
+                    description = "FIELD_REQUIRED / *_FORMAT_INVALID / *_LENGTH_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_EMAIL"),
             @ApiResponse(responseCode = "404",
@@ -249,7 +246,7 @@ public class MemberController {
                     description = "NICKNAME_UPDATED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / NICKNAME_FORMAT_INVALID"),
+                    description = "FIELD_REQUIRED / NICKNAME_FORMAT_INVALID / NICKNAME_LENGTH_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "409",
@@ -260,7 +257,8 @@ public class MemberController {
     )
     @PatchMapping("/member/nickname")
     public ResponseEntity<DefaultResponseDto<Object>> updateMemberNickname(
-            HttpServletRequest request2, @RequestBody @Valid MemberUpdateNicknameRequestDto request) {
+            HttpServletRequest request2,
+            @RequestBody @Valid MemberUpdateNicknameRequestDto request) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
@@ -313,13 +311,11 @@ public class MemberController {
                     description = "MEMBER_LOGIN",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "PASSWORD_FORMAT_INVALID / EMAIL_FORMAT_INVALID / FIELD_REQUIRED"),
+                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_PASSWORD"),
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
-            @ApiResponse(responseCode = "409",
-                    description = "UNAUTHORIZED_PASSWORD"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     }
@@ -404,7 +400,8 @@ public class MemberController {
                     description = "OK",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "PASSWORD_FORMAT_INVALID / NICKNAME_FORMAT_INVALID / FIELD_REQUIRED"),
+                    description = "PASSWORD_FORMAT_INVALID / NICKNAME_FORMAT_INVALID / FIELD_REQUIRED " +
+                            "/ UPDATEMEMBERID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "403",
@@ -419,7 +416,8 @@ public class MemberController {
     )
     @PatchMapping("/admin/member/{id}")
     public ResponseEntity<DefaultResponseDto<Object>> updateMemberRoot(
-            @PathVariable("id") Long updateMemberId, @RequestBody @Valid MemberUpdateStatusAdminRequestDto request) {
+            @PathVariable("id") @Positive(message = "회원 식별자는 양수만 가능합니다.") Long updateMemberId,
+            @RequestBody @Valid MemberUpdateStatusAdminRequestDto request) {
 
         Member updateMember = memberService.findById(updateMemberId);
 

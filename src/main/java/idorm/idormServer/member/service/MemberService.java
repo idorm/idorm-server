@@ -63,9 +63,15 @@ public class MemberService {
     /**
      * 닉네임 중복 검사 |
      * 409(DUPLICATE_NICKNAME)
+     * 500(SERVER_ERROR)
      */
     public void isExistingNickname(String nickname) {
-        boolean isExistNicknameResult = memberRepository.existsByNickname(nickname);
+        Boolean isExistNicknameResult = false;
+        try {
+            isExistNicknameResult = memberRepository.existsByNickname(nickname);
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
         if(isExistNicknameResult) {
             throw new CustomException(DUPLICATE_NICKNAME);
         }
@@ -79,8 +85,6 @@ public class MemberService {
     @Transactional
     public void saveProfilePhoto(Member member, MultipartFile file) {
 
-        String fileName = member.getId() + file.getContentType().replace("image/", ".");
-
         if (member.getProfilePhoto() != null) {
             photoService.deleteProfilePhotos(member);
         }
@@ -91,10 +95,16 @@ public class MemberService {
     /**
      * 가입 메일 중복 검사 |
      * 409(DUPLICATE_EMAIL)
+     * 500(SERVER_ERROR)
      */
     public void isExistingEmail(String email) {
 
-        boolean isExistEmailResult = memberRepository.existsByEmail(email);
+        Boolean isExistEmailResult = null;
+        try {
+            isExistEmailResult = memberRepository.existsByEmail(email);
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
         if (isExistEmailResult) {
             throw new CustomException(DUPLICATE_EMAIL);
         }
@@ -102,23 +112,34 @@ public class MemberService {
 
     /**
      * Member 단건 조회 |
-     * 식별자로 멤버를 조회합니다. 찾을 수 없는 식별자라면 404(Not Found)를 던진다.
+     * 404(MEMBER_NOT_FOUND)
      */
     public Member findById(Long memberId) {
 
-        Member foundMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        try {
+            Member foundMember = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        return foundMember;
+            return foundMember;
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
     }
 
     /**
      * Member 전체 조회 |
-     * 관리자 계정에서 사용한다. 조회되는 멤버가 없다면 404(Not Found)를 던진다.
+     * 관리자 계정에서 사용한다. |
+     * 400(MEMBER_NOT_FOUND)
      */
     public List<Member> findAll() {
 
-        List<Member> foundMembers = memberRepository.findAll();
+        List<Member> foundMembers = null;
+
+        try {
+            foundMembers = memberRepository.findAll();
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
 
         if(foundMembers.isEmpty()) {
             throw new CustomException(MEMBER_NOT_FOUND);
@@ -128,6 +149,7 @@ public class MemberService {
 
     /**
      * Member 이메일로 조회 |
+     * 400(MEMBER_NOT_FOUND)
      */
     public Member findByEmail(String email) {
 

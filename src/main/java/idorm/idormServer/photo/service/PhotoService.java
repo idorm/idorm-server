@@ -74,7 +74,8 @@ public class PhotoService {
 
     /**
      * Photo 회원 프로필 사진 저장 |
-     * 사진을 repository와 S3에 저장한다. 매핑된 Member의 profilePhoto에도 저장한다.
+     * 사진을 repository와 S3에 저장한다. 매핑된 Member의 profilePhoto에도 저장한다. |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public Photo createProfilePhoto(Member member, MultipartFile file) {
@@ -91,26 +92,36 @@ public class PhotoService {
 
         String fileName = createdProfilePhoto.getId() + file.getContentType().replace("image/", ".");
         String photoUrl = insertFileToS3(folderName, fileName, file);
-        createdProfilePhoto.setFileName(fileName);
-        createdProfilePhoto.setPhotoUrl(photoUrl);
 
-        member.updateProfilePhoto(createdProfilePhoto);
+        try {
+            createdProfilePhoto.setFileName(fileName);
+            createdProfilePhoto.setPhotoUrl(photoUrl);
+            member.updateProfilePhoto(createdProfilePhoto);
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
+
         return createdProfilePhoto;
     }
 
     /**
      * 프로필 사진 삭제 |
-     * S3, repository에서 삭제한다. 매핑된 member의 profilePhoto도 자동으로 삭제된다.
+     * S3, repository에서 삭제한다. 매핑된 member의 profilePhoto도 자동으로 삭제된다. |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void deleteProfilePhotos(Member member) {
 
         String folderName = member.getProfilePhoto().getFolderName();
-        List<Photo> profilePhotos = photoRepository.findByFolderName(folderName);
+        List<Photo> profilePhotos = null;
+        try {
+            profilePhotos = photoRepository.findByFolderName(folderName);
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
 
         for(Photo photo : profilePhotos) {
             deleteFileFromS3(folderName, photo.getFileName());
-
             deletePhoto(photo);
         }
     }
