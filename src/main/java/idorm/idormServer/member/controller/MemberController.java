@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -104,6 +105,7 @@ public class MemberController {
                     description = "INTERNAL_SERVER_ERROR"),
     }
     )
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
     public ResponseEntity<DefaultResponseDto<Object>> saveMember(
             @RequestBody @Valid MemberSaveRequestDto request
@@ -150,6 +152,7 @@ public class MemberController {
                     description = "INTERNAL_SERVER_ERROR"),
     }
     )
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/member/profile-photo")
     public ResponseEntity<DefaultResponseDto<Object>> saveMemberProfilePhoto(
             HttpServletRequest request, @RequestPart(value = "file", required = false) MultipartFile file) {
