@@ -68,8 +68,8 @@ public class MatchingDefaultResponseDto {
     @ApiModelProperty(position = 17, value = "룸메에게 하고싶은 말", example = "즐거운 한 학기를 보내보아요~")
     private String wishText;
 
-    @ApiModelProperty(position = 18, value = "좋아요 혹은 싫어요한 멤버로 추가한 시간", example = "시간")
-    private LocalDateTime addedAt;
+    @ApiModelProperty(position = 18, value = "매칭정보 공개 여부", example = "true")
+    private Boolean isMatchingInfoPublic;
 
     public MatchingDefaultResponseDto(MatchingInfo matchingInfo) {
         this.memberId = matchingInfo.getMember().getId();
@@ -89,26 +89,6 @@ public class MatchingDefaultResponseDto {
         this.openKakaoLink = matchingInfo.getOpenKakaoLink();
         this.mbti = matchingInfo.getMbti();
         this.wishText = matchingInfo.getWishText();
-    }
-
-    public MatchingDefaultResponseDto(MatchingInfo matchingInfo, LocalDateTime addedAt) {
-        this.memberId = matchingInfo.getMember().getId();
-        this.matchingInfoId = matchingInfo.getId();
-        this.dormCategory = DormCategory.valueOf(matchingInfo.getDormCategory());
-        this.joinPeriod = JoinPeriod.valueOf(matchingInfo.getJoinPeriod());
-        this.gender = Gender.valueOf(matchingInfo.getGender());
-        this.age = matchingInfo.getAge();
-        this.isSnoring = matchingInfo.getIsSnoring();
-        this.isGrinding = matchingInfo.getIsGrinding();
-        this.isSmoking = matchingInfo.getIsSmoking();
-        this.isAllowedFood = matchingInfo.getIsAllowedFood();
-        this.isWearEarphones = matchingInfo.getIsWearEarphones();
-        this.wakeUpTime = matchingInfo.getWakeUpTime();
-        this.cleanUpStatus = matchingInfo.getCleanUpStatus();
-        this.showerTime = matchingInfo.getShowerTime();
-        this.openKakaoLink = matchingInfo.getOpenKakaoLink();
-        this.mbti = matchingInfo.getMbti();
-        this.wishText = matchingInfo.getWishText();
-        this.addedAt = addedAt;
+        this.isMatchingInfoPublic = matchingInfo.getIsMatchingInfoPublic();
     }
 }

@@ -57,7 +57,8 @@ public class MemberService {
     public Member createMember(MemberSaveRequestDto request) {
 
         Member createdMember = request.toEntity();
-        return save(createdMember);
+        save(createdMember);
+        return createdMember;
     }
 
     /**
@@ -115,15 +116,10 @@ public class MemberService {
      * 404(MEMBER_NOT_FOUND)
      */
     public Member findById(Long memberId) {
+        Member foundMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        try {
-            Member foundMember = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-
-            return foundMember;
-        } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
-        }
+        return foundMember;
     }
 
     /**

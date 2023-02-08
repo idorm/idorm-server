@@ -59,7 +59,7 @@ public class CommunityController {
                     description = "OK",
                     content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "DORM_CATEGORY_FORMAT_INVALID, FIELD_REQUIRED"),
+                    description = "DORMCATEGORY_FORMAT_INVALID, FIELD_REQUIRED"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
@@ -96,7 +96,7 @@ public class CommunityController {
                     responseCode = "204",
                     description = "NO CONTENT"),
             @ApiResponse(responseCode = "400",
-                    description = "DORM_CATEGORY_FORMAT_INVALID"),
+                    description = "DORMCATEGORY_FORMAT_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
@@ -189,7 +189,7 @@ public class CommunityController {
                     description = "CREATED",
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FILE_SIZE_EXCEEDED / FILE_COUNT_EXCEEDED / DORM_CATEGORY_FORMAT_INVALID /" +
+                    description = "FILE_SIZE_EXCEEDED / FILE_COUNT_EXCEEDED / DORMCATEGORY_FORMAT_INVALID /" +
                             " FIELD_REQUIRED"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
@@ -423,7 +423,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "LIKED_NOT_FOUND / POST_LIKED_MEMBER_NOT_FOUND"),
+                    description = "LIKED_NOT_FOUND / POSTLIKEDMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -611,7 +611,7 @@ public class CommunityController {
 
     private void validateDormCategory(String dormNum) {
         if(!dormNum.equals("DORM1") && !dormNum.equals("DORM2") && !dormNum.equals("DORM3")) {
-            throw new CustomException(DORM_CATEGORY_FORMAT_INVALID);
+            throw new CustomException(DORMCATEGORY_FORMAT_INVALID);
         }
     }
 

@@ -19,13 +19,13 @@ public enum ExceptionCode {
     EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
     PASSWORD_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
     NICKNAME_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
-    DORM_CATEGORY_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 기숙사 분류가 아닙니다."),
-    JOIN_PERIOD_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 입사 기간이 아닙니다."),
+    DORMCATEGORY_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 기숙사 분류가 아닙니다."),
+    JOINPERIOD_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 입사 기간이 아닙니다."),
     
     ILLEGAL_ARGUMENT_ADMIN(BAD_REQUEST, "관리자는 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
 
-    ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC(BAD_REQUEST, "매칭정보가 비공개 입니다."),
+    ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(BAD_REQUEST, "매칭정보가 비공개 입니다."),
 
     /**
      * 401 UNAUTHORIZED : 인증되지 않은 사용자
@@ -50,10 +50,12 @@ public enum ExceptionCode {
 
     EMAIL_NOT_FOUND(NOT_FOUND, "등록된 이메일이 없습니다."),
     MEMBER_NOT_FOUND(NOT_FOUND, "등록된 멤버가 없습니다."),
+    DISLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "싫어요한 멤버가 없습니다."),
+    LIKEDMEMBER_NOT_FOUND(NOT_FOUND, "좋아요한 멤버가 없습니다."),
     FILE_NOT_FOUND(NOT_FOUND, "등록된 파일이 없습니다."),
-    MATCHING_INFO_NOT_FOUND(NOT_FOUND, "등록된 매칭정보가 없습니다."),
+    MATCHINGINFO_NOT_FOUND(NOT_FOUND, "등록된 매칭정보가 없습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "등록된 댓글이 없습니다."),
-    POST_LIKED_MEMBER_NOT_FOUND(NOT_FOUND, "멤버가 게시글에 공감하지 않았습니다."),
+    POSTLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "멤버가 게시글에 공감하지 않았습니다."),
     POST_NOT_FOUND(NOT_FOUND, "등록된 게시글이 없습니다."),
     LIKED_NOT_FOUND(NOT_FOUND, "등록된 공감이 없습니다."),
     CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 캘린더 정보가 없습니다."),
@@ -75,7 +77,7 @@ public enum ExceptionCode {
     DUPLICATE_MEMBER(CONFLICT, "이미 등록된 멤버 입니다."),
     DUPLICATE_NICKNAME(CONFLICT, "이미 등록된 닉네임 입니다."),
     DUPLICATE_SAME_NICKNAME(CONFLICT, "기존의 닉네임과 같습니다."),
-    DUPLICATE_MATCHING_INFO(CONFLICT, "매칭정보가 이미 등록되어 있습니다."),
+    DUPLICATE_MATCHINGINFO(CONFLICT, "매칭정보가 이미 등록되어 있습니다."),
     DUPLICATE_LIKED_MEMBER(CONFLICT, "이미 좋아요한 멤버 입니다."),
     DUPLICATE_DISLIKED_MEMBER(CONFLICT, "이미 싫어요한 멤버 입니다."),
     DUPLICATE_LIKED(CONFLICT, "공감은 한 번만 가능합니다."),

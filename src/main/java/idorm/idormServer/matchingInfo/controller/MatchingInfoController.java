@@ -46,7 +46,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "409",
-                    description = "DUPLICATE_MATCHING_INFO"),
+                    description = "DUPLICATE_MATCHINGINFO"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -59,7 +59,7 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() != null) { // 등록된 매칭정보가 있다면
-            throw new CustomException(DUPLICATE_MATCHING_INFO);
+            throw new CustomException(DUPLICATE_MATCHINGINFO);
         }
 
         MatchingInfo createdMatchingInfo = matchingInfoService.createMatchingInfo(request, member);
@@ -86,7 +86,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "MATCHING_INFO_NOT_FOUND"),
+                    description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -98,7 +98,7 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
-            throw new CustomException(MATCHING_INFO_NOT_FOUND);
+            throw new CustomException(MATCHINGINFO_NOT_FOUND);
         }
 
         matchingInfoService.updateMatchingInfo(member.getMatchingInfo(), request);
@@ -123,7 +123,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "MATCHING_INFO_NOT_FOUND"),
+                    description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -136,7 +136,7 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
-            throw new CustomException(MATCHING_INFO_NOT_FOUND);
+            throw new CustomException(MATCHINGINFO_NOT_FOUND);
         }
 
         matchingInfoService.updateMatchingInfoIsPublic(member.getMatchingInfo(), requestDto.isMatchingInfoPublic());
@@ -159,7 +159,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "MATCHING_INFO_NOT_FOUND"),
+                    description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -170,7 +170,7 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
-            throw new CustomException(MATCHING_INFO_NOT_FOUND);
+            throw new CustomException(MATCHINGINFO_NOT_FOUND);
         }
 
         MatchingInfo foundMatchingInfo = matchingInfoService.findById(member.getMatchingInfo().getId());
@@ -195,7 +195,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "MATCHING_INFO_NOT_FOUND"),
+                    description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -205,7 +205,7 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없는 경우
-            throw new CustomException(MATCHING_INFO_NOT_FOUND);
+            throw new CustomException(MATCHINGINFO_NOT_FOUND);
         }
 
         matchingInfoService.deleteMatchingInfo(member.getMatchingInfo());

@@ -12,13 +12,14 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
 
     Optional<MatchingInfo> findByMemberId(Long memberId);
 
-    List<MatchingInfo> findAllByMemberIdAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(Long memberId,
+    List<MatchingInfo> findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
+                                                                              Long memberId,
                                                                               Character dormCategory,
                                                                               Character joinPeriod,
                                                                               Character gender);
 
     @Query(value = "SELECT m FROM MatchingInfo m " +
-            "WHERE m.member.id = :memberId AND " +
+            "WHERE m.member.id <> :memberId AND " +
             "m.dormCategory = :dormCategory AND " +
             "m.joinPeriod = :joinPeriod AND " +
             "m.gender = :gender AND " +

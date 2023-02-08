@@ -6,8 +6,6 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
 
-import idorm.idormServer.matching.service.DislikedMemberService;
-import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.MemberService;
@@ -46,8 +44,8 @@ public class MemberController {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final EmailService emailService;
-    private final LikedMemberService likedMemberService;
-    private final DislikedMemberService dislikedMemberService;
+//    private final LikedMemberService likedMemberService;
+//    private final DislikedMemberService dislikedMemberService;
 
     @Value("${DB_USERNAME}")
     private String ENV_USERNAME;
@@ -292,8 +290,8 @@ public class MemberController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member foundMember = memberService.findById(loginMemberId);
 
-        likedMemberService.deleteLikedMembers(foundMember.getId());
-        dislikedMemberService.deleteDislikedMembers(foundMember.getId());
+//        likedMemberService.deleteLikedMembers(foundMember.getId());
+//        dislikedMemberService.deleteDislikedMembers(foundMember.getId());
         memberService.deleteMember(foundMember);
 
         return ResponseEntity.status(200)
@@ -455,8 +453,8 @@ public class MemberController {
             @PathVariable("id") Long deleteMemberId
     ) {
         Member foundMember = memberService.findById(deleteMemberId);
-        likedMemberService.deleteLikedMembers(foundMember.getId());
-        dislikedMemberService.deleteDislikedMembers(foundMember.getId());
+//        likedMemberService.deleteLikedMembers(foundMember.getId());
+//        dislikedMemberService.deleteDislikedMembers(foundMember.getId());
         memberService.deleteMember(foundMember);
 
         List<Member> members = memberService.findAll();

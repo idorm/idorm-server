@@ -56,7 +56,7 @@ public class PostLikedMemberService {
         boolean likedYn = isMemberLikedPost(member, post);
 
         if(likedYn == false) {
-            throw new CustomException(POST_LIKED_MEMBER_NOT_FOUND);
+            throw new CustomException(POSTLIKEDMEMBER_NOT_FOUND);
         }
 
         try {

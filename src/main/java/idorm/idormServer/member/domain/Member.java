@@ -37,6 +37,18 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Photo profilePhoto;
 
+    @ElementCollection
+    @CollectionTable(name = "liked_members",
+            joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "liked_member")
+    private List<Long> likedMembers = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "disliked_members",
+            joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "disliked_member")
+    private List<Long> dislikedMembers = new ArrayList<>();
+
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
@@ -77,6 +89,22 @@ public class Member extends BaseEntity implements UserDetails {
 
     public void setMatchingInfo(MatchingInfo matchingInfo) {
         this.matchingInfo = matchingInfo;
+    }
+
+    public void addLikedMember(Long memberId) {
+        this.likedMembers.add(memberId);
+    }
+
+    public void removeLikedMember(Long memberId) {
+        this.likedMembers.remove(memberId);
+    }
+
+    public void addDislikedMember(Long memberId) {
+        this.dislikedMembers.add(memberId);
+    }
+
+    public void removeDislikedMember(Long memberId) {
+        this.dislikedMembers.remove(memberId);
     }
 
     @Override

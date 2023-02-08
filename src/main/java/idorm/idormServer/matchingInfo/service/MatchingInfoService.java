@@ -47,7 +47,7 @@ public class MatchingInfoService {
 
     /**
      * MatchingInfo 매칭이미지 공개여부 변경 |
-     * 404(MATCHING_INFO_NOT_FOUND)
+     * 404(MATCHINGINFO_NOT_FOUND)
      */
     @Transactional
     public void updateMatchingInfoIsPublic(MatchingInfo updateMatchingInfo, boolean isMatchingInfoPublic) {
@@ -61,23 +61,32 @@ public class MatchingInfoService {
 
     /**
      * MatchingInfo 단건 조회 |
-     * 404(MATCHING_INFO_NOT_FOUND)
+     * 404(MATCHINGINFO_NOT_FOUND)
      */
     public MatchingInfo findById(Long matchingInfoId) {
 
         MatchingInfo foundMatchingInfo = matchingInfoRepository.findById(matchingInfoId)
-                .orElseThrow(() -> new CustomException(MATCHING_INFO_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(MATCHINGINFO_NOT_FOUND));
         return foundMatchingInfo;
     }
 
     /**
+     * 매칭정보 공개 여부 확인 |
+     * 400(ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC)
+     */
+    public void validateMatchingInfoIsPublic(Member member) {
+        if (!member.getMatchingInfo().getIsMatchingInfoPublic())
+            throw new CustomException(ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC);
+    }
+
+    /**
      * MatchingInfo 단건 조회 |
-     * 404(MATCHING_INFO_NOT_FOUND)
+     * 404(MATCHINGINFO_NOT_FOUND)
      */
     public MatchingInfo findByMemberId(Long memberId) {
 
         MatchingInfo foundMatchingInfo = matchingInfoRepository.findByMemberId(memberId).orElseThrow(
-                () -> new CustomException(MATCHING_INFO_NOT_FOUND));
+                () -> new CustomException(MATCHINGINFO_NOT_FOUND));
 
         return foundMatchingInfo;
     }

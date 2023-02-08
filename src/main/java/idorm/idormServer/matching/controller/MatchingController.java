@@ -4,15 +4,13 @@ import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.exception.CustomException;
 
-import idorm.idormServer.matching.domain.DislikedMember;
-import idorm.idormServer.matching.domain.LikedMember;
 import idorm.idormServer.matching.dto.MatchingDefaultResponseDto;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
-import idorm.idormServer.matching.service.DislikedMemberService;
-import idorm.idormServer.matching.service.LikedMemberService;
 import idorm.idormServer.matching.service.MatchingService;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
+import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,12 +18,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,124 +34,21 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 @RequiredArgsConstructor
 public class MatchingController {
 
-    private final MatchingService matchingService;
-    private final MatchingInfoService matchingInfoService;
-    private final LikedMemberService likedMemberService;
-    private final DislikedMemberService dislikedMemberService;
-
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberService memberService;
+    private final MatchingInfoService matchingInfoService;
+    private final MatchingService matchingService;
 
-    @ApiOperation(value = "Matching 매칭멤버 조회")
+    @ApiOperation(value = "좋아요한 회원 다건 조회", notes = "매칭이미지 공개 여부가 false 인 매칭정보는 클라이언트에서 추가 필터링이 필요합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "LIKEDMEMBERS_FOUND / LIKEDMEMBER_NO_RESULT",
                     content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
-            @ApiResponse(responseCode = "400",
-                    description = "ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "MATCHING_INFO_NOT_FOUND"),
-            @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
-    })
-    @GetMapping("/member/matching")
-    public ResponseEntity<DefaultResponseDto<Object>> findMatchingMembers(
-            HttpServletRequest request
-    ) {
-
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-
-        List<MatchingInfo> filteredMatchingInfo = matchingService.findMatchingMembers(loginMemberId);
-
-        if(filteredMatchingInfo.isEmpty()) {
-            return ResponseEntity.status(204)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("NO_CONTENT")
-                            .responseMessage("매칭되는 멤버가 없습니다.")
-                            .build());
-        }
-
-        List<MatchingDefaultResponseDto> response = new ArrayList<>();
-
-        for(MatchingInfo matchingInfo : filteredMatchingInfo) {
-            response.add(new MatchingDefaultResponseDto(matchingInfo));
-        }
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Matching 매칭멤버 조회 완료")
-                        .data(response)
-                        .build());
-    }
-
-    @ApiOperation(value = "Matching 필터링된 매칭멤버 조회")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
-            @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / DORM_CATEGORY_FORMAT_INVALID / " +
-                            "JOIN_PERIOD_FORMAT_INVALID / ILLEGAL_STATEMENT_MATCHING_INFO_NON_PUBLIC"),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
-            @ApiResponse(responseCode = "404",
-                    description = "MATCHING_INFO_NOT_FOUND"),
-            @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
-    })
-    @PostMapping("/member/matching/filter")
-    public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(
-            HttpServletRequest request, @RequestBody @Valid MatchingFilteredMatchingInfoRequestDto filteringRequest
-    ) {
-
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-
-        List<MatchingInfo> filteredMatchingInfo = matchingService.findFilteredMatchingMembers(loginMemberId,
-                filteringRequest);
-
-        if(filteredMatchingInfo.isEmpty()) {
-            return ResponseEntity.status(204)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("NO_CONTENT")
-                            .responseMessage("매칭되는 멤버가 없습니다.")
-                            .build());
-        }
-
-        List<MatchingDefaultResponseDto> response = new ArrayList<>();
-
-        for(MatchingInfo matchingInfo : filteredMatchingInfo) {
-            response.add(new MatchingDefaultResponseDto(matchingInfo));
-        }
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Matching 필터링된 매칭멤버 조회 완료")
-                        .data(response)
-                        .build());
-    }
-
-    @ApiOperation(value = "Matching 좋아요한 매칭멤버 조회")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
-            @ApiResponse(responseCode = "404",
-                    description = "MATCHING_INFO_NOT_FOUND"),
+                    description = "LIKEDMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -163,124 +58,41 @@ public class MatchingController {
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
 
-        List<LikedMember> likedMembers = likedMemberService.findLikedMembersByMemberId(loginMemberId);
+        List<Member> likedMembers = matchingService.findLikedMembers(loginMember);
 
         if(likedMembers.isEmpty()) {
-            return ResponseEntity.status(204)
+            return ResponseEntity.status(200)
                     .body(DefaultResponseDto.builder()
-                            .responseCode("NO_CONTENT")
-                            .responseMessage("Matching 좋아요한 매칭멤버가 존재하지 않습니다.")
+                            .responseCode("LIKEDMEMBER_NO_RESULT")
+                            .responseMessage("Matching 좋아요한 회원 존재하지 않음")
                             .build());
         }
 
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
-        for(LikedMember likedMember : likedMembers) {
-            MatchingInfo likedMemberMatchingInfo = matchingInfoService.findByMemberId(
-                    likedMember.getSelectedLikedMemberId());
-
-            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(likedMemberMatchingInfo,
-                    likedMember.getCreatedAt());
-            response.add(matchingOneDto);
+        for(Member likedMember : likedMembers) {
+            response.add(new MatchingDefaultResponseDto(likedMember.getMatchingInfo()));
         }
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Matching 좋아요한 매칭멤버 조회 완료")
+                        .responseCode("LIKEDMEMBERS_FOUND")
+                        .responseMessage("Matching 좋아요한 회원 다건 조회 완료")
                         .data(response)
                         .build());
     }
 
-    @ApiOperation(value = "Matching 좋아요한 매칭멤버 추가")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
-            @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / ILLEGAL_ARGUMENT_SELF / ILLEGAL_ARGUMENT_ADMIN"),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
-            @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND / MATCHING_INFO_NOT_FOUND"),
-            @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
-    })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @PostMapping("/member/matching/like/{liked-member-id}")
-    public ResponseEntity<DefaultResponseDto<Object>> addLikedMatchingMember(
-            HttpServletRequest request, @PathVariable(value = "liked-member-id") Long selectedLikedMemberId
-    ) {
-
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-
-        if(selectedLikedMemberId == loginMemberId) {
-            throw new CustomException(ILLEGAL_ARGUMENT_SELF);
-        }
-        if(selectedLikedMemberId == 1) {
-            throw new CustomException(ILLEGAL_ARGUMENT_ADMIN);
-        }
-
-        // 싫어요한 멤버로 등록되어있는지 확인, 되어있다면 true 반환
-        boolean isRegisteredDislikedMember =
-                dislikedMemberService.isRegisteredDislikedMemberIdByMemberId(loginMemberId, selectedLikedMemberId);
-
-        //  등록되어있다면 싫어요한 멤버 삭제 처리 필요
-        if(isRegisteredDislikedMember == true) {
-            dislikedMemberService.deleteDislikedMember(loginMemberId, selectedLikedMemberId);
-        }
-        likedMemberService.saveLikedMember(loginMemberId, selectedLikedMemberId);
-
-        return ResponseEntity.status(204)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
-                        .responseMessage("Matching 좋아요한 매칭멤버 추가 완료")
-                        .build());
-    }
-
-    @ApiOperation(value = "Matching 좋아요한 매칭멤버 삭제")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
-            @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED"),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
-            @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
-    })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/member/matching/like/{liked-member-id}")
-    public ResponseEntity<DefaultResponseDto<Object>> deleteLikedMatchingMember(
-            HttpServletRequest request, @PathVariable(value = "liked-member-id") Long likedMemberId
-    ) {
-
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-
-        likedMemberService.deleteLikedMember(loginMemberId, likedMemberId);
-        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findByMemberId(loginMemberId);
-
-        return ResponseEntity.status(204)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
-                        .responseMessage("Matching 좋아요한 매칭멤버 삭제 완료")
-                        .build());
-    }
-
-    @ApiOperation(value = "Matching 싫어요한 매칭멤버 조회")
+    @ApiOperation(value = "싫어요한 회원 다건 조회", notes = "매칭이미지 공개 여부가 false 인 매칭정보는 추가 필터링이 필요합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "DISLIKEDMEMBERS_FOUND / DISLIKEDMEMBER_NO_RESULT",
                     content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "MATCHING_INFO_NOT_FOUND"),
+                    description = "DISLIKEDMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -290,109 +102,238 @@ public class MatchingController {
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
 
-        List<DislikedMember> dislikedMembers = dislikedMemberService.findDislikedMembersByMemberId(loginMemberId);
+        List<Member> dislikedMembers = matchingService.findDislikedMembers(loginMember);
 
         if(dislikedMembers.isEmpty()) {
-            return ResponseEntity.status(204)
+            return ResponseEntity.status(200)
                     .body(DefaultResponseDto.builder()
-                            .responseCode("NO_CONTENT")
-                            .responseMessage("Matching 싫어요한 매칭멤버가 존재하지 않습니다.")
+                            .responseCode("DISLIKEDMEMBER_NO_RESULT")
+                            .responseMessage("Matching 싫어요한 회원 존재하지 않음")
                             .build());
         }
 
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
-        for(DislikedMember dislikedMember : dislikedMembers) {
-
-            MatchingInfo dislikedMemberMatchingInfo = matchingInfoService.findByMemberId(
-                    dislikedMember.getSelectedDislikedMemberId());
-
-            MatchingDefaultResponseDto matchingOneDto = new MatchingDefaultResponseDto(dislikedMemberMatchingInfo,
-                    dislikedMember.getCreatedAt());
-            response.add(matchingOneDto);
+        for(Member dislikedMember : dislikedMembers) {
+            response.add(new MatchingDefaultResponseDto(dislikedMember.getMatchingInfo()));
         }
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Matching 싫어요한 매칭멤버 조회 완료")
+                        .responseCode("DISLIKEDMEMBERS_FOUND")
+                        .responseMessage("Matching 싫어요한 회원 다건 조회 완료")
                         .data(response)
                         .build());
     }
 
-    @ApiOperation(value = "Matching 싫어요한 매칭멤버 추가")
+    @ApiOperation(value = "매칭 좋아요 혹은 싫어요한 회원 추가",
+            notes = "- matchingType true는 좋아요한 회원, false는 싫어요한 회원을 의미합니다.")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
+                    responseCode = "200",
+                    description = "LIKEDMEMBER_SAVED / DISLIKEDMEMBER_SAVED"),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / ILLEGAL_ARGUMENT_SELF / ILLEGAL_ARGUMENT_ADMIN"),
+                    description = "SELECTEDMEMBERID_NEGATIVEORZERO_INVALID / ILLEGAL_ARGUMENT_SELF" +
+                            " / ILLEGAL_ARGUMENT_ADMIN / ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND / MATCHING_INFO_NOT_FOUND"),
+                    description = "MEMBER_NOT_FOUND / MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "409",
-                    description = "DUPLICATE_DISLIKED_MEMBER"),
+                    description = "DUPLICATE_LIKED_MEMBER / DUPLICATE_DISLIKED_MEMBER"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @PostMapping("/member/matching/dislike/{disliked-member-id}")
-    public ResponseEntity<DefaultResponseDto<Object>> addDislikedMatchingMember(
-            HttpServletRequest request, @PathVariable(value = "disliked-member-id") Long selectedDislikedMemberId
+    @PostMapping("/member/matching/{selected-member-id}")
+    public ResponseEntity<DefaultResponseDto<Object>> addMatchingMember(
+            HttpServletRequest request,
+            @RequestParam(value = "matchingType")
+                    boolean matchingType,
+            @PathVariable(value = "selected-member-id")
+            @Positive(message = "추가할 회원 식별자는 양수만 가능합니다.")
+                    Long selectedMemberId
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
+        Member selectedMember = memberService.findById(selectedMemberId);
 
-        if(selectedDislikedMemberId == loginMemberId) {
+        matchingInfoService.findByMemberId(loginMemberId);
+        matchingInfoService.findByMemberId(selectedMemberId);
+
+        matchingInfoService.validateMatchingInfoIsPublic(loginMember);
+        matchingInfoService.validateMatchingInfoIsPublic(selectedMember);
+
+        if(loginMember.equals(selectedMember)) {
             throw new CustomException(ILLEGAL_ARGUMENT_SELF);
         }
-        if(selectedDislikedMemberId == 1) {
+        if(selectedMember.getRoles().contains("ROLE_ADMIN")) {
             throw new CustomException(ILLEGAL_ARGUMENT_ADMIN);
         }
 
-        // 좋아요한 멤버로 등록되어있는지 확인, 되어있다면 true 반환
-        boolean isRegisteredLikedMember =
-                likedMemberService.isRegisteredlikedMemberIdByMemberId(loginMemberId, selectedDislikedMemberId);
+        if (matchingType == true) {
+            matchingService.addLikedMember(loginMember, selectedMemberId);
 
-        //  등록되어있다면 좋아요한 멤버 삭제 처리 필요
-        if(isRegisteredLikedMember == true) {
-            likedMemberService.deleteLikedMember(loginMemberId, selectedDislikedMemberId);
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("LIKEDMEMBER_SAVED")
+                            .responseMessage("Matching 좋아요한 회원 추가 완료")
+                            .build());
+        } else {
+            matchingService.addDislikedMember(loginMember, selectedMemberId);
+
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("DISLIKEDMEMBER_SAVED")
+                            .responseMessage("Matching 싫어요한 회원 추가 완료")
+                            .build());
         }
-        dislikedMemberService.saveDislikedMember(loginMemberId, selectedDislikedMemberId);
-
-        return ResponseEntity.status(204)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
-                        .responseMessage("Matching 싫어요한 매칭멤버 추가 완료")
-                        .build());
     }
 
-    @ApiOperation(value = "Matching 싫어요한 매칭멤버 삭제")
+    @ApiOperation(value = "매칭 좋아요 혹은 싫어요한 회원 삭제",
+            notes = "- matchingType true는 좋아요한 회원, false는 싫어요한 회원을 의미합니다. ")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
+                    responseCode = "200",
+                    description = "LIKEDMEMBER_DELETED / DISLIKEDMEMBER_DELETED"),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED"),
+                    description = "SELECTEDMEMBERID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
+            @ApiResponse(responseCode = "404",
+                    description = "LIKEDMEMBER_NOT_FOUND / DISLIKEDMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/member/matching/dislike/{disliked-member-id}")
-    public ResponseEntity<DefaultResponseDto<Object>> deleteDislikedMatchingMember(
-        HttpServletRequest request, @PathVariable(value = "disliked-member-id") Long dislikedMemberId
+    @DeleteMapping("/member/matching/{selected-member-id}")
+    public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingMember(
+            HttpServletRequest request,
+            @RequestParam(value = "matchingType")
+                    boolean matchingType,
+            @PathVariable(value = "selected-member-id")
+            @Positive(message = "추가할 회원 식별자는 양수만 가능합니다.")
+                    Long selectedMemberId
     ) {
+
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
 
-        dislikedMemberService.deleteDislikedMember(loginMemberId, dislikedMemberId);
+        if (matchingType == true) {
+            matchingService.removeLikedMember(loginMember, selectedMemberId);
 
-        return ResponseEntity.status(204)
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("LIKEDMEMBER_DELETED")
+                            .responseMessage("Matching 좋아요한 회원 삭제 완료")
+                            .build());
+        } else {
+            matchingService.removeDislikedMember(loginMember, selectedMemberId);
+
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("DISLIKEDMEMBER_DELETED")
+                            .responseMessage("Matching 싫어요한 회원 삭제 완료")
+                            .build());
+        }
+    }
+
+    @ApiOperation(value = "매칭 회원 다건 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "MATCHING_MEMBERS_FOUND / MATCHING_MEMBERS_NO_RESULT",
+                    content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER"),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHINGINFO_NOT_FOUND"),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR"),
+    })
+    @GetMapping("/member/matching")
+    public ResponseEntity<DefaultResponseDto<Object>> findMatchingMembers(
+            HttpServletRequest request
+    ) {
+
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
+        matchingInfoService.findByMemberId(loginMemberId);
+        matchingInfoService.validateMatchingInfoIsPublic(loginMember);
+
+        List<MatchingInfo> foundMatchingInfo = matchingService.findMatchingMembers(loginMember);
+
+        if(foundMatchingInfo.isEmpty()) {
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("MATCHING_MEMBERS_NO_RESULT")
+                            .responseMessage("Matching 매칭되는 회원 존재하지 않음")
+                            .build());
+        }
+
+        List<MatchingDefaultResponseDto> responses = new ArrayList<>();
+
+        for(MatchingInfo matchingInfo : foundMatchingInfo) {
+            responses.add(new MatchingDefaultResponseDto(matchingInfo));
+        }
+        return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
-                        .responseMessage("Matching 싫어요한 매칭멤버 삭제 완료")
+                        .responseCode("MATCHING_MEMBERS_FOUND")
+                        .responseMessage("Matching 매칭 회원 조회 완료")
+                        .data(responses)
                         .build());
     }
+
+    @ApiOperation(value = "필터링 매칭 회원 다건 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "FILTERED_MATCHING_MEMBERS_FOUND / FILTERED_MATCHING_MEMBERS_NO_RESULT",
+                    content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / DORMCATEGORY_FORMAT_INVALID / " +
+                            "JOINPERIOD_FORMAT_INVALID / ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_MEMBER"),
+            @ApiResponse(responseCode = "404",
+                    description = "MATCHINGINFO_NOT_FOUND"),
+            @ApiResponse(responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR"),
+    })
+    @PostMapping("/member/matching/filter")
+    public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(
+            HttpServletRequest request2,
+            @RequestBody @Valid MatchingFilteredMatchingInfoRequestDto request
+    ) {
+
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
+        matchingInfoService.findByMemberId(loginMemberId);
+        matchingInfoService.validateMatchingInfoIsPublic(loginMember);
+
+        List<MatchingInfo> foundMatchingInfos = matchingService.findFilteredMatchingMembers(loginMember, request);
+
+        if(foundMatchingInfos == null) {
+            return ResponseEntity.status(200)
+                    .body(DefaultResponseDto.builder()
+                            .responseCode("FILTERED_MATCHING_MEMBERS_NO_RESULT")
+                            .responseMessage("Matching 필터링 후 매칭되는 회원 존재하지 않음")
+                            .build());
+        }
+
+        List<MatchingDefaultResponseDto> responses = new ArrayList<>();
+
+        for(MatchingInfo matchingInfo : foundMatchingInfos) {
+            responses.add(new MatchingDefaultResponseDto(matchingInfo));
+        }
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("FILTERED_MATCHING_MEMBERS_FOUND")
+                        .responseMessage("Matching 필터링 후 매칭 회원 조회 완료")
+                        .data(responses)
+                        .build());
+    }
+
 }
