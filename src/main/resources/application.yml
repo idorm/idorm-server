@@ -2,13 +2,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-#    username: ${DB_USERNAME}
-#    password: ${DB_PASSWORD}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
-    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-    username: nahyeon
-    password: lsmi81
+#    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+#    username: nahyeon
+#    password: lsmi81
 
   jpa:
     hibernate:
@@ -16,16 +16,16 @@ spring:
       use-new-id-generator-mappings: false
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
+        show_sql: false
+        format_sql: false
 
-  logging:
-    level:
-      org:
-        hibernate:
-          type:
-            descriptor:
-              sql: trace
+#  logging:
+#    level:
+#      org:
+#        hibernate:
+#          type:
+#            descriptor:
+#              sql: trace
 
   mvc:
     pathmatch:
