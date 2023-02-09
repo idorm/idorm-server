@@ -43,7 +43,7 @@ public class MatchingController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "LIKEDMEMBERS_FOUND / LIKEDMEMBER_NO_RESULT",
+                    description = "LIKEDMEMBERS_FOUND",
                     content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
@@ -62,18 +62,12 @@ public class MatchingController {
 
         List<Member> likedMembers = matchingService.findLikedMembers(loginMember);
 
-        if(likedMembers.isEmpty()) {
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("LIKEDMEMBER_NO_RESULT")
-                            .responseMessage("Matching 좋아요한 회원 존재하지 않음")
-                            .build());
-        }
-
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
-        for(Member likedMember : likedMembers) {
-            response.add(new MatchingDefaultResponseDto(likedMember.getMatchingInfo()));
+        if (likedMembers != null) {
+            for(Member likedMember : likedMembers) {
+                response.add(new MatchingDefaultResponseDto(likedMember.getMatchingInfo()));
+            }
         }
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -87,7 +81,7 @@ public class MatchingController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "DISLIKEDMEMBERS_FOUND / DISLIKEDMEMBER_NO_RESULT",
+                    description = "DISLIKEDMEMBERS_FOUND",
                     content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
@@ -106,18 +100,12 @@ public class MatchingController {
 
         List<Member> dislikedMembers = matchingService.findDislikedMembers(loginMember);
 
-        if(dislikedMembers.isEmpty()) {
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("DISLIKEDMEMBER_NO_RESULT")
-                            .responseMessage("Matching 싫어요한 회원 존재하지 않음")
-                            .build());
-        }
-
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
-        for(Member dislikedMember : dislikedMembers) {
-            response.add(new MatchingDefaultResponseDto(dislikedMember.getMatchingInfo()));
+        if (dislikedMembers != null) {
+            for(Member dislikedMember : dislikedMembers) {
+                response.add(new MatchingDefaultResponseDto(dislikedMember.getMatchingInfo()));
+            }
         }
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -242,7 +230,7 @@ public class MatchingController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "MATCHING_MEMBERS_FOUND / MATCHING_MEMBERS_NO_RESULT",
+                    description = "MATCHING_MEMBERS_FOUND",
                     content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
@@ -265,18 +253,12 @@ public class MatchingController {
 
         List<MatchingInfo> foundMatchingInfo = matchingService.findMatchingMembers(loginMember);
 
-        if(foundMatchingInfo.isEmpty()) {
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("MATCHING_MEMBERS_NO_RESULT")
-                            .responseMessage("Matching 매칭되는 회원 존재하지 않음")
-                            .build());
-        }
-
         List<MatchingDefaultResponseDto> responses = new ArrayList<>();
 
-        for(MatchingInfo matchingInfo : foundMatchingInfo) {
-            responses.add(new MatchingDefaultResponseDto(matchingInfo));
+        if (foundMatchingInfo != null) {
+            for(MatchingInfo matchingInfo : foundMatchingInfo) {
+                responses.add(new MatchingDefaultResponseDto(matchingInfo));
+            }
         }
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -290,7 +272,7 @@ public class MatchingController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "FILTERED_MATCHING_MEMBERS_FOUND / FILTERED_MATCHING_MEMBERS_NO_RESULT",
+                    description = "FILTERED_MATCHING_MEMBERS_FOUND",
                     content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / DORMCATEGORY_CHARACTER_INVALID / " +
@@ -315,19 +297,14 @@ public class MatchingController {
 
         List<MatchingInfo> foundMatchingInfos = matchingService.findFilteredMatchingMembers(loginMember, request);
 
-        if(foundMatchingInfos == null) {
-            return ResponseEntity.status(200)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("FILTERED_MATCHING_MEMBERS_NO_RESULT")
-                            .responseMessage("Matching 필터링 후 매칭되는 회원 존재하지 않음")
-                            .build());
-        }
-
         List<MatchingDefaultResponseDto> responses = new ArrayList<>();
 
-        for(MatchingInfo matchingInfo : foundMatchingInfos) {
-            responses.add(new MatchingDefaultResponseDto(matchingInfo));
+        if (foundMatchingInfos != null) {
+            for(MatchingInfo matchingInfo : foundMatchingInfos) {
+                responses.add(new MatchingDefaultResponseDto(matchingInfo));
+            }
         }
+
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("FILTERED_MATCHING_MEMBERS_FOUND")
