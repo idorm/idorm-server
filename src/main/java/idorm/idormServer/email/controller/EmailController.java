@@ -50,7 +50,7 @@ public class EmailController {
                     description = "SEND_EMAIL",
                     content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "EMAIL_FORMAT_INVALID / FIELD_REQUIRED"),
+                    description = "EMAIL_CHARACTER_INVALID / FIELD_REQUIRED"),
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_EMAIL"),
             @ApiResponse(responseCode = "500",
@@ -66,7 +66,7 @@ public class EmailController {
         String[] mailSplit = request.getEmail().split("@");
 
         if(!(mailSplit.length == 2) || !mailSplit[1].equals("inu.ac.kr")) {
-            throw new CustomException(EMAIL_FORMAT_INVALID);
+            throw new CustomException(EMAIL_CHARACTER_INVALID);
         }
 
         sendSimpleMessage(request.getEmail());
@@ -86,7 +86,7 @@ public class EmailController {
                     description = "EMAIL_VERIFIED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / EMAIL_FORMAT_INVALID"),
+                    description = "FIELD_REQUIRED / EMAIL_CHARACTER_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "INVALID_CODE / EXPIRED_CODE"),
             @ApiResponse(responseCode = "404",
@@ -128,7 +128,7 @@ public class EmailController {
                     description = "SEND_REGISTERED_EMAIL",
                     content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
-                    description = "EMAIL_FORMAT_INVALID"),
+                    description = "EMAIL_CHARACTER_INVALID"),
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",

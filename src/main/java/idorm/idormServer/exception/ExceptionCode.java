@@ -13,14 +13,13 @@ public enum ExceptionCode {
     /**
      * 400 BAD_REQUEST : 잘못된 요청
      */
-
     FIELD_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
 
-    EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
-    PASSWORD_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
-    NICKNAME_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
-    DORMCATEGORY_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 기숙사 분류가 아닙니다."),
-    JOINPERIOD_FORMAT_INVALID(BAD_REQUEST, "올바른 형식의 입사 기간이 아닙니다."),
+    EMAIL_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
+    PASSWORD_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
+    NICKNAME_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
+    DORMCATEGORY_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 기숙사 분류가 아닙니다."),
+    JOINPERIOD_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 입사 기간이 아닙니다."),
     
     ILLEGAL_ARGUMENT_ADMIN(BAD_REQUEST, "관리자는 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),

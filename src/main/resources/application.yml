@@ -6,10 +6,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-#    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-#    username: nahyeon
-#    password: lsmi81
-
   jpa:
     hibernate:
       ddl-auto: ${DB_DDL_TYPE}
@@ -19,13 +15,13 @@ spring:
         show_sql: false
         format_sql: false
 
-#  logging:
-#    level:
-#      org:
-#        hibernate:
-#          type:
-#            descriptor:
-#              sql: trace
+  logging:
+    level:
+      org:
+        hibernate:
+          type:
+            descriptor:
+              sql: trace
 
   mvc:
     pathmatch:

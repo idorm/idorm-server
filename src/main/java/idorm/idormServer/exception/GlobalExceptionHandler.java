@@ -48,7 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         } else if (responseMessage.contains("~")) {
             responseCode = exception.getFieldError().getField().toUpperCase().concat("_LENGTH_INVALID");
         } else if (responseMessage.contains("형식")) {
-            responseCode = exception.getFieldError().getField().toUpperCase().concat("_FORMAT_INVALID");
+            responseCode = exception.getFieldError().getField().toUpperCase().concat("_CHARACTER_INVALID");
         } else if (responseMessage.contains("양수")) {
             responseCode = exception.getFieldError().getField().toUpperCase().concat("_NEGATIVEORZERO_INVALID");
         } else {
@@ -85,7 +85,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             } else if (responseMessage.contains("~")) {
                 responseCode = responseCode.concat("_LENGTH_INVALID");
             } else if (responseMessage.contains("형식")) {
-                responseCode = responseCode.concat("_FORMAT_INVALID");
+                responseCode = responseCode.concat("_CHARACTER_INVALID");
             } else if (responseMessage.contains("양수")) {
                 responseCode = responseCode.concat("_NEGATIVEORZERO_INVALID");
             } else {

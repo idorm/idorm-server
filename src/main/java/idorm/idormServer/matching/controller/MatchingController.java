@@ -293,8 +293,8 @@ public class MatchingController {
                     description = "FILTERED_MATCHING_MEMBERS_FOUND / FILTERED_MATCHING_MEMBERS_NO_RESULT",
                     content = @Content(schema = @Schema(implementation = MatchingDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / DORMCATEGORY_FORMAT_INVALID / " +
-                            "JOINPERIOD_FORMAT_INVALID / ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
+                    description = "FIELD_REQUIRED / DORMCATEGORY_CHARACTER_INVALID / " +
+                            "JOINPERIOD_CHARACTER_INVALID / ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
