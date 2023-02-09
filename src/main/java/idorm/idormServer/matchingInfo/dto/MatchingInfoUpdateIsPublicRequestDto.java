@@ -1,7 +1,6 @@
 package idorm.idormServer.matchingInfo.dto;
 
 import idorm.idormServer.common.ValidationSequence;
-import idorm.idormServer.member.dto.MemberSaveRequestDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -15,13 +14,12 @@ import javax.validation.constraints.NotNull;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@GroupSequence({MatchingInfoUpdateIsPublicRequestDto.class,
-        ValidationSequence.NotNull.class
+@GroupSequence({MatchingInfoUpdateIsPublicRequestDto.class
 })
 @ApiModel(value = "MatchingInfo 수정 요청")
 public class MatchingInfoUpdateIsPublicRequestDto {
 
-    @ApiModelProperty(position = 1, required = true, example = "true")
-    @NotNull(message = "매칭이미지 공개 여부 입력은 필수입니다.", groups = ValidationSequence.NotNull.class)
-    private boolean isMatchingInfoPublic;
+    @ApiModelProperty(position = 1, required = true, value = "매칭 이미지 공개 여부", example = "true")
+    @NotNull(message = "매칭 이미지 공개 여부를 입력해 주세요.", groups = ValidationSequence.NotNull.class)
+    private Boolean isMatchingInfoPublic;
 }

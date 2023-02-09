@@ -132,16 +132,19 @@ public class MatchingInfoController {
     @PatchMapping("/member/matchinginfo")
     public ResponseEntity<DefaultResponseDto<Object>> updateisMatchingInfoPublic(
             HttpServletRequest request2,
-            MatchingInfoUpdateIsPublicRequestDto requestDto) {
+            MatchingInfoUpdateIsPublicRequestDto request) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
+
+        if (request.getIsMatchingInfoPublic() == null || request.getIsMatchingInfoPublic().equals(""))
+            throw new CustomException(FIELD_REQUIRED);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
             throw new CustomException(MATCHINGINFO_NOT_FOUND);
         }
 
-        matchingInfoService.updateMatchingInfoIsPublic(member.getMatchingInfo(), requestDto.isMatchingInfoPublic());
+        matchingInfoService.updateMatchingInfoIsPublic(member.getMatchingInfo(), request.getIsMatchingInfoPublic());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

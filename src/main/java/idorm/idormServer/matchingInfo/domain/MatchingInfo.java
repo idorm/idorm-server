@@ -95,7 +95,7 @@ public class MatchingInfo extends BaseEntity {
         this.openKakaoLink = requestDto.getOpenKakaoLink();
     }
 
-    public void updateIsMatchingInfoPublic(boolean isMatchingInfoPublic) {
+    public void updateIsMatchingInfoPublic(Boolean isMatchingInfoPublic) {
         this.isMatchingInfoPublic = isMatchingInfoPublic;
     }
 }

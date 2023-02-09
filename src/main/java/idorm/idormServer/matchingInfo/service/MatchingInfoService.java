@@ -50,7 +50,7 @@ public class MatchingInfoService {
      * 404(MATCHINGINFO_NOT_FOUND)
      */
     @Transactional
-    public void updateMatchingInfoIsPublic(MatchingInfo updateMatchingInfo, boolean isMatchingInfoPublic) {
+    public void updateMatchingInfoIsPublic(MatchingInfo updateMatchingInfo, Boolean isMatchingInfoPublic) {
 
         try {
             updateMatchingInfo.updateIsMatchingInfoPublic(isMatchingInfoPublic);
