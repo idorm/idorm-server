@@ -41,6 +41,7 @@ public class CommentService {
             Comment savedComment = commentRepository.save(createdComment);
             return savedComment;
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -65,6 +66,7 @@ public class CommentService {
             subComment.setParentCommentId(parentCommentId);
             commentRepository.save(subComment);
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -91,6 +93,7 @@ public class CommentService {
 
             return foundSubComments;
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -105,6 +108,7 @@ public class CommentService {
                     commentRepository.findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(member.getId(), false);
             return commentsByMemberId;
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -113,23 +117,29 @@ public class CommentService {
      * Comment 게시글 내 모든 댓글 조회
      */
     public List<Comment> findCommentsByPostId(Long postId) {
-        List<Comment> foundComments =
-                commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
-        return foundComments;
+        try {
+            List<Comment> foundComments =
+                    commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
+            return foundComments;
+        } catch (RuntimeException e) {
+            e.getStackTrace();
+            throw new CustomException(SERVER_ERROR);
+        }
     }
 
     /**
      * Comment 게시글 내 모든 댓글, 대댓글 삭제
      */
+    @Transactional
     public void deleteCommentsByPostId(Long postId) {
         List<Comment> foundComments = findCommentsByPostId(postId);
 
         try {
             for (Comment comment : foundComments) {
                 comment.deleteComment();
-                commentRepository.save(comment);
             }
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -153,6 +163,7 @@ public class CommentService {
             foundComment.deleteComment();
             commentRepository.save(foundComment);
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -160,14 +171,16 @@ public class CommentService {
     /**
      * 멤버 삭제 시 Comment 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
      */
+    @Transactional
     public void updateMemberNullFromComment(Member member) {
-        List<Comment> foundComments = commentRepository.findAllByMemberId(member.getId());
 
         try {
+            List<Comment> foundComments = commentRepository.findAllByMemberId(member.getId());
             for(Comment comment : foundComments) {
                 comment.updateMemberNull();
             }
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }

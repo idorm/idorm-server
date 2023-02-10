@@ -6,6 +6,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
+#    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+#    username: nahyeon
+#    password: lsmi81
+
   jpa:
     hibernate:
       ddl-auto: ${DB_DDL_TYPE}
@@ -33,8 +37,16 @@ spring:
       max-request-size: ${MAX_REQUEST_SIZE}
       enabled: true
 
-# S3
-s3.accessKey: ${S3_ACCESS_KEY}
-s3.secretKey: ${S3_SECRET_KEY}
-s3.bucketName: ${S3_BUCKET_NAME}
-s3.region: ${S3_REGION}
+  s3:
+    access-key: ${S3_ACCESS_KEY}
+    secret-key: ${S3_SECRET_KEY}
+    bucket-name: ${S3_BUCKET_NAME}
+    region: ${S3_REGION}
+
+#  sentry:
+#    dsn: ${SENTRY_DSN}
+#    traces-sample-rate: 1.0
+#    enable-tracing: true
+#    logging:
+#      minimum-event-level: info
+#      minimum-breadcrumb-level: info

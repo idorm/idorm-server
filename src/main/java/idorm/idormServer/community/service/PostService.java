@@ -34,13 +34,14 @@ public class PostService {
      */
     @Transactional
     public void updateMemberNullFromPost(Member member) {
-        List<Post> foundPosts = postRepository.findAllByMemberId(member.getId());
 
         try {
+            List<Post> foundPosts = postRepository.findAllByMemberId(member.getId());
             for(Post post : foundPosts) {
                 post.updateMemberNull();
             }
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
         commentService.updateMemberNullFromComment(member);
@@ -94,6 +95,7 @@ public class PostService {
 
             return createdPost;
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -125,9 +127,10 @@ public class PostService {
 
             foundPost.updateImagesCount(files.size());
 
-            Post updatedPost = postRepository.save(foundPost);
+            postRepository.save(foundPost);
 
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -152,6 +155,7 @@ public class PostService {
             postRepository.save(foundPost);
             photoService.deletePhotoDeletingPost(postId);
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -183,6 +187,7 @@ public class PostService {
                             PageRequest.of(pageNum, 20));
             return foundPosts;
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -199,6 +204,7 @@ public class PostService {
 
             return foundPosts;
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -213,6 +219,7 @@ public class PostService {
 
             return postsByMemberId;
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -227,8 +234,8 @@ public class PostService {
         Long savedPostLikedMemberId = postLikedMemberService.save(member, post);
         try {
             post.addLikesCount();
-            postRepository.save(post);
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
         return savedPostLikedMemberId;
@@ -250,6 +257,7 @@ public class PostService {
             post.subtractLikesCount();
             postRepository.save(post);
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }

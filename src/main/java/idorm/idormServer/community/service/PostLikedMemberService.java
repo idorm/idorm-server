@@ -43,12 +43,18 @@ public class PostLikedMemberService {
 
             return postLikedMember.getId();
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
 
     public boolean isMemberLikedPost(Member member, Post post) {
-        return postLikedMemberRepository.existsByMemberIdAndPostId(member.getId(), post.getId());
+        try {
+            return postLikedMemberRepository.existsByMemberIdAndPostId(member.getId(), post.getId());
+        } catch (RuntimeException e) {
+            e.getStackTrace();
+            throw new CustomException(SERVER_ERROR);
+        }
     }
 
     @Transactional
@@ -62,6 +68,7 @@ public class PostLikedMemberService {
         try {
             postLikedMemberRepository.deleteByMemberIdAndPostId(member.getId(), post.getId());
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -74,6 +81,7 @@ public class PostLikedMemberService {
             List<Long> foundLikedPosts = postLikedMemberRepository.findLikedPostsByMemberId(memberId);
             return foundLikedPosts;
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -86,6 +94,7 @@ public class PostLikedMemberService {
         try {
             postLikedMemberRepository.deleteAllByPostId(post.getId());
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
