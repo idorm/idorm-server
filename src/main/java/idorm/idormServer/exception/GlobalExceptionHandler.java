@@ -27,7 +27,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { CustomException.class })
     protected ResponseEntity<DefaultExceptionResponseDto> handleCustomException(CustomException e) {
-        log.error("[Error] {} - {}", e.getExceptionCode().name(), e.getCause());
+
+//        Sentry.captureException(e);
+        log.error("[Error] {} - {}", e.getExceptionCode().name(), e.getExceptionCode().getMessage());
         return DefaultExceptionResponseDto.exceptionResponse(e.getExceptionCode());
     }
 
@@ -40,6 +42,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,
                                                                   WebRequest request) {
+//        Sentry.captureException(exception);
+
         String responseMessage = Objects.requireNonNull(exception.getFieldError()).getDefaultMessage();
         String responseCode = null;
 
@@ -55,7 +59,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             responseCode = exception.getFieldError().getField().toUpperCase();
         }
 
-        log.error("[ERROR] {} - {}", responseMessage, exception.getCause());
+        log.error("[ERROR] {} - {}", responseCode, responseMessage);
 
         return ResponseEntity.status(status)
                 .body(DefaultExceptionResponseDto.builder()
@@ -66,6 +70,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { ConstraintViolationException.class })
     protected ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException exception) {
+//        Sentry.captureException(exception);
+
         String responseCode = null;
         String responseMessage = null;
         if (exception.getConstraintViolations().stream().findFirst().isPresent()) {
@@ -95,7 +101,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             throw new CustomException(SERVER_ERROR);
         }
 
-        log.error("[ERROR] {} - {}", responseMessage, exception.getCause());
+        log.error("[ERROR] {} - {}", responseCode, responseMessage);
 
         return ResponseEntity.status(400)
                 .body(DefaultExceptionResponseDto.builder()
@@ -112,11 +118,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                          HttpHeaders headers,
                                                                          HttpStatus status,
                                                                          WebRequest request) {
+//        Sentry.captureException(exception);
 
         String responseCode = METHOD_NOT_ALLOWED.name();
         String responseMessage = METHOD_NOT_ALLOWED.getMessage();
 
-        log.error("[ERROR] {} - {}", responseMessage, exception.getCause());
+        log.error("[ERROR] {} - {}", responseCode, responseMessage);
 
         return ResponseEntity.status(status)
                 .body(DefaultExceptionResponseDto.builder()
@@ -131,7 +138,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = { MaxUploadSizeExceededException.class })
     @ResponseStatus(PAYLOAD_TOO_LARGE)
-    protected ResponseEntity<DefaultExceptionResponseDto> handleFileSizeLimitExceeded() {
+    protected ResponseEntity<DefaultExceptionResponseDto> handleFileSizeLimitExceeded(Exception exception) {
+//        Sentry.captureException(exception);
 
         log.error("[ERROR] {} - {}", FILE_SIZE_EXCEED.name(), FILE_SIZE_EXCEED.getMessage());
         return DefaultExceptionResponseDto.exceptionResponse(FILE_SIZE_EXCEED);

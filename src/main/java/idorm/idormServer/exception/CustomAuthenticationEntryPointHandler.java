@@ -13,7 +13,7 @@ import java.io.OutputStream;
 import static idorm.idormServer.exception.ExceptionCode.UNAUTHORIZED_MEMBER;
 
 @Component("customAuthenticationEntryPoint")
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomAuthenticationEntryPointHandler implements AuthenticationEntryPoint {
 
     private static DefaultExceptionResponseDto errorResponse =
             new DefaultExceptionResponseDto(

@@ -16,8 +16,8 @@ spring:
       use-new-id-generator-mappings: false
     properties:
       hibernate:
-        show_sql: false
-        format_sql: false
+        show_sql: true
+        format_sql: true
 
   logging:
     level:

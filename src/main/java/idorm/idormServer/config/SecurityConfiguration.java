@@ -1,7 +1,7 @@
 package idorm.idormServer.config;
 
 import idorm.idormServer.exception.CustomAccessDeniedHandler;
-import idorm.idormServer.exception.CustomAuthenticationEntryPoint;
+import idorm.idormServer.exception.CustomAuthenticationEntryPointHandler;
 import idorm.idormServer.auth.JwtAuthenticationFilter;
 import idorm.idormServer.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +56,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
                 .and()
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
-                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPointHandler())
 
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),

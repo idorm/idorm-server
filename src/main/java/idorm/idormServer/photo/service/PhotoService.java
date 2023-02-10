@@ -29,7 +29,7 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 @Transactional(readOnly = true)
 public class PhotoService {
 
-    @Value("${s3.bucketName}")
+    @Value("${s3.bucket-name}")
     private String bucketName;
     private final PhotoRepository photoRepository;
     private final AmazonS3Client amazonS3Client;
@@ -51,7 +51,8 @@ public class PhotoService {
      * DB에 사진 삭제 |
      * 500(SERVER_ERROR)
      */
-    private void deletePhoto(Photo photo) {
+    @Transactional
+    public void deletePhoto(Photo photo) {
         try {
             photoRepository.delete(photo);
         } catch (RuntimeException e) {
@@ -68,6 +69,7 @@ public class PhotoService {
         try {
             photoRepository.save(photo);
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
@@ -98,6 +100,7 @@ public class PhotoService {
             createdProfilePhoto.setPhotoUrl(photoUrl);
             member.updateProfilePhoto(createdProfilePhoto);
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
 
@@ -117,6 +120,7 @@ public class PhotoService {
         try {
             profilePhotos = photoRepository.findByFolderName(folderName);
         } catch (RuntimeException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
 
@@ -159,6 +163,7 @@ public class PhotoService {
 
                 savedPhoto = photoRepository.save(photo);
             } catch (RuntimeException e) {
+                e.getStackTrace();
                 throw new CustomException(SERVER_ERROR);
             }
 
@@ -185,6 +190,7 @@ public class PhotoService {
             try {
                 photoRepository.delete(photo);
             } catch (RuntimeException e) {
+                e.getStackTrace();
                 throw new CustomException(SERVER_ERROR);
             }
         }
@@ -195,9 +201,14 @@ public class PhotoService {
      */
     @Transactional
     public void deletePhotoDeletingPost(Long postId) {
-        List<Photo> foundPhotos = photoRepository.findByPostId(postId);
-        for (Photo photo : foundPhotos) {
-            photo.removePhoto();
+        try {
+            List<Photo> foundPhotos = photoRepository.findByPostId(postId);
+            for (Photo photo : foundPhotos) {
+                photo.removePhoto();
+            }
+        } catch (RuntimeException e) {
+            e.getStackTrace();
+            throw new CustomException(SERVER_ERROR);
         }
     }
 
@@ -260,6 +271,7 @@ public class PhotoService {
             String url = amazonS3Client.getUrl(bucketName, uploadingFileName).toString();
             return url;
         } catch (IOException e) {
+            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
