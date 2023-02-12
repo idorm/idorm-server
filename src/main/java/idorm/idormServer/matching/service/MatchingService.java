@@ -80,11 +80,11 @@ public class MatchingService {
                     request.getDormCategory().getType(),
                     request.getJoinPeriod().getType(),
                     member.getMatchingInfo().getGender(),
-                    request.isSnoring(),
-                    request.isSmoking(),
-                    request.isGrinding(),
-                    request.isWearEarphones(),
-                    request.isAllowedFood(),
+                    request.getIsSnoring(),
+                    request.getIsSmoking(),
+                    request.getIsGrinding(),
+                    request.getIsWearEarphones(),
+                    request.getIsAllowedFood(),
                     request.getMinAge(),
                     request.getMaxAge()
             );

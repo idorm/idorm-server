@@ -212,7 +212,7 @@ public class CommunityController {
                 dormCategory,
                 postRequest.getTitle(),
                 postRequest.getContent(),
-                postRequest.isAnonymous());
+                postRequest.getIsAnonymous());
 
         PostOneResponseDto response = new PostOneResponseDto(createdPost);
 
@@ -264,7 +264,7 @@ public class CommunityController {
         postService.updatePost(updatePostId,
                 updateRequest.getTitle(),
                 updateRequest.getContent(),
-                updateRequest.isAnonymous(),
+                updateRequest.getIsAnonymous(),
                 updateRequest.getFiles());
 
         PostOneResponseDto response = new PostOneResponseDto(foundPost);
