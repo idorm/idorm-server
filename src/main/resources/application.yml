@@ -43,10 +43,10 @@ spring:
     bucket-name: ${S3_BUCKET_NAME}
     region: ${S3_REGION}
 
-#  sentry:
-#    dsn: ${SENTRY_DSN}
-#    traces-sample-rate: 1.0
-#    enable-tracing: true
-#    logging:
-#      minimum-event-level: info
-#      minimum-breadcrumb-level: info
+  sentry:
+    dsn: ${SENTRY_DSN}
+    traces-sample-rate: 1.0
+    enable-tracing: true
+    logging:
+      minimum-event-level: info
+      minimum-breadcrumb-level: info

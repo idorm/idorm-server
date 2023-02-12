@@ -29,8 +29,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { CustomException.class })
     protected ResponseEntity<DefaultExceptionResponseDto> handleCustomException(CustomException e) {
 
-//        if (e.getExceptionCode().equals(SERVER_ERROR))
-//            Sentry.captureException(e);
+        if (e.getExceptionCode().equals(SERVER_ERROR))
+            Sentry.captureException(e);
         // TODO: e.getCause e.getprintstacktrace 와 같은 원인을 전달해줘야 함.
 
         log.error("[Error] {} - {}", e.getExceptionCode().name(), e.getExceptionCode().getMessage());
