@@ -50,7 +50,7 @@ public class MatchingController {
             @ApiResponse(responseCode = "404",
                     description = "LIKEDMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping("/member/matching/like")
     public ResponseEntity<DefaultResponseDto<Object>> findLikedMatchingMembers(
@@ -88,7 +88,7 @@ public class MatchingController {
             @ApiResponse(responseCode = "404",
                     description = "DISLIKEDMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping("/member/matching/dislike")
     public ResponseEntity<DefaultResponseDto<Object>> findDislikedMatchingMembers(
@@ -131,7 +131,7 @@ public class MatchingController {
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_LIKED_MEMBER / DUPLICATE_DISLIKED_MEMBER"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @PostMapping("/member/matching/{selected-member-id}")
     public ResponseEntity<DefaultResponseDto<Object>> addMatchingMember(
@@ -192,7 +192,7 @@ public class MatchingController {
             @ApiResponse(responseCode = "404",
                     description = "LIKEDMEMBER_NOT_FOUND / DISLIKEDMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @DeleteMapping("/member/matching/{selected-member-id}")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingMember(
@@ -239,7 +239,7 @@ public class MatchingController {
             @ApiResponse(responseCode = "404",
                     description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping("/member/matching")
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingMembers(
@@ -282,7 +282,7 @@ public class MatchingController {
             @ApiResponse(responseCode = "404",
                     description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @PostMapping("/member/matching/filter")
     public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(

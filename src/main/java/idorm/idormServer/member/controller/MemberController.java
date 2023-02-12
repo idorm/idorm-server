@@ -68,7 +68,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> findOneMember(
@@ -102,7 +102,7 @@ public class MemberController {
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_EMAIL / DUPLICATE_NICKNAME"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @ResponseStatus(HttpStatus.CREATED)
@@ -149,7 +149,7 @@ public class MemberController {
             @ApiResponse(responseCode = "415",
                     description = "FILE_TYPE_UNSUPPORTED"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @ResponseStatus(HttpStatus.CREATED)
@@ -184,7 +184,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404",
                     description = "FILE_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @DeleteMapping("/member/profile-photo")
@@ -216,7 +216,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @PatchMapping("/password")
@@ -253,7 +253,7 @@ public class MemberController {
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_SAME_NICKNAME / DUPLICATE_NICKNAME / CANNOT_UPDATE_NICKNAME"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @PatchMapping("/member/nickname")
@@ -282,7 +282,7 @@ public class MemberController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @DeleteMapping("/member")
@@ -318,7 +318,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @PostMapping("/login")
@@ -376,7 +376,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @GetMapping("/admin/members")
@@ -412,7 +412,7 @@ public class MemberController {
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_NICKNAME"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @PatchMapping("/admin/member/{id}")
@@ -448,7 +448,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @DeleteMapping("/admin/member/{id}")

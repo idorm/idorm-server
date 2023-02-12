@@ -109,7 +109,7 @@ public enum ExceptionCode {
     FILE_TYPE_UNSUPPORTED(UNSUPPORTED_MEDIA_TYPE, "파일 형식은 '.jpg', '.jpeg', '.png' 만 가능합니다."),
 
     /**
-     * 500 INTERNAL_SERVER_ERROR : 서버 에러
+     * 500 SERVER_ERROR : 서버 에러
      */
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.");
 

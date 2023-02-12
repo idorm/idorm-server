@@ -49,7 +49,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_MATCHINGINFO"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @PostMapping("/member/matchinginfo")
     @ResponseStatus(HttpStatus.CREATED)
@@ -90,7 +90,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "404",
                     description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(
             HttpServletRequest request2,
@@ -127,7 +127,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "404",
                     description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @PatchMapping("/member/matchinginfo")
     public ResponseEntity<DefaultResponseDto<Object>> updateisMatchingInfoPublic(
@@ -166,7 +166,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "404",
                     description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingInfo(
             HttpServletRequest request2) {
@@ -202,7 +202,7 @@ public class MatchingInfoController {
             @ApiResponse(responseCode = "404",
                     description = "MATCHINGINFO_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingInfo(HttpServletRequest request2) {
 

@@ -65,7 +65,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping("/posts/{dormitory-category}")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsFilteredByCategory(
@@ -99,7 +99,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping("/posts/{dormitory-category}/top")
     public ResponseEntity<DefaultResponseDto<Object>> findTopPostsFilteredByCategory(
@@ -132,7 +132,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> findOnePost(
@@ -186,7 +186,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "415",
                     description = "FILE_TYPE_UNSUPPORTED"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(value = "/post",
@@ -237,7 +237,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "415",
                     description = "FILE_TYPE_UNSUPPORTED"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @PostMapping(value = "/post/{post-id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -282,7 +282,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping("/posts/write")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsByMember(
@@ -315,7 +315,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping("/posts/like")
     public ResponseEntity<DefaultResponseDto<Object>> findLikedPostsByMember(
@@ -359,7 +359,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_LIKED / CANNOT_LIKED_SELF"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @PutMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> savePostLikes(
@@ -390,7 +390,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST / POSTLIKEDMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @DeleteMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> deletePostLikes(
@@ -421,7 +421,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @DeleteMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> deletePost(
@@ -461,7 +461,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST / COMMENT_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(value = "/post/{post-id}/comment")
@@ -511,7 +511,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST / COMMENT_NOT_FOUND / DELETED_COMMENT"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> deleteComment(
             HttpServletRequest request,
@@ -541,7 +541,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     })
     @GetMapping(value = "/comments")
     public ResponseEntity<DefaultResponseDto<Object>> findCommentsByMember(

@@ -54,7 +54,7 @@ public class EmailController {
             @ApiResponse(responseCode = "409",
                     description = "DUPLICATE_EMAIL"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @PostMapping("/email")
@@ -92,7 +92,7 @@ public class EmailController {
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @PostMapping("/verifyCode/{email}")
@@ -132,7 +132,7 @@ public class EmailController {
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @PostMapping("/email/password")
@@ -165,7 +165,7 @@ public class EmailController {
             @ApiResponse(responseCode = "404",
                     description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR"),
+                    description = "SERVER_ERROR"),
     }
     )
     @PostMapping("/verifyCode/password/{email}")
