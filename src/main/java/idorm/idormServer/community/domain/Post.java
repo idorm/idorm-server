@@ -28,6 +28,7 @@ public class Post extends BaseEntity {
     private String content;
     private Boolean isAnonymous;
     private int reportedCount;
+    private int postLikedCnt;
     private Boolean isDeleted;
 
     @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
@@ -51,6 +52,7 @@ public class Post extends BaseEntity {
         this.content = content;
         this.isAnonymous = isAnonymous;
         this.reportedCount = 0;
+        this.postLikedCnt = 0;
         this.isDeleted = false;
     }
 
@@ -64,6 +66,14 @@ public class Post extends BaseEntity {
         for (Photo photo : photos) {
             this.photos.add(photo);
         }
+    }
+
+    public void incrementPostLikedCnt() {
+        this.postLikedCnt++;
+    }
+
+    public void decrementPostLikedCnt() {
+        this.postLikedCnt--;
     }
 
     public void deletePost() {

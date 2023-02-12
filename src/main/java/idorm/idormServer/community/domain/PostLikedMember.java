@@ -31,6 +31,7 @@ public class PostLikedMember extends BaseEntity {
     public PostLikedMember(Post post, Member member) {
         this.post = post;
         this.member = member;
+        post.incrementPostLikedCnt();
     }
 
     public void removeMember() {

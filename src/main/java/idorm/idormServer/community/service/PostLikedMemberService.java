@@ -71,6 +71,7 @@ public class PostLikedMemberService {
         }
 
         try {
+            post.decrementPostLikedCnt();
             postLikedMemberRepository.deleteByMemberIdAndPostId(member.getId(), post.getId());
         } catch (RuntimeException e) {
             e.getStackTrace();
