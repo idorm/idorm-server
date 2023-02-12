@@ -478,6 +478,7 @@ public class CommunityController {
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
+
         Post post = postService.findById(postId);
 
         if(requestDto.getParentCommentId() != null) {
@@ -486,7 +487,7 @@ public class CommunityController {
 
         Comment createdComment = commentService.saveComment(
                 requestDto.getContent(),
-                requestDto.isAnonymous(),
+                requestDto.getIsAnonymous(),
                 post,
                 loginMember);
 

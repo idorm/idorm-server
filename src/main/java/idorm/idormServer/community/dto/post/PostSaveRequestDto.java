@@ -35,7 +35,7 @@ public class PostSaveRequestDto {
 
     @ApiModelProperty(position = 4, required = true, value = "익명 여부")
     @NotNull(message = "익명 여부를 입력해 주세요.", groups = ValidationSequence.NotNull.class)
-    private boolean isAnonymous;
+    private Boolean isAnonymous;
 
     @ApiModelProperty(position = 5, dataType = "List<MultipartFile>", value = "게시글 사진들")
     private List<MultipartFile> files = new ArrayList<>();

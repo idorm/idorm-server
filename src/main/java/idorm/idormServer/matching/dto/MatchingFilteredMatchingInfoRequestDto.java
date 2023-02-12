@@ -41,21 +41,21 @@ public class MatchingFilteredMatchingInfoRequestDto {
 
     @ApiModelProperty(position = 5, required = true, value = "코골이 여부", example = "false")
     @NotNull(message = "코골이 여부 입력은 필수입니다.", groups = ValidationSequence.NotNull.class)
-    private boolean isSnoring;
+    private Boolean isSnoring;
 
     @ApiModelProperty(position = 6, required = true, value = "흡연 여부", example = "false")
     @NotNull(message = "흡연 여부 입력은 필수입니다.", groups = ValidationSequence.NotNull.class)
-    private boolean isSmoking;
+    private Boolean isSmoking;
 
     @ApiModelProperty(position = 7, required = true, value = "이갈이 여부", example = "false")
     @NotNull(message = "이갈이 여부 입력은 필수입니다.", groups = ValidationSequence.NotNull.class)
-    private boolean isGrinding;
+    private Boolean isGrinding;
 
     @ApiModelProperty(position = 8, required = true, value = "이어폰 착용 의사 여부", example = "true")
     @NotNull(message = "이어폰 착용 의사 여부 입력은 필수입니다.", groups = ValidationSequence.NotNull.class)
-    private boolean isWearEarphones;
+    private Boolean isWearEarphones;
 
     @ApiModelProperty(position = 9, required = true, value = "실내 음식 섭취 허용 여부", example = "true")
     @NotNull(message = "살외 음식 섭취 허용 여부 입력은 필수입니다.", groups = ValidationSequence.NotNull.class)
-    private boolean isAllowedFood;
+    private Boolean isAllowedFood;
 }

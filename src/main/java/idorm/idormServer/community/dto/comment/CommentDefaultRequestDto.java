@@ -24,8 +24,8 @@ public class CommentDefaultRequestDto {
     private String content;
 
     @ApiModelProperty(position = 2, required = true, value = "익명 여부", example = "true")
-    @NotNull(message = "댓글 익명 여부를 입력 해주세요.", groups = ValidationSequence.NotNull.class)
-    private boolean isAnonymous;
+    @NotNull(message = "익명 여부를 입력 해주세요.", groups = ValidationSequence.NotNull.class)
+    private Boolean isAnonymous;
 
     @ApiModelProperty(position = 3, value = "대댓글일 시 부모 댓글 식별자", example = "null")
     private Long parentCommentId;
