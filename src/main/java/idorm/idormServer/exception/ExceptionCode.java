@@ -33,7 +33,8 @@ public enum ExceptionCode {
     OPENKAKAOLINK_LENGTH_INVALID(BAD_REQUEST, "오픈채팅 링크는 ~100자 이내로 입력해 주세요."),
     MBTI_LENGTH_INVALID(BAD_REQUEST, "mbti는 3~5자로 입력해 주세요."),
     WISHTEXT_LENGTH_INVALID(BAD_REQUEST, "하고싶은 말은 ~150자 이내로 입력해 주세요."),
-    CONTENT_LENGTH_INVALID(BAD_REQUEST, "댓글 내용은 1~50자로 입력해 주세요."),
+    CONTENT_LENGTH_INVALID(BAD_REQUEST, "게시글 혹은 댓글 내용은 1~50자로 입력해 주세요."),
+    TITLE_LENGTH_INVALID(BAD_REQUEST, "게시글 제목은 1~30자로 입력해 주세요."),
 
     ILLEGAL_ARGUMENT_ADMIN(BAD_REQUEST, "관리자는 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),

@@ -196,20 +196,15 @@ public class CommunityController {
             HttpServletRequest request,
             @ModelAttribute @Valid PostSaveRequestDto postRequest
     ) {
-
-        DormCategory dormCategory = DormCategory.validateType(postRequest.getDormCategory());
-
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        if(postRequest.getFiles().size() > 10) {
-            throw new CustomException(FILE_COUNT_EXCEED);
-        }
+        postService.validatePostPhotoCountExceeded(postRequest.getFiles().size());
 
         Post createdPost = postService.savePost(
                 member,
                 postRequest.getFiles(),
-                dormCategory,
+                DormCategory.validateType(postRequest.getDormCategory()),
                 postRequest.getTitle(),
                 postRequest.getContent(),
                 postRequest.getIsAnonymous());
@@ -252,7 +247,6 @@ public class CommunityController {
             @PathVariable("post-id") Long updatePostId,
             @ModelAttribute @Valid PostUpdateRequestDto updateRequest
     ) {
-
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
