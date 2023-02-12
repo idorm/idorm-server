@@ -15,12 +15,26 @@ public enum ExceptionCode {
      */
     FIELD_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
 
+    // 형식
     EMAIL_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
     PASSWORD_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
     NICKNAME_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
     DORMCATEGORY_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 기숙사 분류가 아닙니다."),
     JOINPERIOD_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 입사 기간이 아닙니다."),
-    
+    GENDER_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 성별이 아닙니다."),
+
+    // 사이즈
+    NICKNAME_LENGTH_INVALID(BAD_REQUEST, "닉네임은 2~8자만 가능합니다."),
+    PASSWORD_LENGTH_INVALID(BAD_REQUEST, "비밀번호는 8~15자만 가능합니다."),
+    AGE_LENGTH_INVALID(BAD_REQUEST, "나이는 20~100살 사이여야 합니다."),
+    WAKEUPTIME_LENGTH_INVALID(BAD_REQUEST, "기상 시간은 ~30자 이내로 입력해 주세요."),
+    CLEANUPSTATUS_LENGTH_INVALID(BAD_REQUEST, "정리정돈 상태는 ~30자 이내로 입력해 주세요."),
+    SHOWERTIME_LENGTH_INVALID(BAD_REQUEST, "샤워시간은 ~30자 이내로 입력해 주세요."),
+    OPENKAKAOLINK_LENGTH_INVALID(BAD_REQUEST, "오픈채팅 링크는 ~100자 이내로 입력해 주세요."),
+    MBTI_LENGTH_INVALID(BAD_REQUEST, "mbti는 3~5자로 입력해 주세요."),
+    WISHTEXT_LENGTH_INVALID(BAD_REQUEST, "하고싶은 말은 ~150자 이내로 입력해 주세요."),
+    CONTENT_LENGTH_INVALID(BAD_REQUEST, "댓글 내용은 1~50자로 입력해 주세요."),
+
     ILLEGAL_ARGUMENT_ADMIN(BAD_REQUEST, "관리자는 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
 
@@ -29,15 +43,14 @@ public enum ExceptionCode {
     /**
      * 401 UNAUTHORIZED : 인증되지 않은 사용자
      */
-
     INVALID_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
     EXPIRED_CODE(UNAUTHORIZED, "이메일 인증 유효시간이 초과되었습니다."),
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "로그인이 필요합니다."),
-    UNAUTHORIZED_DELETE(UNAUTHORIZED, "삭제 권한이 없습니다."),
-    UNAUTHORIZED_POST(UNAUTHORIZED, "게시글 수정 및 삭제 권한이 없습니다"),
     UNAUTHORIZED_PASSWORD(UNAUTHORIZED, "올바르지 않은 비밀번호 입니다."),
     UNAUTHORIZED_EMAIL(UNAUTHORIZED, "인증이 되지 않은 이메일입니다."),
 
+    UNAUTHORIZED_POST(UNAUTHORIZED, "게시글 수정 및 삭제 권한이 없습니다"),
+    UNAUTHORIZED_COMMENT(UNAUTHORIZED, "댓글 수정 및 삭제 권한이 없습니다."),
     /**
      * 403 FORBIDDEN : 권한이 없는 사용자
      */
@@ -46,7 +59,6 @@ public enum ExceptionCode {
     /**
      * 404 NOT_FOUND : Resource 를 찾을 수 없음
      */
-
     EMAIL_NOT_FOUND(NOT_FOUND, "등록된 이메일이 없습니다."),
     MEMBER_NOT_FOUND(NOT_FOUND, "등록된 멤버가 없습니다."),
     DISLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "싫어요한 멤버가 없습니다."),

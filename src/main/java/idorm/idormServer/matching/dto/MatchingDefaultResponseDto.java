@@ -9,8 +9,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,16 +21,18 @@ public class MatchingDefaultResponseDto {
     @ApiModelProperty(position = 2, value="매칭정보 식별자", example = "1")
     private Long matchingInfoId;
 
-    @ApiModelProperty(position = 3, required = true, value = "기숙사 분류: DORM1, DORM2, DORM3", example = "DORM1")
+    @ApiModelProperty(position = 3, required = true, value = "기숙사 분류", allowableValues = "DORM1, DORM2, DORM3",
+            example = "DORM1")
     private DormCategory dormCategory;
 
-    @ApiModelProperty(position = 4, required = true, value = "입사기간: WEEK16, WEEK24", example = "WEEK16")
+    @ApiModelProperty(position = 4, required = true, value = "입사기간", allowableValues = "WEEK16, WEEK24",
+            example = "WEEK16")
     private JoinPeriod joinPeriod;
 
-    @ApiModelProperty(position = 5, required = true, value = "성별: MALE, FEMALE", example = "MALE")
+    @ApiModelProperty(position = 5, required = true, value = "성별", allowableValues = "MALE, FEMALE", example = "MALE")
     private Gender gender;
 
-    @ApiModelProperty(position = 6, value = "나이", example = "20")
+    @ApiModelProperty(position = 6, required = true, example = "20", value = "나이")
     private Integer age;
 
     @ApiModelProperty(position = 7, value = "코골이 여부", example = "false")
@@ -50,22 +50,22 @@ public class MatchingDefaultResponseDto {
     @ApiModelProperty(position = 11, value = "이어폰 착용 여부", example = "false")
     private Boolean isWearEarphones;
 
-    @ApiModelProperty(position = 12, value = "기상 시간", example = "아침 7시 기상")
+    @ApiModelProperty(position = 12, value = "기상시간", example = "아침 7시 기상")
     private String wakeUpTime;
 
-    @ApiModelProperty(position = 13, value = "정리 정돈 상태", example = "더러워용")
+    @ApiModelProperty(position = 13, value = "정리정돈", example = "더러워용")
     private String cleanUpStatus;
 
-    @ApiModelProperty(position = 14, value = "샤워 시간", example = "아침7시, 밤 12시에 주로 씻어요")
+    @ApiModelProperty(position = 14, value = "샤워시간", example = "아침7시, 밤 12시에 주로 씻어요")
     private String showerTime;
 
-    @ApiModelProperty(position = 15, value = "오픈 채팅 링크", example = "링크~")
+    @ApiModelProperty(position = 15, value = "오픈채팅 링크", example = "링크~")
     private String openKakaoLink;
 
     @ApiModelProperty(position = 16, value = "mbti", example = "ISTP")
     private String mbti;
 
-    @ApiModelProperty(position = 17, value = "룸메에게 하고싶은 말", example = "즐거운 한 학기를 보내보아요~")
+    @ApiModelProperty(position = 17, value = "룸메에게 보내는 한마디", example = "즐거운 한 학기를 보내보아요~")
     private String wishText;
 
     @ApiModelProperty(position = 18, value = "매칭정보 공개 여부", example = "true")

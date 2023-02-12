@@ -47,7 +47,7 @@ public class MatchingInfoService {
 
     /**
      * MatchingInfo 매칭이미지 공개여부 변경 |
-     * 404(MATCHINGINFO_NOT_FOUND)
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void updateMatchingInfoIsPublic(MatchingInfo updateMatchingInfo, Boolean isMatchingInfoPublic) {
@@ -93,6 +93,7 @@ public class MatchingInfoService {
 
     /**
      * MatchingInfo 삭제 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void deleteMatchingInfo(MatchingInfo matchingInfo) {
@@ -106,6 +107,7 @@ public class MatchingInfoService {
 
     /**
      * MatchingInfo 수정 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void updateMatchingInfo(MatchingInfo updateMatchingInfo, MatchingInfoDefaultRequestDto request) {

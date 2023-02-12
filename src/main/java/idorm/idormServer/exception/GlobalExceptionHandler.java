@@ -31,7 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (e.getExceptionCode().equals(SERVER_ERROR))
             Sentry.captureException(e);
-        // TODO: e.getCause e.getprintstacktrace 와 같은 원인을 전달해줘야 함.
+        // TODO: e.getprintstacktrace 내용을 Sentry에 전달
 
         log.error("[Error] {} - {}", e.getExceptionCode().name(), e.getExceptionCode().getMessage());
         return DefaultExceptionResponseDto.exceptionResponse(e.getExceptionCode());
@@ -39,7 +39,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 400 Bad Request |
-     * 잘못된 응답 문법으로 인하여 서버가 요청하여 이해할 수 없습니다.
      */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
@@ -135,7 +134,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 413 Payload Too Large
-     * 파일 용량은 최대 5MB 까지 받는다.
      */
     @ExceptionHandler(value = { MaxUploadSizeExceededException.class })
     @ResponseStatus(PAYLOAD_TOO_LARGE)

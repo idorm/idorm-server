@@ -16,27 +16,28 @@ import java.time.LocalDateTime;
 @ApiModel(value = "Comment 댓글 및 대댓글 기본 응답")
 public class CommentDefaultResponseDto {
 
-    @ApiModelProperty(position = 1, value="댓글 식별자")
+    @ApiModelProperty(position = 1, value= "댓글 식별자", required = true)
     private Long commentId;
 
-    @ApiModelProperty(position = 2, value="부모 댓글 식별자")
+    @ApiModelProperty(position = 2, value= "부모 댓글 식별자")
     private Long parentCommentId;
 
-    @ApiModelProperty(position = 3, value="댓글 삭제 여부")
+    @ApiModelProperty(position = 3, value= "댓글 삭제 여부", required = true)
     private Boolean isDeleted;
 
-    @ApiModelProperty(position = 4, value = "닉네임", example = "null, anonymous, 응철이")
+    @ApiModelProperty(position = 4, value = "닉네임", allowableValues = "null(탈퇴한 회원), anonymous(익명), 응철이(익명 아님)",
+            example = "anonymous", required = true)
     private String nickname;
 
-    @ApiModelProperty(position = 5, value = "프로필사진 주소", example = "null(사진이 없거나, 익명), url")
+    @ApiModelProperty(position = 5, value = "프로필사진 주소", allowableValues = "null(프로필사진 없음/익명), url(익명 아님)",
+            example = "null", required = true)
     private String profileUrl;
 
-    @ApiModelProperty(position = 6, value = "댓글 내용")
+    @ApiModelProperty(position = 6, value = "댓글 내용", required = true)
     private String content;
 
-    @ApiModelProperty(position = 7, value = "생성일자")
+    @ApiModelProperty(position = 7, value = "생성일자", required = true)
     private LocalDateTime createdAt;
-
 
     public CommentDefaultResponseDto(Comment comment) {
 

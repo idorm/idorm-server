@@ -25,7 +25,7 @@ public class MemberUpdatePasswordRequestDto {
 
     @ApiModelProperty(position = 1, required = true, value = "이메일", example = "aaa@inu.ac.kr")
     @NotBlank(message = "이메일 입력은 필수입니다.", groups = ValidationSequence.NotBlank.class)
-    @Email(message = "이메일 형식이 올바르지 않습니다.", groups = ValidationSequence.Email.class)
+    @Email(message = "올바른 형식의 이메일이 아닙니다.", groups = ValidationSequence.Email.class)
     private String email;
 
     @ApiModelProperty(position = 2, required = true, value = "비밀번호", example = "aaaaaaa7!")

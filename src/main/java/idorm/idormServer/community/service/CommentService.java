@@ -154,7 +154,7 @@ public class CommentService {
 
     /**
      * Comment 댓글 단건 삭제 |
-     * 401(UNAUTHORIZED_DELETE)
+     * 401(UNAUTHORIZED_COMMENT)
      * 404(DELETED_COMMENT)
      */
     @Transactional
@@ -162,7 +162,7 @@ public class CommentService {
         Comment foundComment = findById(commentId);
 
         if (foundComment.getMember().getId() != member.getId()) {
-            throw new CustomException(UNAUTHORIZED_DELETE);
+            throw new CustomException(UNAUTHORIZED_COMMENT);
         }
 
         if (foundComment.getIsDeleted() == true) {

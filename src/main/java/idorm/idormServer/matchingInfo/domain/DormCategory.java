@@ -1,7 +1,6 @@
 package idorm.idormServer.matchingInfo.domain;
 
 import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.exception.ExceptionCode;
 import lombok.Getter;
 
 import static idorm.idormServer.exception.ExceptionCode.DORMCATEGORY_CHARACTER_INVALID;

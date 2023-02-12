@@ -1,6 +1,9 @@
 package idorm.idormServer.matchingInfo.domain;
 
+import idorm.idormServer.exception.CustomException;
 import lombok.Getter;
+
+import static idorm.idormServer.exception.ExceptionCode.JOINPERIOD_CHARACTER_INVALID;
 
 public enum JoinPeriod {
 
@@ -12,6 +15,14 @@ public enum JoinPeriod {
 
     JoinPeriod(Character type) {
         this.type = type;
+    }
+
+    public static JoinPeriod validateType(String joinPeriod) {
+        try {
+            return JoinPeriod.valueOf(joinPeriod);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(JOINPERIOD_CHARACTER_INVALID);
+        }
     }
 
     public static JoinPeriod valueOf(Character type) {

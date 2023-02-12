@@ -2,6 +2,8 @@ package idorm.idormServer.matching.service;
 
 import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matchingInfo.domain.JoinPeriod;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
 import idorm.idormServer.member.domain.Member;
@@ -77,8 +79,8 @@ public class MatchingService {
         try {
             foundMatchingInfos = matchingInfoRepository.findFilteredMatchingMembers(
                     member.getId(),
-                    request.getDormCategory().getType(),
-                    request.getJoinPeriod().getType(),
+                    DormCategory.validateType(request.getDormCategory()).getType(),
+                    JoinPeriod.validateType(request.getJoinPeriod()).getType(),
                     member.getMatchingInfo().getGender(),
                     request.getIsSnoring(),
                     request.getIsSmoking(),

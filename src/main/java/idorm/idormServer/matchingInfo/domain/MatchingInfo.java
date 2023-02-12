@@ -78,9 +78,9 @@ public class MatchingInfo extends BaseEntity {
     }
 
     public void updateMatchingInfo(MatchingInfoDefaultRequestDto requestDto) {
-        this.dormCategory = requestDto.getDormCategory().getType();
-        this.joinPeriod = requestDto.getJoinPeriod().getType();
-        this.gender = requestDto.getGender().getType();
+        this.dormCategory = DormCategory.validateType(requestDto.getDormCategory()).getType();
+        this.joinPeriod = JoinPeriod.validateType(requestDto.getJoinPeriod()).getType();
+        this.gender = Gender.validateType(requestDto.getGender()).getType();
         this.age = requestDto.getAge();
         this.isSnoring = requestDto.getIsSnoring();
         this.isSmoking = requestDto.getIsSmoking();

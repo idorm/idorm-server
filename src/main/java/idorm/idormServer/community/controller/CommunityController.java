@@ -171,7 +171,7 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "게시글 저장")
+    @ApiOperation(value = "게시글 저장", notes = "- 첨부 파일이 없다면 null 이 아닌 빈 배열로 보내주세요.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
@@ -225,7 +225,7 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "게시글 수정")
+    @ApiOperation(value = "게시글 수정", notes = "- 첨부 파일이 없다면 null 이 아닌 빈 배열로 보내주세요.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -513,7 +513,7 @@ public class CommunityController {
                     responseCode = "200",
                     description = "COMMENT_DELETED"),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_DELETE"),
+                    description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_COMMENT"),
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST / COMMENT_NOT_FOUND / DELETED_COMMENT"),
             @ApiResponse(responseCode = "500",
