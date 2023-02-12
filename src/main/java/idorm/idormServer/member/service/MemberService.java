@@ -1,5 +1,6 @@
 package idorm.idormServer.member.service;
 
+import idorm.idormServer.community.service.PostLikedMemberService;
 import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
@@ -31,6 +32,7 @@ public class MemberService {
     private final EmailService emailService;
     private final PhotoService photoService;
     private final PostService postService;
+    private final PostLikedMemberService postLikedMemberService;
 
     @Value("${DB_USERNAME}")
     private String ENV_USERNAME;
@@ -167,10 +169,10 @@ public class MemberService {
     @Transactional
     public void deleteMember(Member member) {
 
-        Email foundEmail = emailService.findByEmail(member.getEmail());
-        emailService.deleteEmail(foundEmail);
+        emailService.deleteEmail(emailService.findByEmail(member.getEmail()));
         photoService.deleteProfilePhotos(member);
-        postService.updateMemberNullFromPost(member);
+        postService.updateMemberNull(member);
+        postLikedMemberService.updateMemberNull(member);
         try {
             memberRepository.delete(member);
         } catch (RuntimeException e) {

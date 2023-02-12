@@ -21,10 +21,15 @@ public class PostLikedMemberService {
 
     private final PostLikedMemberRepository postLikedMemberRepository;
 
+    /**
+     * 게시글 공감 저장 |
+     * 409(CANNOT_LIKED_SELF)
+     * 409(DUPLICATE_LIKED)
+     */
     @Transactional
-    public Long save(Member member, Post post) {
+    public PostLikedMember savePostLikedMember(Member member, Post post) {
 
-        if(post.getMember() != null && post.getMember().getId() == member.getId()) {
+        if(post.getMember() != null && (post.getMember().getId() == member.getId())) {
             throw new CustomException(CANNOT_LIKED_SELF);
         }
 
@@ -41,7 +46,7 @@ public class PostLikedMemberService {
 
             postLikedMemberRepository.save(postLikedMember);
 
-            return postLikedMember.getId();
+            return postLikedMember;
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
@@ -58,7 +63,7 @@ public class PostLikedMemberService {
     }
 
     @Transactional
-    public void deleteById(Member member, Post post) {
+    public void deletePostLikedMember(Member member, Post post) {
         boolean likedYn = isMemberLikedPost(member, post);
 
         if(likedYn == false) {
@@ -87,7 +92,8 @@ public class PostLikedMemberService {
     }
 
     /**
-     * 게시글 삭제 시 해당 공감 전부 삭제
+     * 게시글 삭제 시 해당 공감 전부 삭제 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void deleteAllLikesFromPost(Post post) {
@@ -99,5 +105,23 @@ public class PostLikedMemberService {
         }
     }
 
+    /**
+     * 멤버 탈퇴 시 PostLikedMember에 Member를 null로 수정 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void updateMemberNull(Member member) {
 
+        try {
+            List<PostLikedMember> postLikedMembers = postLikedMemberRepository.findAllByMemberId(member.getId());
+            if (postLikedMembers.isEmpty()) {
+                return;
+            }
+            for (PostLikedMember postLikedMember : postLikedMembers) {
+                postLikedMember.removeMember();
+            }
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
+    }
 }

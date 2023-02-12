@@ -15,6 +15,8 @@ public interface PostLikedMemberRepository extends JpaRepository<PostLikedMember
             "ORDER BY plm.created_at DESC", nativeQuery = true)
     List<Long> findLikedPostsByMemberId(@Param("memberId") Long memberId);
 
+    List<PostLikedMember> findAllByMemberId(Long memberId);
+
     void deleteByMemberIdAndPostId(Long memberId, Long postId);
 
     void deleteAllByPostId(Long postId);

@@ -1,6 +1,10 @@
 package idorm.idormServer.matchingInfo.domain;
 
+import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.exception.ExceptionCode;
 import lombok.Getter;
+
+import static idorm.idormServer.exception.ExceptionCode.DORMCATEGORY_CHARACTER_INVALID;
 
 public enum DormCategory {
 
@@ -13,6 +17,14 @@ public enum DormCategory {
 
     DormCategory(Character type) {
         this.type = type;
+    }
+
+    public static DormCategory validateType(String dormCategory) {
+        try {
+            return DormCategory.valueOf(dormCategory);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(DORMCATEGORY_CHARACTER_INVALID);
+        }
     }
 
     public static DormCategory valueOf(Character type) {

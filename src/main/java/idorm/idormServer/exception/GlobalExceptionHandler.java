@@ -1,5 +1,6 @@
 package idorm.idormServer.exception;
 
+import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { CustomException.class })
     protected ResponseEntity<DefaultExceptionResponseDto> handleCustomException(CustomException e) {
 
-//        Sentry.captureException(e);
+//        if (e.getExceptionCode().equals(SERVER_ERROR))
+//            Sentry.captureException(e);
+        // TODO: e.getCause e.getprintstacktrace 와 같은 원인을 전달해줘야 함.
+
         log.error("[Error] {} - {}", e.getExceptionCode().name(), e.getExceptionCode().getMessage());
         return DefaultExceptionResponseDto.exceptionResponse(e.getExceptionCode());
     }
@@ -42,7 +46,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,
                                                                   WebRequest request) {
-//        Sentry.captureException(exception);
 
         String responseMessage = Objects.requireNonNull(exception.getFieldError()).getDefaultMessage();
         String responseCode = null;
@@ -70,7 +73,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { ConstraintViolationException.class })
     protected ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException exception) {
-//        Sentry.captureException(exception);
 
         String responseCode = null;
         String responseMessage = null;
@@ -118,7 +120,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                          HttpHeaders headers,
                                                                          HttpStatus status,
                                                                          WebRequest request) {
-//        Sentry.captureException(exception);
 
         String responseCode = METHOD_NOT_ALLOWED.name();
         String responseMessage = METHOD_NOT_ALLOWED.getMessage();
@@ -139,7 +140,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { MaxUploadSizeExceededException.class })
     @ResponseStatus(PAYLOAD_TOO_LARGE)
     protected ResponseEntity<DefaultExceptionResponseDto> handleFileSizeLimitExceeded(Exception exception) {
-//        Sentry.captureException(exception);
 
         log.error("[ERROR] {} - {}", FILE_SIZE_EXCEED.name(), FILE_SIZE_EXCEED.getMessage());
         return DefaultExceptionResponseDto.exceptionResponse(FILE_SIZE_EXCEED);

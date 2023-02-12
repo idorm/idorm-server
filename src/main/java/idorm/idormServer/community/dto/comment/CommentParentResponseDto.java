@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ApiModel(value = "Comment 부모 댓글 응답")
+@ApiModel(value = "Comment 커스텀 부모 댓글 및 대댓글들 응답")
 public class CommentParentResponseDto {
 
     @ApiModelProperty(position = 1, value="댓글 식별자")

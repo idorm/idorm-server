@@ -4,6 +4,7 @@ import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.PostRepository;
 import idorm.idormServer.exception.CustomException;
 
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.Photo;
 import idorm.idormServer.photo.service.PhotoService;
@@ -33,12 +34,12 @@ public class PostService {
      * 멤버 삭제 시 Post, Comment 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
      */
     @Transactional
-    public void updateMemberNullFromPost(Member member) {
+    public void updateMemberNull(Member member) {
 
         try {
             List<Post> foundPosts = postRepository.findAllByMemberId(member.getId());
             for(Post post : foundPosts) {
-                post.updateMemberNull();
+                post.removeMember();
             }
         } catch (RuntimeException e) {
             e.getStackTrace();
@@ -50,7 +51,7 @@ public class PostService {
     /**
      * Post 게시글 사진 추가 메소드 |
      */
-    private List<Photo> savePhotos(Post post, Member member, List<MultipartFile> files) {
+    private List<Photo> savePostPhotos(Post post, List<MultipartFile> files) {
 
         int index = 1;
         List<String> fileNames = new ArrayList<>();
@@ -61,7 +62,7 @@ public class PostService {
             index += 1;
         }
 
-        List<Photo> savedPhotos = photoService.savePostPhotos(post, member, fileNames, files);
+        List<Photo> savedPhotos = photoService.savePostPhotos(post, fileNames, files);
 
         return savedPhotos;
     }
@@ -73,7 +74,7 @@ public class PostService {
     @Transactional
     public Post savePost(Member member,
                      List<MultipartFile> files,
-                     String dormNum,
+                     DormCategory dormCategory,
                      String title,
                      String content,
                      Boolean isAnonymous
@@ -82,16 +83,14 @@ public class PostService {
         try {
             Post createdPost = Post.builder()
                     .member(member)
-                    .dormNum(dormNum)
+                    .dormCategory(dormCategory)
                     .title(title)
                     .content(content)
                     .isAnonymous(isAnonymous)
                     .build();
 
-            createdPost.updateImagesCount(files.size());
             Post savedPost = postRepository.save(createdPost);
-            List<Photo> savedPhotos = savePhotos(savedPost, member, files);
-            savedPost.addPhotos(savedPhotos);
+            savePostPhotos(savedPost, files);
 
             return createdPost;
         } catch (RuntimeException e) {
@@ -109,7 +108,6 @@ public class PostService {
     @Transactional
     public void updatePost(
             Long postId,
-            Member member,
             String title,
             String content,
             Boolean isAnonymous,
@@ -117,15 +115,15 @@ public class PostService {
     ) {
 
         Post foundPost = findById(postId);
-        photoService.deletePostFullPhotos(foundPost, member);
+
+        // TODO: 수정된 사진만 수정되게 변경
+        photoService.deletePostFullPhotos(foundPost);
 
         try {
             foundPost.updatePost(title, content, isAnonymous);
 
-            List<Photo> updatedPhotos = savePhotos(foundPost, member, files);
-            foundPost.addPhotos(updatedPhotos);
-
-            foundPost.updateImagesCount(files.size());
+            List<Photo> updatedPhotos = savePostPhotos(foundPost, files);
+            foundPost.addPostPhotos(updatedPhotos);
 
             postRepository.save(foundPost);
 
@@ -137,23 +135,16 @@ public class PostService {
 
     /**
      * Post 삭제 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deletePost(Long postId, Member member) {
-        Post foundPost = findById(postId);
+    public void deletePost(Post post) {
 
-        if(foundPost.getMember() == null || foundPost.getMember().getId() != member.getId()) {
-            throw new CustomException(UNAUTHORIZED_DELETE);
-        }
-
-        commentService.deleteCommentsByPostId(postId);
-        postLikedMemberService.deleteAllLikesFromPost(foundPost);
-
+        commentService.deleteCommentsByPost(post);
+        postLikedMemberService.deleteAllLikesFromPost(post);
+        photoService.deletePhotoDeletingPost(post);
         try {
-            foundPost.deletePost();
-            foundPost.deleteLikesCount();
-            postRepository.save(foundPost);
-            photoService.deletePhotoDeletingPost(postId);
+            post.deletePost();
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
@@ -162,7 +153,8 @@ public class PostService {
 
     /**
      * Post 단건 조회 |
-     * 게시글 식별자를 통해 조회합니다.
+     * 404(POST_NOT_FOUND)
+     * 404(DELETED_POST)
      */
     public Post findById(Long postId) {
         Post foundPost = postRepository.findById(postId)
@@ -176,14 +168,13 @@ public class PostService {
 
     /**
      * Post 기숙사 카테고리 별 다건 조회 |
-     * 기숙사 카테고리를 사용한 쿼리를 통해 해당되는 기숙사의 게시글들을 조회합니다.
+     * 500(SERVER_ERROR)
      */
-    public Page<Post> findManyPostsByDormCategory(String dormNum, int pageNum) {
+    public Page<Post> findManyPostsByDormCategory(DormCategory dormCategory, int pageNum) {
         try {
             Page<Post> foundPosts =
-                    postRepository.findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(
-                            dormNum,
-                            false,
+                    postRepository.findAllByDormCategoryAndIsDeletedFalseOrderByCreatedAtDesc(
+                            dormCategory.getType(),
                             PageRequest.of(pageNum, 20));
             return foundPosts;
         } catch (RuntimeException e) {
@@ -198,9 +189,9 @@ public class PostService {
      * 일주일 이내의 글만 인기글로 선정
      * 공감 순으로 상위 10개 조회 (만약 동일 공감이 많다면 더 빠른 최신 날짜로)
      */
-    public List<Post> findTopPosts(String dormNum) {
+    public List<Post> findTopPosts(DormCategory dormCategory) {
         try {
-            List<Post> foundPosts = postRepository.findTopPostsByDormCategory(dormNum);
+            List<Post> foundPosts = postRepository.findTopPostsByDormCategory(dormCategory.getType());
 
             return foundPosts;
         } catch (RuntimeException e) {
@@ -215,7 +206,7 @@ public class PostService {
     public List<Post> findPostsByMember(Member member) {
         try {
             List<Post> postsByMemberId =
-                    postRepository.findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(member.getId(), false);
+                    postRepository.findAllByMemberIdAndIsDeletedFalseOrderByUpdatedAtDesc(member.getId());
 
             return postsByMemberId;
         } catch (RuntimeException e) {
@@ -225,41 +216,22 @@ public class PostService {
     }
 
     /**
-     * 게시글에 멤버가 공감했을 때
-     * Post 공감 카운트 증가 및 PostLikedMember save 호출
+     * 게시글 수정 / 삭제 권한 검증 |
+     * 401(POST_NOT_ALLOWED)
      */
-    @Transactional
-    public Long addPostLikes(Member member, Post post) {
-
-        Long savedPostLikedMemberId = postLikedMemberService.save(member, post);
-        try {
-            post.addLikesCount();
-        } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+    public void validatePostAuthorization(Post post, Member member) {
+        if (!member.getId().equals(post.getMember().getId())) {
+            throw new CustomException(UNAUTHORIZED_POST);
         }
-        return savedPostLikedMemberId;
     }
 
     /**
-     * 게시글에 멤버가 공감 취소했을 때
-     * Post 공감 카운트 감소 및 PostLikedMember deletePostLikes 호출
+     * 게시글 첨부 파일 개수 검증 |
+     * 413(FILE_COUNT_EXCEED)
      */
-    @Transactional
-    public void deletePostLikes(Member member, Post post) {
-
-        if(post.getLikesCount() <= 0) {
-            throw new CustomException(LIKED_NOT_FOUND);
-        }
-        postLikedMemberService.deleteById(member, post);
-
-        try {
-            post.subtractLikesCount();
-            postRepository.save(post);
-        } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+    public void validatePostPhotoCountExceeded(int count) {
+        if(count > 10) {
+            throw new CustomException(FILE_COUNT_EXCEED);
         }
     }
-
 }

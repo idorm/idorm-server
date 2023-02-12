@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ApiModel(value = "Comment 대댓글 응답")
+@ApiModel(value = "Comment 댓글 및 대댓글 기본 응답")
 public class CommentDefaultResponseDto {
 
     @ApiModelProperty(position = 1, value="댓글 식별자")

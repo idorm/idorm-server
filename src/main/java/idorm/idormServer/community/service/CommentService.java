@@ -22,7 +22,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     /**
-     * Comment 저장
+     * Comment 저장 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public Comment saveComment(String content,
@@ -57,14 +58,14 @@ public class CommentService {
     }
 
     /**
-     * 대댓글이라면 부모 댓글 식별자 저장하기
+     * 대댓글의 부모 댓글 식별자 저장 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void saveParentCommentId(Long parentCommentId, Comment subComment) {
 
         try {
             subComment.setParentCommentId(parentCommentId);
-            commentRepository.save(subComment);
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
@@ -72,8 +73,9 @@ public class CommentService {
     }
 
     /**
-     * Comment 단건 조회
-     * 삭제된 부모 댓글도 조회해야 하므로 DELETED_COMMENT(404)에 대한 예외처리는 하지 않는다.
+     * Comment 단건 조회 |
+     * 삭제된 부모 댓글도 조회해야 하므로 DELETED_COMMENT(404)에 대한 예외처리는 하지 않는다. |
+     * 404(COMMENT_NOT_FOUND)
      */
     public Comment findById(Long commentId) {
 
@@ -83,7 +85,8 @@ public class CommentService {
     }
 
     /**
-     * Comment 부모 댓글 식별자를 받아서 해당 대댓글 리스트 반환
+     * Comment 부모 댓글 식별자를 받아서 해당 대댓글 리스트 반환 |
+     * 500(SERVER_ERROR)
      */
     public List<Comment> findSubCommentsByParentCommentId(Long postId, Long parentCommentId) {
 
@@ -99,7 +102,8 @@ public class CommentService {
     }
 
     /**
-     * Comment 로그인한 멤버가 작성한 모든 댓글들 조회
+     * Comment 로그인한 멤버가 작성한 모든 댓글들 조회 |
+     * 500(SERVER_ERROR)
      */
     public List<Comment> findCommentsByMember(Member member) {
 
@@ -114,7 +118,8 @@ public class CommentService {
     }
 
     /**
-     * Comment 게시글 내 모든 댓글 조회
+     * 특정 게시글의 댓글 다건 조회 |
+     * 500(SERVER_ERROR)
      */
     public List<Comment> findCommentsByPostId(Long postId) {
         try {
@@ -128,12 +133,15 @@ public class CommentService {
     }
 
     /**
-     * Comment 게시글 내 모든 댓글, 대댓글 삭제
+     * Comment 게시글 내 모든 댓글, 대댓글 삭제 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deleteCommentsByPostId(Long postId) {
-        List<Comment> foundComments = findCommentsByPostId(postId);
-
+    public void deleteCommentsByPost(Post post) {
+        List<Comment> foundComments = findCommentsByPostId(post.getId());
+        if (foundComments.isEmpty()) {
+            return;
+        }
         try {
             for (Comment comment : foundComments) {
                 comment.deleteComment();
@@ -146,6 +154,8 @@ public class CommentService {
 
     /**
      * Comment 댓글 단건 삭제 |
+     * 401(UNAUTHORIZED_DELETE)
+     * 404(DELETED_COMMENT)
      */
     @Transactional
     public void deleteComment(Long commentId, Member member) {
@@ -161,7 +171,6 @@ public class CommentService {
 
         try {
             foundComment.deleteComment();
-            commentRepository.save(foundComment);
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
@@ -169,7 +178,8 @@ public class CommentService {
     }
 
     /**
-     * 멤버 삭제 시 Comment 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
+     * 멤버 삭제 시 Comment 도메인의 member_id(FK) 를 null로 변경 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void updateMemberNullFromComment(Member member) {

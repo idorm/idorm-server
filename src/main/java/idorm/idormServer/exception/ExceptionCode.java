@@ -32,9 +32,9 @@ public enum ExceptionCode {
 
     INVALID_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
     EXPIRED_CODE(UNAUTHORIZED, "이메일 인증 유효시간이 초과되었습니다."),
-
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "로그인이 필요합니다."),
     UNAUTHORIZED_DELETE(UNAUTHORIZED, "삭제 권한이 없습니다."),
+    UNAUTHORIZED_POST(UNAUTHORIZED, "게시글 수정 및 삭제 권한이 없습니다"),
     UNAUTHORIZED_PASSWORD(UNAUTHORIZED, "올바르지 않은 비밀번호 입니다."),
     UNAUTHORIZED_EMAIL(UNAUTHORIZED, "인증이 되지 않은 이메일입니다."),
 

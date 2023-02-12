@@ -132,17 +132,18 @@ public class PhotoService {
 
     /**
      * 커뮤니티 게시글 사진 저장 |
-     * 기존에 저장되어있는 사진이 있다면 해당 게시글의 모든 사진을 aws와 DB에서 삭제한 후 다시 사진을 저장한다. |
+     * 기존에 저장되어있는 사진이 있다면 해당 게시글의 모든 사진을 aws와 DB에서 삭제한 후 다시 사진을 저장한다. 후에 저장한 사진들을 매핑된 Post에도
+     * 저장한다. |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public List<Photo> savePostPhotos(Post post, Member member, List<String> fileNames, List<MultipartFile> files) {
+    public List<Photo> savePostPhotos(Post post, List<String> fileNames, List<MultipartFile> files) {
 
-        String folderName = "community/" + post.getDormNum() + "/" + "post-" + post.getId();
+        String folderName = "community/" + post.getDormCategory() + "/" + "post-" + post.getId();
         List<Photo> photos = new ArrayList<>();
 
         if(post.getPhotos() != null) {
-            deletePostFullPhotos(post, member);
+            deletePostFullPhotos(post);
         }
 
         int fileIndex = 0;
@@ -171,6 +172,7 @@ public class PhotoService {
             fileIndex += 1;
         }
 
+        post.addPostPhotos(photos);
         return photos;
     }
 
@@ -179,9 +181,9 @@ public class PhotoService {
      * 폴더명 (post-{postId}/)을 받으면 해당 폴더 내의 전체 사진을 삭제합니다.
      */
     @Transactional
-    public void deletePostFullPhotos(Post post, Member member) {
+    public void deletePostFullPhotos(Post post) {
 
-        String folderName = "community/" + post.getDormNum() + "/" + "post-" + post.getId();
+        String folderName = "community/" + post.getDormCategory() + "/" + "post-" + post.getId();
 
         List<Photo> foundPhotos = photoRepository.findByFolderName(folderName);
 
@@ -197,12 +199,16 @@ public class PhotoService {
     }
 
     /**
-     * 게시글 삭제 시 커뮤니티 게시글 사진 isDeleted true로 변경
+     * 게시글 삭제 시 해당 게시글의 전체 사진 isDeleted true로 변경
+     * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deletePhotoDeletingPost(Long postId) {
+    public void deletePhotoDeletingPost(Post post) {
         try {
-            List<Photo> foundPhotos = photoRepository.findByPostId(postId);
+            List<Photo> foundPhotos = photoRepository.findByPostId(post.getId());
+            if (foundPhotos.isEmpty()) {
+                return;
+            }
             for (Photo photo : foundPhotos) {
                 photo.removePhoto();
             }

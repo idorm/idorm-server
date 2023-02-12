@@ -14,7 +14,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /**
      * 기숙사 카테고리로 필터링한 게시글들 조회
      */
-    Page<Post> findAllByDormNumAndIsDeletedOrderByCreatedAtDesc(String dormNum, Boolean isDeleted, Pageable pageable);
+    Page<Post> findAllByDormCategoryAndIsDeletedFalseOrderByCreatedAtDesc(Character dormCategory, Pageable pageable);
 
     /**
      * 인기 게시글 찾는 로직
@@ -25,17 +25,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
      */
     @Query(value = "SELECT *" +
             "FROM post p " +
-            "WHERE p.dorm_num = :dormNum AND " +
+            "WHERE p.dorm_category = :dormCategory AND " +
             "p.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -1 WEEK) AND NOW() AND " +
             "p.is_deleted = 0 " +
             "ORDER BY p.likes_count DESC, p.created_at DESC " +
             "LIMIT 10", nativeQuery = true)
-    List<Post> findTopPostsByDormCategory(@Param("dormNum") String dormNum);
+    List<Post> findTopPostsByDormCategory(@Param("dormCategory") Character dormCategory);
 
     /**
      * 멤버 아이디를 통해서 멤버가 작성한 게시글 반환
      */
-    List<Post> findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(Long memberId, Boolean isDeleted);
+    List<Post> findAllByMemberIdAndIsDeletedFalseOrderByUpdatedAtDesc(Long memberId);
 
     /**
      * 멤버가 작성한 삭제된 게시글을 포함한 모든 게시글 반환

@@ -3,6 +3,7 @@ package idorm.idormServer.community.dto.post;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.photo.domain.Photo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -23,6 +24,9 @@ public class PostOneResponseDto {
 
     @ApiModelProperty(position = 1, value="게시글 식별자", example = "1")
     private Long postId;
+
+    @ApiModelProperty(position = 2, value = "기숙사 분류", example = "DORM1", allowableValues = "DORM1, DORM2, DORM3")
+    private DormCategory dormCategory;
 
     @ApiModelProperty(position = 2, value = "게시글 제목", example = "제에목")
     private String title;
@@ -59,14 +63,25 @@ public class PostOneResponseDto {
 
     public PostOneResponseDto(Post post) {
         this.postId = post.getId();
+        this.dormCategory = DormCategory.valueOf(post.getDormCategory());
         this.title = post.getTitle();
         this.content = post.getContent();
-
-        this.likesCount = post.getLikesCount();
-        this.commentsCount = post.getCommentsCount();
-        this.imagesCount = post.getImagesCount();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
+
+        if (post.getPostLikedMembers() != null) {
+            this.likesCount = post.getPostLikedMembers().size();
+        }
+        if (post.getComments() != null) {
+            for (Comment comment : post.getComments()) {
+                if (!comment.getIsDeleted()) {
+                    this.commentsCount += 1;
+                }
+            }
+        }
+        if (post.getPhotos() != null) {
+            this.imagesCount = post.getPhotos().size();
+        }
 
         if(post.getMember() == null) { // 회원 탈퇴의 경우
             this.nickname = null;

@@ -32,4 +32,8 @@ public class PostLikedMember extends BaseEntity {
         this.post = post;
         this.member = member;
     }
+
+    public void removeMember() {
+        this.member = null;
+    }
 }

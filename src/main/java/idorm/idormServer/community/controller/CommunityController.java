@@ -16,6 +16,7 @@ import idorm.idormServer.community.dto.post.PostSaveRequestDto;
 import idorm.idormServer.community.dto.post.PostUpdateRequestDto;
 import idorm.idormServer.exception.CustomException;
 
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.annotations.Api;
@@ -51,15 +52,16 @@ public class CommunityController {
     private final PostLikedMemberService postLikedMemberService;
     private final CommentService commentService;
 
-    @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "페이징 적용으로 page는 페이지 번호를 의미합니다. " +
-            "page는 0부터 시작하며 서버에서 20개 단위로 페이징해서 반환합니다. 서버에서 최신순으로 정렬하여 응답합니다.")
+    @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "- 페이징 적용으로 page는 페이지 번호를 의미합니다.\n " +
+            "- page는 0부터 시작하며 서버에서 20개 단위로 페이징해서 반환합니다.\n " +
+            "- 서버에서 최신순으로 정렬하여 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "POST_MANY_FOUND",
                     content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "DORMCATEGORY_CHARACTER_INVALID, FIELD_REQUIRED"),
+                    description = "DORMCATEGORY_CHARACTER_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
@@ -67,34 +69,31 @@ public class CommunityController {
     })
     @GetMapping("/posts/{dormitory-category}")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsFilteredByCategory(
-            @PathVariable(value = "dormitory-category") String dormNum,
+            @PathVariable(value = "dormitory-category") String dormCategoryRequest,
             @RequestParam(value = "page") int pageNum
     ) {
-        validateDormCategory(dormNum);
+        DormCategory dormCategory = DormCategory.validateType(dormCategoryRequest);
 
-        Page<Post> posts = postService.findManyPostsByDormCategory(dormNum, pageNum);
+        Page<Post> posts = postService.findManyPostsByDormCategory(dormCategory, pageNum);
 
         List<PostDefaultResponseDto> response = posts.stream()
                 .map(post -> new PostDefaultResponseDto(post)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Post 커뮤니티 홈화면 게시글 목록 조회 완료")
+                        .responseCode("POST_MANY_FOUND")
+                        .responseMessage("Post 기숙사 필터링 후 게시글 다건 조회 완료")
                         .data(response)
                         .build()
                 );
     }
 
-    @ApiOperation(value = "기숙사별 인기 게시글 목록 조회", notes = "서버에서 최신순으로 정렬하여 응답합니다.")
+    @ApiOperation(value = "기숙사별 인기 게시글 다건 조회", notes = "- 서버에서 최신순으로 정렬하여 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "TOP_POST_MANY_FOUND",
                     content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO CONTENT"),
             @ApiResponse(responseCode = "400",
                     description = "DORMCATEGORY_CHARACTER_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -104,28 +103,19 @@ public class CommunityController {
     })
     @GetMapping("/posts/{dormitory-category}/top")
     public ResponseEntity<DefaultResponseDto<Object>> findTopPostsFilteredByCategory(
-            @PathVariable("dormitory-category") String dormNum
+            @PathVariable("dormitory-category") String dormCategoryRequest
     ) {
+        DormCategory dormCategory = DormCategory.validateType(dormCategoryRequest);
 
-        validateDormCategory(dormNum);
-
-        List<Post> posts = postService.findTopPosts(dormNum);
-
-        if (posts.isEmpty()) {
-            return ResponseEntity.status(204)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("NO_CONTENT")
-                            .responseMessage("인기 게시글이 없습니다.")
-                            .build());
-        }
+        List<Post> posts = postService.findTopPosts(dormCategory);
 
         List<PostDefaultResponseDto> response = posts.stream()
                 .map(post -> new PostDefaultResponseDto(post)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Post 인기 게시글 목록 조회 완료")
+                        .responseCode("TOP_POST_MANY_FOUND")
+                        .responseMessage("Post 인기 게시글 다건 조회 완료")
                         .data(response)
                         .build()
                 );
@@ -150,7 +140,6 @@ public class CommunityController {
     ) {
 
         Post foundPost = postService.findById(postId);
-        validateDeletedPost(foundPost);
 
         List<Comment> foundComments = commentService.findCommentsByPostId(postId);
         List<CommentParentResponseDto> customResponseDtos = new ArrayList<>();
@@ -189,10 +178,13 @@ public class CommunityController {
                     description = "CREATED",
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FILE_SIZE_EXCEEDED / FILE_COUNT_EXCEEDED / DORMCATEGORY_CHARACTER_INVALID /" +
-                            " FIELD_REQUIRED"),
+                    description = "DORMCATEGORY_CHARACTER_INVALID / FIELD_REQUIRED"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
+            @ApiResponse(responseCode = "413",
+                    description = "FILE_SIZE_EXCEED / FILE_COUNT_EXCEED"),
+            @ApiResponse(responseCode = "415",
+                    description = "FILE_TYPE_UNSUPPORTED"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -205,7 +197,7 @@ public class CommunityController {
             @ModelAttribute @Valid PostSaveRequestDto postRequest
     ) {
 
-        validateDormCategory(postRequest.getDormNum());
+        DormCategory dormCategory = DormCategory.validateType(postRequest.getDormCategory());
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
@@ -217,10 +209,10 @@ public class CommunityController {
         Post createdPost = postService.savePost(
                 member,
                 postRequest.getFiles(),
-                postRequest.getDormNum(),
+                dormCategory,
                 postRequest.getTitle(),
                 postRequest.getContent(),
-                postRequest.getIsAnonymous());
+                postRequest.isAnonymous());
 
         PostOneResponseDto response = new PostOneResponseDto(createdPost);
 
@@ -237,14 +229,18 @@ public class CommunityController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "POST_UPDATED",
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FILE_SIZE_EXCEEDED / FILE_COUNT_EXCEEDED / FIELD_REQUIRED"),
+                    description = "FIELD_REQUIRED"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
                     description = "DELETED_POST / POST_NOT_FOUND"),
+            @ApiResponse(responseCode = "413",
+                    description = "FILE_SIZE_EXCEED / FILE_COUNT_EXCEED"),
+            @ApiResponse(responseCode = "415",
+                    description = "FILE_TYPE_UNSUPPORTED"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
@@ -260,41 +256,35 @@ public class CommunityController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        if(updateRequest.getFiles().size() > 10) {
-            throw new CustomException(FILE_COUNT_EXCEED);
-        }
+        postService.validatePostPhotoCountExceeded(updateRequest.getFiles().size());
 
         Post foundPost = postService.findById(updatePostId);
-        validateDeletedPost(foundPost);
+        postService.validatePostAuthorization(foundPost, member);
 
         postService.updatePost(updatePostId,
-                member,
                 updateRequest.getTitle(),
                 updateRequest.getContent(),
-                updateRequest.getIsAnonymous(),
+                updateRequest.isAnonymous(),
                 updateRequest.getFiles());
 
         PostOneResponseDto response = new PostOneResponseDto(foundPost);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("POST_UPDATED")
                         .responseMessage("Post 수정 완료")
                         .data(response)
                         .build()
                 );
     }
 
-    @ApiOperation(value = "내가 쓴 글 목록 조회", notes = "서버에서 최신순으로 정렬하여 응답힙니다. 이 API의 경우에는 게시글 생성일자가 아닌 " +
-            "수정일자로 정렬합니다.")
+    @ApiOperation(value = "내가 쓴 글 목록 조회", notes = "- 서버에서 최신순으로 정렬하여 응답힙니다.\n " +
+            "- 이 API의 경우에는 게시글 생성일자가 아닌 수정일자로 정렬합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "POST_MANY_FOUND",
                     content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
@@ -307,24 +297,15 @@ public class CommunityController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
-
         List<Post> posts = postService.findPostsByMember(member);
 
-        if(posts.isEmpty()) {
-            return ResponseEntity.status(204)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("NO_CONTENT")
-                            .responseMessage("작성한 게시글이 없습니다.")
-                            .build());
-        }
-
         List<PostDefaultResponseDto> response = posts.stream()
-                .map(post -> new PostDefaultResponseDto(post, post.getMember().getNickname()))
+                .map(post -> new PostDefaultResponseDto(post))
                 .collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("POST_MANY_FOUND")
                         .responseMessage("Post 내가 쓴 글 목록 조회 완료")
                         .data(response)
                         .build()
@@ -335,11 +316,8 @@ public class CommunityController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "LIKED_POST_MANY_FOUND",
                     content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
@@ -355,14 +333,6 @@ public class CommunityController {
 
         List<Long> foundPostIds = postLikedMemberService.findLikedPostIdsByMemberId(loginMemberId);
 
-        if(foundPostIds.isEmpty()) {
-            return ResponseEntity.status(204)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("NO_CONTENT")
-                            .responseMessage("공감한 게시글이 없습니다.")
-                            .build());
-        }
-
         List<Post> resultPosts = new ArrayList<>();
 
         for(Long postId : foundPostIds) {
@@ -375,7 +345,7 @@ public class CommunityController {
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("LIKED_POST_MANY_FOUND")
                         .responseMessage("Post 로그인한 멤버가 공감한 게시글 조회 완료")
                         .data(response)
                         .build()
@@ -385,8 +355,9 @@ public class CommunityController {
     @ApiOperation(value = "게시글 공감하기")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
+                    responseCode = "200",
+                    description = "MEMBER_LIKED_POST",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
@@ -396,7 +367,6 @@ public class CommunityController {
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PutMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> savePostLikes(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
@@ -405,12 +375,12 @@ public class CommunityController {
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
-        postService.addPostLikes(member, post);
+        postLikedMemberService.savePostLikedMember(member, post);
 
-        return ResponseEntity.status(204)
+        return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
-                        .responseMessage("Post 게시글 공감하기 완료")
+                        .responseCode("MEMBER_LIKED_POST")
+                        .responseMessage("Post 게시글 공감 완료")
                         .build()
                 );
     }
@@ -418,16 +388,16 @@ public class CommunityController {
     @ApiOperation(value = "게시글 공감 취소하기")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO CONTENT"),
+                    responseCode = "200",
+                    description = "MEMBER_LIKED_POST_CANCELED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
-                    description = "LIKED_NOT_FOUND / POSTLIKEDMEMBER_NOT_FOUND"),
+                    description = "POST_NOT_FOUND / DELETED_POST / POSTLIKEDMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> deletePostLikes(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
@@ -436,11 +406,11 @@ public class CommunityController {
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
-        postService.deletePostLikes(member, post);
+        postLikedMemberService.deletePostLikedMember(member, post);
 
-        return ResponseEntity.status(204)
+        return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
+                        .responseCode("MEMBER_LIKED_POST_CANCELED")
                         .responseMessage("Post 게시글 공감 삭제 완료")
                         .build()
                 );
@@ -449,14 +419,16 @@ public class CommunityController {
     @ApiOperation(value = "게시글 삭제")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
+                    responseCode = "200",
+                    description = "POST_DELETED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_DELETE"),
+                    description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_POST"),
+            @ApiResponse(responseCode = "404",
+                    description = "POST_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> deletePost(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
@@ -465,12 +437,14 @@ public class CommunityController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        postService.deletePost(postId,member);
+        Post deletePost = postService.findById(postId);
+        postService.validatePostAuthorization(deletePost, member);
+        postService.deletePost(deletePost);
 
-        return ResponseEntity.status(204)
+        return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
-                        .responseMessage("Post 삭제 완료")
+                        .responseCode("POST_DELETED")
+                        .responseMessage("Post 게시글 삭제 완료")
                         .build()
                 );
     }
@@ -479,12 +453,12 @@ public class CommunityController {
      * Comment
      */
     @ApiOperation(value = "댓글/대댓글 저장",
-            notes = "대댓글인 경우, 부모 댓글이 조회되지 않는다면 COMMENT_NOT_FOUND(404)를 반환합니다. 이 때, 부모 댓글이 삭제된 경우도 DB에 " +
-                    "저장되어있으므로 문제 없습니다.")
+            notes = "- 대댓글인 경우, 부모 댓글이 조회되지 않는다면 COMMENT_NOT_FOUND(404)를 반환합니다.\n" +
+                    "- 이 때, 부모 댓글이 삭제된 경우도 DB에 저장되어있으므로 문제 없습니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "CREATED",
+                    description = "COMMENT_SAVED",
                     content = @Content(schema = @Schema(implementation = CommentDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED"),
@@ -495,8 +469,8 @@ public class CommunityController {
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    @PostMapping(value = "/post/{post-id}/comment")
     @ResponseStatus(value = HttpStatus.CREATED)
+    @PostMapping(value = "/post/{post-id}/comment")
     public ResponseEntity<DefaultResponseDto<Object>> saveComment(
             HttpServletRequest request,
             @PathVariable("post-id") Long postId,
@@ -524,8 +498,8 @@ public class CommunityController {
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("CREATED")
-                        .responseMessage("Comment 저장 완료")
+                        .responseCode("COMMENT_SAVED")
+                        .responseMessage("Comment 댓글 저장 완료")
                         .data(response)
                         .build()
                 );
@@ -535,8 +509,8 @@ public class CommunityController {
     @ApiOperation(value = "댓글 삭제")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
+                    responseCode = "200",
+                    description = "COMMENT_DELETED"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_DELETE"),
             @ApiResponse(responseCode = "404",
@@ -544,7 +518,6 @@ public class CommunityController {
             @ApiResponse(responseCode = "500",
                     description = "INTERNAL_SERVER_ERROR"),
     })
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<DefaultResponseDto<Object>> deleteComment(
             HttpServletRequest request,
             @PathVariable("post-id") Long postId,
@@ -555,9 +528,9 @@ public class CommunityController {
         postService.findById(postId);
         commentService.deleteComment(commentId, loginMember);
 
-        return ResponseEntity.status(204)
+        return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("NO_CONTENT")
+                        .responseCode("COMMENT_DELETED")
                         .responseMessage("Comment 삭제 완료")
                         .build()
                 );
@@ -568,11 +541,8 @@ public class CommunityController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "COMMENT_MANY_FOUND",
                     content = @Content(schema = @Schema(implementation = CommentDefaultResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "NO_CONTENT"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
@@ -587,37 +557,15 @@ public class CommunityController {
 
         List<Comment> foundComments = commentService.findCommentsByMember(loginMember);
 
-        if(foundComments.isEmpty()) {
-            return ResponseEntity.status(204)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("NO_CONTENT")
-                            .responseMessage("조회할 댓글이 없습니다.")
-                            .build()
-                    );
-        }
-
         List<CommentDefaultResponseDto> response = foundComments.stream()
                 .map(comment -> new CommentDefaultResponseDto(comment)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("COMMENT_MANY_FOUND")
                         .responseMessage("Comment 로그인한 멤버가 작성한 모든 댓글 조회 완료")
                         .data(response)
                         .build()
                 );
-    }
-
-
-    private void validateDormCategory(String dormNum) {
-        if(!dormNum.equals("DORM1") && !dormNum.equals("DORM2") && !dormNum.equals("DORM3")) {
-            throw new CustomException(DORMCATEGORY_CHARACTER_INVALID);
-        }
-    }
-
-    private void validateDeletedPost(Post post) {
-        if(post.getIsDeleted() == true) {
-            throw new CustomException(DELETED_POST);
-        }
     }
 }
