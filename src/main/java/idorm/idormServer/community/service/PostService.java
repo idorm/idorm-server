@@ -175,7 +175,7 @@ public class PostService {
             Page<Post> foundPosts =
                     postRepository.findAllByDormCategoryAndIsDeletedFalseOrderByCreatedAtDesc(
                             dormCategory.getType(),
-                            PageRequest.of(pageNum, 20));
+                            PageRequest.of(pageNum, 10));
             return foundPosts;
         } catch (RuntimeException e) {
             e.getStackTrace();
