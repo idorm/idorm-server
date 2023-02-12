@@ -537,8 +537,8 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "내가 작성한 댓글 목록 조회", notes = "서버에서 최신순으로 정렬하여 응답합니다. 이 API의 경우에는 댓글 생성일자가 아닌 " +
-            "수정일자로 정렬합니다.")
+    @ApiOperation(value = "내가 작성한 댓글 목록 조회", notes = "- 서버에서 최신순으로 정렬하여 응답합니다. \n" +
+            "- 댓글은 수정 기능을 제공하지 않으므로 생성일자로 정렬합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",

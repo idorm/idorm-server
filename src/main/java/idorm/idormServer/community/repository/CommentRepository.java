@@ -9,7 +9,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     /**
      * 멤버가 작성한 모든 댓글 반환
      */
-    List<Comment> findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(Long memberId, Boolean isDeleted);
+    List<Comment> findAllByMemberIdAndIsDeletedFalseOrderByCreatedAtDesc(Long memberId);
 
     /**
      * 게시글 식별자를 통해서 게시글 내에서 조회되는 모든 댓글 반환

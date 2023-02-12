@@ -109,7 +109,7 @@ public class CommentService {
 
         try {
             List<Comment> commentsByMemberId =
-                    commentRepository.findAllByMemberIdAndIsDeletedOrderByUpdatedAtDesc(member.getId(), false);
+                    commentRepository.findAllByMemberIdAndIsDeletedFalseOrderByCreatedAtDesc(member.getId());
             return commentsByMemberId;
         } catch (RuntimeException e) {
             e.getStackTrace();
