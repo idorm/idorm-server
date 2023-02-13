@@ -21,11 +21,14 @@ public class CommentParentResponseDto {
     @ApiModelProperty(position = 1, value= "댓글 식별자", required = true)
     private Long commentId;
 
+    @ApiModelProperty(position = 3, value = "회원 식별자")
+    private Long memberId;
+
     @ApiModelProperty(position = 2, value= "댓글 삭제 여부", required = true)
     private Boolean isDeleted;
 
-    @ApiModelProperty(position = 3, value = "닉네임", allowableValues = "null(탈퇴한 회원), anonymous(익명), 응철이(익명 아님)",
-            example = "anonymous", required = true)
+    @ApiModelProperty(position = 3, value = "닉네임", allowableValues = "null(탈퇴한 회원), 익명1, 응철이",
+            example = "익명1", required = true)
     private String nickname;
 
     @ApiModelProperty(position = 4, value = "프로필사진 주소", allowableValues = "null(프로필사진 없음/익명), url(익명 아님)",
@@ -41,18 +44,20 @@ public class CommentParentResponseDto {
     @ApiModelProperty(position = 7, value = "대댓글들")
     private List<CommentDefaultResponseDto> subComments = new ArrayList<>();
 
+    public CommentParentResponseDto(String anonymousNickname,
+                                    Comment parentComment,
+                                    List<CommentDefaultResponseDto> subComments) {
 
-    public CommentParentResponseDto(Comment parentComment, List<CommentDefaultResponseDto> subComments) {
-
-        this.isDeleted = parentComment.getIsDeleted();
         this.commentId = parentComment.getId();
+        this.memberId = parentComment.getMember().getId();
+        this.isDeleted = parentComment.getIsDeleted();
         this.content = parentComment.getContent();
         this.createdAt = parentComment.getCreatedAt();
 
         if (parentComment.getMember() == null) {
             this.nickname = null;
         } else if(parentComment.getIsAnonymous() == true) {
-            this.nickname = "anonymous";
+            this.nickname = anonymousNickname;
         } else if(parentComment.getIsAnonymous() == false) {
             this.nickname = parentComment.getMember().getNickname();
             if(parentComment.getMember().getProfilePhoto() != null) {
@@ -60,8 +65,10 @@ public class CommentParentResponseDto {
             }
         }
 
-        for (CommentDefaultResponseDto subComment : subComments) {
-            this.subComments.add(subComment);
+        if (subComments != null) {
+            for (CommentDefaultResponseDto subComment : subComments) {
+                this.subComments.add(subComment);
+            }
         }
     }
 }

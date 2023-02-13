@@ -14,7 +14,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     /**
      * 게시글 식별자를 통해서 게시글 내에서 조회되는 모든 댓글 반환
      */
-    List<Comment> findAllByPostIdOrderByCreatedAtDesc(Long postId);
+    List<Comment> findAllByPostIdOrderByCreatedAtAsc(Long postId);
 
     /**
      * 부모 댓글 식별자를 통해서 조회되는 모든 대댓글 반환

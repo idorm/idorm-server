@@ -124,7 +124,7 @@ public class CommentService {
     public List<Comment> findCommentsByPostId(Long postId) {
         try {
             List<Comment> foundComments =
-                    commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
+                    commentRepository.findAllByPostIdOrderByCreatedAtAsc(postId);
             return foundComments;
         } catch (RuntimeException e) {
             e.getStackTrace();

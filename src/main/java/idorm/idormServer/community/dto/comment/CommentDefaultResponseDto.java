@@ -22,35 +22,59 @@ public class CommentDefaultResponseDto {
     @ApiModelProperty(position = 2, value= "부모 댓글 식별자")
     private Long parentCommentId;
 
-    @ApiModelProperty(position = 3, value= "댓글 삭제 여부", required = true)
+    @ApiModelProperty(position = 3, value = "회원 식별자")
+    private Long memberId;
+
+    @ApiModelProperty(position = 4, value= "댓글 삭제 여부", required = true)
     private Boolean isDeleted;
 
-    @ApiModelProperty(position = 4, value = "닉네임", allowableValues = "null(탈퇴한 회원), anonymous(익명), 응철이(익명 아님)",
-            example = "anonymous", required = true)
+    @ApiModelProperty(position = 5, value = "닉네임", allowableValues = "null(탈퇴한 회원), 익명1, 응철이",
+            example = "익명1", required = true)
     private String nickname;
 
-    @ApiModelProperty(position = 5, value = "프로필사진 주소", allowableValues = "null(프로필사진 없음/익명), url(익명 아님)",
+    @ApiModelProperty(position = 6, value = "프로필사진 주소", allowableValues = "null(프로필사진 없음/익명), url(익명 아님)",
             example = "null", required = true)
     private String profileUrl;
 
-    @ApiModelProperty(position = 6, value = "댓글 내용", required = true)
+    @ApiModelProperty(position = 7, value = "댓글 내용", required = true)
     private String content;
 
-    @ApiModelProperty(position = 7, value = "생성일자", required = true)
+    @ApiModelProperty(position = 8, value = "생성일자", required = true)
     private LocalDateTime createdAt;
 
     public CommentDefaultResponseDto(Comment comment) {
 
-        this.isDeleted = comment.getIsDeleted();
         this.commentId = comment.getId();
         this.parentCommentId = comment.getParentCommentId();
+        this.memberId = comment.getMember().getId();
+        this.isDeleted = comment.getIsDeleted();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
 
         if (comment.getMember() == null) {
             this.nickname = null;
         } else if(comment.getIsAnonymous() == true) {
-            this.nickname = "anonymous";
+            this.nickname = "익명";
+        } else if(comment.getIsAnonymous() == false) {
+            this.nickname = comment.getMember().getNickname();
+            if(comment.getMember().getProfilePhoto() != null) {
+                this.profileUrl = comment.getMember().getProfilePhoto().getPhotoUrl();
+            }
+        }
+    }
+    public CommentDefaultResponseDto(String anonymousNickname, Comment comment) {
+
+        this.commentId = comment.getId();
+        this.parentCommentId = comment.getParentCommentId();
+        this.memberId = comment.getMember().getId();
+        this.isDeleted = comment.getIsDeleted();
+        this.content = comment.getContent();
+        this.createdAt = comment.getCreatedAt();
+
+        if (comment.getMember() == null) {
+            this.nickname = null;
+        } else if(comment.getIsAnonymous() == true) {
+            this.nickname = anonymousNickname;
         } else if(comment.getIsAnonymous() == false) {
             this.nickname = comment.getMember().getNickname();
             if(comment.getMember().getProfilePhoto() != null) {

@@ -7,14 +7,13 @@ import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.dto.comment.CommentParentResponseDto;
 import idorm.idormServer.community.dto.comment.CommentDefaultRequestDto;
 import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
-import idorm.idormServer.community.dto.post.PostDefaultResponseDto;
+import idorm.idormServer.community.dto.post.PostAbstractResponseDto;
 import idorm.idormServer.community.dto.post.PostOneResponseDto;
 import idorm.idormServer.community.service.CommentService;
 import idorm.idormServer.community.service.PostLikedMemberService;
 import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.community.dto.post.PostSaveRequestDto;
 import idorm.idormServer.community.dto.post.PostUpdateRequestDto;
-import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
@@ -26,6 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,8 +37,6 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Api(tags = "커뮤니티")
 @RestController
@@ -59,7 +57,7 @@ public class CommunityController {
             @ApiResponse(
                     responseCode = "200",
                     description = "POST_MANY_FOUND",
-                    content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = PostAbstractResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "DORMCATEGORY_CHARACTER_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -76,8 +74,8 @@ public class CommunityController {
 
         Page<Post> posts = postService.findManyPostsByDormCategory(dormCategory, pageNum);
 
-        List<PostDefaultResponseDto> response = posts.stream()
-                .map(post -> new PostDefaultResponseDto(post)).collect(Collectors.toList());
+        List<PostAbstractResponseDto> response = posts.stream()
+                .map(post -> new PostAbstractResponseDto(post)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -93,7 +91,7 @@ public class CommunityController {
             @ApiResponse(
                     responseCode = "200",
                     description = "TOP_POST_MANY_FOUND",
-                    content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = PostAbstractResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "DORMCATEGORY_CHARACTER_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -109,8 +107,8 @@ public class CommunityController {
 
         List<Post> posts = postService.findTopPosts(dormCategory);
 
-        List<PostDefaultResponseDto> response = posts.stream()
-                .map(post -> new PostDefaultResponseDto(post)).collect(Collectors.toList());
+        List<PostAbstractResponseDto> response = posts.stream()
+                .map(post -> new PostAbstractResponseDto(post)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -121,11 +119,11 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "게시글 단건 조회")
+    @ApiOperation(value = "게시글 단건 조회", notes = "- 댓글은 과거순으로 정렬됩니다.\n")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
+                    description = "POST_FOUND",
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
@@ -136,35 +134,68 @@ public class CommunityController {
     })
     @GetMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> findOnePost(
+            HttpServletRequest request,
             @PathVariable("post-id") Long postId
     ) {
-
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(loginMemberId);
+        
         Post foundPost = postService.findById(postId);
-
         List<Comment> foundComments = commentService.findCommentsByPostId(postId);
-        List<CommentParentResponseDto> customResponseDtos = new ArrayList<>();
-        for(Comment comment : foundComments) {
-            // 부모 식별자를 가지고 있지 않다면, 해당 부모 식별자를 가지고 있는 댓글 리스트와 함께 dto 생성
-            if(comment.getParentCommentId() == null) { // 대댓글이 아닌 댓글임
-                List<Comment> foundSubComments =
-                        commentService.findSubCommentsByParentCommentId(postId, comment.getId());
 
-                List<CommentDefaultResponseDto> defaultResponseDtos = new ArrayList<>();
-                for (Comment subComment : foundSubComments) {
-                    CommentDefaultResponseDto commentDefaultResponseDto = new CommentDefaultResponseDto(subComment);
-                    defaultResponseDtos.add(commentDefaultResponseDto);
+        List<Member> anonymousMembers = new ArrayList<>();
+        List<CommentParentResponseDto> parentCommentResponses = new ArrayList<>();
+
+        for(Comment comment : foundComments) {
+
+            if(comment.getParentCommentId() == null) { // 대댓글이 아닌 댓글
+
+                String parentAnonymousNickname = null;
+
+                if (comment.getMember() != null && comment.getIsAnonymous() == true) {
+                    if (!anonymousMembers.contains(comment.getMember())) {
+                        anonymousMembers.add(comment.getMember());
+                    }
+                    int index = anonymousMembers.indexOf(comment.getMember()) + 1;
+                    parentAnonymousNickname = "익명" + index;
                 }
 
-                CommentParentResponseDto customResponseDto = new CommentParentResponseDto(comment, defaultResponseDtos);
-                customResponseDtos.add(customResponseDto);
+                List<Comment> subComments =
+                        commentService.findSubCommentsByParentCommentId(postId, comment.getId());
+
+                if (subComments.isEmpty()) {
+                    parentCommentResponses.add(new CommentParentResponseDto(parentAnonymousNickname,
+                            comment,
+                            null));
+                    continue;
+                }
+
+                List<CommentDefaultResponseDto> subCommentDtos = new ArrayList<>();
+                for (Comment subComment : subComments) {
+
+                    String subCommentAnonymousNickname = null;
+
+                    if (subComment.getMember() != null && subComment.getIsAnonymous() == true) {
+                        if (!anonymousMembers.contains(subComment.getMember())) {
+                            anonymousMembers.add(subComment.getMember());
+                        }
+                        int index = anonymousMembers.indexOf(subComment.getMember()) + 1;
+                        subCommentAnonymousNickname = "익명" + index;
+                    }
+
+                    CommentDefaultResponseDto subCommentDto = new CommentDefaultResponseDto(subCommentAnonymousNickname,
+                            subComment);
+                    subCommentDtos.add(subCommentDto);
+                }
+                parentCommentResponses.add(new CommentParentResponseDto(parentAnonymousNickname, comment, subCommentDtos));
             }
         }
-
-        PostOneResponseDto response = new PostOneResponseDto(foundPost);
+        boolean memberLikedPost = postLikedMemberService.isMemberLikedPost(member, foundPost);
+        PostOneResponseDto response = new PostOneResponseDto(foundPost, parentCommentResponses, memberLikedPost);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
+                        .responseCode("POST_FOUND")
                         .responseMessage("Post 단건 조회 완료")
                         .data(response)
                         .build()
@@ -175,7 +206,7 @@ public class CommunityController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "CREATED",
+                    description = "POST_SAVED",
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "DORMCATEGORY_CHARACTER_INVALID / FIELD_REQUIRED"),
@@ -213,7 +244,7 @@ public class CommunityController {
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("CREATED")
+                        .responseCode("POST_SAVED")
                         .responseMessage("Post 저장 완료")
                         .data(response)
                         .build()
@@ -261,13 +292,10 @@ public class CommunityController {
                 updateRequest.getIsAnonymous(),
                 updateRequest.getFiles());
 
-        PostOneResponseDto response = new PostOneResponseDto(foundPost);
-
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("POST_UPDATED")
                         .responseMessage("Post 수정 완료")
-                        .data(response)
                         .build()
                 );
     }
@@ -278,7 +306,7 @@ public class CommunityController {
             @ApiResponse(
                     responseCode = "200",
                     description = "POST_MANY_FOUND",
-                    content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = PostAbstractResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
@@ -293,8 +321,8 @@ public class CommunityController {
         Member member = memberService.findById(loginMemberId);
         List<Post> posts = postService.findPostsByMember(member);
 
-        List<PostDefaultResponseDto> response = posts.stream()
-                .map(post -> new PostDefaultResponseDto(post))
+        List<PostAbstractResponseDto> response = posts.stream()
+                .map(post -> new PostAbstractResponseDto(post))
                 .collect(Collectors.toList());
 
         return ResponseEntity.status(200)
@@ -311,7 +339,7 @@ public class CommunityController {
             @ApiResponse(
                     responseCode = "200",
                     description = "LIKED_POST_MANY_FOUND",
-                    content = @Content(schema = @Schema(implementation = PostDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = PostAbstractResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "500",
@@ -334,8 +362,8 @@ public class CommunityController {
             resultPosts.add(post);
         }
 
-        List<PostDefaultResponseDto> response = resultPosts.stream()
-                .map(post -> new PostDefaultResponseDto(post)).collect(Collectors.toList());
+        List<PostAbstractResponseDto> response = resultPosts.stream()
+                .map(post -> new PostAbstractResponseDto(post)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -427,7 +455,6 @@ public class CommunityController {
     public ResponseEntity<DefaultResponseDto<Object>> deletePost(
             HttpServletRequest request2, @PathVariable("post-id") Long postId
     ) {
-
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
@@ -505,7 +532,8 @@ public class CommunityController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "COMMENT_DELETED"),
+                    description = "COMMENT_DELETED",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_COMMENT"),
             @ApiResponse(responseCode = "404",
