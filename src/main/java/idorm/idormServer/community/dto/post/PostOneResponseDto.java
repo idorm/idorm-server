@@ -2,7 +2,6 @@ package idorm.idormServer.community.dto.post;
 
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
 import idorm.idormServer.community.dto.comment.CommentParentResponseDto;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.photo.domain.Photo;
@@ -66,11 +65,8 @@ public class PostOneResponseDto {
     @ApiModelProperty(position = 14, value = "업로드한 사진 주소 목록")
     private List<String> photoUrls = new ArrayList<>();
 
-    @ApiModelProperty(position = 15, value = "댓글/대댓글 목록(삭제 예정)")
-    private List<CommentDefaultResponseDto> comments = new ArrayList<>();
-
-    @ApiModelProperty(position = 15, value = "댓글/대댓글 목록(수정 버전)")
-    private List<CommentParentResponseDto> parentComments = new ArrayList<>();
+    @ApiModelProperty(position = 15, value = "댓글/대댓글 목록")
+    private List<CommentParentResponseDto> comments = new ArrayList<>();
 
     // 게시글 저장 시에만 사용
     public PostOneResponseDto(Post post) {
@@ -158,7 +154,7 @@ public class PostOneResponseDto {
 
         if(comments != null) {
             for(CommentParentResponseDto comment : comments) {
-                this.parentComments.add(comment);
+                this.comments.add(comment);
             }
         }
     }
