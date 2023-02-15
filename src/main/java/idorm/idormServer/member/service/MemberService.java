@@ -170,9 +170,16 @@ public class MemberService {
     public void deleteMember(Member member) {
 
         emailService.deleteEmail(emailService.findByEmail(member.getEmail()));
-        photoService.deleteProfilePhotos(member);
-        postService.updateMemberNull(member);
-        postLikedMemberService.updateMemberNull(member);
+
+        if (member.getProfilePhoto() != null)
+            photoService.deleteProfilePhotos(member);
+
+        if (member.getPosts() != null)
+            postService.updateMemberNull(member);
+
+        if (member.getPostLikedMembers() != null)
+            postLikedMemberService.updateMemberNull(member);
+
         try {
             memberRepository.delete(member);
         } catch (RuntimeException e) {
