@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -224,21 +223,23 @@ public class CommunityController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DefaultResponseDto<Object>> savePost(
-            HttpServletRequest request,
-            @ModelAttribute @Valid PostSaveRequestDto postRequest
+            HttpServletRequest request2,
+            @ModelAttribute PostSaveRequestDto request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        postService.validatePostPhotoCountExceeded(postRequest.getFiles().size());
+        DormCategory dormCategory = DormCategory.validateType(request.getDormCategory());
+        postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
+        postService.validatePostPhotoCountExceeded(request.getFiles().size());
 
         Post createdPost = postService.savePost(
                 member,
-                postRequest.getFiles(),
-                DormCategory.validateType(postRequest.getDormCategory()),
-                postRequest.getTitle(),
-                postRequest.getContent(),
-                postRequest.getIsAnonymous());
+                request.getFiles(),
+                dormCategory,
+                request.getTitle(),
+                request.getContent(),
+                request.getIsAnonymous());
 
         PostOneResponseDto response = new PostOneResponseDto(createdPost);
 
@@ -274,23 +275,24 @@ public class CommunityController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DefaultResponseDto<Object>> updatePost(
-            HttpServletRequest request,
+            HttpServletRequest request2,
             @PathVariable("post-id") Long updatePostId,
-            @ModelAttribute @Valid PostUpdateRequestDto updateRequest
+            @ModelAttribute PostUpdateRequestDto request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        postService.validatePostPhotoCountExceeded(updateRequest.getFiles().size());
+        postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
+        postService.validatePostPhotoCountExceeded(request.getFiles().size());
 
         Post foundPost = postService.findById(updatePostId);
         postService.validatePostAuthorization(foundPost, member);
 
         postService.updatePost(updatePostId,
-                updateRequest.getTitle(),
-                updateRequest.getContent(),
-                updateRequest.getIsAnonymous(),
-                updateRequest.getFiles());
+                request.getTitle(),
+                request.getContent(),
+                request.getIsAnonymous(),
+                request.getFiles());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

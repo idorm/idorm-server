@@ -2,7 +2,6 @@ package idorm.idormServer.member.service;
 
 import idorm.idormServer.community.service.PostLikedMemberService;
 import idorm.idormServer.community.service.PostService;
-import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
 
@@ -54,7 +53,6 @@ public class MemberService {
     /**
      * 회원 생성 |
      */
-
     @Transactional
     public Member createMember(MemberSaveRequestDto request) {
 

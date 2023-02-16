@@ -21,7 +21,7 @@ public enum DormCategory {
     public static DormCategory validateType(String dormCategory) {
         try {
             return DormCategory.valueOf(dormCategory);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             throw new CustomException(DORMCATEGORY_CHARACTER_INVALID);
         }
     }

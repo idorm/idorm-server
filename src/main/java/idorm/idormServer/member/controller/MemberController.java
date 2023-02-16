@@ -45,8 +45,6 @@ public class MemberController {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final EmailService emailService;
-//    private final LikedMemberService likedMemberService;
-//    private final DislikedMemberService dislikedMemberService;
 
     @Value("${DB_USERNAME}")
     private String ENV_USERNAME;

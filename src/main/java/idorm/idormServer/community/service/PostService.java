@@ -234,4 +234,26 @@ public class PostService {
             throw new CustomException(FILE_COUNT_EXCEED);
         }
     }
+
+    /**
+     * 게시글 저장 및 수정 시 multipart/form-data 타입의 request dto 검증 |
+     * 400(FIELD_REQUIRED)
+     * 400(TITLE_LENGTH_INVALID)
+     * 400(CONTENT_LENGTH_INVALID)
+     */
+    public void validatePostRequest(String title, String content, Boolean isAnonymous) {
+
+        if (title == null || title.isEmpty())
+            throw new CustomException(FIELD_REQUIRED);
+        if (content == null || content.isEmpty())
+            throw new CustomException(FIELD_REQUIRED);
+        if (isAnonymous == null)
+            throw new CustomException(FIELD_REQUIRED);
+
+        if (!(title.length() >= 1 && title.length() <= 30))
+            throw new CustomException(TITLE_LENGTH_INVALID);
+        if (!(content.length() >= 1 && content.length() <= 300))
+            throw new CustomException(CONTENT_LENGTH_INVALID);
+    }
+
 }
