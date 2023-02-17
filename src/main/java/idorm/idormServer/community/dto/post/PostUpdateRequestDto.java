@@ -21,6 +21,9 @@ public class PostUpdateRequestDto {
     @ApiModelProperty(position = 3, required = true, value = "익명 여부")
     private Boolean isAnonymous;
 
-    @ApiModelProperty(position = 4, value = "게시글 사진들")
+    @ApiModelProperty(position = 4, value = "삭제할 게시글 사진 식별자들")
+    private List<Long> deletePostPhotoIds = new ArrayList<>();
+
+    @ApiModelProperty(position = 5, value = "게시글 사진들")
     private List<MultipartFile> files = new ArrayList<>();
 }

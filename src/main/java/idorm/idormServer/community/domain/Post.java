@@ -62,10 +62,18 @@ public class Post extends BaseEntity {
         this.isAnonymous = isAnonymous;
     }
 
-    public void addPostPhotos(List<Photo> photos) {
-        for (Photo photo : photos) {
-            this.photos.add(photo);
+    public void addPostPhoto(Photo postPhoto) {
+        this.photos.add(postPhoto);
+    }
+
+    public List<Photo> getPostPhotosIsDeletedFalse() {
+        List<Photo> uploadedPhotos = new ArrayList<>();
+        for (Photo photo : this.photos) {
+            if (!photo.getIsDeleted()) {
+                uploadedPhotos.add(photo);
+            }
         }
+        return uploadedPhotos;
     }
 
     public void incrementPostLikedCnt() {

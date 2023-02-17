@@ -13,9 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
@@ -49,37 +47,16 @@ public class PostService {
     }
 
     /**
-     * Post 게시글 사진 추가 메소드 |
-     */
-    private List<Photo> savePostPhotos(Post post, List<MultipartFile> files) {
-
-        int index = 1;
-        List<String> fileNames = new ArrayList<>();
-
-        for(MultipartFile file : files) {
-            String fileName = index + file.getContentType().replace("image/", ".");;
-            fileNames.add(fileName);
-            index += 1;
-        }
-
-        List<Photo> savedPhotos = photoService.savePostPhotos(post, fileNames, files);
-
-        return savedPhotos;
-    }
-
-    /**
      * Post 저장 |
      * Photo까지 저장되어야한다.
      */
     @Transactional
     public Post savePost(Member member,
-                     List<MultipartFile> files,
                      DormCategory dormCategory,
                      String title,
                      String content,
                      Boolean isAnonymous
     ) {
-
         try {
             Post createdPost = Post.builder()
                     .member(member)
@@ -89,10 +66,7 @@ public class PostService {
                     .isAnonymous(isAnonymous)
                     .build();
 
-            Post savedPost = postRepository.save(createdPost);
-            savePostPhotos(savedPost, files);
-
-            return createdPost;
+            return postRepository.save(createdPost);
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
@@ -101,32 +75,23 @@ public class PostService {
 
 
     /**
-     * Post 게시글 수정
-     * 작성한 멤버가 맞는지 확인 후 게시글 식별자를 통해 게시글을 수정합니다.
-     * 수정할 수 있는 요소는 제목, 내용, 익명여부, 사진 입니다.
+     * Post 게시글 수정 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void updatePost(
-            Long postId,
+            Post updatePost,
             String title,
             String content,
             Boolean isAnonymous,
-            List<MultipartFile> files
+            List<Photo> deletePostPhotos
     ) {
-
-        Post foundPost = findById(postId);
-
-        // TODO: 수정된 사진만 수정되게 변경
-        photoService.deletePostFullPhotos(foundPost);
-
         try {
-            foundPost.updatePost(title, content, isAnonymous);
+            for (Photo deletePostPhoto : deletePostPhotos) {
+                deletePostPhoto.delete();
+            }
 
-            List<Photo> updatedPhotos = savePostPhotos(foundPost, files);
-            foundPost.addPostPhotos(updatedPhotos);
-
-            postRepository.save(foundPost);
-
+            updatePost.updatePost(title, content, isAnonymous);
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
@@ -216,11 +181,18 @@ public class PostService {
     }
 
     /**
+     * 특정 게시글의 삭제되지 않은 게시글 사진들 조회 |
+     */
+    public List<Photo> findPostPhotosIsDeletedFalse(Post post) {
+        return post.getPostPhotosIsDeletedFalse();
+    }
+
+    /**
      * 게시글 수정 / 삭제 권한 검증 |
-     * 401(POST_NOT_ALLOWED)
+     * 401(UNAUTHORIZED_POST)
      */
     public void validatePostAuthorization(Post post, Member member) {
-        if (!member.getId().equals(post.getMember().getId())) {
+        if (post.getMember() == null || !member.getId().equals(post.getMember().getId())) {
             throw new CustomException(UNAUTHORIZED_POST);
         }
     }

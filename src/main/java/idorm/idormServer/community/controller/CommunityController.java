@@ -18,6 +18,8 @@ import idorm.idormServer.community.dto.post.PostUpdateRequestDto;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
+import idorm.idormServer.photo.domain.Photo;
+import idorm.idormServer.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,6 +50,7 @@ public class CommunityController {
     private final PostService postService;
     private final PostLikedMemberService postLikedMemberService;
     private final CommentService commentService;
+    private final PhotoService photoService;
 
     @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "- 페이징 적용으로 page는 페이지 번호를 의미합니다.\n " +
             "- page는 0부터 시작하며 서버에서 10개 단위로 페이징해서 반환합니다.\n " +
@@ -208,7 +211,8 @@ public class CommunityController {
                     description = "POST_SAVED",
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "DORMCATEGORY_CHARACTER_INVALID / FIELD_REQUIRED"),
+                    description = "DORMCATEGORY_CHARACTER_INVALID / FIELD_REQUIRED / TITLE_LENGTH_INVALID / " +
+                            "CONTENT_LENGTH_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "413",
@@ -233,15 +237,16 @@ public class CommunityController {
         postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
         postService.validatePostPhotoCountExceeded(request.getFiles().size());
 
-        Post createdPost = postService.savePost(
+        Post post = postService.savePost(
                 member,
-                request.getFiles(),
                 dormCategory,
                 request.getTitle(),
                 request.getContent(),
                 request.getIsAnonymous());
 
-        PostOneResponseDto response = new PostOneResponseDto(createdPost);
+        photoService.savePostPhotos(post, request.getFiles());
+
+        PostOneResponseDto response = new PostOneResponseDto(post);
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -252,18 +257,19 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "게시글 수정", notes = "- 첨부 파일이 없다면 null 이 아닌 빈 배열로 보내주세요.")
+    @ApiOperation(value = "게시글 수정", notes = "- 첨부 파일이 없다면 null 이 아닌 빈 배열로 보내주세요.\n" +
+            "- 삭제할 게시글 사진(deletePostPhotoIds)이 없다면 404(POST_PHOTO_NOT_FOUND)를 보냅니다. ")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "POST_UPDATED",
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED"),
+                    description = "FIELD_REQUIRED / TITLE_LENGTH_INVALID / CONTENT_LENGTH_INVALID"),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
+                    description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_POST"),
             @ApiResponse(responseCode = "404",
-                    description = "DELETED_POST / POST_NOT_FOUND"),
+                    description = "DELETED_POST / POST_NOT_FOUND / POST_PHOTO_NOT_FOUND"),
             @ApiResponse(responseCode = "413",
                     description = "FILE_SIZE_EXCEED / FILE_COUNT_EXCEED"),
             @ApiResponse(responseCode = "415",
@@ -281,23 +287,36 @@ public class CommunityController {
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
+        Post post = postService.findById(updatePostId);
 
+        postService.validatePostAuthorization(post, member);
         postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
-        postService.validatePostPhotoCountExceeded(request.getFiles().size());
 
-        Post foundPost = postService.findById(updatePostId);
-        postService.validatePostAuthorization(foundPost, member);
+        List<Photo> savedPostPhotos = postService.findPostPhotosIsDeletedFalse(post);
+        List<Photo> deletePostphotos = new ArrayList<>();
 
-        postService.updatePost(updatePostId,
+        for (Long deletePostPhotoId : request.getDeletePostPhotoIds()) {
+            deletePostphotos.add(photoService.findById(post.getId(), deletePostPhotoId));
+        }
+
+        postService.validatePostPhotoCountExceeded(savedPostPhotos.size() - deletePostphotos.size()
+                + request.getFiles().size());
+
+        postService.updatePost(post,
                 request.getTitle(),
                 request.getContent(),
                 request.getIsAnonymous(),
-                request.getFiles());
+                deletePostphotos);
+
+        photoService.savePostPhotos(post, request.getFiles());
+
+        PostOneResponseDto response = new PostOneResponseDto(post);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("POST_UPDATED")
                         .responseMessage("Post 수정 완료")
+                        .data(response)
                         .build()
                 );
     }

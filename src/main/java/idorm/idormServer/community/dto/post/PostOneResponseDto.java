@@ -62,8 +62,8 @@ public class PostOneResponseDto {
     @ApiModelProperty(position = 13, value = "수정일자")
     private LocalDateTime updatedAt;
 
-    @ApiModelProperty(position = 14, value = "업로드한 사진 주소 목록")
-    private List<String> photoUrls = new ArrayList<>();
+    @ApiModelProperty(position = 14, value = "게시글 업로드 사진들")
+    private List<PostPhotoDefaultResponseDto> postPhotos = new ArrayList<>();
 
     @ApiModelProperty(position = 15, value = "댓글/대댓글 목록")
     private List<CommentParentResponseDto> comments = new ArrayList<>();
@@ -105,8 +105,10 @@ public class PostOneResponseDto {
         }
 
         if(post.getPhotos() != null) {
-            for(Photo photo : post.getPhotos()) {
-                this.photoUrls.add(photo.getPhotoUrl());
+            List<Photo> savedPostPhotos = post.getPhotos();
+            for(Photo photo : savedPostPhotos) {
+                if (!photo.getIsDeleted())
+                    this.postPhotos.add(new PostPhotoDefaultResponseDto(photo));
             }
         }
     }
@@ -147,8 +149,10 @@ public class PostOneResponseDto {
         }
 
         if(post.getPhotos() != null) {
-            for(Photo photo : post.getPhotos()) {
-                this.photoUrls.add(photo.getPhotoUrl());
+            List<Photo> savedPostPhotos = post.getPhotos();
+            for(Photo photo : savedPostPhotos) {
+                if (!photo.getIsDeleted())
+                    this.postPhotos.add(new PostPhotoDefaultResponseDto(photo));
             }
         }
 

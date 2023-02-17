@@ -69,6 +69,7 @@ public enum ExceptionCode {
     COMMENT_NOT_FOUND(NOT_FOUND, "등록된 댓글이 없습니다."),
     POSTLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "멤버가 게시글에 공감하지 않았습니다."),
     POST_NOT_FOUND(NOT_FOUND, "등록된 게시글이 없습니다."),
+    POST_PHOTO_NOT_FOUND(NOT_FOUND, "등록된 게시글 사진이 없습니다."),
     LIKED_NOT_FOUND(NOT_FOUND, "등록된 공감이 없습니다."),
     CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 캘린더 정보가 없습니다."),
 

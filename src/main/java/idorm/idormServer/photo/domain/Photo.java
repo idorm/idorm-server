@@ -55,7 +55,7 @@ public class Photo extends BaseEntity {
         this.fileName = fileName;
     }
 
-    public void removePhoto() {
+    public void delete() {
         this.isDeleted = true;
     }
 }

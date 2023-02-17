@@ -61,11 +61,11 @@ public class PhotoService {
     }
 
     /**
-     * DB에 회원 프로필 사진 저장 |
+     * DB에 Photo 저장 |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void saveProfilePhoto(Photo photo) {
+    public void save(Photo photo) {
         try {
             photoRepository.save(photo);
         } catch (RuntimeException e) {
@@ -90,7 +90,7 @@ public class PhotoService {
                 .folderName(folderName)
                 .member(member)
                 .build();
-        saveProfilePhoto(createdProfilePhoto);
+        save(createdProfilePhoto);
 
         String fileName = createdProfilePhoto.getId() + file.getContentType().replace("image/", ".");
         String photoUrl = insertFileToS3(folderName, fileName, file);
@@ -132,48 +132,38 @@ public class PhotoService {
 
     /**
      * 커뮤니티 게시글 사진 저장 |
-     * 기존에 저장되어있는 사진이 있다면 해당 게시글의 모든 사진을 aws와 DB에서 삭제한 후 다시 사진을 저장한다. 후에 저장한 사진들을 매핑된 Post에도
-     * 저장한다. |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public List<Photo> savePostPhotos(Post post, List<String> fileNames, List<MultipartFile> files) {
+    public List<Photo> savePostPhotos(Post post, List<MultipartFile> files) {
 
         String folderName = "community/" + post.getDormCategory() + "/" + "post-" + post.getId();
-        List<Photo> photos = new ArrayList<>();
 
-        if(post.getPhotos() != null) {
-            deletePostFullPhotos(post);
-        }
+        List<Photo> savedPhotos = new ArrayList<>();
 
-        int fileIndex = 0;
         for (MultipartFile file : files) {
-            String fileName = fileNames.get(fileIndex);
+            String fileName = UUID.randomUUID() + file.getContentType().replace("image/", ".");
 
             String url = insertFileToS3(folderName, fileName, file);
 
             Photo savedPhoto = null;
             try {
-
-                Photo photo = Photo.PostPhotoBuilder()
+                savedPhoto = Photo.PostPhotoBuilder()
                         .folderName(folderName)
                         .fileName(fileName)
                         .url(url)
                         .post(post)
                         .build();
 
-                savedPhoto = photoRepository.save(photo);
             } catch (RuntimeException e) {
                 e.getStackTrace();
                 throw new CustomException(SERVER_ERROR);
             }
-
-            photos.add(savedPhoto);
-            fileIndex += 1;
+            save(savedPhoto);
+            post.addPostPhoto(savedPhoto);
+            savedPhotos.add(savedPhoto);
         }
-
-        post.addPostPhotos(photos);
-        return photos;
+        return savedPhotos;
     }
 
     /**
@@ -210,12 +200,23 @@ public class PhotoService {
                 return;
             }
             for (Photo photo : foundPhotos) {
-                photo.removePhoto();
+                photo.delete();
             }
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
+    }
+
+    /**
+     * 게시글 사진 단건 조회 |
+     * 404(POST_PHOTO_NOT_FOUND)
+     */
+    public Photo findById(Long postId, Long photoId) {
+        return photoRepository.findByIdAndPostId(photoId, postId)
+                .orElseThrow(() -> {
+                    throw new CustomException(POST_PHOTO_NOT_FOUND);
+                });
     }
 
     /**
