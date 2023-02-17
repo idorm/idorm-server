@@ -52,7 +52,7 @@ public class PhotoService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deletePhoto(Photo photo) {
+    public void deleteMemberPhoto(Photo photo) {
         try {
             photoRepository.delete(photo);
         } catch (RuntimeException e) {
@@ -75,7 +75,7 @@ public class PhotoService {
     }
 
     /**
-     * Photo 회원 프로필 사진 저장 |
+     * 회원 프로필 사진 저장 |
      * 사진을 repository와 S3에 저장한다. 매핑된 Member의 profilePhoto에도 저장한다. |
      * 500(SERVER_ERROR)
      */
@@ -85,49 +85,48 @@ public class PhotoService {
         validateFileType(file);
 
         String folderName = "profile-photo/" + member.getId();
+        String fileName = UUID.randomUUID() + file.getContentType().replace("image/", ".");
 
-        Photo createdProfilePhoto = Photo.ProfilePhotoBuilder()
+        String photoUrl = insertFileToS3(folderName, fileName, file);
+        
+        Photo profilePhoto = Photo.ProfilePhotoBuilder()
                 .folderName(folderName)
+                .fileName(fileName)
+                .photoUrl(photoUrl)
                 .member(member)
                 .build();
-        save(createdProfilePhoto);
-
-        String fileName = createdProfilePhoto.getId() + file.getContentType().replace("image/", ".");
-        String photoUrl = insertFileToS3(folderName, fileName, file);
-
+        save(profilePhoto);
+        
         try {
-            createdProfilePhoto.setFileName(fileName);
-            createdProfilePhoto.setPhotoUrl(photoUrl);
-            member.updateProfilePhoto(createdProfilePhoto);
+            member.updateProfilePhoto(profilePhoto);
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
 
-        return createdProfilePhoto;
+        return profilePhoto;
     }
 
     /**
      * 프로필 사진 삭제 |
-     * S3, repository에서 삭제한다. 매핑된 member의 profilePhoto도 자동으로 삭제된다. |
+     * S3, repository에서 삭제한다. 매핑된 Member의 profilePhoto도 자동으로 삭제된다. |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deleteProfilePhotos(Member member) {
+    public void deleteProfilePhoto(Member member) {
 
-        String folderName = member.getProfilePhoto().getFolderName();
-        List<Photo> profilePhotos = null;
+        Optional<Photo> profilePhoto = null;
         try {
-            profilePhotos = photoRepository.findByFolderName(folderName);
+            profilePhoto = photoRepository.findByMemberId(member.getId());
+            if (profilePhoto.isEmpty())
+                return;
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
 
-        for(Photo photo : profilePhotos) {
-            deleteFileFromS3(folderName, photo.getFileName());
-            deletePhoto(photo);
-        }
+        deleteFileFromS3(profilePhoto.get().getFolderName(), profilePhoto.get().getFileName());
+        deleteMemberPhoto(profilePhoto.get());
     }
 
     /**
@@ -143,63 +142,39 @@ public class PhotoService {
 
         for (MultipartFile file : files) {
             String fileName = UUID.randomUUID() + file.getContentType().replace("image/", ".");
+            String photoUrl = insertFileToS3(folderName, fileName, file);
 
-            String url = insertFileToS3(folderName, fileName, file);
+            Photo savedPhoto = Photo.PostPhotoBuilder()
+                    .folderName(folderName)
+                    .fileName(fileName)
+                    .photoUrl(photoUrl)
+                    .post(post)
+                    .build();
+            save(savedPhoto);
 
-            Photo savedPhoto = null;
             try {
-                savedPhoto = Photo.PostPhotoBuilder()
-                        .folderName(folderName)
-                        .fileName(fileName)
-                        .url(url)
-                        .post(post)
-                        .build();
-
+                post.addPostPhoto(savedPhoto);
             } catch (RuntimeException e) {
-                e.getStackTrace();
                 throw new CustomException(SERVER_ERROR);
             }
-            save(savedPhoto);
-            post.addPostPhoto(savedPhoto);
+            
             savedPhotos.add(savedPhoto);
         }
         return savedPhotos;
     }
 
     /**
-     * 게시글 사진 삭제 - 해당 게시글의 전체 사진 삭제 |
-     * 폴더명 (post-{postId}/)을 받으면 해당 폴더 내의 전체 사진을 삭제합니다.
-     */
-    @Transactional
-    public void deletePostFullPhotos(Post post) {
-
-        String folderName = "community/" + post.getDormCategory() + "/" + "post-" + post.getId();
-
-        List<Photo> foundPhotos = photoRepository.findByFolderName(folderName);
-
-        for(Photo photo : foundPhotos) {
-            deleteFileFromS3(folderName, photo.getFileName());
-            try {
-                photoRepository.delete(photo);
-            } catch (RuntimeException e) {
-                e.getStackTrace();
-                throw new CustomException(SERVER_ERROR);
-            }
-        }
-    }
-
-    /**
-     * 게시글 삭제 시 해당 게시글의 전체 사진 isDeleted true로 변경
+     * 게시글 삭제 시 해당 게시글의 모든 사진 삭제 |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deletePhotoDeletingPost(Post post) {
+    public void deleteAllPostPhotoByDeletedPost(Post post) {
         try {
-            List<Photo> foundPhotos = photoRepository.findByPostId(post.getId());
-            if (foundPhotos.isEmpty()) {
+            List<Photo> postPhotos = photoRepository.findByPostId(post.getId());
+            if (postPhotos.isEmpty()) {
                 return;
             }
-            for (Photo photo : foundPhotos) {
+            for (Photo photo : postPhotos) {
                 photo.delete();
             }
         } catch (RuntimeException e) {
@@ -213,26 +188,10 @@ public class PhotoService {
      * 404(POST_PHOTO_NOT_FOUND)
      */
     public Photo findById(Long postId, Long photoId) {
-        return photoRepository.findByIdAndPostId(photoId, postId)
+        return photoRepository.findByIdAndPostIdAndIsDeletedFalse(photoId, postId)
                 .orElseThrow(() -> {
                     throw new CustomException(POST_PHOTO_NOT_FOUND);
                 });
-    }
-
-    /**
-     * 캘린더 사진 저장 |
-     */
-    public String putImage(MultipartFile file) {
-        String fileName = UUID.randomUUID().toString();
-
-        return insertFileToS3(CALENDAR_FOLDER, fileName, file);
-    }
-
-    /**
-     * 캘린더 사진 삭제 |
-     */
-    public void deleteImage(String fileName) {
-        deleteFileFromS3(CALENDAR_FOLDER, fileName);
     }
 
     /**
@@ -240,7 +199,7 @@ public class PhotoService {
      * 파일 형식은 .png, .jpg, .jpeg 만 받는다. |
      * 415(FILE_TYPE_UNSUPPORTED)
      */
-    private void validateFileType(MultipartFile file) {
+    public void validateFileType(MultipartFile file) {
         String type = file.getContentType().split("/")[1];
 
         if (!type.equals("jpg") && !type.equals("jpeg") && !type.equals("png")) {
@@ -250,7 +209,7 @@ public class PhotoService {
 
     /**
      * MultipartFile을 File로 전환 |
-     * MultipartFile을 받아서 File의 형태로 전환하여 반환한다. |
+     * MultipartFile을 받아서 File의 형태로 전환하여 반환한다.
      */
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convertingFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
@@ -294,5 +253,21 @@ public class PhotoService {
         } catch (SdkClientException e) {
             throw new CustomException(SERVER_ERROR);
         }
+    }
+
+    /**
+     * 캘린더 사진 저장 |
+     */
+    public String putImage(MultipartFile file) {
+        String fileName = UUID.randomUUID().toString();
+
+        return insertFileToS3(CALENDAR_FOLDER, fileName, file);
+    }
+
+    /**
+     * 캘린더 사진 삭제 |
+     */
+    public void deleteImage(String fileName) {
+        deleteFileFromS3(CALENDAR_FOLDER, fileName);
     }
 }

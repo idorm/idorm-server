@@ -22,37 +22,26 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     /**
-     * Comment 저장 |
+     * DB에 댓글 저장 및 매핑된 Member의 comments에 댓글 추가 |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public Comment saveComment(String content,
-                               Boolean isAnonymous,
-                               Post post,
-                               Member member) {
-
+    public Comment save(Member member, Comment comment) {
         try {
-            Comment createdComment = Comment.builder()
-                    .content(content)
-                    .isAnonymous(isAnonymous)
-                    .post(post)
-                    .member(member)
-                    .build();
-
-            Comment savedComment = commentRepository.save(createdComment);
+            Comment savedComment = commentRepository.save(comment);
+            member.addComment(comment);
             return savedComment;
         } catch (RuntimeException e) {
-            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
 
     /**
-     * 대댓글일 때 해당 게시글에 부모 댓글이 저장되어 있는지 확인하기
+     * 게시글에 특정 댓글의 존재 여부 확인 |
+     * 404(COMMENT_NOT_FOUND)
      */
-    public void isExistParentCommentFromPost(Long postId, Long commentId) {
-        boolean isExistParentComment = commentRepository.existsByIdAndPostId(commentId, postId);
-        if(isExistParentComment == false) {
+    public void isExistCommentFromPost(Long postId, Long commentId) {
+        if(!commentRepository.existsByIdAndPostId(commentId, postId)) {
             throw new CustomException(COMMENT_NOT_FOUND);
         }
     }
@@ -102,19 +91,34 @@ public class CommentService {
     }
 
     /**
-     * Comment 로그인한 멤버가 작성한 모든 댓글들 조회 |
+     * 회원이 작성한 모든 댓글 조회 |
      * 500(SERVER_ERROR)
      */
     public List<Comment> findCommentsByMember(Member member) {
 
         try {
-            List<Comment> commentsByMemberId =
-                    commentRepository.findAllByMemberIdAndIsDeletedFalseOrderByCreatedAtDesc(member.getId());
-            return commentsByMemberId;
+            return commentRepository.findAllByMemberIdAndIsDeletedFalseOrderByCreatedAtDesc(member.getId());
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
+    }
+
+    /**
+     * 게시글 식별자와 댓글 식별자로 댓글 단건 조회 |
+     * 404(COMMENT_NOT_FOUND)
+     * 404(DELETED_COMMENT)
+     */
+    public Comment findByCommentIdAndPost(Post post, Long commentId) {
+        Comment comment = commentRepository.findByIdAndPostId(commentId, post.getId())
+                .orElseThrow(() -> {
+                    throw new CustomException(COMMENT_NOT_FOUND);
+                });
+
+        if (comment.getIsDeleted())
+            throw new CustomException(DELETED_COMMENT);
+
+        return comment;
     }
 
     /**
@@ -133,18 +137,18 @@ public class CommentService {
     }
 
     /**
-     * Comment 게시글 내 모든 댓글, 대댓글 삭제 |
+     * 게시글 삭제 시 모든 댓글 삭제 |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deleteCommentsByPost(Post post) {
+    public void deleteAllCommentByDeletedPost(Post post) {
         List<Comment> foundComments = findCommentsByPostId(post.getId());
         if (foundComments.isEmpty()) {
             return;
         }
         try {
             for (Comment comment : foundComments) {
-                comment.deleteComment();
+                comment.delete();
             }
         } catch (RuntimeException e) {
             e.getStackTrace();
@@ -153,24 +157,14 @@ public class CommentService {
     }
 
     /**
-     * Comment 댓글 단건 삭제 |
-     * 401(UNAUTHORIZED_COMMENT)
-     * 404(DELETED_COMMENT)
+     * 댓글 단건 삭제 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deleteComment(Long commentId, Member member) {
-        Comment foundComment = findById(commentId);
-
-        if (foundComment.getMember().getId() != member.getId()) {
-            throw new CustomException(UNAUTHORIZED_COMMENT);
-        }
-
-        if (foundComment.getIsDeleted() == true) {
-            throw new CustomException(DELETED_COMMENT);
-        }
+    public void deleteComment(Comment comment) {
 
         try {
-            foundComment.deleteComment();
+            comment.delete();
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
@@ -192,6 +186,16 @@ public class CommentService {
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 댓글 삭제 권한 검증 |
+     * 401(UNAUTHORIZED_COMMENT)
+     */
+    public void validateCommentAuthorization(Comment comment, Member member) {
+        if (comment.getMember() == null || !member.getId().equals(comment.getMember().getId())) {
+            throw new CustomException(UNAUTHORIZED_COMMENT);
         }
     }
 }

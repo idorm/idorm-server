@@ -46,10 +46,12 @@ public class CommentDefaultResponseDto {
 
         this.commentId = comment.getId();
         this.parentCommentId = comment.getParentCommentId();
-        this.memberId = comment.getMember().getId();
         this.isDeleted = comment.getIsDeleted();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
+
+        if (comment.getMember() != null)
+            this.memberId = comment.getMember().getId();
 
         if (comment.getMember() == null) {
             this.nickname = null;
@@ -66,10 +68,12 @@ public class CommentDefaultResponseDto {
 
         this.commentId = comment.getId();
         this.parentCommentId = comment.getParentCommentId();
-        this.memberId = comment.getMember().getId();
         this.isDeleted = comment.getIsDeleted();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
+
+        if (comment.getMember() != null)
+            this.memberId = comment.getMember().getId();
 
         if (comment.getMember() == null) {
             this.nickname = null;

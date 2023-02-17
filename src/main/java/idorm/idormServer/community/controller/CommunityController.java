@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class CommunityController {
 
     @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "- 페이징 적용으로 page는 페이지 번호를 의미합니다.\n " +
             "- page는 0부터 시작하며 서버에서 10개 단위로 페이징해서 반환합니다.\n " +
-            "- 서버에서 최신순으로 정렬하여 응답합니다.")
+            "- 서버에서 최신 순으로 정렬하여 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -88,7 +89,8 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "기숙사별 인기 게시글 다건 조회", notes = "- 서버에서 최신순으로 정렬하여 응답합니다.")
+    @ApiOperation(value = "기숙사별 인기 게시글 다건 조회", notes = "- 서버에서 공감 순으로 정렬 후 최신 순으로 정렬합니다.\n" +
+            "- 인기 게시글은 10개 입니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -121,12 +123,14 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "게시글 단건 조회", notes = "- 댓글은 과거순으로 정렬됩니다.\n")
+    @ApiOperation(value = "게시글 단건 조회", notes = "- 댓글은 과거 순으로 정렬됩니다.\n")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "POST_FOUND",
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "POSTID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
@@ -137,12 +141,15 @@ public class CommunityController {
     @GetMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> findOnePost(
             HttpServletRequest request,
-            @PathVariable("post-id") Long postId
+            @PathVariable("post-id")
+            @Positive(message = "게시글 식별자는 양수만 가능합니다.")
+                Long postId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
         
         Post foundPost = postService.findById(postId);
+
         List<Comment> foundComments = commentService.findCommentsByPostId(postId);
 
         List<Member> anonymousMembers = new ArrayList<>();
@@ -233,16 +240,10 @@ public class CommunityController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        DormCategory dormCategory = DormCategory.validateType(request.getDormCategory());
         postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
         postService.validatePostPhotoCountExceeded(request.getFiles().size());
 
-        Post post = postService.savePost(
-                member,
-                dormCategory,
-                request.getTitle(),
-                request.getContent(),
-                request.getIsAnonymous());
+        Post post = postService.save(member, request.toEntity(member));
 
         photoService.savePostPhotos(post, request.getFiles());
 
@@ -265,7 +266,8 @@ public class CommunityController {
                     description = "POST_UPDATED",
                     content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / TITLE_LENGTH_INVALID / CONTENT_LENGTH_INVALID"),
+                    description = "FIELD_REQUIRED / TITLE_LENGTH_INVALID / CONTENT_LENGTH_INVALID /" +
+                            "POSTID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_POST"),
             @ApiResponse(responseCode = "404",
@@ -282,31 +284,33 @@ public class CommunityController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DefaultResponseDto<Object>> updatePost(
             HttpServletRequest request2,
-            @PathVariable("post-id") Long updatePostId,
+            @PathVariable("post-id")
+            @Positive(message = "게시글 식별자는 양수만 가능합니다.")
+                Long postId,
             @ModelAttribute PostUpdateRequestDto request
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
-        Post post = postService.findById(updatePostId);
+        Post post = postService.findById(postId);
 
         postService.validatePostAuthorization(post, member);
         postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
 
         List<Photo> savedPostPhotos = postService.findPostPhotosIsDeletedFalse(post);
-        List<Photo> deletePostphotos = new ArrayList<>();
+        List<Photo> deletePostPhotos = new ArrayList<>();
 
         for (Long deletePostPhotoId : request.getDeletePostPhotoIds()) {
-            deletePostphotos.add(photoService.findById(post.getId(), deletePostPhotoId));
+            deletePostPhotos.add(photoService.findById(post.getId(), deletePostPhotoId));
         }
 
-        postService.validatePostPhotoCountExceeded(savedPostPhotos.size() - deletePostphotos.size()
+        postService.validatePostPhotoCountExceeded(savedPostPhotos.size() - deletePostPhotos.size()
                 + request.getFiles().size());
 
         postService.updatePost(post,
                 request.getTitle(),
                 request.getContent(),
                 request.getIsAnonymous(),
-                deletePostphotos);
+                deletePostPhotos);
 
         photoService.savePostPhotos(post, request.getFiles());
 
@@ -321,7 +325,7 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "내가 쓴 글 목록 조회", notes = "- 서버에서 최신순으로 정렬하여 응답힙니다.\n " +
+    @ApiOperation(value = "내가 쓴 글 목록 조회", notes = "- 서버에서 최신 순으로 정렬하여 응답힙니다.\n " +
             "- 이 API의 경우에는 게시글 생성일자가 아닌 수정일자로 정렬합니다.")
     @ApiResponses(value = {
             @ApiResponse(
@@ -355,7 +359,7 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "내가 공감한 게시글 목록 조회", notes = "서버에서 최신순으로 정렬하여 응답힙니다.")
+    @ApiOperation(value = "내가 공감한 게시글 목록 조회", notes = "- 서버에서 최신 순으로 정렬하여 응답힙니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -374,16 +378,15 @@ public class CommunityController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         memberService.findById(loginMemberId);
 
-        List<Long> foundPostIds = postLikedMemberService.findLikedPostIdsByMemberId(loginMemberId);
+        List<Long> likedPostIds = postLikedMemberService.findAllLikedPostIdByMemberId(loginMemberId);
 
-        List<Post> resultPosts = new ArrayList<>();
-
-        for(Long postId : foundPostIds) {
+        List<Post> likedPosts = new ArrayList<>();
+        for(Long postId : likedPostIds) {
             Post post = postService.findById(postId);
-            resultPosts.add(post);
+            likedPosts.add(post);
         }
 
-        List<PostAbstractResponseDto> response = resultPosts.stream()
+        List<PostAbstractResponseDto> response = likedPosts.stream()
                 .map(post -> new PostAbstractResponseDto(post)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
@@ -401,6 +404,8 @@ public class CommunityController {
                     responseCode = "200",
                     description = "MEMBER_LIKED_POST",
                     content = @Content(schema = @Schema(implementation = Object.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "POSTID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
@@ -412,13 +417,16 @@ public class CommunityController {
     })
     @PutMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> savePostLikes(
-            HttpServletRequest request2, @PathVariable("post-id") Long postId
+            HttpServletRequest request2,
+            @PathVariable("post-id")
+            @Positive(message = "게시글 식별자는 양수만 가능합니다.")
+                Long postId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
-        postLikedMemberService.savePostLikedMember(member, post);
+        postLikedMemberService.create(member, post);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -434,6 +442,8 @@ public class CommunityController {
                     responseCode = "200",
                     description = "MEMBER_LIKED_POST_CANCELED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "POSTID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
@@ -443,13 +453,16 @@ public class CommunityController {
     })
     @DeleteMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> deletePostLikes(
-            HttpServletRequest request2, @PathVariable("post-id") Long postId
+            HttpServletRequest request2,
+            @PathVariable("post-id")
+            @Positive(message = "게시글 식별자는 양수만 가능합니다.")
+                Long postId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
-        postLikedMemberService.deletePostLikedMember(member, post);
+        postLikedMemberService.delete(member, post);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -465,6 +478,8 @@ public class CommunityController {
                     responseCode = "200",
                     description = "POST_DELETED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "POSTID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_POST"),
             @ApiResponse(responseCode = "404",
@@ -474,14 +489,17 @@ public class CommunityController {
     })
     @DeleteMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> deletePost(
-            HttpServletRequest request2, @PathVariable("post-id") Long postId
+            HttpServletRequest request2,
+            @PathVariable("post-id")
+            @Positive(message = "게시글 식별자는 양수만 가능합니다.")
+                Long postId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        Post deletePost = postService.findById(postId);
-        postService.validatePostAuthorization(deletePost, member);
-        postService.deletePost(deletePost);
+        Post post = postService.findById(postId);
+        postService.validatePostAuthorization(post, member);
+        postService.deletePost(post);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -495,15 +513,14 @@ public class CommunityController {
      * Comment
      */
     @ApiOperation(value = "댓글/대댓글 저장",
-            notes = "- 대댓글인 경우, 부모 댓글이 조회되지 않는다면 COMMENT_NOT_FOUND(404)를 반환합니다.\n" +
-                    "- 이 때, 부모 댓글이 삭제된 경우도 DB에 저장되어있으므로 문제 없습니다.")
+            notes = "- 대댓글인 경우, parentCommentId(부모 댓글 식별자)가 게시글에 존재하지 않는다면 404(COMMENT_NOT_FOUND)를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
                     description = "COMMENT_SAVED",
                     content = @Content(schema = @Schema(implementation = CommentDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED"),
+                    description = "FIELD_REQUIRED / POSTID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
@@ -514,30 +531,25 @@ public class CommunityController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(value = "/post/{post-id}/comment")
     public ResponseEntity<DefaultResponseDto<Object>> saveComment(
-            HttpServletRequest request,
-            @PathVariable("post-id") Long postId,
-            @RequestBody @Valid CommentDefaultRequestDto requestDto
+            HttpServletRequest request2,
+            @PathVariable("post-id")
+            @Positive(message = "게시글 식별자는 양수만 가능합니다.")
+                Long postId,
+            @RequestBody @Valid CommentDefaultRequestDto request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(loginMemberId);
 
         Post post = postService.findById(postId);
+        if(request.getParentCommentId() != null)
+            commentService.isExistCommentFromPost(postId, request.getParentCommentId());
 
-        if(requestDto.getParentCommentId() != null) {
-            commentService.isExistParentCommentFromPost(postId, requestDto.getParentCommentId());
-        }
+        Comment comment = commentService.save(member, request.toEntity(member, post));
 
-        Comment createdComment = commentService.saveComment(
-                requestDto.getContent(),
-                requestDto.getIsAnonymous(),
-                post,
-                loginMember);
+        if(request.getParentCommentId() != null)
+            commentService.saveParentCommentId(request.getParentCommentId(), comment);
 
-        if(requestDto.getParentCommentId() != null) {
-            commentService.saveParentCommentId(requestDto.getParentCommentId(), createdComment);
-        }
-
-        CommentDefaultResponseDto response = new CommentDefaultResponseDto(createdComment);
+        CommentDefaultResponseDto response = new CommentDefaultResponseDto(comment);
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -555,6 +567,8 @@ public class CommunityController {
                     responseCode = "200",
                     description = "COMMENT_DELETED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "POSTID_NEGATIVEORZERO_INVALID / COMMENTID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_COMMENT"),
             @ApiResponse(responseCode = "404",
@@ -564,13 +578,22 @@ public class CommunityController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> deleteComment(
             HttpServletRequest request,
-            @PathVariable("post-id") Long postId,
-            @PathVariable("comment-id") Long commentId
+            @PathVariable("post-id")
+            @Positive(message = "게시글 식별자는 양수만 가능합니다.")
+                Long postId,
+            @PathVariable("comment-id")
+            @Positive(message = "댓글 식별자는 양수만 가능합니다.")
+                Long commentId
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
-        postService.findById(postId);
-        commentService.deleteComment(commentId, loginMember);
+        Member member = memberService.findById(loginMemberId);
+
+        Post post = postService.findById(postId);
+        Comment comment = commentService.findByCommentIdAndPost(post, commentId);
+
+        commentService.validateCommentAuthorization(comment, member);
+
+        commentService.deleteComment(comment);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -580,7 +603,7 @@ public class CommunityController {
                 );
     }
 
-    @ApiOperation(value = "내가 작성한 댓글 목록 조회", notes = "- 서버에서 최신순으로 정렬하여 응답합니다. \n" +
+    @ApiOperation(value = "내가 작성한 댓글 목록 조회", notes = "- 서버에서 최신 순으로 정렬하여 응답합니다. \n" +
             "- 댓글은 수정 기능을 제공하지 않으므로 생성일자로 정렬합니다.")
     @ApiResponses(value = {
             @ApiResponse(
@@ -597,9 +620,9 @@ public class CommunityController {
             HttpServletRequest request
     ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
+        Member member = memberService.findById(loginMemberId);
 
-        List<Comment> foundComments = commentService.findCommentsByMember(loginMember);
+        List<Comment> foundComments = commentService.findCommentsByMember(member);
 
         List<CommentDefaultResponseDto> response = foundComments.stream()
                 .map(comment -> new CommentDefaultResponseDto(comment)).collect(Collectors.toList());

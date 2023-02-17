@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostLikedMemberRepository extends JpaRepository<PostLikedMember, Long> {
 
@@ -13,7 +14,7 @@ public interface PostLikedMemberRepository extends JpaRepository<PostLikedMember
             "FROM post_liked_member plm " +
             "WHERE plm.member_id = :memberId " +
             "ORDER BY plm.created_at DESC", nativeQuery = true)
-    List<Long> findLikedPostsByMemberId(@Param("memberId") Long memberId);
+    List<Long> findAllLikedPostByMemberId(@Param("memberId") Long memberId);
 
     List<PostLikedMember> findAllByMemberId(Long memberId);
 
@@ -22,4 +23,6 @@ public interface PostLikedMemberRepository extends JpaRepository<PostLikedMember
     void deleteAllByPostId(Long postId);
 
     boolean existsByMemberIdAndPostId(Long memberId, Long postId);
+
+    Optional<PostLikedMember> findByMemberIdAndPostId(Long memberId, Long postId);
 }

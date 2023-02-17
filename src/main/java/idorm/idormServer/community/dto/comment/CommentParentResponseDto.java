@@ -49,10 +49,12 @@ public class CommentParentResponseDto {
                                     List<CommentDefaultResponseDto> subComments) {
 
         this.commentId = parentComment.getId();
-        this.memberId = parentComment.getMember().getId();
         this.isDeleted = parentComment.getIsDeleted();
         this.content = parentComment.getContent();
         this.createdAt = parentComment.getCreatedAt();
+
+        if (parentComment.getMember() != null)
+            this.memberId = parentComment.getMember().getId();
 
         if (parentComment.getMember() == null) {
             this.nickname = null;

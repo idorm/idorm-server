@@ -50,11 +50,13 @@ public class PostAbstractResponseDto {
 
     public PostAbstractResponseDto(Post post) {
         this.postId = post.getId();
-        this.memberId = post.getMember().getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
         this.title = post.getTitle();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
+
+        if (post.getMember() != null)
+            this.memberId = post.getMember().getId();
 
         if (post.getPostLikedMembers() != null) {
             this.likesCount = post.getPostLikedMembers().size();

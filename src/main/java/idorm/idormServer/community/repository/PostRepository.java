@@ -11,18 +11,8 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    /**
-     * 기숙사 카테고리로 필터링한 게시글들 조회
-     */
     Page<Post> findAllByDormCategoryAndIsDeletedFalseOrderByCreatedAtDesc(Character dormCategory, Pageable pageable);
 
-    /**
-     * 인기 게시글 찾는 로직
-     * 기숙사 분류를 통한 일차 필터링
-     * 생성일자 기준으로 7일 이내의 글 중에서만 조회
-     * 공감 순으로 상위 10개 조회
-     * 만약 동일 공감이 많다면 더 빠른 최신 날짜가 우선순위
-     */
     @Query(value = "SELECT *" +
             "FROM post p " +
             "WHERE p.dorm_category = :dormCategory AND " +
@@ -32,13 +22,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "LIMIT 10", nativeQuery = true)
     List<Post> findTopPostsByDormCategory(@Param("dormCategory") Character dormCategory);
 
-    /**
-     * 멤버 아이디를 통해서 멤버가 작성한 게시글 반환
-     */
     List<Post> findAllByMemberIdAndIsDeletedFalseOrderByUpdatedAtDesc(Long memberId);
 
-    /**
-     * 멤버가 작성한 삭제된 게시글을 포함한 모든 게시글 반환
-     */
+    // 멤버 탈퇴 시 사용, 삭제된 게시글도 전부 조회
     List<Post> findAllByMemberId(Long memberId);
 }

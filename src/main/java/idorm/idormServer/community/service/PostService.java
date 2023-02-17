@@ -29,10 +29,10 @@ public class PostService {
     private final CommentService commentService;
 
     /**
-     * 멤버 삭제 시 Post, Comment 도메인의 member_id(FK) 를 null로 변경해주어야 한다.
+     * 멤버 탈퇴 시 Post, Comment에 매핑된 Member를 null로 변경 |
      */
     @Transactional
-    public void updateMemberNull(Member member) {
+    public void removeMember(Member member) {
 
         try {
             List<Post> foundPosts = postRepository.findAllByMemberId(member.getId());
@@ -47,32 +47,19 @@ public class PostService {
     }
 
     /**
-     * Post 저장 |
-     * Photo까지 저장되어야한다.
+     * DB에 게시글 저장 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
-    public Post savePost(Member member,
-                     DormCategory dormCategory,
-                     String title,
-                     String content,
-                     Boolean isAnonymous
-    ) {
+    public Post save(Member member, Post post) {
         try {
-            Post createdPost = Post.builder()
-                    .member(member)
-                    .dormCategory(dormCategory)
-                    .title(title)
-                    .content(content)
-                    .isAnonymous(isAnonymous)
-                    .build();
-
-            return postRepository.save(createdPost);
+            Post savedPost = postRepository.save(post);
+            member.addPost(savedPost);
+            return savedPost;
         } catch (RuntimeException e) {
-            e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
     }
-
 
     /**
      * Post 게시글 수정 |
@@ -99,17 +86,17 @@ public class PostService {
     }
 
     /**
-     * Post 삭제 |
+     * 게시글 삭제 |
      * 500(SERVER_ERROR)
      */
     @Transactional
     public void deletePost(Post post) {
 
-        commentService.deleteCommentsByPost(post);
-        postLikedMemberService.deleteAllLikesFromPost(post);
-        photoService.deletePhotoDeletingPost(post);
+        commentService.deleteAllCommentByDeletedPost(post);
+        postLikedMemberService.deleteAllLikeByDeletedPost(post);
+        photoService.deleteAllPostPhotoByDeletedPost(post);
         try {
-            post.deletePost();
+            post.delete();
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);
@@ -117,22 +104,22 @@ public class PostService {
     }
 
     /**
-     * Post 단건 조회 |
+     * 게시글 단건 조회 |
      * 404(POST_NOT_FOUND)
      * 404(DELETED_POST)
      */
     public Post findById(Long postId) {
-        Post foundPost = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-
-        if(foundPost.getIsDeleted() == true) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> {
+                    throw new CustomException(POST_NOT_FOUND);
+                });
+        if (post.getIsDeleted())
             throw new CustomException(DELETED_POST);
-        }
-        return foundPost;
+        return post;
     }
 
     /**
-     * Post 기숙사 카테고리 별 다건 조회 |
+     * 기숙사 카테고리 별 모든 게시글 다건 조회 |
      * 500(SERVER_ERROR)
      */
     public Page<Post> findManyPostsByDormCategory(DormCategory dormCategory, int pageNum) {
@@ -166,14 +153,12 @@ public class PostService {
     }
 
     /**
-     * 특정 멤버가 작성한 모든 게시글 리스트 조회 |
+     * 회원이 작성한 모든 게시글 조회 |
+     * 500(SERVER_ERROR)
      */
     public List<Post> findPostsByMember(Member member) {
         try {
-            List<Post> postsByMemberId =
-                    postRepository.findAllByMemberIdAndIsDeletedFalseOrderByUpdatedAtDesc(member.getId());
-
-            return postsByMemberId;
+            return postRepository.findAllByMemberIdAndIsDeletedFalseOrderByUpdatedAtDesc(member.getId());
         } catch (RuntimeException e) {
             e.getStackTrace();
             throw new CustomException(SERVER_ERROR);

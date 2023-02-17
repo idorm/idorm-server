@@ -71,13 +71,15 @@ public class PostOneResponseDto {
     // 게시글 저장 시에만 사용
     public PostOneResponseDto(Post post) {
         this.postId = post.getId();
-        this.memberId = post.getMember().getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
         this.title = post.getTitle();
         this.content = post.getContent();
         this.isLiked = false;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
+
+        if (post.getMember() != null)
+            this.memberId = post.getMember().getId();
 
         if (post.getPostLikedMembers() != null) {
             this.likesCount = post.getPostLikedMembers().size();
@@ -115,13 +117,15 @@ public class PostOneResponseDto {
 
     public PostOneResponseDto(Post post, List<CommentParentResponseDto> comments, boolean isLiked) {
         this.postId = post.getId();
-        this.memberId = post.getMember().getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
         this.title = post.getTitle();
         this.content = post.getContent();
         this.isLiked = isLiked;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
+
+        if (post.getMember() != null)
+            this.memberId = post.getMember().getId();
 
         if (post.getPostLikedMembers() != null) {
             this.likesCount = post.getPostLikedMembers().size();

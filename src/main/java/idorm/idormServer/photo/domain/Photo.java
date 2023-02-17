@@ -32,27 +32,21 @@ public class Photo extends BaseEntity {
 
 
     @Builder(builderClassName = "ProfilePhotoBuilder", builderMethodName = "ProfilePhotoBuilder")
-    public Photo(String folderName, Member member) {
+    public Photo(String folderName, String fileName, String photoUrl, Member member) {
         this.folderName = folderName;
+        this.fileName = fileName;
+        this.photoUrl = photoUrl;
         this.member = member;
         this.isDeleted = false;
     }
 
     @Builder(builderClassName = "PostPhotoBuilder", builderMethodName = "PostPhotoBuilder")
-    public Photo(String folderName, String url, String fileName, Post post) {
+    public Photo(String folderName, String fileName, String photoUrl, Post post) {
         this.folderName = folderName;
         this.fileName = fileName;
-        this.photoUrl = url;
+        this.photoUrl = photoUrl;
         this.post = post;
         this.isDeleted = false;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     public void delete() {

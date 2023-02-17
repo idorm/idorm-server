@@ -66,6 +66,14 @@ public class Post extends BaseEntity {
         this.photos.add(postPhoto);
     }
 
+    public void addPostLikedMember(PostLikedMember postLikedMember) {
+        this.postLikedMembers.add(postLikedMember);
+    }
+
+    public void removePostLikedMember(PostLikedMember postLikedMember) {
+        this.postLikedMembers.remove(postLikedMember);
+    }
+
     public List<Photo> getPostPhotosIsDeletedFalse() {
         List<Photo> uploadedPhotos = new ArrayList<>();
         for (Photo photo : this.photos) {
@@ -84,7 +92,7 @@ public class Post extends BaseEntity {
         this.postLikedCnt--;
     }
 
-    public void deletePost() {
+    public void delete() {
         this.isDeleted = true;
     }
 

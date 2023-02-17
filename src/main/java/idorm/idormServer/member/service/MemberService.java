@@ -43,8 +43,7 @@ public class MemberService {
     @Transactional
     public Member save(Member member) {
         try {
-            Member savedMember = memberRepository.save(member);
-            return savedMember;
+            return memberRepository.save(member);
         } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
@@ -79,16 +78,14 @@ public class MemberService {
     }
 
     /**
-     * Member 프로필 사진 저장 |
-     * 멤버의 프로필 사진을 저장한다. 저장할 파일이 존재 한다면 파일 이름을 부여하여 저장한다. 저장 전에 이미 저장된 프로필 사진이 존재한다면 DB에는 중복으로
-     * 생성하지 않고, 업데이트 하도록 한다.
+     * 회원 프로필 사진 저장 |
+     * 이미 저장되어있는 프로필 사진이 있다면 삭제 후 저장한다.
      */
     @Transactional
     public void saveProfilePhoto(Member member, MultipartFile file) {
 
-        if (member.getProfilePhoto() != null) {
-            photoService.deleteProfilePhotos(member);
-        }
+        if (member.getProfilePhoto() != null)
+            photoService.deleteProfilePhoto(member);
 
         photoService.createProfilePhoto(member, file);
     }
@@ -112,35 +109,25 @@ public class MemberService {
     }
 
     /**
-     * Member 단건 조회 |
+     * 회원 단건 조회 |
      * 404(MEMBER_NOT_FOUND)
      */
     public Member findById(Long memberId) {
-        Member foundMember = memberRepository.findById(memberId)
+        return memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-
-        return foundMember;
     }
 
     /**
-     * Member 전체 조회 |
-     * 관리자 계정에서 사용한다. |
+     * [Admin] 회원 전체 조회 |
      * 400(MEMBER_NOT_FOUND)
      */
     public List<Member> findAll() {
 
-        List<Member> foundMembers = null;
-
         try {
-            foundMembers = memberRepository.findAll();
+            return memberRepository.findAll();
         } catch (RuntimeException e) {
             throw new CustomException(SERVER_ERROR);
         }
-
-        if(foundMembers.isEmpty()) {
-            throw new CustomException(MEMBER_NOT_FOUND);
-        }
-        return foundMembers;
     }
 
     /**
@@ -170,13 +157,13 @@ public class MemberService {
         emailService.deleteEmail(emailService.findByEmail(member.getEmail()));
 
         if (member.getProfilePhoto() != null)
-            photoService.deleteProfilePhotos(member);
+            photoService.deleteProfilePhoto(member);
 
         if (member.getPosts() != null)
-            postService.updateMemberNull(member);
+            postService.removeMember(member);
 
         if (member.getPostLikedMembers() != null)
-            postLikedMemberService.updateMemberNull(member);
+            postLikedMemberService.removeMember(member);
 
         try {
             memberRepository.delete(member);
@@ -186,13 +173,13 @@ public class MemberService {
     }
 
     /**
-     * Member 프로필 포토 삭제 |
+     * 회원 프로필 사진 삭제 |
      */
     @Transactional
     public void deleteMemberProfilePhoto(Member member) {
 
         photoService.isExistProfilePhoto(member);
-        photoService.deleteProfilePhotos(member);
+        photoService.deleteProfilePhoto(member);
     }
 
     /**

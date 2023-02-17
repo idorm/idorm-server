@@ -78,9 +78,7 @@ public class Member extends BaseEntity implements UserDetails {
     }
 
     public void updateProfilePhoto(Photo profilePhoto) {
-        if (!profilePhoto.getIsDeleted()) {
-            this.profilePhoto = profilePhoto;
-        }
+        this.profilePhoto = profilePhoto;
     }
 
     public void updateNicknameUpdatedAt(LocalDate updatedAt) {
@@ -105,6 +103,22 @@ public class Member extends BaseEntity implements UserDetails {
 
     public void removeDislikedMember(Long memberId) {
         this.dislikedMembers.remove(memberId);
+    }
+
+    public void addPost(Post post) {
+        this.posts.add(post);
+    }
+
+    public void addPostLikedMemer(PostLikedMember postLikedMember) {
+        this.postLikedMembers.add(postLikedMember);
+    }
+
+    public void removePostLikedMember(PostLikedMember postLikedMember) {
+        this.postLikedMembers.remove(postLikedMember);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
     }
 
     @Override

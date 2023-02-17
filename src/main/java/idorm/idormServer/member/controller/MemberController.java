@@ -9,6 +9,7 @@ import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.MemberService;
+import idorm.idormServer.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -45,6 +46,7 @@ public class MemberController {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final EmailService emailService;
+    private final PhotoService photoService;
 
     @Value("${DB_USERNAME}")
     private String ENV_USERNAME;
@@ -85,7 +87,7 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "회원 가입", notes = "회원 가입은 이메일 인증이 완료된 후 가능합니다.")
+    @ApiOperation(value = "회원 가입", notes = "- 회원 가입은 이메일 인증이 완료된 후 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
@@ -161,7 +163,7 @@ public class MemberController {
         if(file == null) {
             throw new CustomException(FILE_NOT_FOUND);
         }
-
+        photoService.validateFileType(file);
         memberService.saveProfilePhoto(loginMember, file);
 
         return ResponseEntity.status(201)
@@ -171,7 +173,7 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "프로필 사진 삭제", notes = "삭제할 사진이 없다면 404(FILE_NOT_FOUND)를 반환합니다.")
+    @ApiOperation(value = "프로필 사진 삭제", notes = "- 삭제할 사진이 없다면 404(FILE_NOT_FOUND)를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -289,11 +291,9 @@ public class MemberController {
     ) {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member foundMember = memberService.findById(loginMemberId);
+        Member member = memberService.findById(loginMemberId);
 
-//        likedMemberService.deleteLikedMembers(foundMember.getId());
-//        dislikedMemberService.deleteDislikedMembers(foundMember.getId());
-        memberService.deleteMember(foundMember);
+        memberService.deleteMember(member);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -303,7 +303,7 @@ public class MemberController {
     }
 
 
-    @ApiOperation(value = "로그인", notes = "헤더에 토큰을 담아 응답합니다.")
+    @ApiOperation(value = "로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -360,8 +360,7 @@ public class MemberController {
     /**
      * admin role
      */
-
-    @ApiOperation(value = "관리자용 / Member 전체 조회", notes = "가입된 전체 멤버에 대한 데이터를 조회할 수 있습니다.")
+    @ApiOperation(value = "관리자용 / Member 전체 조회", notes = "- 가입된 전체 멤버에 대한 데이터를 조회할 수 있습니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -371,8 +370,6 @@ public class MemberController {
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "403",
                     description = "FORBIDDEN_AUTHORIZATION"),
-            @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "SERVER_ERROR"),
     }
@@ -415,7 +412,9 @@ public class MemberController {
     )
     @PatchMapping("/admin/member/{id}")
     public ResponseEntity<DefaultResponseDto<Object>> updateMemberRoot(
-            @PathVariable("id") @Positive(message = "회원 식별자는 양수만 가능합니다.") Long updateMemberId,
+            @PathVariable("id")
+            @Positive(message = "회원 식별자는 양수만 가능합니다.")
+                Long updateMemberId,
             @RequestBody @Valid MemberUpdateStatusAdminRequestDto request) {
 
         Member updateMember = memberService.findById(updateMemberId);
@@ -454,8 +453,7 @@ public class MemberController {
             @PathVariable("id") Long deleteMemberId
     ) {
         Member foundMember = memberService.findById(deleteMemberId);
-//        likedMemberService.deleteLikedMembers(foundMember.getId());
-//        dislikedMemberService.deleteDislikedMembers(foundMember.getId());
+
         memberService.deleteMember(foundMember);
 
         List<Member> members = memberService.findAll();

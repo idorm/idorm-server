@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
-    Optional<Photo> findByFileName(String fileName);
+    Optional<Photo> findByIdAndPostIdAndIsDeletedFalse(Long id, Long postId);
 
-    Optional<Photo> findByIdAndPostId(Long id, Long postId);
+    Optional<Photo> findByMemberId(Long memberId);
 
     List<Photo> findByFolderName(String folderName);
 

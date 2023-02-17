@@ -1,6 +1,9 @@
 package idorm.idormServer.community.dto.comment;
 
 import idorm.idormServer.common.ValidationSequence;
+import idorm.idormServer.community.domain.Comment;
+import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.member.domain.Member;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -33,4 +36,13 @@ public class CommentDefaultRequestDto {
     @ApiModelProperty(position = 3, value = "대댓글일 시 부모 댓글 식별자", allowableValues = "null(댓글), 1(대댓글일 때 댓글 식별자)",
             example = "null")
     private Long parentCommentId;
+
+    public Comment toEntity(Member member, Post post) {
+        return Comment.builder()
+                .content(this.content)
+                .isAnonymous(this.isAnonymous)
+                .post(post)
+                .member(member)
+                .build();
+    }
 }

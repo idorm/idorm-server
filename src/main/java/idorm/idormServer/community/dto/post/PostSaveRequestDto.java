@@ -1,5 +1,8 @@
 package idorm.idormServer.community.dto.post;
 
+import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.member.domain.Member;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,4 +30,14 @@ public class PostSaveRequestDto {
 
     @ApiModelProperty(position = 5, dataType = "List<MultipartFile>", value = "게시글 사진들")
     private List<MultipartFile> files = new ArrayList<>();
+
+    public Post toEntity(Member member) {
+        return Post.builder()
+                .dormCategory(DormCategory.validateType(this.dormCategory))
+                .title(this.title)
+                .content(content)
+                .isAnonymous(this.isAnonymous)
+                .member(member)
+                .build();
+    }
 }
