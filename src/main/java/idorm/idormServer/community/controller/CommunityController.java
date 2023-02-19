@@ -259,12 +259,13 @@ public class CommunityController {
     }
 
     @ApiOperation(value = "게시글 수정", notes = "- 첨부 파일이 없다면 null 이 아닌 빈 배열로 보내주세요.\n" +
-            "- 삭제할 게시글 사진(deletePostPhotoIds)이 없다면 404(POST_PHOTO_NOT_FOUND)를 보냅니다. ")
+            "- 삭제할 게시글 사진(deletePostPhotoIds)이 없다면 404(POST_PHOTO_NOT_FOUND)를 보냅니다.\n" +
+            "- 게시글 수정 후 응답 데이터가 필요하다면 게시들 단건 조회 API를 사용해주세요. ")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "POST_UPDATED",
-                    content = @Content(schema = @Schema(implementation = PostOneResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / TITLE_LENGTH_INVALID / CONTENT_LENGTH_INVALID /" +
                             "POSTID_NEGATIVEORZERO_INVALID"),
@@ -314,13 +315,10 @@ public class CommunityController {
 
         photoService.savePostPhotos(post, request.getFiles());
 
-        PostOneResponseDto response = new PostOneResponseDto(post);
-
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("POST_UPDATED")
                         .responseMessage("Post 수정 완료")
-                        .data(response)
                         .build()
                 );
     }

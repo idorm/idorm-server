@@ -3,6 +3,7 @@ package idorm.idormServer.community.dto.post;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.photo.domain.Photo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -69,7 +70,11 @@ public class PostAbstractResponseDto {
             }
         }
         if (post.getPhotos() != null) {
-            this.imagesCount = post.getPhotos().size();
+            for (Photo photo : post.getPhotos()) {
+                if (!photo.getIsDeleted()) {
+                    this.imagesCount += 1;
+                }
+            }
         }
 
         if(post.getMember() == null) { // 회원 탈퇴의 경우

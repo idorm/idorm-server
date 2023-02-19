@@ -77,23 +77,9 @@ public class PostOneResponseDto {
         this.isLiked = false;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
-
-        if (post.getMember() != null)
-            this.memberId = post.getMember().getId();
-
-        if (post.getPostLikedMembers() != null) {
-            this.likesCount = post.getPostLikedMembers().size();
-        }
-        if (post.getComments() != null) {
-            for (Comment comment : post.getComments()) {
-                if (!comment.getIsDeleted()) {
-                    this.commentsCount += 1;
-                }
-            }
-        }
-        if (post.getPhotos() != null) {
-            this.imagesCount = post.getPhotos().size();
-        }
+        this.likesCount = 0;
+        this.commentsCount = 0;
+        this.memberId = post.getMember().getId();
 
         if(post.getMember() == null) { // 회원 탈퇴의 경우
             this.nickname = null;
@@ -107,10 +93,11 @@ public class PostOneResponseDto {
         }
 
         if(post.getPhotos() != null) {
-            List<Photo> savedPostPhotos = post.getPhotos();
-            for(Photo photo : savedPostPhotos) {
-                if (!photo.getIsDeleted())
+            for(Photo photo : post.getPhotos()) {
+                if (!photo.getIsDeleted()){
+                    this.imagesCount += 1;
                     this.postPhotos.add(new PostPhotoDefaultResponseDto(photo));
+                }
             }
         }
     }
@@ -137,8 +124,13 @@ public class PostOneResponseDto {
                 }
             }
         }
+
         if (post.getPhotos() != null) {
-            this.imagesCount = post.getPhotos().size();
+            for (Photo photo : post.getPhotos()) {
+                if (!photo.getIsDeleted()) {
+                    this.imagesCount += 1;
+                }
+            }
         }
 
         if(post.getMember() == null) { // 회원 탈퇴의 경우
