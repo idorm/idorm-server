@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import idorm.idormServer.exception.CustomException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,10 +14,11 @@ import java.io.FileInputStream;
 import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 
 @Configuration
+@RequiredArgsConstructor
 public class FirebaseConfiguration {
 
     @Value("${firebase.project-id}")
-    private String projectId;
+    private final String projectId;
 
     @PostConstruct
     public void firebaseInit(){

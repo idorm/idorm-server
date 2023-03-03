@@ -22,7 +22,7 @@ import static org.springframework.http.HttpHeaders.*;
 public class FCMService {
 
     @Value("${firebase.project-id}")
-    private String projectId;
+    private final String projectId;
 
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
     private final ObjectMapper objectMapper;
