@@ -22,13 +22,13 @@ import static org.springframework.http.HttpHeaders.*;
 public class FCMService {
 
     @Value("${firebase.project-id}")
-    private final String projectId;
+    private String projectId;
 
-    private final String API_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
     private final ObjectMapper objectMapper;
 
     public void sendMessage(String targetToken, String title, String body) throws IOException {
 
+        String API_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
         String message = createMessage(targetToken, title, body);
 
         OkHttpClient client = new OkHttpClient();
@@ -61,7 +61,7 @@ public class FCMService {
     }
 
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "serviceAccountKey.json";
+        String firebaseConfigPath = "src/main/resources/serviceAccountKey.json";
 
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
