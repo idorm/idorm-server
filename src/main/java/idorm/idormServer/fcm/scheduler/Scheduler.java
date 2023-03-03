@@ -6,25 +6,21 @@ import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-@SpringBootApplication
-@EnableScheduling
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Component
+@RequiredArgsConstructor
 public class Scheduler {
 
     private final FCMService fcmService;
     private final MemberService memberService;
     private final PostService postService;
-
 
     @Scheduled(cron = "* 55 8 * * 1,2,3,4,5")
     public void alertTopPosts() throws IOException {
