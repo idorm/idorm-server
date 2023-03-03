@@ -20,11 +20,10 @@ public class FirebaseConfiguration {
 
     @PostConstruct
     public void firebaseInit(){
-        String firebaseConfigPath = "firebaseServiceKey.json";
+        String firebaseConfigPath = "serviceAccountKey.json";
 
         try {
-            FileInputStream refreshToken =
-                    new FileInputStream(firebaseConfigPath);
+            FileInputStream refreshToken = new FileInputStream(firebaseConfigPath);
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(refreshToken))
