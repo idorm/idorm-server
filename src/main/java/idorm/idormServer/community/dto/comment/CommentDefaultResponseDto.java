@@ -42,6 +42,9 @@ public class CommentDefaultResponseDto {
     @ApiModelProperty(position = 8, value = "생성일자", required = true)
     private LocalDateTime createdAt;
 
+    @ApiModelProperty(position = 9, value = "익명여부")
+    private Boolean isAnonymous;
+
     public CommentDefaultResponseDto(Comment comment) {
 
         this.commentId = comment.getId();
@@ -49,6 +52,7 @@ public class CommentDefaultResponseDto {
         this.isDeleted = comment.getIsDeleted();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
+        this.isAnonymous = comment.getIsAnonymous();
 
         if (comment.getMember() != null)
             this.memberId = comment.getMember().getId();
@@ -71,6 +75,7 @@ public class CommentDefaultResponseDto {
         this.isDeleted = comment.getIsDeleted();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
+        this.isAnonymous = comment.getIsAnonymous();
 
         if (comment.getMember() != null)
             this.memberId = comment.getMember().getId();

@@ -41,7 +41,10 @@ public class CommentParentResponseDto {
     @ApiModelProperty(position = 6, value = "생성일자", required = true)
     private LocalDateTime createdAt;
 
-    @ApiModelProperty(position = 7, value = "대댓글들")
+    @ApiModelProperty(position = 7, value = "익명여부")
+    private Boolean isAnonymous;
+
+    @ApiModelProperty(position = 8, value = "대댓글들")
     private List<CommentDefaultResponseDto> subComments = new ArrayList<>();
 
     public CommentParentResponseDto(String anonymousNickname,
@@ -52,6 +55,7 @@ public class CommentParentResponseDto {
         this.isDeleted = parentComment.getIsDeleted();
         this.content = parentComment.getContent();
         this.createdAt = parentComment.getCreatedAt();
+        this.isAnonymous = parentComment.getIsAnonymous();
 
         if (parentComment.getMember() != null)
             this.memberId = parentComment.getMember().getId();

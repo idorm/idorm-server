@@ -49,12 +49,16 @@ public class PostAbstractResponseDto {
     @ApiModelProperty(position = 10, value = "생성일자")
     private LocalDateTime createdAt;
 
+    @ApiModelProperty(position = 11, value = "익명여부")
+    private Boolean isAnonymous;
+
     public PostAbstractResponseDto(Post post) {
         this.postId = post.getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
         this.title = post.getTitle();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
+        this.isAnonymous = post.getIsAnonymous();
 
         if (post.getMember() != null)
             this.memberId = post.getMember().getId();

@@ -154,6 +154,18 @@ public class PostService {
     }
 
     /**
+     * FCM 용 기숙사 카테고리 별 인기 게시글 1개 조회 |
+     */
+    public Post findTopPost(DormCategory dormCategory) {
+        try {
+            return postRepository.findTopPostByDormCategory(dormCategory.getType());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw new CustomException(SERVER_ERROR);
+        }
+    }
+
+    /**
      * 회원이 작성한 모든 게시글 조회 |
      * 500(SERVER_ERROR)
      */

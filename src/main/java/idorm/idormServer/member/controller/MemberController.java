@@ -302,7 +302,7 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "[FCM 수정] 로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
+    @ApiOperation(value = "로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -320,6 +320,60 @@ public class MemberController {
     )
     @PostMapping("/login")
     public ResponseEntity<DefaultResponseDto<Object>> login(
+            @RequestBody @Valid MemberLoginRequestDto request) {
+
+        Member loginMember = null;
+
+        if(request.getEmail().equals(ENV_USERNAME + "@inu.ac.kr")) {
+            if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
+                throw new CustomException(UNAUTHORIZED_PASSWORD);
+            }
+            loginMember = memberService.findById(1L);
+        } else {
+            loginMember = memberService.findByEmail(request.getEmail());
+
+            if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
+                throw new CustomException(UNAUTHORIZED_PASSWORD);
+            }
+        }
+
+        Iterator<String> iter = loginMember.getRoles().iterator();
+        List<String> roles = new ArrayList<>();
+
+        while (iter.hasNext()) {
+            roles.add(iter.next());
+        }
+
+        String token = jwtTokenProvider.createToken(loginMember.getUsername(), roles);
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
+
+        return ResponseEntity.status(200)
+                .header(AUTHORIZATION, token)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("MEMBER_LOGIN")
+                        .responseMessage("회원 로그인 완료")
+                        .data(response)
+                        .build());
+    }
+
+    @ApiOperation(value = "[FCM 수정] 로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "MEMBER_LOGIN",
+                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / EMAIL_CHARACTER_INVALID"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_PASSWORD"),
+            @ApiResponse(responseCode = "404",
+                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
+            @ApiResponse(responseCode = "500",
+                    description = "SERVER_ERROR"),
+    }
+    )
+    @PostMapping("/v2/login")
+    public ResponseEntity<DefaultResponseDto<Object>> loginV2(
             @RequestHeader("fcm-token") String fcmToken,
             @RequestBody @Valid MemberLoginRequestDto request) {
 

@@ -22,6 +22,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "LIMIT 10", nativeQuery = true)
     List<Post> findTopPostsByDormCategory(@Param("dormCategory") Character dormCategory);
 
+    @Query(value = "SELECT *" +
+            "FROM post p " +
+            "WHERE p.dorm_category = :dormCategory AND " +
+            "p.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -1 WEEK) AND NOW() AND " +
+            "p.is_deleted = 0 " +
+            "ORDER BY p.post_liked_cnt DESC, p.created_at DESC " +
+            "LIMIT 1", nativeQuery = true)
+    Post findTopPostByDormCategory(@Param("dormCategory") Character dormCategory);
+
     List<Post> findAllByMemberIdAndIsDeletedFalseOrderByUpdatedAtDesc(Long memberId);
 
     // 멤버 탈퇴 시 사용, 삭제된 게시글도 전부 조회

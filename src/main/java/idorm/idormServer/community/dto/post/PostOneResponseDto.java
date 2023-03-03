@@ -62,10 +62,13 @@ public class PostOneResponseDto {
     @ApiModelProperty(position = 13, value = "수정일자")
     private LocalDateTime updatedAt;
 
-    @ApiModelProperty(position = 14, value = "게시글 업로드 사진들")
+    @ApiModelProperty(position = 14, value = "익명여부")
+    private Boolean isAnonymous;
+
+    @ApiModelProperty(position = 15, value = "게시글 업로드 사진들")
     private List<PostPhotoDefaultResponseDto> postPhotos = new ArrayList<>();
 
-    @ApiModelProperty(position = 15, value = "댓글/대댓글 목록")
+    @ApiModelProperty(position = 16, value = "댓글/대댓글 목록")
     private List<CommentParentResponseDto> comments = new ArrayList<>();
 
     // 게시글 저장 시에만 사용
@@ -80,6 +83,7 @@ public class PostOneResponseDto {
         this.likesCount = 0;
         this.commentsCount = 0;
         this.memberId = post.getMember().getId();
+        this.isAnonymous = post.getIsAnonymous();
 
         if(post.getMember() == null) { // 회원 탈퇴의 경우
             this.nickname = null;
@@ -110,6 +114,7 @@ public class PostOneResponseDto {
         this.isLiked = isLiked;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
+        this.isAnonymous = post.getIsAnonymous();
 
         if (post.getMember() != null)
             this.memberId = post.getMember().getId();
