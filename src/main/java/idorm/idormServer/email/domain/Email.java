@@ -2,6 +2,7 @@ package idorm.idormServer.email.domain;
 
 import idorm.idormServer.common.BaseEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

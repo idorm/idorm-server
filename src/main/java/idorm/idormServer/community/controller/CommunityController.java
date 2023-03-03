@@ -15,6 +15,7 @@ import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.community.dto.post.PostSaveRequestDto;
 import idorm.idormServer.community.dto.post.PostUpdateRequestDto;
 
+import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,6 +54,7 @@ public class CommunityController {
     private final PostLikedMemberService postLikedMemberService;
     private final CommentService commentService;
     private final PhotoService photoService;
+    private final FCMService fcmService;
 
     @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "- 페이징 적용으로 page는 페이지 번호를 의미합니다.\n " +
             "- page는 0부터 시작하며 서버에서 10개 단위로 페이징해서 반환합니다.\n " +
@@ -510,8 +513,10 @@ public class CommunityController {
     /**
      * Comment
      */
-    @ApiOperation(value = "댓글/대댓글 저장",
-            notes = "- 대댓글인 경우, parentCommentId(부모 댓글 식별자)가 게시글에 존재하지 않는다면 404(COMMENT_NOT_FOUND)를 반환합니다.")
+    @ApiOperation(value = "[FCM 적용] 댓글/대댓글 저장",
+            notes = "- 대댓글인 경우, parentCommentId(부모 댓글 식별자)가 게시글에 존재하지 않는다면 404(COMMENT_NOT_FOUND)를 반환합니다.\n" +
+                    "- 댓글이 저장되면 게시글 작성자에게 FCM 알람을 보냅니다.\n" +
+                    "- 대댓글이 저장되면 게시글 작성자, 부모 댓글 작성자, 부모 댓글에 단 대댓글들의 작성자들 에게 FCM 알람을 보냅니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
@@ -528,13 +533,13 @@ public class CommunityController {
     })
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(value = "/post/{post-id}/comment")
-    public ResponseEntity<DefaultResponseDto<Object>> saveComment(
+    public ResponseEntity<DefaultResponseDto<Object>> saveComment (
             HttpServletRequest request2,
             @PathVariable("post-id")
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId,
             @RequestBody @Valid CommentDefaultRequestDto request
-    ) {
+    ) throws IOException {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
@@ -544,8 +549,38 @@ public class CommunityController {
 
         Comment comment = commentService.save(member, request.toEntity(member, post));
 
-        if(request.getParentCommentId() != null)
+        if(request.getParentCommentId() != null) { // 대댓글, 게시글 주인/부모댓글 주인 / 대댓글 단 사람들한테 알람
             commentService.saveParentCommentId(request.getParentCommentId(), comment);
+
+            String alertTitle = "새로운 대댓글이 달렸어요: ";
+            
+            if (post.getMember() != null) {
+                fcmService.sendMessage(post.getMember().getFcmToken(),
+                        alertTitle,
+                        comment.getContent());
+            } else if (commentService.findById(request.getParentCommentId()).getMember() != null) {
+                fcmService.sendMessage(commentService.findById(request.getParentCommentId()).getMember().getFcmToken(),
+                        alertTitle,
+                        comment.getContent());
+            } else {
+                List<Comment> subComments = commentService.findSubCommentsByParentCommentId(post.getId(),
+                        request.getParentCommentId());
+
+                for (Comment subComment : subComments) {
+                    if (subComment.getId() != comment.getId())
+                        if (subComment.getMember() != null)
+                            fcmService.sendMessage(subComment.getMember().getFcmToken(),
+                                    alertTitle,
+                                    comment.getContent());
+                }
+            }
+        } else { // 댓글, 게시글 주인에게 알람
+
+            if (post.getMember() != null)
+                fcmService.sendMessage(post.getMember().getFcmToken(),
+                        "새로운 댓글이 달렸어요: ",
+                        comment.getContent());
+        }
 
         CommentDefaultResponseDto response = new CommentDefaultResponseDto(comment);
 

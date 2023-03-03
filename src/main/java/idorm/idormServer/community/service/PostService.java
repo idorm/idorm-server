@@ -30,6 +30,7 @@ public class PostService {
 
     /**
      * 멤버 탈퇴 시 Post, Comment에 매핑된 Member를 null로 변경 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void removeMember(Member member) {

@@ -252,4 +252,30 @@ public class MemberService {
 
         save(member);
     }
+
+    /**
+     * 회원 FCM 토큰 설정 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void updateFcmToken(Member member, String fcmToken) {
+        try {
+            member.updateFcmToken(fcmToken);
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 회원 FCM 토큰 삭제 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void deleteFcmToken(Member member) {
+        try {
+            member.deleteFcmToken();
+        } catch (RuntimeException e) {
+            throw new CustomException(SERVER_ERROR);
+        }
+    }
 }

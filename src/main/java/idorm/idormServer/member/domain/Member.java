@@ -31,6 +31,10 @@ public class Member extends BaseEntity implements UserDetails {
     private String nickname;
     private LocalDate nicknameUpdatedAt;
 
+    private String fcmToken;
+
+    private LocalDate fcmTokenUpdatedAt;
+
     @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private MatchingInfo matchingInfo;
 
@@ -119,6 +123,16 @@ public class Member extends BaseEntity implements UserDetails {
 
     public void addComment(Comment comment) {
         this.comments.add(comment);
+    }
+
+    public void updateFcmToken(String token) {
+        this.fcmToken = token;
+        this.fcmTokenUpdatedAt = LocalDate.now();
+    }
+
+    public void deleteFcmToken() {
+        this.fcmToken = null;
+        this.fcmTokenUpdatedAt = LocalDate.now();
     }
 
     @Override

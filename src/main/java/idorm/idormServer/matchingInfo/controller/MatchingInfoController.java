@@ -53,7 +53,7 @@ public class MatchingInfoController {
     })
     @PostMapping("/member/matchinginfo")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DefaultResponseDto<Object>> saveMatchingInfo(
+    public ResponseEntity<DefaultResponseDto<Object>> save(
             HttpServletRequest request2,
             @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 

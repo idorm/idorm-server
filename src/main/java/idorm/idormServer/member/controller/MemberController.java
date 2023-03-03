@@ -302,8 +302,7 @@ public class MemberController {
                         .build());
     }
 
-
-    @ApiOperation(value = "로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
+    @ApiOperation(value = "[FCM 수정] 로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -321,6 +320,7 @@ public class MemberController {
     )
     @PostMapping("/login")
     public ResponseEntity<DefaultResponseDto<Object>> login(
+            @RequestHeader("fcm-token") String fcmToken,
             @RequestBody @Valid MemberLoginRequestDto request) {
 
         Member loginMember = null;
@@ -346,6 +346,8 @@ public class MemberController {
         }
 
         String token = jwtTokenProvider.createToken(loginMember.getUsername(), roles);
+        memberService.updateFcmToken(loginMember, fcmToken);
+
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
 
         return ResponseEntity.status(200)
@@ -354,6 +356,70 @@ public class MemberController {
                         .responseCode("MEMBER_LOGIN")
                         .responseMessage("회원 로그인 완료")
                         .data(response)
+                        .build());
+    }
+
+    @ApiOperation(value = "[FCM 수정] FCM 토큰 업데이트",
+            notes = "- 앱을 실행할 때 로그인이 되어 있으면 타임스탬프 갱신을 위한 FCM 토큰을 서버에 전송해주세요. \n" +
+                    "- FCM 토큰이 만료되었을 때 FCM 토큰을 업데이트해주세요.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "MEMBER_FCM_UPDATED"),
+            @ApiResponse(responseCode = "400",
+                    description = "FIELD_REQUIRED / EMAIL_CHARACTER_INVALID"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_PASSWORD"),
+            @ApiResponse(responseCode = "404",
+                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
+            @ApiResponse(responseCode = "500",
+                    description = "SERVER_ERROR"),
+    }
+    )
+    @PatchMapping("/member/fcm")
+    public ResponseEntity<DefaultResponseDto<Object>> updateFcmToken(
+            HttpServletRequest request,
+            @RequestHeader("fcm-token") String fcmToken) {
+
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(loginMemberId);
+
+        memberService.updateFcmToken(member, fcmToken);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("MEMBER_FCM_UPDATED")
+                        .responseMessage("회원 FCM 업데이트 완료")
+                        .build());
+    }
+
+    @ApiOperation(value = "[FCM 수정] 로그아웃",
+            notes = "- 토큰 관리를 위해 로그아웃 시 해당 API를 호출해주세요.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "MEMBER_LOGOUT"),
+            @ApiResponse(responseCode = "401",
+                    description = "UNAUTHORIZED_PASSWORD"),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND"),
+            @ApiResponse(responseCode = "500",
+                    description = "SERVER_ERROR"),
+    }
+    )
+    @DeleteMapping("/member/fcm")
+    public ResponseEntity<DefaultResponseDto<Object>> logout(
+            HttpServletRequest request) {
+
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(loginMemberId);
+
+        memberService.deleteFcmToken(member);
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("MEMBER_LOGOUT")
+                        .responseMessage("회원 로그아웃 완료")
                         .build());
     }
 

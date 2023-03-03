@@ -1,24 +1,30 @@
-package idorm.idormServer.fcm.domain;
+package idorm.idormServer.fcm.dto;
 
-import com.google.firebase.messaging.Message;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class FcmMessage {
+    private boolean validateOnly;
+    private Message message;
 
-    @Id
-    @Column(name = "fcm_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class Message {
+        private Notification notification;
+        private String token;
+    }
 
-    private boolean validate;
-
-
+    @Builder
+    @AllArgsConstructor
+    @Getter
+    public static class Notification {
+        private String title;
+        private String body;
+        private String image;
+    }
 }

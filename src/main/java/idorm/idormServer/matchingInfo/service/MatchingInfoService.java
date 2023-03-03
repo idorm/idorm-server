@@ -25,7 +25,7 @@ public class MatchingInfoService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void saveMatchingInfo(MatchingInfo matchingInfo) {
+    public void save(MatchingInfo matchingInfo) {
         try {
             matchingInfoRepository.save(matchingInfo);
         } catch (RuntimeException e) {
@@ -40,7 +40,7 @@ public class MatchingInfoService {
     public MatchingInfo createMatchingInfo(MatchingInfoDefaultRequestDto requestDto, Member member) {
 
         MatchingInfo matchingInfo = requestDto.toEntity(member);
-        saveMatchingInfo(matchingInfo);
+        save(matchingInfo);
 
         return matchingInfo;
     }

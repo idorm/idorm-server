@@ -1,14 +1,20 @@
-package idorm.idormServer.community.service;
+package idorm.idormServer.fcm.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.messaging.*;
-import idorm.idormServer.exception.CustomException;
+import com.google.auth.oauth2.GoogleCredentials;
+import idorm.idormServer.fcm.dto.FcmMessage;
 import lombok.RequiredArgsConstructor;
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
+import java.io.IOException;
+import java.util.List;
+
+import static org.springframework.http.HttpHeaders.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,27 +27,47 @@ public class FCMService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
     private final ObjectMapper objectMapper;
 
-    public String sendMessage(int requestId, String registrationToken) {
+    public void sendMessage(String targetToken, String title, String body) throws IOException {
 
-        try {
-            Message message = Message.builder()
-                    .setAndroidConfig(AndroidConfig.builder()
-                            .setTtl(3600*1000)
-                            .setPriority(AndroidConfig.Priority.HIGH)
-                            .setRestrictedPackageName("org.appcenter.inudorm")
-                            .setDirectBootOk(true)
-                            .setNotification(AndroidNotification.builder()
-                                    .setTitle("[idorm] 오늘의 인기 게시글!") // TODO: 수정
-                                    .setBody("오늘의 인기게시글 본문입니다.") // TODO: 수정
-                                    .build())
-                            .build())
-                    .putData("requestId", String.valueOf(requestId))
-                    .setToken(registrationToken)
-                    .build();
+        String message = createMessage(targetToken, title, body);
 
-            return FirebaseMessaging.getInstance().send(message);
-        } catch (Exception e) {
-            throw new CustomException(SERVER_ERROR);
-        }
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
+        Request request = new Request.Builder()
+                .url(API_URL)
+                .post(requestBody)
+                .addHeader(AUTHORIZATION, "Bearer " + getAccessToken())
+                .addHeader(CONTENT_TYPE, "application/json; UTF-8")
+                .build();
+
+        Response response = client.newCall(request).execute();
+
+        System.out.println(response.body().string());
+    }
+
+    public String createMessage(String targetToken, String title, String body) throws JsonProcessingException {
+        FcmMessage fcmMessage = FcmMessage.builder()
+                .message(FcmMessage.Message.builder()
+                        .token(targetToken)
+                        .notification(FcmMessage.Notification.builder()
+                                .title(title)
+                                .body(body)
+                                .image(null)
+                                .build())
+                        .build())
+                .validateOnly(false)
+                .build();
+        return objectMapper.writeValueAsString(fcmMessage);
+    }
+
+    private String getAccessToken() throws IOException {
+        String firebaseConfigPath = "firebaseServiceKey.json";
+
+        GoogleCredentials googleCredentials = GoogleCredentials
+                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
+                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+
+        googleCredentials.refreshIfExpired();
+        return googleCredentials.getAccessToken().getTokenValue();
     }
 }

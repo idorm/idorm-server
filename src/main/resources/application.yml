@@ -31,22 +31,25 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-  servlet:
-    multipart:
-      max-file-size: ${MAX_FILE_SIZE}
-      max-request-size: ${MAX_REQUEST_SIZE}
-      enabled: true
+servlet:
+  multipart:
+    max-file-size: ${MAX_FILE_SIZE}
+    max-request-size: ${MAX_REQUEST_SIZE}
+    enabled: true
 
-  s3:
-    access-key: ${S3_ACCESS_KEY}
-    secret-key: ${S3_SECRET_KEY}
-    bucket-name: ${S3_BUCKET_NAME}
-    region: ${S3_REGION}
+s3:
+  access-key: ${S3_ACCESS_KEY}
+  secret-key: ${S3_SECRET_KEY}
+  bucket-name: ${S3_BUCKET_NAME}
+  region: ${S3_REGION}
 
-  sentry:
-    dsn: ${SENTRY_DSN}
-    traces-sample-rate: 1.0
-    enable-tracing: true
-    logging:
-      minimum-event-level: info
-      minimum-breadcrumb-level: info
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0
+  enable-tracing: true
+  logging:
+    minimum-event-level: info
+    minimum-breadcrumb-level: info
+
+firebase:
+  project-id: ${FIREBASE_PROJECT_ID}
