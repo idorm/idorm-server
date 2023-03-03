@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.Range;
 import javax.validation.GroupSequence;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Getter
 @AllArgsConstructor
@@ -61,9 +60,4 @@ public class MatchingFilteredMatchingInfoRequestDto {
     @ApiModelProperty(position = 9, required = true, example = "true", value = "이어폰 착용 여부")
     @NotNull(message = "이어폰 착용 의사 여부 입력은 필수입니다.", groups = ValidationSequence.NotNull.class)
     private Boolean isWearEarphones;
-
-    @ApiModelProperty(position = 10, required = true, example = "오전 9시에 기상합니다.", value = "기상시간")
-    @NotBlank(message = "기상 시간 입력은 필수입니다.", groups = ValidationSequence.NotBlank.class)
-    @Size(max = 30, message = "기상 시간은 ~30자 이내로 입력해 주세요.", groups = ValidationSequence.Size.class)
-    private String wakeupTime;
 }
