@@ -62,10 +62,11 @@ public class FirebaseConfiguration {
             Map<String, Object> map = new HashMap<>();
             map = objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>(){});
 
-            String path = "src/main/resources/serviceAccountKey.json";
+//            String path = "src/main/resources/serviceAccountKey.json";
+            String path = "/";
             objectMapper.writeValue(new File(path), map);
 
-            FileInputStream refreshToken = new FileInputStream("src/main/resources/serviceAccountKey.json");
+            FileInputStream refreshToken = new FileInputStream(path);
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(refreshToken))
