@@ -47,6 +47,7 @@ public class MemberController {
     private final MemberService memberService;
     private final EmailService emailService;
     private final PhotoService photoService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${DB_USERNAME}")
     private String ENV_USERNAME;
@@ -54,8 +55,6 @@ public class MemberController {
     @Value("${ADMIN_PASSWORD}")
     private String ENV_PASSWORD;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @ApiOperation(value = "회원 단건 조회")
     @ApiResponses(value = {
@@ -120,7 +119,7 @@ public class MemberController {
         memberService.isExistingEmail(request.getEmail());
         memberService.isExistingNickname(request.getNickname());
 
-        Member createdMember = memberService.createMember(request);
+        Member createdMember = memberService.createMember(request, passwordEncoder.encode(request.getPassword()));
 
         emailService.updateIsJoined(foundEmail);
 
@@ -302,7 +301,7 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
+    @ApiOperation(value = "[삭제 예정] 로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",

@@ -43,10 +43,10 @@ public class MemberSaveRequestDto {
             groups = ValidationSequence.Pattern.class)
     private String nickname;
 
-    public Member toEntity() {
+    public Member toEntity(String password) {
         return Member.builder()
                 .email(this.email)
-                .password(this.password)
+                .password(password)
                 .nickname(this.nickname)
                 .build();
     }

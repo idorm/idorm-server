@@ -53,9 +53,9 @@ public class MemberService {
      * 회원 생성 |
      */
     @Transactional
-    public Member createMember(MemberSaveRequestDto request) {
+    public Member createMember(MemberSaveRequestDto request, String password) {
 
-        Member createdMember = request.toEntity();
+        Member createdMember = request.toEntity(password);
         save(createdMember);
         return createdMember;
     }
