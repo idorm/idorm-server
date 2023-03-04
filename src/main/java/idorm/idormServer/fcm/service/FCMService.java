@@ -99,7 +99,7 @@ public class FCMService {
         map = objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>(){});
 
 //        String path = "src/main/resources/serviceAccountKey.json";
-        String path = "/";
+        String path = "/serviceAccountKey.json";
         objectMapper.writeValue(new File(path), map);
 
         GoogleCredentials googleCredentials = GoogleCredentials

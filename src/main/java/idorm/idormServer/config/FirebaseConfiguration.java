@@ -63,7 +63,7 @@ public class FirebaseConfiguration {
             map = objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>(){});
 
 //            String path = "src/main/resources/serviceAccountKey.json";
-            String path = "/";
+            String path = "/serviceAccountKey.json";
             objectMapper.writeValue(new File(path), map);
 
             FileInputStream refreshToken = new FileInputStream(path);
