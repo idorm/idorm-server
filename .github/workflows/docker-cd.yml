@@ -23,15 +23,6 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      
-      ## Firebase Key를 Github Secret에서 값을 가져와 생성합니다.
-      - name: Create firebase key
-        run: |
-          cd ./src/main/resources
-          ls -a .
-          touch ./serviceAccountKey.json
-          echo "${{ secrets.FIREBASE_JSON_CONTENT }}" > ./serviceAccountKey.json
-        shell: bash
 
       # "latest" 태그로 빌드하여 GitHub registry에 올립니다.
       - name: Build bootBuildImage with latest
