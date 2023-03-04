@@ -94,16 +94,18 @@ public class FCMService {
                 "\"client_x509_cert_url\" : \"" + clientUrl + "\"\n" +
                 "}";
 
-        ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-        Map<String, Object> map = new HashMap<>();
-        map = objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>(){});
+//        ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+//        Map<String, Object> map = new HashMap<>();
+//        map = objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>(){});
 
-//        String path = "src/main/resources/serviceAccountKey.json";
-        String path = "/serviceAccountKey.json";
-        objectMapper.writeValue(new File(path), map);
+//        String path = "src/main/resources/serviceAccountKey.json"; // 로컬
+//        String path = "/serviceAccountKey.json";
+//        objectMapper.writeValue(new File(path), map);
+
+        InputStream is = new ByteArrayInputStream(jsonText.getBytes());
 
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource(path).getInputStream())
+                .fromStream(is)
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
         googleCredentials.refreshIfExpired();

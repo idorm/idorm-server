@@ -58,18 +58,20 @@ public class FirebaseConfiguration {
                     "\"client_x509_cert_url\" : \"" + clientUrl + "\"\n" +
                     "}";
 
-            ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-            Map<String, Object> map = new HashMap<>();
-            map = objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>(){});
+//            ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+//            Map<String, Object> map = new HashMap<>();
+//            map = objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>(){});
 
-//            String path = "src/main/resources/serviceAccountKey.json";
-            String path = "/serviceAccountKey.json";
-            objectMapper.writeValue(new File(path), map);
+//            String path = "src/main/resources/serviceAccountKey.json"; // 로컬
+//            String path = "/serviceAccountKey.json";
+//            objectMapper.writeValue(new File(path), map);
+//
+//            FileInputStream refreshToken = new FileInputStream(path);
 
-            FileInputStream refreshToken = new FileInputStream(path);
+            InputStream is = new ByteArrayInputStream(jsonText.getBytes());
 
             FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(refreshToken))
+                    .setCredentials(GoogleCredentials.fromStream(is))
                     .setProjectId(projectId)
                     .build();
 
