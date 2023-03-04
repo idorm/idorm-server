@@ -1,5 +1,32 @@
-# 공통 설정
+# MySQL
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  #    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+  #    username: nahyeon
+  #    password: lsmi81
+
+  jpa:
+    hibernate:
+      ddl-auto: ${DB_DDL_TYPE}
+      use-new-id-generator-mappings: false
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+
+  #  logging:
+  #    level:
+  #      org:
+  #        hibernate:
+  #          type:
+  #            descriptor:
+  #              sql: trace
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -9,6 +36,12 @@ servlet:
     max-file-size: ${MAX_FILE_SIZE}
     max-request-size: ${MAX_REQUEST_SIZE}
     enabled: true
+
+s3:
+  access-key: ${S3_ACCESS_KEY}
+  secret-key: ${S3_SECRET_KEY}
+  bucket-name: ${S3_BUCKET_NAME}
+  region: ${S3_REGION}
 
 sentry:
   dsn: ${SENTRY_DSN}
@@ -25,62 +58,3 @@ firebase:
   client-email: ${FCM_CLIENT_EMAIL}
   client-id: ${FCM_CLIENT_ID}
   client-url: ${FCM_CLIENT_URL}
-
-
---- # local 설정
-spring:
-  config:
-    activate:
-      on-profile: "local"
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-    username: nahyeon
-    password: lsmi81
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-      use-new-id-generator-mappings: false
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-
-s3:
-  config:
-    activate:
-      on-profile: "local"
-  access-key: ${S3_ACCESS_KEY}
-  secret-key: ${S3_SECRET_KEY}
-  bucket-name: idorm-local-bucket
-  region: ${S3_REGION}
-
---- # prod 설정
-spring:
-  config:
-    activate:
-      on-profile: "prod"
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-
-  jpa:
-    hibernate:
-      ddl-auto: ${DB_DDL_TYPE}
-      use-new-id-generator-mappings: false
-    properties:
-      hibernate:
-        show_sql: false
-        format_sql: false
-
-s3:
-  config:
-    activate:
-      on-profile: "prod"
-  access-key: ${S3_ACCESS_KEY}
-  secret-key: ${S3_SECRET_KEY}
-  bucket-name: ${S3_BUCKET_NAME}
-  region: ${S3_REGION}
