@@ -15,7 +15,8 @@ import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.community.dto.post.PostSaveRequestDto;
 import idorm.idormServer.community.dto.post.PostUpdateRequestDto;
 
-import idorm.idormServer.fcm.domain.FcmChannel;
+import idorm.idormServer.fcm.domain.NotifyType;
+import idorm.idormServer.fcm.dto.FcmRequestDto;
 import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
@@ -38,7 +39,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -540,7 +540,7 @@ public class CommunityController {
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId,
             @RequestBody @Valid CommentDefaultRequestDto request
-    ) throws IOException {
+    ) {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
@@ -556,34 +556,62 @@ public class CommunityController {
             String alertTitle = "새로운 대댓글이 달렸어요: ";
             
             if (post.getMember() != null) {
-                fcmService.sendMessage(FcmChannel.SUBCOMMENT, post.getMember().getFcmToken(),
-                        alertTitle,
-                        comment.getContent());
+                FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
+                        .token(post.getMember().getFcmToken())
+                        .notification(FcmRequestDto.Notification.builder()
+                                .notifyType(NotifyType.SUBCOMMENT)
+                                .contentId(postId)
+                                .tite(alertTitle)
+                                .content(comment.getContent())
+                                .build())
+                        .build();
+                fcmService.sendMessage(fcmRequestDto);
             } else if (commentService.findById(request.getParentCommentId()).getMember() != null) {
-                fcmService.sendMessage(FcmChannel.SUBCOMMENT,
-                        commentService.findById(request.getParentCommentId()).getMember().getFcmToken(),
-                        alertTitle,
-                        comment.getContent());
+
+                FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
+                        .token(commentService.findById(request.getParentCommentId()).getMember().getFcmToken())
+                        .notification(FcmRequestDto.Notification.builder()
+                                .notifyType(NotifyType.SUBCOMMENT)
+                                .contentId(postId)
+                                .tite(alertTitle)
+                                .content(comment.getContent())
+                                .build())
+                        .build();
+                fcmService.sendMessage(fcmRequestDto);
             } else {
                 List<Comment> subComments = commentService.findSubCommentsByParentCommentId(post.getId(),
                         request.getParentCommentId());
 
                 for (Comment subComment : subComments) {
                     if (subComment.getId() != comment.getId())
-                        if (subComment.getMember() != null)
-                            fcmService.sendMessage(FcmChannel.SUBCOMMENT,
-                                    subComment.getMember().getFcmToken(),
-                                    alertTitle,
-                                    comment.getContent());
+                        if (subComment.getMember() != null) {
+                            FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
+                                    .token(subComment.getMember().getFcmToken())
+                                    .notification(FcmRequestDto.Notification.builder()
+                                            .notifyType(NotifyType.SUBCOMMENT)
+                                            .contentId(postId)
+                                            .tite(alertTitle)
+                                            .content(comment.getContent())
+                                            .build())
+                                    .build();
+                            fcmService.sendMessage(fcmRequestDto);
+                        }
                 }
             }
         } else { // 댓글, 게시글 주인에게 알람
 
-            if (post.getMember() != null)
-                fcmService.sendMessage(FcmChannel.COMMENT,
-                        post.getMember().getFcmToken(),
-                        "새로운 댓글이 달렸어요: ",
-                        comment.getContent());
+            if (post.getMember() != null) {
+                FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
+                        .token(post.getMember().getFcmToken())
+                        .notification(FcmRequestDto.Notification.builder()
+                                .notifyType(NotifyType.COMMENT)
+                                .contentId(postId)
+                                .tite("새로운 댓글이 달렸어요: ")
+                                .content(comment.getContent())
+                                .build())
+                        .build();
+                fcmService.sendMessage(fcmRequestDto);
+            }
         }
 
         CommentDefaultResponseDto response = new CommentDefaultResponseDto(comment);

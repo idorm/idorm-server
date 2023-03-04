@@ -6,9 +6,13 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-  #    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-  #    username: nahyeon
-  #    password: lsmi81
+#    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
+#    username: nahyeon
+#    password: lsmi81
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
 
   jpa:
     hibernate:

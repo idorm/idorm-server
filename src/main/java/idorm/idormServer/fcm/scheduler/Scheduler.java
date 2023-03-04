@@ -2,7 +2,8 @@ package idorm.idormServer.fcm.scheduler;
 
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.service.PostService;
-import idorm.idormServer.fcm.domain.FcmChannel;
+import idorm.idormServer.fcm.domain.NotifyType;
+import idorm.idormServer.fcm.dto.FcmRequestDto;
 import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
@@ -11,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class Scheduler {
     private final PostService postService;
 
     @Scheduled(cron = "* 55 8 * * 1,2,3,4,5")
-    public void alertTopPosts() throws IOException {
+    public void alertTopPosts() {
 
         List<Member> members = memberService.findAll();
         Member admin = memberService.findById(1L);
@@ -44,22 +44,47 @@ public class Scheduler {
                     !member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
 
                 if (member.getMatchingInfo() != null) {
+
+                    FcmRequestDto fcmRequestDto = null;
                     switch (DormCategory.valueOf(member.getMatchingInfo().getDormCategory())) {
                         case DORM1:
-                            fcmService.sendMessage(FcmChannel.TOPPOST,
-                                    titleOfDorm1,
-                                    topPostFromDorm1.getTitle(),
-                                    topPostFromDorm1.getContent());
+                            fcmRequestDto = FcmRequestDto.builder()
+                                    .token(member.getFcmToken())
+                                    .notification(FcmRequestDto.Notification.builder()
+                                            .notifyType(NotifyType.TOPPOST)
+                                            .contentId(topPostFromDorm1.getId())
+                                            .tite(titleOfDorm1)
+                                            .content(topPostFromDorm1.getContent())
+                                            .build())
+                                    .build();
+                            fcmService.sendMessage(fcmRequestDto);
+                            break;
+
                         case DORM2:
-                            fcmService.sendMessage(FcmChannel.TOPPOST,
-                                    titleOfDorm2,
-                                    topPostFromDorm2.getTitle(),
-                                    topPostFromDorm2.getContent());
+                            fcmRequestDto = FcmRequestDto.builder()
+                                    .token(member.getFcmToken())
+                                    .notification(FcmRequestDto.Notification.builder()
+                                            .notifyType(NotifyType.TOPPOST)
+                                            .contentId(topPostFromDorm2.getId())
+                                            .tite(titleOfDorm2)
+                                            .content(topPostFromDorm2.getContent())
+                                            .build())
+                                    .build();
+                            fcmService.sendMessage(fcmRequestDto);
+                            break;
+
                         case DORM3:
-                            fcmService.sendMessage(FcmChannel.TOPPOST,
-                                    titleOfDorm3,
-                                    topPostFromDorm3.getTitle(),
-                                    topPostFromDorm3.getContent());
+                            fcmRequestDto = FcmRequestDto.builder()
+                                    .token(member.getFcmToken())
+                                    .notification(FcmRequestDto.Notification.builder()
+                                            .notifyType(NotifyType.TOPPOST)
+                                            .contentId(topPostFromDorm3.getId())
+                                            .tite(titleOfDorm3)
+                                            .content(topPostFromDorm3.getContent())
+                                            .build())
+                                    .build();
+                            fcmService.sendMessage(fcmRequestDto);
+                            break;
                     }
                 }
             }

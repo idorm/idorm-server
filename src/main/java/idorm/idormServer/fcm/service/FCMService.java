@@ -1,11 +1,14 @@
 package idorm.idormServer.fcm.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.messaging.*;
 import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.fcm.domain.FcmChannel;
-import idorm.idormServer.fcm.dto.FcmMessage;
+import idorm.idormServer.fcm.domain.NotifyType;
+import idorm.idormServer.fcm.dto.FcmRequestDto;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +21,7 @@ import java.util.List;
 import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 import static org.springframework.http.HttpHeaders.*;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -44,11 +48,11 @@ public class FCMService {
     private final ObjectMapper objectMapper;
 
 
-    public void sendMessage(FcmChannel channel, String targetToken, String title, String body) {
+    public void sendMessage(FcmRequestDto fcmRequestDto) {
 
         try {
             String API_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
-            String message = createMessage(channel, targetToken, title, body);
+            String message = createMessage(fcmRequestDto);
 
             OkHttpClient client = new OkHttpClient();
             RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
@@ -66,22 +70,41 @@ public class FCMService {
         }
     }
 
-    public String createMessage(FcmChannel channel, String targetToken, String title, String body) {
+    public String createMessage(FcmRequestDto requestDto) {
         try {
 
-            FcmMessage fcmMessage = FcmMessage.builder()
-                    .message(FcmMessage.Message.builder()
-                            .token(targetToken)
-                            .notification(FcmMessage.Notification.builder()
-                                    .alertType(channel.toString())
-                                    .title(title)
-                                    .body(body)
-                                    .build())
-                            .build())
-                    .validateOnly(false)
+            Message message = Message.builder()
+                    .setToken(requestDto.getToken())
+                    .setNotification(
+                            Notification.builder()
+                                    .setTitle(requestDto.getNotification().getTite())
+                                    .setBody(requestDto.getNotification().getContent())
+                                    .build()
+                    )
+                    .setAndroidConfig(
+                            AndroidConfig.builder()
+                                    .setNotification(
+                                            AndroidNotification.builder()
+                                                    .setChannelId(requestDto.getNotification().getNotifyType().toString())
+                                                    .setTitle(requestDto.getNotification().getTite())
+                                                    .setBody(requestDto.getNotification().getContent())
+                                                    .setClickAction("push_click")
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .setApnsConfig(
+                            ApnsConfig.builder()
+                                    .setAps(Aps.builder()
+                                            .setCategory("push_click")
+                                            .build())
+                                    .build()
+                    )
+                    .putData("notifyType", requestDto.getNotification().getNotifyType().toString())
+                    .putData("contentId", requestDto.getNotification().getContentId().toString())
                     .build();
 
-            return objectMapper.writeValueAsString(fcmMessage);
+            return objectMapper.writeValueAsString(message);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new CustomException(SERVER_ERROR);

@@ -4,6 +4,7 @@ import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.development.dto.TestRequestDto;
 import idorm.idormServer.development.service.TestService;
+import idorm.idormServer.fcm.dto.FcmRequestDto;
 import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
@@ -44,16 +45,22 @@ public class TestController {
     })
     @PostMapping("/fcm")
     public ResponseEntity pushMessage(
-            @RequestBody TestRequestDto request) throws IOException {
+            @RequestBody TestRequestDto request) {
 
         System.out.println(request.getTargetToken() + " "
                 +request.getTitle() + " " + request.getBody());
 
-        firebaseCloudMessageService.sendMessage(
-                request.getAlertType(),
-                request.getTargetToken(),
-                request.getTitle(),
-                request.getBody());
+        FcmRequestDto fcmRequest = FcmRequestDto.builder()
+                .token(request.getTargetToken())
+                .notification(FcmRequestDto.Notification.builder()
+                        .notifyType(request.getAlertType())
+                        .contentId(request.getContentId())
+                        .tite(request.getTitle())
+                        .content(request.getBody())
+                        .build())
+                .build();
+
+        firebaseCloudMessageService.sendMessage(fcmRequest);
 
         return ResponseEntity.status(204).build();
     }
