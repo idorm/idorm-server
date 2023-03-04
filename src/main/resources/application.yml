@@ -53,3 +53,8 @@ sentry:
 
 firebase:
   project-id: ${FIREBASE_PROJECT_ID}
+  private-key-id: ${FCM_PRIVATE_KEY_ID}
+  private-key: ${FCM_PRIVATE_KEY}
+  client-email: ${FCM_CLIENT_EMAIL}
+  client-id: ${FCM_CLIENT_ID}
+  client-url: ${FCM_CLIENT_URL}

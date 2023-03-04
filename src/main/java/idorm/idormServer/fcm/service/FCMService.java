@@ -28,52 +28,23 @@ public class FCMService {
     @Value("${firebase.project-id}")
     private String projectId;
 
-    @Value("${FCM_PRIVATE_KEY_ID}")
+    @Value("${firebase.private-key-id}")
     private String privateKeyId;
 
-    @Value("${FCM_PRIVATE_KEY}")
+    @Value("${firebase.private-key}")
     private String privateKey;
 
-    @Value("${FCM_CLIENT_EMAIL}")
+    @Value("${firebase.client-email}")
     private String clientEmail;
 
-    @Value("${FCM_CLIENT_ID}")
+    @Value("${firebase.client-id}")
     private String clientId;
 
-    @Value("${FCM_CLIENT_URL}")
+    @Value("${firebase.client-url}")
     private String clientUrl;
 
     private final ObjectMapper objectMapper;
 
-    class FcmKey {
-
-        public String type;
-        public String project_id;
-        public String private_key_id;
-        public String private_key;
-        public String client_email;
-        public String client_id;
-        public String auth_uri;
-        public String token_uri;
-        public String auth_provider_x509_cert_url;
-        public String client_x509_cert_url;
-
-        public FcmKey(String type,
-                      String auth_uri,
-                      String token_uri,
-                      String auth_provider_x509_cert_url) {
-            this.type = type;
-            this.project_id = projectId;
-            this.private_key_id = privateKeyId;
-            this.private_key = privateKey;
-            this.client_email = clientEmail;
-            this.client_id = clientId;
-            this.auth_uri = auth_uri;
-            this.token_uri = token_uri;
-            this.auth_provider_x509_cert_url = auth_provider_x509_cert_url;
-            this.client_x509_cert_url = clientUrl;
-        }
-    }
 
     public void sendMessage(String targetToken, String title, String body) throws IOException {
 
@@ -129,8 +100,6 @@ public class FCMService {
 
         String path = "src/main/resources/serviceAccountKey.json";
         objectMapper.writeValue(new File(path), map);
-
-        FileInputStream refreshToken = new FileInputStream("src/main/resources/serviceAccountKey.json");
 
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(path).getInputStream())
