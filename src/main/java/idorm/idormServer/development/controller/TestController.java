@@ -50,6 +50,7 @@ public class TestController {
                 +request.getTitle() + " " + request.getBody());
 
         firebaseCloudMessageService.sendMessage(
+                request.getAlertType(),
                 request.getTargetToken(),
                 request.getTitle(),
                 request.getBody());

@@ -1,8 +1,5 @@
 package idorm.idormServer.config;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -15,8 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
 import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 
@@ -57,16 +52,6 @@ public class FirebaseConfiguration {
                     "\"auth_provider_x509_cert_url\" : \"https://www.googleapis.com/oauth2/v1/certs\",\n" +
                     "\"client_x509_cert_url\" : \"" + clientUrl + "\"\n" +
                     "}";
-
-//            ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-//            Map<String, Object> map = new HashMap<>();
-//            map = objectMapper.readValue(jsonText, new TypeReference<Map<String, Object>>(){});
-
-//            String path = "src/main/resources/serviceAccountKey.json"; // 로컬
-//            String path = "/serviceAccountKey.json";
-//            objectMapper.writeValue(new File(path), map);
-//
-//            FileInputStream refreshToken = new FileInputStream(path);
 
             InputStream is = new ByteArrayInputStream(jsonText.getBytes());
 

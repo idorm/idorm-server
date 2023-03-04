@@ -2,6 +2,7 @@ package idorm.idormServer.fcm.scheduler;
 
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.service.PostService;
+import idorm.idormServer.fcm.domain.FcmChannel;
 import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
@@ -45,15 +46,18 @@ public class Scheduler {
                 if (member.getMatchingInfo() != null) {
                     switch (DormCategory.valueOf(member.getMatchingInfo().getDormCategory())) {
                         case DORM1:
-                            fcmService.sendMessage(titleOfDorm1,
+                            fcmService.sendMessage(FcmChannel.TOPPOST,
+                                    titleOfDorm1,
                                     topPostFromDorm1.getTitle(),
                                     topPostFromDorm1.getContent());
                         case DORM2:
-                            fcmService.sendMessage(titleOfDorm2,
+                            fcmService.sendMessage(FcmChannel.TOPPOST,
+                                    titleOfDorm2,
                                     topPostFromDorm2.getTitle(),
                                     topPostFromDorm2.getContent());
                         case DORM3:
-                            fcmService.sendMessage(titleOfDorm3,
+                            fcmService.sendMessage(FcmChannel.TOPPOST,
+                                    titleOfDorm3,
                                     topPostFromDorm3.getTitle(),
                                     topPostFromDorm3.getContent());
                     }

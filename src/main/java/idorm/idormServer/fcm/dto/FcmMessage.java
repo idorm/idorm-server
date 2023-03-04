@@ -2,8 +2,6 @@ package idorm.idormServer.fcm.dto;
 
 import lombok.*;
 
-import javax.persistence.*;
-
 @Getter
 @AllArgsConstructor
 @Builder
@@ -23,6 +21,7 @@ public class FcmMessage {
     @AllArgsConstructor
     @Getter
     public static class Notification {
+        private String alertType;
         private String title;
         private String body;
         private String image;

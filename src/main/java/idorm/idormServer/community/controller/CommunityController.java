@@ -15,6 +15,7 @@ import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.community.dto.post.PostSaveRequestDto;
 import idorm.idormServer.community.dto.post.PostUpdateRequestDto;
 
+import idorm.idormServer.fcm.domain.FcmChannel;
 import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
@@ -555,11 +556,12 @@ public class CommunityController {
             String alertTitle = "새로운 대댓글이 달렸어요: ";
             
             if (post.getMember() != null) {
-                fcmService.sendMessage(post.getMember().getFcmToken(),
+                fcmService.sendMessage(FcmChannel.SUBCOMMENT, post.getMember().getFcmToken(),
                         alertTitle,
                         comment.getContent());
             } else if (commentService.findById(request.getParentCommentId()).getMember() != null) {
-                fcmService.sendMessage(commentService.findById(request.getParentCommentId()).getMember().getFcmToken(),
+                fcmService.sendMessage(FcmChannel.SUBCOMMENT,
+                        commentService.findById(request.getParentCommentId()).getMember().getFcmToken(),
                         alertTitle,
                         comment.getContent());
             } else {
@@ -569,7 +571,8 @@ public class CommunityController {
                 for (Comment subComment : subComments) {
                     if (subComment.getId() != comment.getId())
                         if (subComment.getMember() != null)
-                            fcmService.sendMessage(subComment.getMember().getFcmToken(),
+                            fcmService.sendMessage(FcmChannel.SUBCOMMENT,
+                                    subComment.getMember().getFcmToken(),
                                     alertTitle,
                                     comment.getContent());
                 }
@@ -577,7 +580,8 @@ public class CommunityController {
         } else { // 댓글, 게시글 주인에게 알람
 
             if (post.getMember() != null)
-                fcmService.sendMessage(post.getMember().getFcmToken(),
+                fcmService.sendMessage(FcmChannel.COMMENT,
+                        post.getMember().getFcmToken(),
                         "새로운 댓글이 달렸어요: ",
                         comment.getContent());
         }

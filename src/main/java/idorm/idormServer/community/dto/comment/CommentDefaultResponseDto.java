@@ -45,6 +45,9 @@ public class CommentDefaultResponseDto {
     @ApiModelProperty(position = 9, value = "익명여부")
     private Boolean isAnonymous;
 
+    @ApiModelProperty(position = 10, value = "게시글 식별자")
+    private Long postId;
+
     public CommentDefaultResponseDto(Comment comment) {
 
         this.commentId = comment.getId();
@@ -53,6 +56,7 @@ public class CommentDefaultResponseDto {
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
         this.isAnonymous = comment.getIsAnonymous();
+        this.postId = comment.getPost().getId();
 
         if (comment.getMember() != null)
             this.memberId = comment.getMember().getId();

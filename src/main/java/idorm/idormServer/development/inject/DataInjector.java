@@ -52,7 +52,9 @@ public class DataInjector implements ApplicationRunner {
          */
         for (int i = 1; i <= 100; i++) {
             String email = "test" + i + "@inu.ac.kr";
-            Member member = emailAndMemberDataInject(email, "idorm2023!", "응철이" + i);
+            Member member = emailAndMemberDataInject(email,
+                    passwordEncoder.encode("idorm2023!"),
+                    "응철이" + i);
             members.add(member);
 
             if (i <= 50) {
@@ -379,7 +381,7 @@ public class DataInjector implements ApplicationRunner {
 
         Member member = Member.builder()
                 .email(email)
-                .password(passwordEncoder.encode(password))
+                .password(password)
                 .nickname(nickname)
                 .build();
         return memberService.save(member);
