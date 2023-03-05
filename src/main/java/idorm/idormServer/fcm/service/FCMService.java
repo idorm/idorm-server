@@ -1,13 +1,11 @@
 package idorm.idormServer.fcm.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.messaging.*;
 import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.fcm.domain.NotifyType;
 import idorm.idormServer.fcm.dto.FcmRequestDto;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;

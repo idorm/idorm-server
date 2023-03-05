@@ -373,7 +373,7 @@ public class MemberController {
     )
     @PostMapping("/v2/login")
     public ResponseEntity<DefaultResponseDto<Object>> loginV2(
-            @RequestHeader("fcm-token") String fcmToken,
+            @RequestHeader(name = "fcm-token", required = false) String fcmToken,
             @RequestBody @Valid MemberLoginRequestDto request) {
 
         Member loginMember = null;
