@@ -99,4 +99,8 @@ public class Post extends BaseEntity {
     public void removeMember() {
         this.member = null;
     }
+
+    public void incrementReportedCount() {
+        this.reportedCount += 1;
+    }
 }

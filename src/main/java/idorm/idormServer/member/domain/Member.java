@@ -34,6 +34,7 @@ public class Member extends BaseEntity implements UserDetails {
     private String fcmToken;
 
     private LocalDate fcmTokenUpdatedAt;
+    private Integer reportedCount;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private MatchingInfo matchingInfo;
@@ -70,6 +71,7 @@ public class Member extends BaseEntity implements UserDetails {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+        this.reportedCount = 0;
         this.roles.add("ROLE_USER");
     }
 
@@ -133,6 +135,10 @@ public class Member extends BaseEntity implements UserDetails {
     public void deleteFcmToken() {
         this.fcmToken = null;
         this.fcmTokenUpdatedAt = LocalDate.now();
+    }
+
+    public void incrementreportedCount() {
+        this.reportedCount += 1;
     }
 
     @Override

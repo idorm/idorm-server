@@ -25,6 +25,7 @@ public class Comment extends BaseEntity {
     private Boolean isDeleted; // 댓글 삭제 여부
 
     private Long parentCommentId; // 부모 댓글 식별자
+    private Integer reportedCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -41,6 +42,7 @@ public class Comment extends BaseEntity {
         this.member = member;
         this.post = post;
         this.isDeleted = false;
+        this.reportedCount = 0;
     }
 
     public void setParentCommentId(Long parentCommentId) {
@@ -53,5 +55,9 @@ public class Comment extends BaseEntity {
 
     public void updateMemberNull() {
         this.member = null;
+    }
+
+    public void incrementReportedCount() {
+        this.reportedCount += 1;
     }
 }

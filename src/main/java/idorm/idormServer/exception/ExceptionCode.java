@@ -22,6 +22,9 @@ public enum ExceptionCode {
     DORMCATEGORY_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 기숙사 분류가 아닙니다."),
     JOINPERIOD_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 입사 기간이 아닙니다."),
     GENDER_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 성별이 아닙니다."),
+    REPORT_TYPE_CHARACTER_INVALID(BAD_REQUEST, "올바른 신고 형식이 아닙니다."),
+    MEMBER_REPORT_TYPE_CHARACTER_INVALID(BAD_REQUEST, "올바른 회원 신고 형식이 아닙니다."),
+    COMMUNITY_REPORT_TYPE_CHARACTER_INVALID(BAD_REQUEST, "올바른 커뮤니티 신고 형식이 아닙니다."),
 
     // 사이즈
     NICKNAME_LENGTH_INVALID(BAD_REQUEST, "닉네임은 2~8자만 가능합니다."),
@@ -96,6 +99,9 @@ public enum ExceptionCode {
 
     CANNOT_UPDATE_NICKNAME(CONFLICT, "닉네임은 30일마다 변경할 수 있습니다."),
     CANNOT_LIKED_SELF(CONFLICT, "본인의 글에 공감할 수 없습니다."),
+    MEMBER_CANNOT_SELFREPORT(CONFLICT, "본인은 신고할 수 없습니다."),
+    POST_CANNOT_SELFREPORT(CONFLICT, "본인의 게시글은 신고할 수 없습니다."),
+    COMMENT_CANNOT_SELFREPORT(CONFLICT, "본인의 댓글은 신고할 수 없습니다."),
 
     /**
      * 413 PAYLOAD_TOO_LARGE
