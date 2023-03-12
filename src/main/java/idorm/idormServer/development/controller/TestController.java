@@ -66,7 +66,8 @@ public class TestController {
     }
 
     @ApiOperation(value = "[개발용] 계정 토큰 발급", notes = "- 실 운영 시 삭제 예정\n" +
-            "- 회원 식별자를 주면 access token을 헤더로 반환합니다.")
+            "- 회원 식별자를 주면 access token을 헤더로 반환합니다.\n" +
+            "- 2번 식별자부터 사용 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "TOKEN_RENEWED",
                     content = @Content(schema = @Schema(implementation = Object.class))),

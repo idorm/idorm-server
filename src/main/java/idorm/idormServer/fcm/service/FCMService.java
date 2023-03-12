@@ -124,7 +124,6 @@ public class FCMService {
                     "\"client_x509_cert_url\" : \"" + clientUrl + "\"\n" +
                     "}";
 
-
             InputStream is = new ByteArrayInputStream(jsonText.getBytes());
 
             GoogleCredentials googleCredentials = GoogleCredentials

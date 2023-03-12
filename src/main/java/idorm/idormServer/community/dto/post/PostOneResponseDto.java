@@ -123,6 +123,7 @@ public class PostOneResponseDto {
             this.likesCount = post.getPostLikedMembers().size();
         }
         if (post.getComments() != null) {
+            this.commentsCount = 0;
             for (Comment comment : post.getComments()) {
                 if (!comment.getIsDeleted()) {
                     this.commentsCount += 1;
@@ -131,6 +132,7 @@ public class PostOneResponseDto {
         }
 
         if (post.getPhotos() != null) {
+            this.imagesCount = 0;
             for (Photo photo : post.getPhotos()) {
                 if (!photo.getIsDeleted()) {
                     this.imagesCount += 1;
