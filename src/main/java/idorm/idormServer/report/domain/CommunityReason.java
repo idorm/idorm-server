@@ -25,7 +25,7 @@ public enum CommunityReason {
         try {
             return CommunityReason.valueOf(communityReason);
         } catch (IllegalArgumentException e) {
-            throw new CustomException(COMMUNITY_REPORT_TYPE_CHARACTER_INVALID);
+            throw new CustomException(null, COMMUNITY_REPORT_TYPE_CHARACTER_INVALID);
         }
     }
 
@@ -51,7 +51,7 @@ public enum CommunityReason {
                 communityReason = CommunityReason.ETC;
                 break;
             default:
-                throw new CustomException(SERVER_ERROR);
+                throw new CustomException(null, SERVER_ERROR);
         }
         return communityReason;
     }

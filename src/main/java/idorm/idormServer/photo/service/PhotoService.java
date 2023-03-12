@@ -43,7 +43,7 @@ public class PhotoService {
         boolean result = photoRepository.existsByMemberId(member.getId());
 
         if(result == false) {
-            throw new CustomException(FILE_NOT_FOUND);
+            throw new CustomException(null, FILE_NOT_FOUND);
         }
     }
 
@@ -56,7 +56,7 @@ public class PhotoService {
         try {
             photoRepository.delete(photo);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -70,7 +70,7 @@ public class PhotoService {
             photoRepository.save(photo);
         } catch (RuntimeException e) {
             e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -100,8 +100,7 @@ public class PhotoService {
         try {
             member.updateProfilePhoto(profilePhoto);
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
 
         return profilePhoto;
@@ -121,8 +120,7 @@ public class PhotoService {
             if (profilePhoto.isEmpty())
                 return;
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
 
         deleteFileFromS3(profilePhoto.get().getFolderName(), profilePhoto.get().getFileName());
@@ -155,7 +153,7 @@ public class PhotoService {
             try {
                 post.addPostPhoto(savedPhoto);
             } catch (RuntimeException e) {
-                throw new CustomException(SERVER_ERROR);
+                throw new CustomException(e, SERVER_ERROR);
             }
             
             savedPhotos.add(savedPhoto);
@@ -178,8 +176,7 @@ public class PhotoService {
                 photo.delete();
             }
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -190,7 +187,7 @@ public class PhotoService {
     public Photo findById(Long postId, Long photoId) {
         return photoRepository.findByIdAndPostIdAndIsDeletedFalse(photoId, postId)
                 .orElseThrow(() -> {
-                    throw new CustomException(POST_PHOTO_NOT_FOUND);
+                    throw new CustomException(null, POST_PHOTO_NOT_FOUND);
                 });
     }
 
@@ -203,7 +200,7 @@ public class PhotoService {
         String type = file.getContentType().split("/")[1];
 
         if (!type.equals("jpg") && !type.equals("jpeg") && !type.equals("png")) {
-            throw new CustomException(FILE_TYPE_UNSUPPORTED);
+            throw new CustomException(null, FILE_TYPE_UNSUPPORTED);
         }
     }
 
@@ -237,8 +234,7 @@ public class PhotoService {
             String url = amazonS3Client.getUrl(bucketName, uploadingFileName).toString();
             return url;
         } catch (IOException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -251,7 +247,7 @@ public class PhotoService {
         try {
             amazonS3Client.deleteObject(bucketName, deletingFileName);
         } catch (SdkClientException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 

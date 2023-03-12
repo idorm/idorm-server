@@ -66,7 +66,7 @@ public class EmailController {
         String[] mailSplit = request.getEmail().split("@");
 
         if(!(mailSplit.length == 2) || !mailSplit[1].equals("inu.ac.kr")) {
-            throw new CustomException(EMAIL_CHARACTER_INVALID);
+            throw new CustomException(null,EMAIL_CHARACTER_INVALID);
         }
 
         sendSimpleMessage(request.getEmail());
@@ -106,11 +106,11 @@ public class EmailController {
         LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
 
         if(!(email.getCode().equals(code.getCode()))) {
-            throw new CustomException(INVALID_CODE);
+            throw new CustomException(null,INVALID_CODE);
         }
 
         if(LocalDateTime.now().isAfter(expiredDateTime)) {
-            throw new CustomException(EXPIRED_CODE);
+            throw new CustomException(null,EXPIRED_CODE);
         }
 
         emailService.updateIsChecked(email);
@@ -178,11 +178,11 @@ public class EmailController {
         LocalDateTime expiredDateTime = updateDateTime.plusMinutes(5);
 
         if(!(email.getCode().equals(code.getCode()))) {
-            throw new CustomException(INVALID_CODE);
+            throw new CustomException(null,INVALID_CODE);
         }
 
         if(LocalDateTime.now().isAfter(expiredDateTime)) {
-            throw new CustomException(EXPIRED_CODE);
+            throw new CustomException(null,EXPIRED_CODE);
         }
 
         emailService.updateIsChecked(email);
@@ -254,7 +254,7 @@ public class EmailController {
         try{
             emailSender.send(message);
         } catch(MailException e){
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e,SERVER_ERROR);
         }
     }
 }

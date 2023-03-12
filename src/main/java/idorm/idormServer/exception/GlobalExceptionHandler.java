@@ -29,11 +29,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { CustomException.class })
     protected ResponseEntity<DefaultExceptionResponseDto> handleCustomException(CustomException e) {
 
-        if (e.getExceptionCode().equals(SERVER_ERROR))
+        if (e.getExceptionCode().getHttpStatus().equals(INTERNAL_SERVER_ERROR))
             Sentry.captureException(e);
-        // TODO: e.getprintstacktrace 내용을 Sentry에 전달
 
-        log.error("[Error] {} - {}", e.getExceptionCode().name(), e.getExceptionCode().getMessage());
         return DefaultExceptionResponseDto.exceptionResponse(e.getExceptionCode());
     }
 
@@ -60,8 +58,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         } else {
             responseCode = exception.getFieldError().getField().toUpperCase();
         }
-
-        log.error("[ERROR] {} - {}", responseCode, responseMessage);
 
         return ResponseEntity.status(status)
                 .body(DefaultExceptionResponseDto.builder()
@@ -99,10 +95,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 responseCode = responseCode.toUpperCase();
             }
         } else {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(null, SERVER_ERROR);
         }
-
-        log.error("[ERROR] {} - {}", responseCode, responseMessage);
 
         return ResponseEntity.status(400)
                 .body(DefaultExceptionResponseDto.builder()
@@ -123,8 +117,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String responseCode = METHOD_NOT_ALLOWED.name();
         String responseMessage = METHOD_NOT_ALLOWED.getMessage();
 
-        log.error("[ERROR] {} - {}", responseCode, responseMessage);
-
         return ResponseEntity.status(status)
                 .body(DefaultExceptionResponseDto.builder()
                         .responseCode(responseCode)
@@ -137,9 +129,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = { MaxUploadSizeExceededException.class })
     @ResponseStatus(PAYLOAD_TOO_LARGE)
-    protected ResponseEntity<DefaultExceptionResponseDto> handleFileSizeLimitExceeded(Exception exception) {
+    protected ResponseEntity<DefaultExceptionResponseDto> handleFileSizeLimitExceeded() {
 
-        log.error("[ERROR] {} - {}", FILE_SIZE_EXCEED.name(), FILE_SIZE_EXCEED.getMessage());
         return DefaultExceptionResponseDto.exceptionResponse(FILE_SIZE_EXCEED);
     }
 }

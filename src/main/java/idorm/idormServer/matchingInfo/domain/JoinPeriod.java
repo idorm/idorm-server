@@ -4,6 +4,7 @@ import idorm.idormServer.exception.CustomException;
 import lombok.Getter;
 
 import static idorm.idormServer.exception.ExceptionCode.JOINPERIOD_CHARACTER_INVALID;
+import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 
 public enum JoinPeriod {
 
@@ -21,7 +22,7 @@ public enum JoinPeriod {
         try {
             return JoinPeriod.valueOf(joinPeriod);
         } catch (IllegalArgumentException e) {
-            throw new CustomException(JOINPERIOD_CHARACTER_INVALID);
+            throw new CustomException(null, JOINPERIOD_CHARACTER_INVALID);
         }
     }
 
@@ -35,7 +36,7 @@ public enum JoinPeriod {
                 joinPeriod = JoinPeriod.WEEK24;
                 break;
             default:
-                break;
+                throw new CustomException(null, SERVER_ERROR);
         }
         return joinPeriod;
     }

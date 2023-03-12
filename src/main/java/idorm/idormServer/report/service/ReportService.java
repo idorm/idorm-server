@@ -29,7 +29,7 @@ public class ReportService {
         try {
             reportRepository.save(report);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -42,7 +42,7 @@ public class ReportService {
         try {
             report.delete();
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -52,7 +52,7 @@ public class ReportService {
      */
     public void validateReportMember(Member reporterMember, Member reportedMember) {
         if (reportedMember.equals(reporterMember))
-            throw new CustomException(MEMBER_CANNOT_SELFREPORT);
+            throw new CustomException(null, MEMBER_CANNOT_SELFREPORT);
     }
 
     /**
@@ -61,7 +61,7 @@ public class ReportService {
      */
     public void validateReportPost(Member reporterMember, Post reportedPost) {
         if (reportedPost.getMember().equals(reporterMember))
-            throw new CustomException(POST_CANNOT_SELFREPORT);
+            throw new CustomException(null, POST_CANNOT_SELFREPORT);
     }
 
     /**
@@ -70,6 +70,6 @@ public class ReportService {
      */
     public void validateReportComment(Member reporterMember, Comment reportedComment) {
         if (reportedComment.getMember().equals(reporterMember))
-            throw new CustomException(COMMENT_CANNOT_SELFREPORT);
+            throw new CustomException(null, COMMENT_CANNOT_SELFREPORT);
     }
 }

@@ -30,8 +30,7 @@ public class PostLikedMemberService {
         try {
             postLikedMemberRepository.save(postLikedMember);
         } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -45,11 +44,11 @@ public class PostLikedMemberService {
     public PostLikedMember create(Member member, Post post) {
 
         if(post.getMember() != null && (post.getMember().getId() == member.getId())) {
-            throw new CustomException(CANNOT_LIKED_SELF);
+            throw new CustomException(null, CANNOT_LIKED_SELF);
         }
 
         if (isMemberLikedPost(member, post)) {
-            throw new CustomException(DUPLICATE_LIKED);
+            throw new CustomException(null, DUPLICATE_LIKED);
         }
 
         PostLikedMember postLikedMember = PostLikedMember.builder()
@@ -62,7 +61,7 @@ public class PostLikedMemberService {
             post.addPostLikedMember(postLikedMember);
             member.addPostLikedMemer(postLikedMember);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
 
         return postLikedMember;
@@ -75,8 +74,7 @@ public class PostLikedMemberService {
         try {
             return postLikedMemberRepository.existsByMemberIdAndPostId(member.getId(), post.getId());
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -90,7 +88,7 @@ public class PostLikedMemberService {
 
         PostLikedMember postLikedMember = postLikedMemberRepository.findByMemberIdAndPostId(member.getId(), post.getId())
                 .orElseThrow(() -> {
-                    throw new CustomException(POSTLIKEDMEMBER_NOT_FOUND);
+                    throw new CustomException(null, POSTLIKEDMEMBER_NOT_FOUND);
                 });
 
         try {
@@ -99,8 +97,7 @@ public class PostLikedMemberService {
             member.removePostLikedMember(postLikedMember);
             postLikedMemberRepository.deleteByMemberIdAndPostId(member.getId(), post.getId());
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -112,8 +109,7 @@ public class PostLikedMemberService {
         try {
             return postLikedMemberRepository.findAllLikedPostByMemberId(memberId);
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -126,8 +122,7 @@ public class PostLikedMemberService {
         try {
             postLikedMemberRepository.deleteAllByPostId(post.getId());
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -147,7 +142,7 @@ public class PostLikedMemberService {
                 postLikedMember.removeMember();
             }
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 }

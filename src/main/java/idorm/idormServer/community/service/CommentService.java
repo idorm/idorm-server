@@ -32,7 +32,7 @@ public class CommentService {
             member.addComment(comment);
             return savedComment;
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -42,7 +42,7 @@ public class CommentService {
      */
     public void isExistCommentFromPost(Long postId, Long commentId) {
         if(!commentRepository.existsByIdAndPostId(commentId, postId)) {
-            throw new CustomException(COMMENT_NOT_FOUND);
+            throw new CustomException(null, COMMENT_NOT_FOUND);
         }
     }
 
@@ -56,8 +56,7 @@ public class CommentService {
         try {
             subComment.setParentCommentId(parentCommentId);
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -69,7 +68,7 @@ public class CommentService {
     public Comment findById(Long commentId) {
 
         Comment foundComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(null, COMMENT_NOT_FOUND));
         return foundComment;
     }
 
@@ -85,8 +84,7 @@ public class CommentService {
 
             return foundSubComments;
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -99,8 +97,7 @@ public class CommentService {
         try {
             return commentRepository.findAllByMemberIdAndIsDeletedFalseOrderByCreatedAtDesc(member.getId());
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -112,11 +109,11 @@ public class CommentService {
     public Comment findByCommentIdAndPost(Post post, Long commentId) {
         Comment comment = commentRepository.findByIdAndPostId(commentId, post.getId())
                 .orElseThrow(() -> {
-                    throw new CustomException(COMMENT_NOT_FOUND);
+                    throw new CustomException(null, COMMENT_NOT_FOUND);
                 });
 
         if (comment.getIsDeleted())
-            throw new CustomException(DELETED_COMMENT);
+            throw new CustomException(null, DELETED_COMMENT);
 
         return comment;
     }
@@ -131,8 +128,7 @@ public class CommentService {
                     commentRepository.findAllByPostIdOrderByCreatedAtAsc(postId);
             return foundComments;
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -151,8 +147,7 @@ public class CommentService {
                 comment.delete();
             }
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -166,8 +161,7 @@ public class CommentService {
         try {
             comment.delete();
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -184,8 +178,7 @@ public class CommentService {
                 comment.updateMemberNull();
             }
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -195,7 +188,7 @@ public class CommentService {
      */
     public void validateCommentAuthorization(Comment comment, Member member) {
         if (comment.getMember() == null || !member.getId().equals(comment.getMember().getId())) {
-            throw new CustomException(UNAUTHORIZED_COMMENT);
+            throw new CustomException(null, UNAUTHORIZED_COMMENT);
         }
     }
 }

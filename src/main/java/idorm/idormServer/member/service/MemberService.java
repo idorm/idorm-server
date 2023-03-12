@@ -45,7 +45,7 @@ public class MemberService {
         try {
             return memberRepository.save(member);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -70,10 +70,10 @@ public class MemberService {
         try {
             isExistNicknameResult = memberRepository.existsByNickname(nickname);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
         if(isExistNicknameResult) {
-            throw new CustomException(DUPLICATE_NICKNAME);
+            throw new CustomException(null, DUPLICATE_NICKNAME);
         }
     }
 
@@ -101,10 +101,10 @@ public class MemberService {
         try {
             isExistEmailResult = memberRepository.existsByEmail(email);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
         if (isExistEmailResult) {
-            throw new CustomException(DUPLICATE_EMAIL);
+            throw new CustomException(null, DUPLICATE_EMAIL);
         }
     }
 
@@ -114,7 +114,7 @@ public class MemberService {
      */
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
     }
 
     /**
@@ -126,7 +126,7 @@ public class MemberService {
         try {
             return memberRepository.findAll();
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -142,7 +142,7 @@ public class MemberService {
         }
 
         Member foundMember = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
 
         return foundMember;
     }
@@ -168,7 +168,7 @@ public class MemberService {
         try {
             memberRepository.delete(member);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -192,7 +192,7 @@ public class MemberService {
         try {
             member.updatePassword(password);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -208,7 +208,7 @@ public class MemberService {
             LocalDate possibleUpdateTime = updatedDate.plusMonths(1);
 
             if(possibleUpdateTime.isAfter(LocalDate.now())) {
-                throw new CustomException(CANNOT_UPDATE_NICKNAME);
+                throw new CustomException(null, CANNOT_UPDATE_NICKNAME);
             }
         }
     }
@@ -220,7 +220,7 @@ public class MemberService {
     public void updateNicknameByAdmin(Member member, String nickname) {
 
         if(member.getNickname().equals(nickname)) {
-            throw new CustomException(DUPLICATE_SAME_NICKNAME);
+            throw new CustomException(null, DUPLICATE_SAME_NICKNAME);
         }
 
         isExistingNickname(nickname);
@@ -229,7 +229,7 @@ public class MemberService {
             member.updateNickname(nickname);
             memberRepository.save(member);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -241,7 +241,7 @@ public class MemberService {
     public void updateNickname(Member member, String nickname) {
 
         if(member.getNickname().equals(nickname)) {
-            throw new CustomException(DUPLICATE_SAME_NICKNAME);
+            throw new CustomException(null, DUPLICATE_SAME_NICKNAME);
         }
 
         isExistingNickname(nickname);
@@ -262,7 +262,7 @@ public class MemberService {
         try {
             member.updateFcmToken(fcmToken);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -275,7 +275,7 @@ public class MemberService {
         try {
             member.deleteFcmToken();
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 }

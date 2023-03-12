@@ -62,8 +62,7 @@ public class FirebaseConfiguration {
 
             FirebaseApp.initializeApp(options);
         } catch (Exception e){
-            e.printStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 }

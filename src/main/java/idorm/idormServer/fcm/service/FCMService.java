@@ -65,8 +65,7 @@ public class FCMService {
 
             client.newCall(request).execute();
         } catch (RuntimeException | IOException e) {
-            e.printStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -106,8 +105,7 @@ public class FCMService {
 
             return objectMapper.writeValueAsString(message);
         } catch (RuntimeException | IOException e) {
-            e.printStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -135,8 +133,7 @@ public class FCMService {
             googleCredentials.refreshIfExpired();
             return googleCredentials.getAccessToken().getTokenValue();
         } catch (RuntimeException | IOException e) {
-            e.printStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 }

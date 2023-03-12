@@ -61,7 +61,7 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() != null) { // 등록된 매칭정보가 있다면
-            throw new CustomException(DUPLICATE_MATCHINGINFO);
+            throw new CustomException(null, DUPLICATE_MATCHINGINFO);
         }
 
         MatchingInfo createdMatchingInfo = matchingInfoService.createMatchingInfo(request, member);
@@ -100,7 +100,7 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
-            throw new CustomException(MATCHINGINFO_NOT_FOUND);
+            throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
         }
 
         matchingInfoService.updateMatchingInfo(member.getMatchingInfo(), request);
@@ -138,10 +138,10 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if (request.getIsMatchingInfoPublic() == null || request.getIsMatchingInfoPublic().equals(""))
-            throw new CustomException(FIELD_REQUIRED);
+            throw new CustomException(null, FIELD_REQUIRED);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
-            throw new CustomException(MATCHINGINFO_NOT_FOUND);
+            throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
         }
 
         matchingInfoService.updateMatchingInfoIsPublic(member.getMatchingInfo(), request.getIsMatchingInfoPublic());
@@ -175,7 +175,7 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
-            throw new CustomException(MATCHINGINFO_NOT_FOUND);
+            throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
         }
 
         MatchingInfo foundMatchingInfo = matchingInfoService.findById(member.getMatchingInfo().getId());
@@ -210,7 +210,7 @@ public class MatchingInfoController {
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없는 경우
-            throw new CustomException(MATCHINGINFO_NOT_FOUND);
+            throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
         }
 
         matchingInfoService.deleteMatchingInfo(member.getMatchingInfo());

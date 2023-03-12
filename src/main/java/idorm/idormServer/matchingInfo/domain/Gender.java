@@ -4,6 +4,7 @@ import idorm.idormServer.exception.CustomException;
 import lombok.Getter;
 
 import static idorm.idormServer.exception.ExceptionCode.GENDER_CHARACTER_INVALID;
+import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 
 public enum Gender {
     MALE('M'),
@@ -20,7 +21,7 @@ public enum Gender {
         try {
             return Gender.valueOf(gender);
         } catch (IllegalArgumentException e) {
-            throw new CustomException(GENDER_CHARACTER_INVALID);
+            throw new CustomException(null, GENDER_CHARACTER_INVALID);
         }
     }
 
@@ -34,7 +35,7 @@ public enum Gender {
                 gender = Gender.FEMALE;
                 break;
             default:
-                break;
+                throw new CustomException(null, SERVER_ERROR);
         }
         return gender;
     }

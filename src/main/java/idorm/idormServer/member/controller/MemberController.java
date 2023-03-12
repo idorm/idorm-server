@@ -112,7 +112,7 @@ public class MemberController {
         Email foundEmail = emailService.findByEmail(request.getEmail());
 
         if (!foundEmail.isCheck()) {
-            throw new CustomException(UNAUTHORIZED_EMAIL);
+            throw new CustomException(null, UNAUTHORIZED_EMAIL);
         }
 
         memberService.isExistingEmail(request.getEmail());
@@ -159,7 +159,7 @@ public class MemberController {
         Member loginMember = memberService.findById(loginMemberId);
 
         if(file == null) {
-            throw new CustomException(FILE_NOT_FOUND);
+            throw new CustomException(null, FILE_NOT_FOUND);
         }
         photoService.validateFileType(file);
         memberService.saveProfilePhoto(loginMember, file);
@@ -224,7 +224,7 @@ public class MemberController {
         Email email = emailService.findByEmail(request.getEmail());
 
         if (!email.isCheck()) {
-            throw new CustomException(UNAUTHORIZED_EMAIL);
+            throw new CustomException(null, UNAUTHORIZED_EMAIL);
         }
         
         Member foundMember = memberService.findByEmail(request.getEmail());
@@ -324,14 +324,14 @@ public class MemberController {
 
         if(request.getEmail().equals(ENV_USERNAME + "@inu.ac.kr")) {
             if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
-                throw new CustomException(UNAUTHORIZED_PASSWORD);
+                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
             }
             loginMember = memberService.findById(1L);
         } else {
             loginMember = memberService.findByEmail(request.getEmail());
 
             if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
-                throw new CustomException(UNAUTHORIZED_PASSWORD);
+                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
             }
         }
 
@@ -379,14 +379,14 @@ public class MemberController {
 
         if(request.getEmail().equals(ENV_USERNAME + "@inu.ac.kr")) {
             if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
-                throw new CustomException(UNAUTHORIZED_PASSWORD);
+                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
             }
             loginMember = memberService.findById(1L);
         } else {
             loginMember = memberService.findByEmail(request.getEmail());
 
             if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
-                throw new CustomException(UNAUTHORIZED_PASSWORD);
+                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
             }
         }
 

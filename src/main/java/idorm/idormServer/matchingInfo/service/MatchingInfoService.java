@@ -29,7 +29,7 @@ public class MatchingInfoService {
         try {
             matchingInfoRepository.save(matchingInfo);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -55,7 +55,7 @@ public class MatchingInfoService {
         try {
             updateMatchingInfo.updateIsMatchingInfoPublic(isMatchingInfoPublic);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -66,7 +66,7 @@ public class MatchingInfoService {
     public MatchingInfo findById(Long matchingInfoId) {
 
         MatchingInfo foundMatchingInfo = matchingInfoRepository.findById(matchingInfoId)
-                .orElseThrow(() -> new CustomException(MATCHINGINFO_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
         return foundMatchingInfo;
     }
 
@@ -76,7 +76,7 @@ public class MatchingInfoService {
      */
     public void validateMatchingInfoIsPublic(Member member) {
         if (!member.getMatchingInfo().getIsMatchingInfoPublic())
-            throw new CustomException(ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC);
+            throw new CustomException(null, ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC);
     }
 
     /**
@@ -86,7 +86,7 @@ public class MatchingInfoService {
     public MatchingInfo findByMemberId(Long memberId) {
 
         MatchingInfo foundMatchingInfo = matchingInfoRepository.findByMemberId(memberId).orElseThrow(
-                () -> new CustomException(MATCHINGINFO_NOT_FOUND));
+                () -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
 
         return foundMatchingInfo;
     }
@@ -101,7 +101,7 @@ public class MatchingInfoService {
         try {
             matchingInfoRepository.delete(matchingInfo);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -115,7 +115,7 @@ public class MatchingInfoService {
         try {
             updateMatchingInfo.updateMatchingInfo(request);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 }

@@ -155,10 +155,10 @@ public class MatchingController {
         matchingInfoService.validateMatchingInfoIsPublic(selectedMember);
 
         if(loginMember.equals(selectedMember)) {
-            throw new CustomException(ILLEGAL_ARGUMENT_SELF);
+            throw new CustomException(null,ILLEGAL_ARGUMENT_SELF);
         }
         if(selectedMember.getRoles().contains("ROLE_ADMIN")) {
-            throw new CustomException(ILLEGAL_ARGUMENT_ADMIN);
+            throw new CustomException(null,ILLEGAL_ARGUMENT_ADMIN);
         }
 
         if (matchingType == true) {

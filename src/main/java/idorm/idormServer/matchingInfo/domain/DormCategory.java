@@ -4,6 +4,7 @@ import idorm.idormServer.exception.CustomException;
 import lombok.Getter;
 
 import static idorm.idormServer.exception.ExceptionCode.DORMCATEGORY_CHARACTER_INVALID;
+import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 
 public enum DormCategory {
 
@@ -22,7 +23,7 @@ public enum DormCategory {
         try {
             return DormCategory.valueOf(dormCategory);
         } catch (IllegalArgumentException | NullPointerException e) {
-            throw new CustomException(DORMCATEGORY_CHARACTER_INVALID);
+            throw new CustomException(null, DORMCATEGORY_CHARACTER_INVALID);
         }
     }
 
@@ -39,7 +40,7 @@ public enum DormCategory {
                 dormCategory = DormCategory.DORM3;
                 break;
             default:
-                break;
+                throw new CustomException(null, SERVER_ERROR);
         }
         return dormCategory;
     }

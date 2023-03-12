@@ -88,7 +88,7 @@ public class Scheduler {
                             fcmService.sendMessage(fcmRequestDto);
                             break;
                         default:
-                            throw new CustomException(SERVER_ERROR);
+                            throw new CustomException(null, SERVER_ERROR);
                     }
                 }
             }

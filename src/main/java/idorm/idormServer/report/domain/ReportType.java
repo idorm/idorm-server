@@ -23,7 +23,7 @@ public enum ReportType {
         try {
             return ReportType.valueOf(type);
         } catch (IllegalArgumentException e) {
-            throw new CustomException(REPORT_TYPE_CHARACTER_INVALID);
+            throw new CustomException(null, REPORT_TYPE_CHARACTER_INVALID);
         }
     }
 
@@ -40,7 +40,7 @@ public enum ReportType {
                 reportType = ReportType.COMMENT;
                 break;
             default:
-                throw new CustomException(SERVER_ERROR);
+                throw new CustomException(null, SERVER_ERROR);
         }
         return reportType;
     }

@@ -24,7 +24,7 @@ public enum MemberReason {
         try {
             return MemberReason.valueOf(memberReason);
         } catch (IllegalArgumentException e) {
-            throw new CustomException(MEMBER_REPORT_TYPE_CHARACTER_INVALID);
+            throw new CustomException(null, MEMBER_REPORT_TYPE_CHARACTER_INVALID);
         }
     }
 
@@ -44,7 +44,7 @@ public enum MemberReason {
                 memberReason = MemberReason.ETC;
                 break;
             default:
-                throw new CustomException(SERVER_ERROR);
+                throw new CustomException(null, SERVER_ERROR);
         }
         return memberReason;
     }

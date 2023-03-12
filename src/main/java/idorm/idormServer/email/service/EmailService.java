@@ -33,7 +33,7 @@ public class EmailService {
         try {
             emailRepository.save(certifiedEmail);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
         return certifiedEmail.getId();
     }
@@ -46,7 +46,7 @@ public class EmailService {
     public void setCode(String email, String code){
 
         Email nonCertifiedEmail = emailRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(null, EMAIL_NOT_FOUND));
 
         nonCertifiedEmail.setCode(code);
     }
@@ -62,7 +62,7 @@ public class EmailService {
     public Email findByEmail(String email){
 
         return emailRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(null, EMAIL_NOT_FOUND));
     }
 
     /**
@@ -75,7 +75,7 @@ public class EmailService {
         try {
             emailRepository.delete(email);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -89,7 +89,7 @@ public class EmailService {
         try {
             email.isChecked();
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -102,7 +102,7 @@ public class EmailService {
         try {
             email.isUnChecked();
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -115,7 +115,7 @@ public class EmailService {
         try {
             email.isJoined();
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -129,7 +129,7 @@ public class EmailService {
         try {
             email.modifyUpdatedAt(LocalDateTime.now());
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 

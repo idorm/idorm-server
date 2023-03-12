@@ -34,7 +34,7 @@ public class CalendarService {
         try {
             return calendarRepository.findById(id).orElseThrow();
         } catch (NoSuchElementException e) {
-            throw new CustomException(CALENDAR_NOT_FOUND);
+            throw new CustomException(null, CALENDAR_NOT_FOUND);
         }
     }
 
@@ -50,7 +50,7 @@ public class CalendarService {
         try {
             calendarRepository.findById(id).orElseThrow();
         } catch (NoSuchElementException e) {
-            throw new CustomException(CALENDAR_NOT_FOUND);
+            throw new CustomException(null, CALENDAR_NOT_FOUND);
         }
 
         return calendarRepository.save(entity);

@@ -41,8 +41,7 @@ public class PostService {
                 post.removeMember();
             }
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
         commentService.updateMemberNullFromComment(member);
     }
@@ -58,7 +57,7 @@ public class PostService {
             member.addPost(savedPost);
             return savedPost;
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -81,8 +80,7 @@ public class PostService {
 
             updatePost.updatePost(title, content, isAnonymous);
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -99,8 +97,7 @@ public class PostService {
         try {
             post.delete();
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -112,10 +109,10 @@ public class PostService {
     public Post findById(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> {
-                    throw new CustomException(POST_NOT_FOUND);
+                    throw new CustomException(null, POST_NOT_FOUND);
                 });
         if (post.getIsDeleted())
-            throw new CustomException(DELETED_POST);
+            throw new CustomException(null, DELETED_POST);
         return post;
     }
 
@@ -131,8 +128,7 @@ public class PostService {
                             PageRequest.of(pageNum, 10));
             return foundPosts;
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -148,8 +144,7 @@ public class PostService {
 
             return foundPosts;
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -160,8 +155,7 @@ public class PostService {
         try {
             return postRepository.findTopPostByDormCategory(dormCategory.getType());
         } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -173,8 +167,7 @@ public class PostService {
         try {
             return postRepository.findAllByMemberIdAndIsDeletedFalseOrderByUpdatedAtDesc(member.getId());
         } catch (RuntimeException e) {
-            e.getStackTrace();
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -191,7 +184,7 @@ public class PostService {
      */
     public void validatePostAuthorization(Post post, Member member) {
         if (post.getMember() == null || !member.getId().equals(post.getMember().getId())) {
-            throw new CustomException(UNAUTHORIZED_POST);
+            throw new CustomException(null, UNAUTHORIZED_POST);
         }
     }
 
@@ -201,7 +194,7 @@ public class PostService {
      */
     public void validatePostPhotoCountExceeded(int count) {
         if(count > 10) {
-            throw new CustomException(FILE_COUNT_EXCEED);
+            throw new CustomException(null, FILE_COUNT_EXCEED);
         }
     }
 
@@ -214,16 +207,16 @@ public class PostService {
     public void validatePostRequest(String title, String content, Boolean isAnonymous) {
 
         if (title == null || title.isEmpty())
-            throw new CustomException(FIELD_REQUIRED);
+            throw new CustomException(null, FIELD_REQUIRED);
         if (content == null || content.isEmpty())
-            throw new CustomException(FIELD_REQUIRED);
+            throw new CustomException(null,FIELD_REQUIRED);
         if (isAnonymous == null)
-            throw new CustomException(FIELD_REQUIRED);
+            throw new CustomException(null,FIELD_REQUIRED);
 
         if (!(title.length() >= 1 && title.length() <= 30))
-            throw new CustomException(TITLE_LENGTH_INVALID);
+            throw new CustomException(null,TITLE_LENGTH_INVALID);
         if (!(content.length() >= 1 && content.length() <= 300))
-            throw new CustomException(CONTENT_LENGTH_INVALID);
+            throw new CustomException(null,CONTENT_LENGTH_INVALID);
     }
 
 }

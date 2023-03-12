@@ -7,7 +7,6 @@ import idorm.idormServer.community.repository.PostRepository;
 import idorm.idormServer.development.inject.DataInjector;
 import idorm.idormServer.email.repository.EmailRepository;
 import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.exception.ExceptionCode;
 import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
 import idorm.idormServer.member.repository.MemberRepository;
 import idorm.idormServer.photo.repository.PhotoRepository;
@@ -17,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -86,7 +87,7 @@ public class TestService {
 
             dataInjector.run(null);
         } catch (RuntimeException e) {
-            throw new CustomException(ExceptionCode.SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 }

@@ -427,8 +427,8 @@ public class DataInjector implements ApplicationRunner {
                 .mbti(mbti)
                 .openKakaoLink(openKakaoLink)
                 .build();
-        matchingInfoService.save(matchingInfo);
         matchingInfoService.updateMatchingInfoIsPublic(matchingInfo, true);
+        matchingInfoService.save(matchingInfo);
     }
 
     @Transactional

@@ -43,7 +43,7 @@ public class MatchingService {
                         loginMemberMatchingInfo.getGender()
                     );
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
 
         if (foundMatchingInfos.isEmpty()) {
@@ -91,7 +91,7 @@ public class MatchingService {
                     request.getMaxAge()
             );
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
 
         if (foundMatchingInfos.isEmpty()) {
@@ -167,7 +167,7 @@ public class MatchingService {
     public void addLikedMember(Member loginMember, Long likedMemberId) {
 
         if (isExistLikedMember(loginMember, likedMemberId)) {
-            throw new CustomException(DUPLICATE_LIKED_MEMBER);
+            throw new CustomException(null, DUPLICATE_LIKED_MEMBER);
         }
         if (isExistDislikedMember(loginMember, likedMemberId)) {
             removeDislikedMember(loginMember, likedMemberId);
@@ -176,7 +176,7 @@ public class MatchingService {
         try {
             loginMember.addLikedMember(likedMemberId);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -184,7 +184,7 @@ public class MatchingService {
     public void addDislikedMember(Member loginMember, Long dislikedMemberd) {
 
         if (isExistDislikedMember(loginMember, dislikedMemberd)) {
-            throw new CustomException(DUPLICATE_DISLIKED_MEMBER);
+            throw new CustomException(null, DUPLICATE_DISLIKED_MEMBER);
         }
         if (isExistLikedMember(loginMember, dislikedMemberd)) {
             removeLikedMember(loginMember, dislikedMemberd);
@@ -193,33 +193,33 @@ public class MatchingService {
         try {
             loginMember.addDislikedMember(dislikedMemberd);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     @Transactional
     public void removeLikedMember(Member loginMember, Long likedMemberId) {
         if (!isExistLikedMember(loginMember, likedMemberId)) {
-            throw new CustomException(LIKEDMEMBER_NOT_FOUND);
+            throw new CustomException(null, LIKEDMEMBER_NOT_FOUND);
         }
 
         try {
             loginMember.removeLikedMember(likedMemberId);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     @Transactional
     public void removeDislikedMember(Member loginMember, Long dislikedMemberId) {
         if (!isExistDislikedMember(loginMember, dislikedMemberId)) {
-            throw new CustomException(DISLIKEDMEMBER_NOT_FOUND);
+            throw new CustomException(null, DISLIKEDMEMBER_NOT_FOUND);
         }
 
         try {
             loginMember.removeDislikedMember(dislikedMemberId);
         } catch (RuntimeException e) {
-            throw new CustomException(SERVER_ERROR);
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
