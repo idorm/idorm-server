@@ -1,7 +1,6 @@
 package idorm.idormServer.fcm.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.messaging.*;
@@ -48,6 +47,9 @@ public class FCMService {
 
     public void sendMessage(FcmRequestDto fcmRequestDto) {
 
+        if (fcmRequestDto.getToken() == null)
+            return;
+
         try {
             String API_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
             String message = createMessage(fcmRequestDto);
@@ -62,7 +64,7 @@ public class FCMService {
                     .build();
 
             client.newCall(request).execute();
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
@@ -103,7 +105,7 @@ public class FCMService {
                     .build();
 
             return objectMapper.writeValueAsString(message);
-        } catch (JsonProcessingException e) {
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
             throw new CustomException(SERVER_ERROR);
         }
@@ -132,7 +134,7 @@ public class FCMService {
 
             googleCredentials.refreshIfExpired();
             return googleCredentials.getAccessToken().getTokenValue();
-        } catch (IOException e) {
+        } catch (RuntimeException | IOException e) {
             e.printStackTrace();
             throw new CustomException(SERVER_ERROR);
         }

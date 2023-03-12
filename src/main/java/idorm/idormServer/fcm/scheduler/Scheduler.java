@@ -2,6 +2,7 @@ package idorm.idormServer.fcm.scheduler;
 
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.service.PostService;
+import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.fcm.domain.NotifyType;
 import idorm.idormServer.fcm.dto.FcmRequestDto;
 import idorm.idormServer.fcm.service.FCMService;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Component
 @RequiredArgsConstructor
@@ -40,10 +43,9 @@ public class Scheduler {
 
         for (Member member : members) {
 
-            if (member.getFcmToken() != null &&
-                    !member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
-
-                if (member.getMatchingInfo() != null) {
+            if (member.getMatchingInfo() != null) {
+                if (member.getFcmToken() != null
+                        && !member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
 
                     FcmRequestDto fcmRequestDto = null;
                     switch (DormCategory.valueOf(member.getMatchingInfo().getDormCategory())) {
@@ -85,6 +87,8 @@ public class Scheduler {
                                     .build();
                             fcmService.sendMessage(fcmRequestDto);
                             break;
+                        default:
+                            throw new CustomException(SERVER_ERROR);
                     }
                 }
             }

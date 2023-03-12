@@ -556,35 +556,40 @@ public class CommunityController {
             String alertTitle = "새로운 대댓글이 달렸어요: ";
             
             if (post.getMember() != null) {
-                FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
-                        .token(post.getMember().getFcmToken())
-                        .notification(FcmRequestDto.Notification.builder()
-                                .notifyType(NotifyType.SUBCOMMENT)
-                                .contentId(postId)
-                                .tite(alertTitle)
-                                .content(comment.getContent())
-                                .build())
-                        .build();
-                fcmService.sendMessage(fcmRequestDto);
+
+                if (post.getMember().getFcmToken() != null) {
+                    FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
+                            .token(post.getMember().getFcmToken())
+                            .notification(FcmRequestDto.Notification.builder()
+                                    .notifyType(NotifyType.SUBCOMMENT)
+                                    .contentId(postId)
+                                    .tite(alertTitle)
+                                    .content(comment.getContent())
+                                    .build())
+                            .build();
+                    fcmService.sendMessage(fcmRequestDto);
+                }
             } else if (commentService.findById(request.getParentCommentId()).getMember() != null) {
 
-                FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
-                        .token(commentService.findById(request.getParentCommentId()).getMember().getFcmToken())
-                        .notification(FcmRequestDto.Notification.builder()
-                                .notifyType(NotifyType.SUBCOMMENT)
-                                .contentId(postId)
-                                .tite(alertTitle)
-                                .content(comment.getContent())
-                                .build())
-                        .build();
-                fcmService.sendMessage(fcmRequestDto);
+                if (commentService.findById(request.getParentCommentId()).getMember().getFcmToken() != null) {
+                    FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
+                            .token(commentService.findById(request.getParentCommentId()).getMember().getFcmToken())
+                            .notification(FcmRequestDto.Notification.builder()
+                                    .notifyType(NotifyType.SUBCOMMENT)
+                                    .contentId(postId)
+                                    .tite(alertTitle)
+                                    .content(comment.getContent())
+                                    .build())
+                            .build();
+                    fcmService.sendMessage(fcmRequestDto);
+                }
             } else {
                 List<Comment> subComments = commentService.findSubCommentsByParentCommentId(post.getId(),
                         request.getParentCommentId());
 
                 for (Comment subComment : subComments) {
                     if (subComment.getId() != comment.getId())
-                        if (subComment.getMember() != null) {
+                        if (subComment.getMember() != null && subComment.getMember().getFcmToken() != null) {
                             FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
                                     .token(subComment.getMember().getFcmToken())
                                     .notification(FcmRequestDto.Notification.builder()
@@ -598,9 +603,9 @@ public class CommunityController {
                         }
                 }
             }
-        } else { // 댓글, 게시글 주인에게 알람
+        } else { // 게시글 주인에게 알람
 
-            if (post.getMember() != null) {
+            if (post.getMember() != null && post.getMember().getFcmToken() != null) {
                 FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
                         .token(post.getMember().getFcmToken())
                         .notification(FcmRequestDto.Notification.builder()
