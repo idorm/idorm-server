@@ -48,7 +48,7 @@ public class DataInjector implements ApplicationRunner {
         List<Post> posts = new ArrayList<>();
 
         /**
-         * 관리자 계정 / 이메일 / 회원 / 매칭정보 주입
+         * 이메일 / 회원 / 매칭정보 주입
          */
         for (int i = 1; i <= 100; i++) {
             String email = "test" + i + "@inu.ac.kr";
@@ -56,10 +56,12 @@ public class DataInjector implements ApplicationRunner {
                     passwordEncoder.encode("idorm2023!"),
                     "응철이" + i);
             members.add(member);
+        }
 
+        for (int i = 0; i<= 99; i++) {
             if (i <= 50) {
                 if (i % 3 == 0) {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM1,
                             JoinPeriod.WEEK24,
                             Gender.MALE,
@@ -76,7 +78,7 @@ public class DataInjector implements ApplicationRunner {
                             "응철이 구해요.",
                             "https://open.kakao.com/o/szaIN6ze");
                 } else if (i % 5 == 0) {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM1,
                             JoinPeriod.WEEK16,
                             Gender.FEMALE,
@@ -93,7 +95,7 @@ public class DataInjector implements ApplicationRunner {
                             "적당한 룸메이트 구해요",
                             "https://open.kakao.com/o/szaIN6ze");
                 } else if (i % 2 == 0) {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM1,
                             JoinPeriod.WEEK24,
                             Gender.FEMALE,
@@ -110,7 +112,7 @@ public class DataInjector implements ApplicationRunner {
                             "게으른 사람 싫어요!",
                             "https://open.kakao.com/o/szaIN6ze");
                 } else {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM1,
                             JoinPeriod.WEEK16,
                             Gender.MALE,
@@ -129,7 +131,7 @@ public class DataInjector implements ApplicationRunner {
                 }
             } else if (i >= 51 && i <= 70) {
                 if (i % 3 == 0) {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM2,
                             JoinPeriod.WEEK24,
                             Gender.MALE,
@@ -146,7 +148,7 @@ public class DataInjector implements ApplicationRunner {
                             "응철이 구해요.",
                             "https://open.kakao.com/o/szaIN6ze");
                 } else if (i % 5 == 0) {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM2,
                             JoinPeriod.WEEK16,
                             Gender.FEMALE,
@@ -163,7 +165,7 @@ public class DataInjector implements ApplicationRunner {
                             "적당한 룸메이트 구해요",
                             "https://open.kakao.com/o/szaIN6ze");
                 } else if (i % 2 == 0) {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM2,
                             JoinPeriod.WEEK24,
                             Gender.FEMALE,
@@ -180,7 +182,7 @@ public class DataInjector implements ApplicationRunner {
                             "게으른 사람 싫어요!",
                             "https://open.kakao.com/o/szaIN6ze");
                 } else {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM2,
                             JoinPeriod.WEEK16,
                             Gender.MALE,
@@ -197,9 +199,9 @@ public class DataInjector implements ApplicationRunner {
                             "룸메이트 구해요",
                             "https://open.kakao.com/o/szaIN6ze");
                 }
-            } else if (i >= 71 && i <= 100) {
+            } else if (i >= 71 && i <= 99) {
                 if (i % 3 == 0) {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM3,
                             JoinPeriod.WEEK24,
                             Gender.MALE,
@@ -216,7 +218,7 @@ public class DataInjector implements ApplicationRunner {
                             "응철이 구해요.",
                             "https://open.kakao.com/o/szaIN6ze");
                 } else if (i % 5 == 0) {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM3,
                             JoinPeriod.WEEK16,
                             Gender.FEMALE,
@@ -233,7 +235,7 @@ public class DataInjector implements ApplicationRunner {
                             "적당한 룸메이트 구해요",
                             "https://open.kakao.com/o/szaIN6ze");
                 } else if (i % 2 == 0) {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM3,
                             JoinPeriod.WEEK24,
                             Gender.FEMALE,
@@ -250,7 +252,7 @@ public class DataInjector implements ApplicationRunner {
                             "게으른 사람 싫어요!",
                             "https://open.kakao.com/o/szaIN6ze");
                 } else {
-                    matchingInfoDataInject(member,
+                    matchingInfoDataInject(members.get(i),
                             DormCategory.DORM3,
                             JoinPeriod.WEEK16,
                             Gender.MALE,
@@ -270,11 +272,13 @@ public class DataInjector implements ApplicationRunner {
             }
         }
 
+
+
         /**
          * 게시글 주입
          */
         for (int i = 0; i <= 99; i++) {
-            if (i <= 30 && (i % 5 == 0) && i != 0) {
+            if (i <= 30 && (i % 5 == 0)) {
                 Post post = postDataInject(members.get(0),
                         DormCategory.DORM1,
                         "테스트 제목 " + i,

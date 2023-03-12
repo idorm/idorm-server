@@ -116,7 +116,8 @@ public class MatchingController {
     }
 
     @ApiOperation(value = "매칭 좋아요 혹은 싫어요한 회원 추가",
-            notes = "- matchingType true는 좋아요한 회원, false는 싫어요한 회원을 의미합니다.")
+            notes = "- matchingType true는 좋아요한 회원, false는 싫어요한 회원을 의미합니다.\n" +
+                    "- 본인 혹은 선택한 매칭 회원이 매칭 정보가 공개 상태가 아니라면 400(ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC)를 던집니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
