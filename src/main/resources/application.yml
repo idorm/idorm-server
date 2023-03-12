@@ -10,26 +10,30 @@ spring:
 #    username: nahyeon
 #    password: lsmi81
 
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
-
   jpa:
     hibernate:
       ddl-auto: ${DB_DDL_TYPE}
       use-new-id-generator-mappings: false
     properties:
       hibernate:
-        show_sql: false
-        format_sql: false
+        show_sql: true
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
 
-  #  logging:
-  #    level:
-  #      org:
-  #        hibernate:
-  #          type:
-  #            descriptor:
-  #              sql: trace
+  logging:
+    level:
+      org:
+        hibernate:
+          sql:
+            debug
+          type:
+            descriptor:
+              sql: trace
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
 
   mvc:
     pathmatch:
