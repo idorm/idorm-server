@@ -32,7 +32,7 @@ public enum JoinPeriod {
             case '1':
                 joinPeriod = JoinPeriod.WEEK16;
                 break;
-            case 'F':
+            case '2':
                 joinPeriod = JoinPeriod.WEEK24;
                 break;
             default:

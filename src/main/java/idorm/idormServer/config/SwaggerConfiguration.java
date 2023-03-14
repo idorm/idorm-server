@@ -50,16 +50,13 @@ public class SwaggerConfiguration {
                 .useDefaultResponseMessages(false)
                 .select()
                 .apis(RequestHandlerSelectors
-                        .withClassAnnotation(RestController.class)) // Swagger를 적용할 패키지 설정
-                .paths(PathSelectors.any()) // Swagger를 적용할 주소 패턴을 세팅
+                        .withClassAnnotation(RestController.class))
+                .paths(PathSelectors.any())
                 .build()
-                .apiInfo(apiInfo()).securityContexts(Arrays.asList(securityContext())) // Swagger UI로 노출할 정보
+                .apiInfo(apiInfo()).securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()));
     }
 
-    /**
-     * jwt를 통해서 인증/인가 설정을 했을 시, swagger에서도 해당 설정을 잡아주는 부분
-     */
     private ApiKey apiKey() {
 
         return new ApiKey("X-AUTH-TOKEN", "X-AUTH-TOKEN", "header");
@@ -88,7 +85,7 @@ public class SwaggerConfiguration {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("idorm API")
-                .version("1.0")
+                .version("1.0.0")
                 .build();
     }
 }

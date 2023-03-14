@@ -26,10 +26,10 @@ spring:
       org:
         hibernate:
           sql:
-            debug
+            info
           type:
             descriptor:
-              sql: trace
+              sql: info
 
   jackson:
     serialization:
