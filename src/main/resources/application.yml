@@ -1,14 +1,9 @@
-# MySQL
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-
-#    url: jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
-#    username: nahyeon
-#    password: lsmi81
 
   jpa:
     hibernate:
@@ -20,16 +15,6 @@ spring:
         format_sql: true
         highlight_sql: true
         use_sql_comments: true
-
-  logging:
-    level:
-      org:
-        hibernate:
-          sql:
-            info
-          type:
-            descriptor:
-              sql: info
 
   jackson:
     serialization:
