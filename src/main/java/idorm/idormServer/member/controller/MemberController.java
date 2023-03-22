@@ -9,6 +9,7 @@ import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.MemberService;
+import idorm.idormServer.photo.service.MemberPhotoService;
 import idorm.idormServer.photo.service.PhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,39 +17,39 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Api(tags = "회원")
+@Validated
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberController {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
     private final MemberService memberService;
     private final EmailService emailService;
     private final PhotoService photoService;
-    private final PasswordEncoder passwordEncoder;
+    private final MemberPhotoService memberPhotoService;
 
-    @Value("${DB_USERNAME}")
+    @Value("${DB_NAME}")
     private String ENV_USERNAME;
 
     @Value("${ADMIN_PASSWORD}")
@@ -70,9 +71,9 @@ public class MemberController {
     })
     @GetMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> findOneMember(
-            HttpServletRequest request
+            HttpServletRequest servletRequest
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
@@ -109,20 +110,20 @@ public class MemberController {
             @RequestBody @Valid MemberSaveRequestDto request
     ) {
 
-        Email foundEmail = emailService.findByEmail(request.getEmail());
+        Email email = emailService.findByEmail(request.getEmail());
 
-        if (!foundEmail.isCheck()) {
+        if (!email.getIsCheck()) {
             throw new CustomException(null, UNAUTHORIZED_EMAIL);
         }
 
-        memberService.isExistingEmail(request.getEmail());
+        emailService.isExistingRegisteredEmail(request.getEmail());
         memberService.isExistingNickname(request.getNickname());
 
-        Member createdMember = memberService.createMember(request, passwordEncoder.encode(request.getPassword()));
+        Member member = memberService.save(request.toMemberEntity(email, passwordEncoder.encode(request.getPassword())));
 
-        emailService.updateIsJoined(foundEmail);
+        emailService.updateIsJoined(email, member);
 
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(createdMember);
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -152,17 +153,20 @@ public class MemberController {
     )
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/member/profile-photo")
-    public ResponseEntity<DefaultResponseDto<Object>> saveMemberProfilePhoto(
-            HttpServletRequest request, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity<DefaultResponseDto<Object>> saveMemberPhoto(
+            HttpServletRequest servletRequest,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
 
-        if(file == null) {
-            throw new CustomException(null, FILE_NOT_FOUND);
-        }
+        photoService.validateFileExistence(file);
         photoService.validateFileType(file);
-        memberService.saveProfilePhoto(loginMember, file);
+
+        if (member.getMemberPhoto() != null)
+            memberPhotoService.delete(member.getMemberPhoto());
+
+        memberPhotoService.createMemberPhoto(member, file);
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -186,13 +190,13 @@ public class MemberController {
     }
     )
     @DeleteMapping("/member/profile-photo")
-    public ResponseEntity<DefaultResponseDto<Object>> deleteMemberProfilePhoto(
-            HttpServletRequest request) {
+    public ResponseEntity<DefaultResponseDto<Object>> deleteMemberPhoto(
+            HttpServletRequest servletRequest) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
 
-        memberService.deleteMemberProfilePhoto(loginMember);
+        memberPhotoService.delete(member.getMemberPhoto());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -223,12 +227,11 @@ public class MemberController {
 
         Email email = emailService.findByEmail(request.getEmail());
 
-        if (!email.isCheck()) {
+        if (!email.getIsCheck())
             throw new CustomException(null, UNAUTHORIZED_EMAIL);
-        }
         
-        Member foundMember = memberService.findByEmail(request.getEmail());
-        memberService.updatePassword(foundMember, passwordEncoder.encode(request.getPassword()));
+        Member member = memberService.findByEmail(request.getEmail());
+        memberService.updatePassword(member, passwordEncoder.encode(request.getPassword()));
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -256,13 +259,17 @@ public class MemberController {
     )
     @PatchMapping("/member/nickname")
     public ResponseEntity<DefaultResponseDto<Object>> updateMemberNickname(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @RequestBody @Valid MemberUpdateNicknameRequestDto request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
 
-        memberService.updateNickname(loginMember, request.getNickname());
+        memberService.validateUpdateNicknameIsChanged(member, request.getNickname());
+        memberService.isExistingNickname(request.getNickname());
+        memberService.validateNicknameUpdatedAt(member);
+
+        memberService.updateNickname(member, request.getNickname());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -285,72 +292,17 @@ public class MemberController {
     )
     @DeleteMapping("/member")
     public ResponseEntity<DefaultResponseDto<Object>> deleteMember(
-            HttpServletRequest request
+            HttpServletRequest servletRequest
     ) {
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(loginMemberId);
-
-        memberService.deleteMember(member);
+        memberService.delete(member);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("MEMBER_DELETED")
                         .responseMessage("Member 삭제 완료")
-                        .build());
-    }
-
-    @ApiOperation(value = "[삭제 예정] 로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "MEMBER_LOGIN",
-                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / EMAIL_CHARACTER_INVALID"),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_PASSWORD"),
-            @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
-            @ApiResponse(responseCode = "500",
-                    description = "SERVER_ERROR"),
-    }
-    )
-    @PostMapping("/login")
-    public ResponseEntity<DefaultResponseDto<Object>> login(
-            @RequestBody @Valid MemberLoginRequestDto request) {
-
-        Member loginMember = null;
-
-        if(request.getEmail().equals(ENV_USERNAME + "@inu.ac.kr")) {
-            if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
-                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
-            }
-            loginMember = memberService.findById(1L);
-        } else {
-            loginMember = memberService.findByEmail(request.getEmail());
-
-            if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
-                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
-            }
-        }
-
-        Iterator<String> iter = loginMember.getRoles().iterator();
-        List<String> roles = new ArrayList<>();
-
-        while (iter.hasNext()) {
-            roles.add(iter.next());
-        }
-
-        String token = jwtTokenProvider.createToken(loginMember.getUsername(), roles);
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
-
-        return ResponseEntity.status(200)
-                .header(AUTHORIZATION, token)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("MEMBER_LOGIN")
-                        .responseMessage("회원 로그인 완료")
-                        .data(response)
                         .build());
     }
 
@@ -475,120 +427,57 @@ public class MemberController {
                         .build());
     }
 
-    /**
-     * admin role
-     */
-    @ApiOperation(value = "관리자용 / Member 전체 조회", notes = "- 가입된 전체 멤버에 대한 데이터를 조회할 수 있습니다.")
+    @ApiOperation(value = "[삭제 예정] 로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
-            @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_AUTHORIZATION"),
-            @ApiResponse(responseCode = "500",
-                    description = "SERVER_ERROR"),
-    }
-    )
-    @GetMapping("/admin/members")
-    public ResponseEntity<DefaultResponseDto<Object>> members() {
-
-        List<Member> members = memberService.findAll();
-        List<MemberDefaultResponseDto> collect = members.stream()
-                .map(o -> new MemberDefaultResponseDto(o)).collect(Collectors.toList());
-
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Member 전체 조회 완료")
-                        .data(new Result(collect))
-                        .build());
-    }
-
-    @ApiOperation(value = "관리자용 / 특정 Member 정보 수정 (비밀번호, 닉네임)")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
+                    description = "MEMBER_LOGIN",
                     content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "PASSWORD_CHARACTER_INVALID / NICKNAME_CHARACTER_INVALID / FIELD_REQUIRED " +
-                            "/ UPDATEMEMBERID_NEGATIVEORZERO_INVALID"),
+                    description = "FIELD_REQUIRED / EMAIL_CHARACTER_INVALID"),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
-            @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_AUTHORIZATION"),
+                    description = "UNAUTHORIZED_PASSWORD"),
             @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND"),
-            @ApiResponse(responseCode = "409",
-                    description = "DUPLICATE_NICKNAME"),
+                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "SERVER_ERROR"),
     }
     )
-    @PatchMapping("/admin/member/{id}")
-    public ResponseEntity<DefaultResponseDto<Object>> updateMemberRoot(
-            @PathVariable("id")
-            @Positive(message = "회원 식별자는 양수만 가능합니다.")
-                Long updateMemberId,
-            @RequestBody @Valid MemberUpdateStatusAdminRequestDto request) {
+    @PostMapping("/login")
+    public ResponseEntity<DefaultResponseDto<Object>> login(
+            @RequestBody @Valid MemberLoginRequestDto request) {
 
-        Member updateMember = memberService.findById(updateMemberId);
+        Member loginMember = null;
 
-        memberService.updatePassword(updateMember, request.getPassword());
-        memberService.updateNicknameByAdmin(updateMember, request.getNickname());
+        if(request.getEmail().equals(ENV_USERNAME + "@inu.ac.kr")) {
+            if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
+                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
+            }
+            loginMember = memberService.findById(1L);
+        } else {
+            loginMember = memberService.findByEmail(request.getEmail());
 
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(updateMember);
+            if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
+                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
+            }
+        }
+
+        Iterator<String> iter = loginMember.getRoles().iterator();
+        List<String> roles = new ArrayList<>();
+
+        while (iter.hasNext()) {
+            roles.add(iter.next());
+        }
+
+        String token = jwtTokenProvider.createToken(loginMember.getUsername(), roles);
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
 
         return ResponseEntity.status(200)
+                .header(AUTHORIZATION, token)
                 .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Member 정보 수정 완료")
+                        .responseCode("MEMBER_LOGIN")
+                        .responseMessage("회원 로그인 완료")
                         .data(response)
                         .build());
-    }
-
-    @ApiOperation(value = "관리자용 / 특정 Member 삭제")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
-            @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_AUTHORIZATION"),
-            @ApiResponse(responseCode = "404",
-                    description = "MEMBER_NOT_FOUND"),
-            @ApiResponse(responseCode = "500",
-                    description = "SERVER_ERROR"),
-    }
-    )
-    @DeleteMapping("/admin/member/{id}")
-    public ResponseEntity<DefaultResponseDto<Object>> deleteMemberRoot(
-            @PathVariable("id") Long deleteMemberId
-    ) {
-        Member foundMember = memberService.findById(deleteMemberId);
-
-        memberService.deleteMember(foundMember);
-
-        List<Member> members = memberService.findAll();
-        List<MemberDefaultResponseDto> collect = members.stream()
-                .map(o -> new MemberDefaultResponseDto(o)).collect(Collectors.toList());
-
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("OK")
-                        .responseMessage("Member 삭제 완료")
-                        .data(new Result(collect))
-                        .build());
-    }
-
-    @Data
-    @AllArgsConstructor
-    static class Result<T> {
-        private T data;
     }
 }

@@ -4,8 +4,9 @@ import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
+import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
-import idorm.idormServer.photo.domain.Photo;
+import idorm.idormServer.photo.domain.MemberPhoto;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,22 +27,22 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String email;
     private String password;
+    private LocalDateTime passwordUpdatedAt;
     private String nickname;
-    private LocalDate nicknameUpdatedAt;
-
+    private LocalDateTime nicknameUpdatedAt;
     private String fcmToken;
-
     private LocalDate fcmTokenUpdatedAt;
     private Integer reportedCount;
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private MatchingInfo matchingInfo;
+    @OneToMany(mappedBy = "member")
+    private List<Email> emails = new ArrayList<>();
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Photo profilePhoto;
+    @OneToMany(mappedBy = "member")
+    private List<MatchingInfo> matchingInfos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberPhoto> memberPhotos = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "liked_members",
@@ -67,32 +69,55 @@ public class Member extends BaseEntity implements UserDetails {
     private Set<String> roles = new HashSet<>();
 
     @Builder
-    public Member(String email, String password, String nickname) {
-        this.email = email;
+    public Member(Email email, String password, String nickname) {
+        this.emails.add(email);
         this.password = password;
+        this.passwordUpdatedAt = LocalDateTime.now();
         this.nickname = nickname;
+        this.nicknameUpdatedAt = LocalDateTime.now();
         this.reportedCount = 0;
         this.roles.add("ROLE_USER");
+
+        this.setIsDeleted(false);
+    }
+
+    public Email getEmail() {
+        Email email = this.emails.get(this.emails.size() - 1);
+        if (email.getIsDeleted())
+            return null;
+        return email;
+    }
+
+    public MatchingInfo getMatchingInfo() {
+        int matchingInfoSize = this.matchingInfos.size();
+        if (matchingInfoSize == 0)
+            return null;
+
+        MatchingInfo matchingInfo = this.matchingInfos.get(matchingInfoSize - 1);
+        if (matchingInfo.getIsDeleted())
+            return null;
+        return matchingInfo;
+    }
+
+    public MemberPhoto getMemberPhoto() {
+        int profilePhotoSize = this.memberPhotos.size();
+        if (profilePhotoSize == 0)
+            return null;
+
+        MemberPhoto memberPhoto = this.memberPhotos.get(profilePhotoSize - 1);
+        if (memberPhoto.getIsDeleted())
+            return null;
+        return memberPhoto;
     }
 
     public void updatePassword(String password) {
         this.password = password;
+        this.passwordUpdatedAt = LocalDateTime.now();
     }
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public void updateProfilePhoto(Photo profilePhoto) {
-        this.profilePhoto = profilePhoto;
-    }
-
-    public void updateNicknameUpdatedAt(LocalDate updatedAt) {
-        this.nicknameUpdatedAt = updatedAt;
-    }
-
-    public void setMatchingInfo(MatchingInfo matchingInfo) {
-        this.matchingInfo = matchingInfo;
+        this.nicknameUpdatedAt = LocalDateTime.now();
     }
 
     public void addLikedMember(Long memberId) {
@@ -139,6 +164,10 @@ public class Member extends BaseEntity implements UserDetails {
 
     public void incrementreportedCount() {
         this.reportedCount += 1;
+    }
+
+    public void delete() {
+        this.setIsDeleted(true);
     }
 
     @Override

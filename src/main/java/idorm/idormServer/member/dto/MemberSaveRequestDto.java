@@ -23,12 +23,12 @@ import javax.validation.constraints.Size;
 @ApiModel(value = "Member 저장 요청")
 public class MemberSaveRequestDto {
 
-    @ApiModelProperty(position = 1, required = true, value = "이메일", example = "aaa@inu.ac.kr")
+    @ApiModelProperty(position = 1, required = true, value = "이메일", example = "test1@inu.ac.kr")
     @NotBlank(message = "이메일 입력은 필수입니다.", groups = ValidationSequence.NotBlank.class)
     @Email(message = "이메일 형식이 올바르지 않습니다.", groups = ValidationSequence.Email.class)
     private String email;
 
-    @ApiModelProperty(position = 2, required = true, value = "비밀번호", example = "aaaaaaa7!")
+    @ApiModelProperty(position = 2, required = true, value = "비밀번호", example = "idorm2023!")
     @NotBlank(message = "비밀번호 입력은 필수입니다.", groups = ValidationSequence.NotBlank.class)
     @Size(min = 8, max = 15, message = "비밀번호는 8~15자만 가능합니다.", groups = ValidationSequence.Size.class)
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,15}$",
@@ -36,17 +36,24 @@ public class MemberSaveRequestDto {
             groups = ValidationSequence.Pattern.class)
     private String password;
 
-    @ApiModelProperty(position = 3, required = true, value = "닉네임", example = "에러난응철이")
+    @ApiModelProperty(position = 3, required = true, value = "닉네임", example = "도미")
     @NotBlank(message = "닉네임 입력은 필수입니다.", groups = ValidationSequence.NotBlank.class)
     @Size(min = 2, max = 8, message = "닉네임은 2~8자만 가능합니다.", groups = ValidationSequence.Size.class)
     @Pattern(regexp = "^[A-Za-z0-9ㄱ-ㅎ가-힣]+$", message = "닉네임은 영문, 숫자, 또는 한글의 조합 형식만 가능합니다.",
             groups = ValidationSequence.Pattern.class)
     private String nickname;
 
-    public Member toEntity(String password) {
-        return Member.builder()
+    public idorm.idormServer.email.domain.Email toEmailEntity(String code) {
+        return idorm.idormServer.email.domain.Email.builder()
                 .email(this.email)
-                .password(password)
+                .code(code)
+                .build();
+    }
+
+    public Member toMemberEntity(idorm.idormServer.email.domain.Email email, String encodedPassword) {
+        return Member.builder()
+                .email(email)
+                .password(encodedPassword)
                 .nickname(this.nickname)
                 .build();
     }
