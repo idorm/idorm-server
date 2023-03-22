@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface EmailRepository extends JpaRepository<Email,Long> {
 
-    Optional<Email> findByEmail(String email);
+    Optional<Email> findByEmailAndIsCheckIsTrueAndIsDeletedIsFalseAndMemberIsNotNull(String email);
 
-    boolean existsByEmail(String email);
+    Optional<Email> findByEmailAndIsDeletedIsFalse(String email);
 }

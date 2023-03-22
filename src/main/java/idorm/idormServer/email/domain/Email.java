@@ -1,6 +1,7 @@
 package idorm.idormServer.email.domain;
 
 import idorm.idormServer.common.BaseEntity;
+import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,39 +19,36 @@ public class Email extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     private String email;
 
     private String code;
 
-    private boolean isCheck; // 인증 여부
+    private Boolean isCheck;
 
-    private boolean isJoin; // 가입 여부
-
+    @Builder
     public Email(String email, String code) {
         this.email = email;
         this.code = code;
         this.isCheck = false;
-        this.isJoin = false;
+        this.setIsDeleted(false);
     }
 
-    /**
-     * 인증 여부
-     */
     public void isChecked() {
         this.isCheck = true;
     }
-    public void isUnChecked() {
-        this.isCheck = false;
+
+    public void isJoined(Member member) {
+        this.member = member;
+        if (!member.getEmails().contains(this)) {
+            member.getEmails().add(this);
+        }
     }
 
-    /**
-     * 가입 여부
-     */
-    public void isJoined() {
-        this.isJoin = true;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+    public void delete() {
+        this.setIsDeleted(true);
     }
 }

@@ -4,13 +4,18 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.repository.EmailRepository;
 import idorm.idormServer.exception.CustomException;
 
+import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
@@ -19,118 +24,175 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 @Transactional(readOnly = true)
 public class EmailService {
 
+    private final JavaMailSender javaMailSender;
     private final EmailRepository emailRepository;
 
     /**
-     * Email 저장 |
-     * 이메일을 저장한다. 저장 중 디비에서 에러가 발생하면 500(Internal Server Error)을 던진다.
+     * DB에 이메일 저장 |
+     * 500(SERVER_ERROR)
      */
-    @Transactional
-    public Long save(String email, String code){
-
-        Email certifiedEmail = new Email(email, code);
+    public Email save(Email email) {
 
         try {
-            emailRepository.save(certifiedEmail);
+            return emailRepository.save(email);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
-        return certifiedEmail.getId();
     }
 
     /**
-     * Email 인증코드 저장 |
-     * 이메일 인증코드를 저장한다. 이메일을 찾지 못하면 404(Not Found)를 던진다.
+     * 이메일 삭제 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
-    public void setCode(String email, String code){
+    public void delete(Email email){
 
-        Email nonCertifiedEmail = emailRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(null, EMAIL_NOT_FOUND));
-
-        nonCertifiedEmail.setCode(code);
-    }
-
-    public boolean isExistingEmail(String email) {
-        return emailRepository.existsByEmail(email);
+        try {
+            email.delete();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
     }
 
     /**
-     * Email 조회 |
+     * 이메일 가입 여부 변경 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void updateIsJoined(Email email, Member member) {
+
+        try {
+            email.isJoined(member);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 이메일 단건 조회 |
      * 404(EMAIL_NOT_FOUND)
      */
-    public Email findByEmail(String email){
+    public Email findByEmail(String email) {
 
-        return emailRepository.findByEmail(email)
+        return emailRepository.findByEmailAndIsDeletedIsFalse(email)
                 .orElseThrow(() -> new CustomException(null, EMAIL_NOT_FOUND));
     }
 
     /**
-     * Email 삭제 |
+     * 가입한 이메일 존재 여부 검증 |
+     * 409(DUPLICATE_EMAIL)
      * 500(SERVER_ERROR)
      */
-    @Transactional
-    public void deleteEmail(Email email){
+    public void isExistingRegisteredEmail(String email) {
+        emailRepository.findByEmailAndIsCheckIsTrueAndIsDeletedIsFalseAndMemberIsNotNull(email)
+                .orElseThrow(() -> new CustomException(null, DUPLICATE_EMAIL));
+    }
 
+    /**
+     * 이메일 존재 여부 검증 |
+     * 500(SERVER_ERROR)
+     */
+    public Optional<Email> isExistingEmail(String email) {
         try {
-            emailRepository.delete(email);
+            return emailRepository.findByEmailAndIsDeletedIsFalse(email);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     /**
-     * Email 인증여부 true 체크 |
-     * 500(SERVER_ERROR)
+     * 이메일 형식 검증 |
+     * 400(EMAIL_CHARACTER_INVALID)
+     */
+    public void validateEmailDomain(String email) {
+
+        String[] mailSplit = email.split("@");
+
+        if(!(mailSplit.length == 2) || !mailSplit[1].equals("inu.ac.kr")) {
+            throw new CustomException(null,EMAIL_CHARACTER_INVALID);
+        }
+    }
+
+    /**
+     * 이메일 유효 시간 검증 |
+     * 400(EXPIRED_CODE)
+     */
+    public void validateEmailIsExpired(LocalDateTime createdAt) {
+
+        if (LocalDateTime.now().isAfter(createdAt.plusMinutes(5))) {
+            throw new CustomException(null, EXPIRED_CODE);
+        }
+    }
+
+    /**
+     * 이메일 인증 코드 검증 |
+     * 400(INVALID_CODE)
      */
     @Transactional
-    public void updateIsChecked(Email email){
+    public void validateEmailCodeIsValid(Email email, String verificationCode) {
 
-        try {
+        if (email.getCode().equals(verificationCode))
             email.isChecked();
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
+        else
+            throw new CustomException(null, INVALID_CODE);
+    }
+
+    /**
+     * 인증 메일 전송 |
+     * 500(EMAIL_SENDING_ERROR)
+     */
+    public void sendVerificationEmail(Email email) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+            mimeMessage.addRecipients(MimeMessage.RecipientType.TO, email.getEmail());
+            mimeMessage.setSubject("[idorm] 인증 코드: " + email.getCode(), "utf-8");
+
+            String emailContent = createEmailContent(email.getCode());
+
+            mimeMessage.setText(emailContent, "utf-8", "html");
+            mimeMessage.setFrom("idormcs@gmail.com");
+
+            mimeMessage.setText("가입을 위해 아래의 인증코드를 이메일 인증코드란에 입력해주세요.", email.getCode());
+            mimeMessage.setFrom("idormServer@gmail.com");
+
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new CustomException(e, EMAIL_SENDING_ERROR);
         }
     }
 
     /**
-     * Email 인증여부 false 체크 |
-     * 500(SERVER_ERROR)
+     * 이메일 인증 코드 생성 |
      */
-    @Transactional
-    public void updateIsUnChecked(Email email) {
-        try {
-            email.isUnChecked();
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
+    public String createVerificationCode() {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        Random random = new Random();
+        random.setSeed(System.currentTimeMillis());
+
+        for (int i = 0; i < 6; i++) {
+            stringBuilder.append((random.nextInt(10)));
         }
+        String code = stringBuilder.toString();
+
+        return code.substring(0, 3) + "-" + code.substring(3, 6);
     }
 
     /**
-     * Email 가입여부 체크 |
-     * 500(SERVER_ERROR)
+     * 이메일 내용 생성 |
      */
-    @Transactional
-    public void updateIsJoined(Email email) {
-        try {
-            email.isJoined();
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
+    private String createEmailContent(String verificationCode) {
 
-    /**
-     * Email updatedAt 수정 |
-     * 이메일 전송 시 인증기간 만료 체크를 위해 updatedAt을 현재 시간으로 수정해야 한다. |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void updateUpdatedAt(Email email) {
-        try {
-            email.modifyUpdatedAt(LocalDateTime.now());
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
+        String message = "";
+        message += "<img width=\"120\" height=\"36\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px; padding-left: 30px;\" src=\"https://slack.com/x-a1607371436052/img/slack_logo_240.png\" alt=\"\" loading=\"lazy\">";
+        message += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">이메일 주소 확인</h1>";
+        message += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">아래 확인 코드를 Slack 가입 창이 있는 브라우저 창에 입력하세요.</p>";
+        message += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
+        message += verificationCode;
+        message += "</td></tr></tbody></table></div>";
+        message += "<a href=\"https://slack.com\" style=\"text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">Slack Clone Technologies, Inc</a>";
 
+        return message;
+    }
 }

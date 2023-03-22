@@ -26,4 +26,12 @@ public class EmailAuthRequestDto {
     @NotBlank(message = "이메일을 입력해 주세요.", groups = ValidationSequence.NotBlank.class)
     @Email(message = "올바른 이메일 형식이 아닙니다.", groups = ValidationSequence.Email.class)
     private String email;
+
+    public idorm.idormServer.email.domain.Email toEntity(String verificationCode) {
+
+        return idorm.idormServer.email.domain.Email.builder()
+                .email(this.email)
+                .code(verificationCode)
+                .build();
+    }
 }
