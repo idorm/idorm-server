@@ -75,13 +75,13 @@ public class PostAbstractResponseDto {
             this.isAnonymous = null;
         }
 
-        if (post.getPostLikedMembers() != null)
-            this.likesCount = post.getPostLikedMembers().size();
+        if (post.getPostLikedMembersIsDeletedIsFalse() != null)
+            this.likesCount = post.getPostLikedMembersIsDeletedIsFalse().size();
 
-        if (post.getComments() != null)
-            this.commentsCount = post.getComments().size();
+        if (post.getCommentsIsDeletedIsFalse() != null)
+            this.commentsCount = post.getCommentsIsDeletedIsFalse().size();
 
-        if (post.getPostPhotos() != null)
-            this.imagesCount = post.getPostPhotos().size();
+        if (post.getPostPhotosIsDeletedIsFalse() != null)
+            this.imagesCount = post.getPostPhotosIsDeletedIsFalse().size();
     }
 }

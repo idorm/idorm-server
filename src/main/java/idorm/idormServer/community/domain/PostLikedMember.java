@@ -34,13 +34,11 @@ public class PostLikedMember extends BaseEntity {
         this.setIsDeleted(false);
 
         post.incrementPostLikedCnt();
+        member.getPostLikedMembers().add(this);
+        post.getPostLikedMembers().add(this);
     }
 
     public void delete() {
         this.setIsDeleted(true);
-    }
-
-    public void removeMember() {
-        this.member = null;
     }
 }

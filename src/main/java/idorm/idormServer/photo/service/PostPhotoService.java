@@ -41,6 +41,19 @@ public class PostPhotoService {
     }
 
     /**
+     * 게시글 사진 삭제 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void delete(PostPhoto postPhoto) {
+        try {
+            postPhoto.delete();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 커뮤니티 게시글 사진 저장 |
      * 500(SERVER_ERROR)
      */
@@ -73,19 +86,12 @@ public class PostPhotoService {
     }
 
     /**
-     * 게시글 삭제 시 해당 게시글의 모든 사진 삭제 |
+     * 게시글로 전체 게시글 사진 조회 |
      * 500(SERVER_ERROR)
      */
-    @Transactional
-    public void deleteAllPostPhotoByDeletedPost(Post post) {
+    public List<PostPhoto> findAllByPost(Post post) {
         try {
-            List<PostPhoto> postPhotos = postPhotoRepository.findByPostId(post.getId());
-            if (postPhotos.isEmpty()) {
-                return;
-            }
-            for (PostPhoto postPhoto : postPhotos) {
-                postPhoto.delete();
-            }
+            return postPhotoRepository.findAllByPostAndIsDeletedIsFalse(post);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }

@@ -22,20 +22,8 @@ public class PostLikedMemberService {
     private final PostLikedMemberRepository postLikedMemberRepository;
 
     /**
-     * DB에 PostLikedMember 저장 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void save(PostLikedMember postLikedMember) {
-        try {
-            postLikedMemberRepository.save(postLikedMember);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
      * 게시글 공감 저장 |
+     * 409(CANNOT_LIKED_POST_BY_DELETED_MEMBER)
      * 409(CANNOT_LIKED_SELF)
      * 409(DUPLICATE_LIKED)
      * 500(SERVER_ERROR)
@@ -43,36 +31,13 @@ public class PostLikedMemberService {
     @Transactional
     public PostLikedMember create(Member member, Post post) {
 
-        if(post.getMember() != null && (post.getMember().getId() == member.getId())) {
-            throw new CustomException(null, CANNOT_LIKED_SELF);
-        }
-
-        if (isMemberLikedPost(member, post)) {
-            throw new CustomException(null, DUPLICATE_LIKED);
-        }
-
-        PostLikedMember postLikedMember = PostLikedMember.builder()
-                .member(member)
-                .post(post)
-                .build();
-        save(postLikedMember);
-
         try {
-            post.addPostLikedMember(postLikedMember);
-            member.addPostLikedMemer(postLikedMember);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
+            PostLikedMember postLikedMember = PostLikedMember.builder()
+                    .member(member)
+                    .post(post)
+                    .build();
 
-        return postLikedMember;
-    }
-
-    /**
-     * 게시글 공감 여부 확인 |
-     */
-    public boolean isMemberLikedPost(Member member, Post post) {
-        try {
-            return postLikedMemberRepository.existsByMemberIdAndPostId(member.getId(), post.getId());
+            return postLikedMemberRepository.save(postLikedMember);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -84,21 +49,36 @@ public class PostLikedMemberService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void delete(Member member, Post post) {
-
-        PostLikedMember postLikedMember = postLikedMemberRepository.findByMemberIdAndPostId(member.getId(), post.getId())
-                .orElseThrow(() -> {
-                    throw new CustomException(null, POSTLIKEDMEMBER_NOT_FOUND);
-                });
+    public void delete(PostLikedMember postLikedMember) {
 
         try {
-            post.decrementPostLikedCnt();
-            post.removePostLikedMember(postLikedMember);
-            member.removePostLikedMember(postLikedMember);
-            postLikedMemberRepository.deleteByMemberIdAndPostId(member.getId(), post.getId());
+            postLikedMember.delete();
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
+    }
+
+    /**
+     * 게시글에 공감 수 카운트 다운 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void decrementLikedCountsOfPost(Post post) {
+        try {
+            post.decrementPostLikedCnt();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 게시글과 회원으로 공감 단건 조회 |
+     * 404(POSTLIKEDMEMBER_NOT_FOUND)
+     */
+    public PostLikedMember findOneByPostAndMember(Post post, Member member) {
+
+        return postLikedMemberRepository.findByMemberIdAndPostIdAndIsDeletedIsFalse(member.getId(), post.getId())
+                .orElseThrow(() -> new CustomException(null, POSTLIKEDMEMBER_NOT_FOUND));
     }
 
     /**
@@ -107,40 +87,31 @@ public class PostLikedMemberService {
      */
     public List<Long> findAllLikedPostIdByMemberId(Long memberId) {
         try {
-            return postLikedMemberRepository.findAllLikedPostByMemberId(memberId);
+            return postLikedMemberRepository.findAllByMemberId(memberId);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     /**
-     * 게시글 삭제 시 모든 공감 삭제 |
+     * 게시글로 전체 공감 조회 |
      * 500(SERVER_ERROR)
      */
-    @Transactional
-    public void deleteAllLikeByDeletedPost(Post post) {
+    public List<PostLikedMember> findAllByPost(Post post) {
         try {
-            postLikedMemberRepository.deleteAllByPostId(post.getId());
+            return postLikedMemberRepository.findAllByPostAndIsDeletedIsFalse(post);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     /**
-     * 멤버 탈퇴 시 PostLikedMember에 매핑된 Member를 null로 변경 |
+     * 회원 - 게시글 공감 존재 여부 확인 |
      * 500(SERVER_ERROR)
      */
-    @Transactional
-    public void removeMember(Member member) {
-
+    public boolean isMemberLikedPost(Member member, Post post) {
         try {
-            List<PostLikedMember> postLikedMembers = postLikedMemberRepository.findAllByMemberId(member.getId());
-            if (postLikedMembers.isEmpty()) {
-                return;
-            }
-            for (PostLikedMember postLikedMember : postLikedMembers) {
-                postLikedMember.removeMember();
-            }
+            return postLikedMemberRepository.existsByMemberIdAndPostIdAndIsDeletedIsFalse(member.getId(), post.getId());
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }

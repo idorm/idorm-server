@@ -11,7 +11,9 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Page<Post> findAllByDormCategoryAndIsDeletedFalseOrderByCreatedAtDesc(Character dormCategory, Pageable pageable);
+    Post findByIdAndIsDeletedIsFalse(Long id);
+
+    Page<Post> findAllByDormCategoryAndIsDeletedIsFalseOrderByCreatedAtDesc(Character dormCategory, Pageable pageable);
 
     @Query(value = "SELECT *" +
             "FROM post p " +
@@ -31,8 +33,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "LIMIT 1", nativeQuery = true)
     Post findTopPostByDormCategory(@Param("dormCategory") Character dormCategory);
 
-    List<Post> findAllByMemberIdAndIsDeletedFalseOrderByUpdatedAtDesc(Long memberId);
+    List<Post> findAllByMemberIdAndIsDeletedIsFalseOrderByUpdatedAtDesc(Long memberId);
 
-    // 멤버 탈퇴 시 사용, 삭제된 게시글도 전부 조회
-    List<Post> findAllByMemberId(Long memberId);
+    List<Post> findAllByMemberIdAndIsDeletedIsFalse(Long memberId);
 }

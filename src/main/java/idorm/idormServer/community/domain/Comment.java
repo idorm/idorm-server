@@ -25,9 +25,9 @@ public class Comment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Post post; // 게시글
+    private Post post;
 
-    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -39,6 +39,9 @@ public class Comment extends BaseEntity {
         this.post = post;
         this.reportedCount = 0;
         this.setIsDeleted(false);
+
+        post.getComments().add(this);
+        member.getComments().add(this);
     }
 
     public void setParentCommentId(Long parentCommentId) {
@@ -47,10 +50,6 @@ public class Comment extends BaseEntity {
 
     public void delete() {
         this.setIsDeleted(true);
-    }
-
-    public void updateMemberNull() {
-        this.member = null;
     }
 
     public void incrementReportedCount() {

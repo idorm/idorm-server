@@ -31,8 +31,7 @@ public class PostPhoto extends BaseEntity {
         this.photoUrl = photoUrl;
         this.setIsDeleted(false);
 
-        if (!post.getPostPhotos().contains(this))
-            post.getPostPhotos().add(this);
+        post.getPostPhotos().add(this);
     }
 
     public void delete() {

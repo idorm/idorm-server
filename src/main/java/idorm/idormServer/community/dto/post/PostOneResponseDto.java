@@ -96,10 +96,10 @@ public class PostOneResponseDto {
             this.nickname = "익명";
         }
 
-        if(post.getPostPhotos() != null) {
-            this.imagesCount = post.getPostPhotos().size();
+        if(post.getPostPhotosIsDeletedIsFalse() != null) {
+            this.imagesCount = post.getPostPhotosIsDeletedIsFalse().size();
 
-            for (PostPhoto postPhoto : post.getPostPhotos())
+            for (PostPhoto postPhoto : post.getPostPhotosIsDeletedIsFalse())
                 this.postPhotos.add(new PostPhotoDefaultResponseDto(postPhoto));
         }
     }
@@ -115,11 +115,11 @@ public class PostOneResponseDto {
         this.updatedAt = post.getUpdatedAt();
         this.isAnonymous = post.getIsAnonymous();
 
-        if (post.getPostLikedMembers() != null)
-            this.likesCount = post.getPostLikedMembers().size();
+        if (post.getPostLikedMembersIsDeletedIsFalse() != null)
+            this.likesCount = post.getPostLikedMembersIsDeletedIsFalse().size();
 
-        if (post.getComments() != null)
-            this.commentsCount = post.getComments().size();
+        if (post.getCommentsIsDeletedIsFalse() != null)
+            this.commentsCount = post.getCommentsIsDeletedIsFalse().size();
 
         if(post.getMember().getIsDeleted()) { // 회원 탈퇴의 경우
             this.memberId = null;
@@ -133,10 +133,10 @@ public class PostOneResponseDto {
             this.nickname = "익명";
         }
 
-        if(post.getPostPhotos() != null) {
-            this.imagesCount = post.getPostPhotos().size();
+        if(post.getPostPhotosIsDeletedIsFalse() != null) {
+            this.imagesCount = post.getPostPhotosIsDeletedIsFalse().size();
 
-            for (PostPhoto postPhoto : post.getPostPhotos())
+            for (PostPhoto postPhoto : post.getPostPhotosIsDeletedIsFalse())
                 this.postPhotos.add(new PostPhotoDefaultResponseDto(postPhoto));
         }
 

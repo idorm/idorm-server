@@ -15,8 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
-
 @Slf4j
 @RequiredArgsConstructor
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
@@ -31,14 +29,6 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         } catch (UsernameNotFoundException e) {
             setExceptionResponse(response, ExceptionCode.UNAUTHORIZED_DELETED_MEMBER);
         }
-
-        /**
-         * catch (IOException | ServletException e) {
-         *             Sentry.captureException(e);
-         *             log.error("[THROWING] ExceptionHandlerFilter | doFilterInternal | throwing = {}", e.getMessage());
-         *             setExceptionResponse(response, SERVER_ERROR);
-         *         }
-         */
     }
 
     private void setExceptionResponse(

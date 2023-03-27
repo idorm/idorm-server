@@ -102,6 +102,7 @@ public enum ExceptionCode {
 
     CANNOT_UPDATE_NICKNAME(CONFLICT, "닉네임은 30일마다 변경할 수 있습니다."),
     CANNOT_LIKED_SELF(CONFLICT, "본인의 글에 공감할 수 없습니다."),
+    CANNOT_LIKED_POST_BY_DELETED_MEMBER(CONFLICT, "게시글 작성자가 탈퇴한 글은 공감할 수 없습니다."),
     MEMBER_CANNOT_SELFREPORT(CONFLICT, "본인은 신고할 수 없습니다."),
     POST_CANNOT_SELFREPORT(CONFLICT, "본인의 게시글은 신고할 수 없습니다."),
     COMMENT_CANNOT_SELFREPORT(CONFLICT, "본인의 댓글은 신고할 수 없습니다."),

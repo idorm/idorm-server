@@ -45,7 +45,7 @@ public class CommentDefaultResponseDto {
     @ApiModelProperty(position = 9, value = "익명여부")
     private Boolean isAnonymous;
 
-    @ApiModelProperty(position = 10, value = "게시글 식별자")
+    @ApiModelProperty(position = 10, value = "게시글 식별자", example = "1, null(삭제된 게시글)")
     private Long postId;
 
     public CommentDefaultResponseDto(Comment comment) {
@@ -53,11 +53,14 @@ public class CommentDefaultResponseDto {
         this.memberId = comment.getMember().getId();
         this.commentId = comment.getId();
         this.parentCommentId = comment.getParentCommentId();
+        this.postId = comment.getPost().getId();
         this.isDeleted = comment.getIsDeleted();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
         this.isAnonymous = comment.getIsAnonymous();
-        this.postId = comment.getPost().getId();
+
+        if (!comment.getPost().getIsDeleted())
+            this.postId = null;
 
         if (comment.getMember().getIsDeleted()) {
             this.nickname = null;
@@ -76,10 +79,14 @@ public class CommentDefaultResponseDto {
         this.memberId = comment.getMember().getId();
         this.commentId = comment.getId();
         this.parentCommentId = comment.getParentCommentId();
+        this.postId = comment.getPost().getId();
         this.isDeleted = comment.getIsDeleted();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
         this.isAnonymous = comment.getIsAnonymous();
+
+        if (comment.getPost().getIsDeleted())
+            this.postId = null;
 
         if (comment.getMember().getIsDeleted()) {
             this.memberId = null;

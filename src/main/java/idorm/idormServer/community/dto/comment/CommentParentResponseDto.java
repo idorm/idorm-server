@@ -56,11 +56,14 @@ public class CommentParentResponseDto {
 
         this.memberId = parentComment.getMember().getId();
         this.commentId = parentComment.getId();
+        this.postId = parentComment.getPost().getId();
         this.isDeleted = parentComment.getIsDeleted();
         this.content = parentComment.getContent();
         this.createdAt = parentComment.getCreatedAt();
         this.isAnonymous = parentComment.getIsAnonymous();
-        this.postId = parentComment.getPost().getId();
+
+        if (parentComment.getPost().getIsDeleted())
+            this.postId = null;
 
         if (parentComment.getMember().getIsDeleted()) {
             this.memberId = null;

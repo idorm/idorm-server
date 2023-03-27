@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
@@ -22,27 +23,29 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     /**
-     * DB에 댓글 저장 및 매핑된 Member의 comments에 댓글 추가 |
+     * DB에 댓글 저장 |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public Comment save(Member member, Comment comment) {
+    public Comment save(Comment comment) {
         try {
-            Comment savedComment = commentRepository.save(comment);
-            member.addComment(comment);
-            return savedComment;
+            return commentRepository.save(comment);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     /**
-     * 게시글에 특정 댓글의 존재 여부 확인 |
-     * 404(COMMENT_NOT_FOUND)
+     * 댓글 단건 삭제 |
+     * 500(SERVER_ERROR)
      */
-    public void isExistCommentFromPost(Long postId, Long commentId) {
-        if(!commentRepository.existsByIdAndPostId(commentId, postId)) {
-            throw new CustomException(null, COMMENT_NOT_FOUND);
+    @Transactional
+    public void delete(Comment comment) {
+
+        try {
+            comment.delete();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
         }
     }
 
@@ -72,6 +75,14 @@ public class CommentService {
         return foundComment;
     }
 
+    public Optional<Comment> findOptionalById(Long commentId) {
+        try {
+            return Optional.of(commentRepository.findByIdAndIsDeletedIsFalse(commentId));
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
     /**
      * Comment 부모 댓글 식별자를 받아서 해당 대댓글 리스트 반환 |
      * 500(SERVER_ERROR)
@@ -79,7 +90,7 @@ public class CommentService {
     public List<Comment> findSubCommentsByParentCommentId(Long postId, Long parentCommentId) {
 
         try {
-            return commentRepository.findAllByPostIdAndParentCommentIdAndIsDeletedIsFalseOrderByCreatedAt(postId, parentCommentId);
+            return commentRepository.findAllByPostIdAndParentCommentIdOrderByCreatedAt(postId, parentCommentId);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -121,59 +132,19 @@ public class CommentService {
      */
     public List<Comment> findCommentsByPostId(Long postId) {
         try {
-            return commentRepository.findAllByPostIdAndIsDeletedIsFalseOrderByCreatedAtAsc(postId);
+            return commentRepository.findAllByPostIdOrderByCreatedAtAsc(postId);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     /**
-     * 게시글 삭제 시 모든 댓글 삭제 |
-     * 500(SERVER_ERROR)
+     * 게시글에 특정 댓글의 존재 여부 확인 |
+     * 404(COMMENT_NOT_FOUND)
      */
-    @Transactional
-    public void deleteAllCommentByDeletedPost(Post post) {
-        List<Comment> foundComments = findCommentsByPostId(post.getId());
-        if (foundComments.isEmpty()) {
-            return;
-        }
-        try {
-            for (Comment comment : foundComments) {
-                comment.delete();
-            }
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 댓글 단건 삭제 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void deleteComment(Comment comment) {
-
-        try {
-            comment.delete();
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 멤버 삭제 시 Comment 도메인의 member_id(FK) 를 null로 변경 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void updateMemberNullFromComment(Member member) {
-
-        try {
-            List<Comment> foundComments = commentRepository.findAllByMemberId(member.getId());
-            for(Comment comment : foundComments) {
-                comment.updateMemberNull();
-            }
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
+    public void isExistCommentFromPost(Long postId, Long commentId) {
+        if(!commentRepository.existsByIdAndPostId(commentId, postId)) {
+            throw new CustomException(null, COMMENT_NOT_FOUND);
         }
     }
 

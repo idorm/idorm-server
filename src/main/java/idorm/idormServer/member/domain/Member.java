@@ -133,18 +133,6 @@ public class Member extends BaseEntity implements UserDetails {
         this.dislikedMembers.remove(memberId);
     }
 
-    public void addPost(Post post) {
-        this.posts.add(post);
-    }
-
-    public void addPostLikedMemer(PostLikedMember postLikedMember) {
-        this.postLikedMembers.add(postLikedMember);
-    }
-
-    public void removePostLikedMember(PostLikedMember postLikedMember) {
-        this.postLikedMembers.remove(postLikedMember);
-    }
-
     public void addComment(Comment comment) {
         this.comments.add(comment);
     }

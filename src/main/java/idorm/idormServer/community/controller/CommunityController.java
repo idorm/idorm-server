@@ -4,6 +4,7 @@ import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.dto.comment.CommentParentResponseDto;
 import idorm.idormServer.community.dto.comment.CommentDefaultRequestDto;
 import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
@@ -15,6 +16,7 @@ import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.community.dto.post.PostSaveRequestDto;
 import idorm.idormServer.community.dto.post.PostUpdateRequestDto;
 
+import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.fcm.domain.NotifyType;
 import idorm.idormServer.fcm.dto.FcmRequestDto;
 import idorm.idormServer.fcm.service.FCMService;
@@ -22,7 +24,6 @@ import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.photo.domain.PostPhoto;
-import idorm.idormServer.photo.service.PhotoService;
 import idorm.idormServer.photo.service.PostPhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,7 +44,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Api(tags = "커뮤니티")
 @Validated
@@ -77,21 +81,25 @@ public class CommunityController {
     })
     @GetMapping("/posts/{dormitory-category}")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsFilteredByCategory(
+            HttpServletRequest servletRequest,
             @PathVariable(value = "dormitory-category") String dormCategoryRequest,
             @RequestParam(value = "page") int pageNum
     ) {
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        memberService.findById(loginMemberId);
+        
         DormCategory dormCategory = DormCategory.validateType(dormCategoryRequest);
 
         Page<Post> posts = postService.findManyPostsByDormCategory(dormCategory, pageNum);
 
-        List<PostAbstractResponseDto> response = posts.stream()
+        List<PostAbstractResponseDto> responses = posts.stream()
                 .map(post -> new PostAbstractResponseDto(post)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("POST_MANY_FOUND")
                         .responseMessage("Post 기숙사 필터링 후 게시글 다건 조회 완료")
-                        .data(response)
+                        .data(responses)
                         .build()
                 );
     }
@@ -112,20 +120,24 @@ public class CommunityController {
     })
     @GetMapping("/posts/{dormitory-category}/top")
     public ResponseEntity<DefaultResponseDto<Object>> findTopPostsFilteredByCategory(
+            HttpServletRequest servletRequest,
             @PathVariable("dormitory-category") String dormCategoryRequest
     ) {
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        memberService.findById(loginMemberId);
+        
         DormCategory dormCategory = DormCategory.validateType(dormCategoryRequest);
 
         List<Post> posts = postService.findTopPosts(dormCategory);
 
-        List<PostAbstractResponseDto> response = posts.stream()
+        List<PostAbstractResponseDto> responses = posts.stream()
                 .map(post -> new PostAbstractResponseDto(post)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("TOP_POST_MANY_FOUND")
                         .responseMessage("Post 인기 게시글 다건 조회 완료")
-                        .data(response)
+                        .data(responses)
                         .build()
                 );
     }
@@ -147,14 +159,13 @@ public class CommunityController {
     })
     @GetMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> findOnePost(
-            HttpServletRequest request,
+            HttpServletRequest servletRequest,
             @PathVariable("post-id")
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
-        
         Post foundPost = postService.findById(postId);
 
         List<Comment> foundComments = commentService.findCommentsByPostId(postId);
@@ -180,9 +191,7 @@ public class CommunityController {
                         commentService.findSubCommentsByParentCommentId(postId, comment.getId());
 
                 if (subComments.isEmpty()) {
-                    parentCommentResponses.add(new CommentParentResponseDto(parentAnonymousNickname,
-                            comment,
-                            null));
+                    parentCommentResponses.add(new CommentParentResponseDto(parentAnonymousNickname, comment, null));
                     continue;
                 }
 
@@ -198,10 +207,8 @@ public class CommunityController {
                         int index = anonymousMembers.indexOf(subComment.getMember()) + 1;
                         subCommentAnonymousNickname = "익명" + index;
                     }
-
-                    CommentDefaultResponseDto subCommentDto = new CommentDefaultResponseDto(subCommentAnonymousNickname,
-                            subComment);
-                    subCommentDtos.add(subCommentDto);
+                    
+                    subCommentDtos.add(new CommentDefaultResponseDto(subCommentAnonymousNickname, subComment));
                 }
                 parentCommentResponses.add(new CommentParentResponseDto(parentAnonymousNickname, comment, subCommentDtos));
             }
@@ -241,16 +248,16 @@ public class CommunityController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DefaultResponseDto<Object>> savePost(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @ModelAttribute PostSaveRequestDto request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
         postService.validatePostPhotoCountExceeded(request.getFiles().size());
 
-        Post post = postService.save(member, request.toEntity(member));
+        Post post = postService.save(request.toEntity(member));
 
         postPhotoService.savePostPhotos(post, request.getFiles());
 
@@ -291,13 +298,13 @@ public class CommunityController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DefaultResponseDto<Object>> updatePost(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @PathVariable("post-id")
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId,
             @ModelAttribute PostUpdateRequestDto request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
@@ -344,10 +351,10 @@ public class CommunityController {
     })
     @GetMapping("/posts/write")
     public ResponseEntity<DefaultResponseDto<Object>> findPostsByMember(
-            HttpServletRequest request2
+            HttpServletRequest servletRequest
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
         List<Post> posts = postService.findPostsByMember(member);
 
@@ -377,28 +384,27 @@ public class CommunityController {
     })
     @GetMapping("/posts/like")
     public ResponseEntity<DefaultResponseDto<Object>> findLikedPostsByMember(
-            HttpServletRequest request2
+            HttpServletRequest servletRequest
     ) {
-
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         memberService.findById(loginMemberId);
 
         List<Long> likedPostIds = postLikedMemberService.findAllLikedPostIdByMemberId(loginMemberId);
 
         List<Post> likedPosts = new ArrayList<>();
         for(Long postId : likedPostIds) {
-            Post post = postService.findById(postId);
-            likedPosts.add(post);
+            postService.findOptionalById(postId)
+                    .ifPresent(post -> likedPosts.add(post));
         }
 
-        List<PostAbstractResponseDto> response = likedPosts.stream()
+        List<PostAbstractResponseDto> responses = likedPosts.stream()
                 .map(post -> new PostAbstractResponseDto(post)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("LIKED_POST_MANY_FOUND")
                         .responseMessage("Post 로그인한 멤버가 공감한 게시글 조회 완료")
-                        .data(response)
+                        .data(responses)
                         .build()
                 );
     }
@@ -416,20 +422,29 @@ public class CommunityController {
             @ApiResponse(responseCode = "404",
                     description = "POST_NOT_FOUND / DELETED_POST"),
             @ApiResponse(responseCode = "409",
-                    description = "DUPLICATE_LIKED / CANNOT_LIKED_SELF"),
+                    description = "DUPLICATE_LIKED / CANNOT_LIKED_SELF / CANNOT_LIKED_POST_BY_DELETED_MEMBER"),
             @ApiResponse(responseCode = "500",
                     description = "SERVER_ERROR"),
     })
     @PutMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> savePostLikes(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @PathVariable("post-id")
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
+
+        if (post.getMember().getIsDeleted())
+            throw new CustomException(null, CANNOT_LIKED_POST_BY_DELETED_MEMBER);
+
+        if(post.getMember().equals(member))
+            throw new CustomException(null, CANNOT_LIKED_SELF);
+
+        if (postLikedMemberService.isMemberLikedPost(member, post))
+            throw new CustomException(null, DUPLICATE_LIKED);
 
         postLikedMemberService.create(member, post);
 
@@ -458,16 +473,19 @@ public class CommunityController {
     })
     @DeleteMapping("/post/{post-id}/like")
     public ResponseEntity<DefaultResponseDto<Object>> deletePostLikes(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @PathVariable("post-id")
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
-        postLikedMemberService.delete(member, post);
+        PostLikedMember postLikedMember = postLikedMemberService.findOneByPostAndMember(post, member);
+
+        postLikedMemberService.decrementLikedCountsOfPost(post);
+        postLikedMemberService.delete(postLikedMember);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -494,17 +512,33 @@ public class CommunityController {
     })
     @DeleteMapping("/post/{post-id}")
     public ResponseEntity<DefaultResponseDto<Object>> deletePost(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @PathVariable("post-id")
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         Post post = postService.findById(postId);
         postService.validatePostAuthorization(post, member);
-        postService.deletePost(post);
+
+        List<PostLikedMember> postLikedMembersFromPost = postLikedMemberService.findAllByPost(post);
+        List<PostPhoto> postPhotosFromPost = postPhotoService.findAllByPost(post);
+
+        if (postLikedMembersFromPost != null) {
+            for (PostLikedMember postLikedMember : postLikedMembersFromPost) {
+                postLikedMemberService.delete(postLikedMember);
+            }
+        }
+        
+        if (postPhotosFromPost != null) {
+            for (PostPhoto postPhoto : postPhotosFromPost) {
+                postPhotoService.delete(postPhoto);
+            }
+        }
+        
+        postService.delete(post);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -527,7 +561,7 @@ public class CommunityController {
                     description = "COMMENT_SAVED",
                     content = @Content(schema = @Schema(implementation = CommentDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / POSTID_NEGATIVEORZERO_INVALID"),
+                    description = "FIELD_REQUIRED / *_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "404",
@@ -538,26 +572,27 @@ public class CommunityController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(value = "/post/{post-id}/comment")
     public ResponseEntity<DefaultResponseDto<Object>> saveComment (
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @PathVariable("post-id")
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId,
             @RequestBody @Valid CommentDefaultRequestDto request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         Post post = postService.findById(postId);
         if(request.getParentCommentId() != null)
             commentService.isExistCommentFromPost(postId, request.getParentCommentId());
 
-        Comment comment = commentService.save(member, request.toEntity(member, post));
+        Comment comment = commentService.save(request.toEntity(member, post));
 
-        if(request.getParentCommentId() != null) { // 대댓글, 게시글 주인/부모댓글 주인 / 대댓글 단 사람들한테 알람
+        if(request.getParentCommentId() != null) { // 대댓글 달림, 게시글 주인 /부모댓글 주인 / 대댓글 단 사람들한테 알람
             commentService.saveParentCommentId(request.getParentCommentId(), comment);
 
             String alertTitle = "새로운 대댓글이 달렸어요: ";
-            
+
+            // 게시글 주인에게 알람
             if (post.getMember().getIsDeleted() == false) {
 
                 if (post.getMember().getFcmToken() != null) {
@@ -572,41 +607,56 @@ public class CommunityController {
                             .build();
                     fcmService.sendMessage(fcmRequestDto);
                 }
-            } else if (commentService.findById(request.getParentCommentId()).getMember().getIsDeleted() == false) {
+            }
 
-                if (commentService.findById(request.getParentCommentId()).getMember().getFcmToken() != null) {
-                    FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
-                            .token(commentService.findById(request.getParentCommentId()).getMember().getFcmToken())
-                            .notification(FcmRequestDto.Notification.builder()
-                                    .notifyType(NotifyType.SUBCOMMENT)
-                                    .contentId(postId)
-                                    .title(alertTitle)
-                                    .content(comment.getContent())
-                                    .build())
-                            .build();
-                    fcmService.sendMessage(fcmRequestDto);
-                }
-            } else {
-                List<Comment> subComments = commentService.findSubCommentsByParentCommentId(post.getId(),
-                        request.getParentCommentId());
+            // 부모 댓글 주인에게 알람
+            Optional<Comment> parentComment = commentService.findOptionalById(request.getParentCommentId());
 
-                for (Comment subComment : subComments) {
-                    if (subComment.getId() != comment.getId())
-                        if (subComment.getMember().getIsDeleted() == false && subComment.getMember().getFcmToken() != null) {
-                            FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
-                                    .token(subComment.getMember().getFcmToken())
-                                    .notification(FcmRequestDto.Notification.builder()
-                                            .notifyType(NotifyType.SUBCOMMENT)
-                                            .contentId(postId)
-                                            .title(alertTitle)
-                                            .content(comment.getContent())
-                                            .build())
-                                    .build();
-                            fcmService.sendMessage(fcmRequestDto);
-                        }
+            if (parentComment.isPresent()) {
+                if (!parentComment.get().getMember().getIsDeleted()
+                        && !parentComment.get().getMember().equals(post.getMember())) {
+
+                    if (parentComment.get().getMember().getFcmToken() != null) {
+                        FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
+                                .token(parentComment.get().getMember().getFcmToken())
+                                .notification(FcmRequestDto.Notification.builder()
+                                        .notifyType(NotifyType.SUBCOMMENT)
+                                        .contentId(postId)
+                                        .title(alertTitle)
+                                        .content(comment.getContent())
+                                        .build())
+                                .build();
+                        fcmService.sendMessage(fcmRequestDto);
+                    }
                 }
             }
-        } else { // 게시글 주인에게 알람
+
+            // 대댓글 주인들에게 알람
+            List<Comment> subComments = commentService.findSubCommentsByParentCommentId(post.getId(),
+                    request.getParentCommentId());
+
+            for (Comment subComment : subComments) {
+                if ((subComment.getId() != comment.getId())
+                        && !subComment.getIsDeleted()
+                        && !subComment.getMember().equals(post.getMember())
+                        && !subComment.getMember().equals(parentComment.get().getMember())) {
+
+                    if (!subComment.getMember().getIsDeleted() && subComment.getMember().getFcmToken() != null) {
+                        FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
+                                .token(subComment.getMember().getFcmToken())
+                                .notification(FcmRequestDto.Notification.builder()
+                                        .notifyType(NotifyType.SUBCOMMENT)
+                                        .contentId(postId)
+                                        .title(alertTitle)
+                                        .content(comment.getContent())
+                                        .build())
+                                .build();
+                        fcmService.sendMessage(fcmRequestDto);
+                    }
+                }
+            }
+
+        } else { // 댓글 달림, 게시글 주인에게 알람
 
             if (post.getMember().getIsDeleted() == false && post.getMember().getFcmToken() != null) {
                 FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
@@ -650,7 +700,7 @@ public class CommunityController {
                     description = "SERVER_ERROR"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> deleteComment(
-            HttpServletRequest request,
+            HttpServletRequest servletRequest,
             @PathVariable("post-id")
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId,
@@ -658,7 +708,7 @@ public class CommunityController {
             @Positive(message = "댓글 식별자는 양수만 가능합니다.")
                 Long commentId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         Post post = postService.findById(postId);
@@ -666,7 +716,7 @@ public class CommunityController {
 
         commentService.validateCommentAuthorization(comment, member);
 
-        commentService.deleteComment(comment);
+        commentService.delete(comment);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -690,9 +740,9 @@ public class CommunityController {
     })
     @GetMapping(value = "/comments")
     public ResponseEntity<DefaultResponseDto<Object>> findCommentsByMember(
-            HttpServletRequest request
+            HttpServletRequest servletRequest
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
         List<Comment> foundComments = commentService.findCommentsByMember(member);

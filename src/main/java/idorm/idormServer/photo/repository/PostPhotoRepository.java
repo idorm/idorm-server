@@ -1,5 +1,6 @@
 package idorm.idormServer.photo.repository;
 
+import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.photo.domain.PostPhoto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,5 +11,5 @@ public interface PostPhotoRepository extends JpaRepository<PostPhoto, Long> {
 
     Optional<PostPhoto> findByIdAndPostIdAndIsDeletedFalse(Long id, Long postId);
 
-    List<PostPhoto> findByPostId(Long postId);
+    List<PostPhoto> findAllByPostAndIsDeletedIsFalse(Post post);
 }

@@ -132,7 +132,7 @@ public class TestService {
             String emailString = "test" + i + "@inu.ac.kr";
             Email email = emailInject(emailString);
 
-            Member member = emailAndMemberDataInject(email,
+            Member member = memberDataInject(email,
                     passwordEncoder.encode("idorm2023!"),
                     "응철이" + i);
             members.add(member);
@@ -476,7 +476,7 @@ public class TestService {
     }
 
     @Transactional
-    public Member emailAndMemberDataInject(Email email, String password, String nickname) {
+    public Member memberDataInject(Email email, String password, String nickname) {
 
         Member member = Member.builder()
                 .email(email)
@@ -488,6 +488,7 @@ public class TestService {
 
         email.isChecked();
         emailService.updateIsJoined(email, member);
+        memberService.updateFcmToken(member, "f2uPzBhiTm-peoTQdXOzF1:APA91bEzJTtxjy7AeMaY_rCJ9jKSC2Br4-209FnNM3HuuYAOGf6KvMpWY-S5ahHHza-U5BaR40gd2dhUt91DjR1IZFJTGweQ57jB04AxVaytkbs-pChiItDrIFJQmNS6dYpMl0T291TS");
         return member;
     }
 
@@ -546,7 +547,7 @@ public class TestService {
                 .isAnonymous(isAnonymous)
                 .build();
 
-        return postService.save(member, post);
+        return postService.save(post);
     }
 
     @Transactional
@@ -559,6 +560,6 @@ public class TestService {
                 .member(member)
                 .build();
 
-        return commentService.save(member, comment);
+        return commentService.save(comment);
     }
 }

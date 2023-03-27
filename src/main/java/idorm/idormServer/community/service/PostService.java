@@ -7,7 +7,6 @@ import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.PostPhoto;
-import idorm.idormServer.photo.service.PostPhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
@@ -24,38 +24,28 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final PostPhotoService postPhotoService;
-    private final PostLikedMemberService postLikedMemberService;
-    private final CommentService commentService;
-
-    /**
-     * 멤버 탈퇴 시 Post, Comment에 매핑된 Member를 null로 변경 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void removeMember(Member member) {
-
-        try {
-            List<Post> foundPosts = postRepository.findAllByMemberId(member.getId());
-            for(Post post : foundPosts) {
-                post.removeMember();
-            }
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-        commentService.updateMemberNullFromComment(member);
-    }
 
     /**
      * DB에 게시글 저장 |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public Post save(Member member, Post post) {
+    public Post save(Post post) {
         try {
-            Post savedPost = postRepository.save(post);
-            member.addPost(savedPost);
-            return savedPost;
+            return postRepository.save(post);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 게시글 삭제 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void delete(Post post) {
+        try {
+            post.delete();
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -85,23 +75,6 @@ public class PostService {
     }
 
     /**
-     * 게시글 삭제 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void deletePost(Post post) {
-
-        commentService.deleteAllCommentByDeletedPost(post);
-        postLikedMemberService.deleteAllLikeByDeletedPost(post);
-        postPhotoService.deleteAllPostPhotoByDeletedPost(post);
-        try {
-            post.delete();
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
      * 게시글 단건 조회 |
      * 404(POST_NOT_FOUND)
      * 404(DELETED_POST)
@@ -117,13 +90,25 @@ public class PostService {
     }
 
     /**
+     * 예외 처리 없이 게시글 단건 조회 |
+     * 삭제되거나 없는 게시글은 null을 반환한다.
+     */
+    public Optional<Post> findOptionalById(Long postId) {
+        try {
+            return Optional.of(postRepository.findByIdAndIsDeletedIsFalse(postId));
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 기숙사 카테고리 별 모든 게시글 다건 조회 |
      * 500(SERVER_ERROR)
      */
     public Page<Post> findManyPostsByDormCategory(DormCategory dormCategory, int pageNum) {
         try {
             Page<Post> foundPosts =
-                    postRepository.findAllByDormCategoryAndIsDeletedFalseOrderByCreatedAtDesc(
+                    postRepository.findAllByDormCategoryAndIsDeletedIsFalseOrderByCreatedAtDesc(
                             dormCategory.getType(),
                             PageRequest.of(pageNum, 10));
             return foundPosts;
@@ -161,7 +146,7 @@ public class PostService {
      */
     public List<Post> findPostsByMember(Member member) {
         try {
-            return postRepository.findAllByMemberIdAndIsDeletedFalseOrderByUpdatedAtDesc(member.getId());
+            return postRepository.findAllByMemberIdAndIsDeletedIsFalseOrderByUpdatedAtDesc(member.getId());
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -171,7 +156,7 @@ public class PostService {
      * 특정 게시글의 삭제되지 않은 게시글 사진들 조회 |
      */
     public List<PostPhoto> findAllPostPhotosFromPost(Post post) {
-        return post.getPostPhotos();
+        return post.getPostPhotosIsDeletedIsFalse();
     }
 
     /**
