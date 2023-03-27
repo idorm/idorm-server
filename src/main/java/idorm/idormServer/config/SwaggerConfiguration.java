@@ -29,9 +29,6 @@ import java.util.List;
 @Configuration
 public class SwaggerConfiguration {
 
-    /**
-     * swagger 문서 api 설정
-     */
     @Bean
     public Docket api() {
         TypeResolver typeResolver = new TypeResolver();

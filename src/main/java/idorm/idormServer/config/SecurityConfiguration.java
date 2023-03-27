@@ -1,5 +1,6 @@
 package idorm.idormServer.config;
 
+import idorm.idormServer.auth.ExceptionHandlerFilter;
 import idorm.idormServer.exception.CustomAccessDeniedHandler;
 import idorm.idormServer.exception.CustomAuthenticationEntryPointHandler;
 import idorm.idormServer.auth.JwtAuthenticationFilter;
@@ -40,11 +41,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
 
                 .csrf().disable()
                 .cors()
-
                 .and()
-                .sessionManagement().sessionCreationPolicy(
-                SessionCreationPolicy.STATELESS)
-
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
                 .antMatchers("/swagger-resources/**").permitAll()
@@ -57,11 +55,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPointHandler())
-
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-                        UsernamePasswordAuthenticationFilter.class);
-
-
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class);
     }
 }

@@ -301,6 +301,9 @@ public class MemberController {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(memberId);
 
+        // TODO: 회원 관련 추가 정보 삭제
+
+        memberService.deleteFcmToken(member);
         memberService.delete(member);
 
         return ResponseEntity.status(200)
@@ -401,8 +404,8 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "[FCM 수정] 로그아웃",
-            notes = "- 토큰 관리를 위해 로그아웃 시 해당 API를 호출해주세요.")
+    @ApiOperation(value = "[FCM 수정] 로그아웃 / FCM 제거 용도",
+            notes = "- FCM 토큰 관리를 위해 로그아웃 시 해당 API를 호출해주세요.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
