@@ -17,9 +17,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,15 +30,16 @@ import javax.validation.Valid;
 import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Api(tags = "온보딩 매칭 정보")
+@Validated
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchingInfoController {
 
     private final MatchingInfoService matchingInfoService;
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @ApiOperation(value = "MatchingInfo 저장", notes = "최초로 온보딩 정보를 저장할 경우만 사용 가능합니다.")
+    @ApiOperation(value = "온보딩 정보 생성", notes = "- 최초로 온보딩 정보를 저장할 경우만 사용 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
@@ -54,18 +57,19 @@ public class MatchingInfoController {
     @PostMapping("/member/matchinginfo")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<DefaultResponseDto<Object>> save(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(loginMemberId);
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
 
-        if(member.getMatchingInfo() != null) { // 등록된 매칭정보가 있다면
+        if(member.getMatchingInfo() != null) {
             throw new CustomException(null, DUPLICATE_MATCHINGINFO);
         }
 
-        MatchingInfo createdMatchingInfo = matchingInfoService.createMatchingInfo(request, member);
-        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(createdMatchingInfo);
+        MatchingInfo matchingInfo = matchingInfoService.save(request.toEntity(member));
+
+        MatchingInfoDefaultResponseDto response = new MatchingInfoDefaultResponseDto(matchingInfo);
 
         return ResponseEntity.status(201)
             .body(DefaultResponseDto.builder()
@@ -77,7 +81,7 @@ public class MatchingInfoController {
     }
 
     @PutMapping("/member/matchinginfo")
-    @ApiOperation(value = "MatchingInfo 수정")
+    @ApiOperation(value = "온보딩 정보 수정")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -93,13 +97,13 @@ public class MatchingInfoController {
                     description = "SERVER_ERROR"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> updateMatchingInfo(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
 
-        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
+        if(member.getMatchingInfo() == null) {
             throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
         }
 
@@ -115,7 +119,7 @@ public class MatchingInfoController {
                 );
     }
 
-    @ApiOperation(value = "MatchingInfo 공개여부 수정")
+    @ApiOperation(value = "온보딩 정보 공개 여부 수정")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -131,16 +135,13 @@ public class MatchingInfoController {
     })
     @PatchMapping("/member/matchinginfo")
     public ResponseEntity<DefaultResponseDto<Object>> updateisMatchingInfoPublic(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             MatchingInfoUpdateIsPublicRequestDto request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(loginMemberId);
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
 
-        if (request.getIsMatchingInfoPublic() == null || request.getIsMatchingInfoPublic().equals(""))
-            throw new CustomException(null, FIELD_REQUIRED);
-
-        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
+        if(member.getMatchingInfo() == null) {
             throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
         }
 
@@ -155,7 +156,7 @@ public class MatchingInfoController {
     }
 
     @GetMapping("/member/matchinginfo")
-    @ApiOperation(value = "MatchingInfo 단건 조회")
+    @ApiOperation(value = "온보딩 정보 단건 조회")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -169,10 +170,10 @@ public class MatchingInfoController {
                     description = "SERVER_ERROR"),
     })
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingInfo(
-            HttpServletRequest request2) {
+            HttpServletRequest servletRequest) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(loginMemberId);
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
             throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
@@ -192,7 +193,7 @@ public class MatchingInfoController {
     }
 
     @DeleteMapping("/member/matchinginfo")
-    @ApiOperation(value = "MatchingInfo 삭제")
+    @ApiOperation(value = "온보딩 정보 삭제")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -213,7 +214,7 @@ public class MatchingInfoController {
             throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
         }
 
-        matchingInfoService.deleteMatchingInfo(member.getMatchingInfo());
+        matchingInfoService.delete(member.getMatchingInfo());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

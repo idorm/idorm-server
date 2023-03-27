@@ -27,7 +27,7 @@ public class EmailConfiguration {
     private boolean fallback;
     @Value("${AdminMail.id}")
     private String id;
-    @Value("${ADMINMAIL_PASSWORD}")
+    @Value("${ADMIN_MAIL_PASSWORD}")
     private String password;
 
     @Bean

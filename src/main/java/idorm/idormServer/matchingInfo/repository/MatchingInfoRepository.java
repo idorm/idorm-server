@@ -10,9 +10,11 @@ import java.util.Optional;
 
 public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long> {
 
-    Optional<MatchingInfo> findByMemberId(Long memberId);
+    Optional<MatchingInfo> findByMemberIdAndIsDeletedIsFalse(Long memberId);
 
-    List<MatchingInfo> findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
+    Optional<MatchingInfo> findByIdAndIsDeletedIsFalse(Long id);
+
+    List<MatchingInfo> findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrueAndIsDeletedIsFalse(
                                                                               Long memberId,
                                                                               Character dormCategory,
                                                                               Character joinPeriod,

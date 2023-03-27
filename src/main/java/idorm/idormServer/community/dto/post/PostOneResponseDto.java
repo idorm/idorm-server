@@ -1,10 +1,9 @@
 package idorm.idormServer.community.dto.post;
 
-import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.dto.comment.CommentParentResponseDto;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
-import idorm.idormServer.photo.domain.Photo;
+import idorm.idormServer.photo.domain.PostPhoto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -74,6 +73,7 @@ public class PostOneResponseDto {
     // 게시글 저장 시에만 사용
     public PostOneResponseDto(Post post) {
         this.postId = post.getId();
+        this.memberId = post.getMember().getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
         this.title = post.getTitle();
         this.content = post.getContent();
@@ -82,32 +82,31 @@ public class PostOneResponseDto {
         this.updatedAt = post.getUpdatedAt();
         this.likesCount = 0;
         this.commentsCount = 0;
-        this.memberId = post.getMember().getId();
         this.isAnonymous = post.getIsAnonymous();
 
-        if(post.getMember() == null) { // 회원 탈퇴의 경우
+        if(post.getMember().getIsDeleted()) { // 회원 탈퇴의 경우
             this.nickname = null;
-        } else if(post.getIsAnonymous() == false) { // 익명이 아닌 경우
+            this.memberId = null;
+        } else if(!post.getIsAnonymous()) { // 익명이 아닌 경우
             this.nickname = post.getMember().getNickname();
-            if(post.getMember().getProfilePhoto() != null) {
-                this.profileUrl = post.getMember().getProfilePhoto().getPhotoUrl();
-            }
-        } else if(post.getIsAnonymous() == true) { // 익명일 경우
+
+            if(post.getMember().getMemberPhoto() != null)
+                this.profileUrl = post.getMember().getMemberPhoto().getPhotoUrl();
+        } else if(post.getIsAnonymous()) { // 익명일 경우
             this.nickname = "익명";
         }
 
-        if(post.getPhotos() != null) {
-            for(Photo photo : post.getPhotos()) {
-                if (!photo.getIsDeleted()){
-                    this.imagesCount += 1;
-                    this.postPhotos.add(new PostPhotoDefaultResponseDto(photo));
-                }
-            }
+        if(post.getPostPhotos() != null) {
+            this.imagesCount = post.getPostPhotos().size();
+
+            for (PostPhoto postPhoto : post.getPostPhotos())
+                this.postPhotos.add(new PostPhotoDefaultResponseDto(postPhoto));
         }
     }
 
     public PostOneResponseDto(Post post, List<CommentParentResponseDto> comments, boolean isLiked) {
         this.postId = post.getId();
+        this.memberId = post.getMember().getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
         this.title = post.getTitle();
         this.content = post.getContent();
@@ -116,47 +115,29 @@ public class PostOneResponseDto {
         this.updatedAt = post.getUpdatedAt();
         this.isAnonymous = post.getIsAnonymous();
 
-        if (post.getMember() != null)
-            this.memberId = post.getMember().getId();
-
-        if (post.getPostLikedMembers() != null) {
+        if (post.getPostLikedMembers() != null)
             this.likesCount = post.getPostLikedMembers().size();
-        }
-        if (post.getComments() != null) {
-            this.commentsCount = 0;
-            for (Comment comment : post.getComments()) {
-                if (!comment.getIsDeleted()) {
-                    this.commentsCount += 1;
-                }
-            }
-        }
 
-        if (post.getPhotos() != null) {
-            this.imagesCount = 0;
-            for (Photo photo : post.getPhotos()) {
-                if (!photo.getIsDeleted()) {
-                    this.imagesCount += 1;
-                }
-            }
-        }
+        if (post.getComments() != null)
+            this.commentsCount = post.getComments().size();
 
-        if(post.getMember() == null) { // 회원 탈퇴의 경우
+        if(post.getMember().getIsDeleted()) { // 회원 탈퇴의 경우
+            this.memberId = null;
             this.nickname = null;
-        } else if(post.getIsAnonymous() == false) { // 익명이 아닌 경우
+        } else if(!post.getIsAnonymous()) { // 익명이 아닌 경우
             this.nickname = post.getMember().getNickname();
-            if(post.getMember().getProfilePhoto() != null) {
-                this.profileUrl = post.getMember().getProfilePhoto().getPhotoUrl();
+            if(post.getMember().getMemberPhoto() != null) {
+                this.profileUrl = post.getMember().getMemberPhoto().getPhotoUrl();
             }
-        } else if(post.getIsAnonymous() == true) { // 익명일 경우
+        } else if(post.getIsAnonymous()) { // 익명일 경우
             this.nickname = "익명";
         }
 
-        if(post.getPhotos() != null) {
-            List<Photo> savedPostPhotos = post.getPhotos();
-            for(Photo photo : savedPostPhotos) {
-                if (!photo.getIsDeleted())
-                    this.postPhotos.add(new PostPhotoDefaultResponseDto(photo));
-            }
+        if(post.getPostPhotos() != null) {
+            this.imagesCount = post.getPostPhotos().size();
+
+            for (PostPhoto postPhoto : post.getPostPhotos())
+                this.postPhotos.add(new PostPhotoDefaultResponseDto(postPhoto));
         }
 
         if(comments != null) {

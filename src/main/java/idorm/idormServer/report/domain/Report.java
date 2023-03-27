@@ -39,7 +39,6 @@ public class Report extends BaseEntity {
 
     private Character reasonType;
     private String reason;
-    private Boolean isDeleted;
 
     @Builder(builderClassName = "MemberReportBuilder", builderMethodName = "MemberReportBuilder")
     public Report(Member reporterMember, Member reportedMember, MemberReason reasonType, String reason) {
@@ -49,7 +48,7 @@ public class Report extends BaseEntity {
         this.reportedComment = null;
         this.reasonType = reasonType.getType();
         this.reason = reason;
-        this.isDeleted = false;
+        this.setIsDeleted(false);
 
         this.reportedMember.incrementreportedCount();
     }
@@ -66,7 +65,7 @@ public class Report extends BaseEntity {
         this.reportedComment = null;
         this.reasonType = reasonType.getType();
         this.reason = reason;
-        this.isDeleted = false;
+        this.setIsDeleted(false);
 
         this.reportedPost.incrementReportedCount();
     }
@@ -82,12 +81,12 @@ public class Report extends BaseEntity {
         this.reportedComment = reportedComment;
         this.reasonType = reasonType.getType();
         this.reason = reason;
-        this.isDeleted = false;
+        this.setIsDeleted(false);
 
         this.reportedComment.incrementReportedCount();
     }
 
     public void delete() {
-        this.isDeleted = true;
+        this.setIsDeleted(true);
     }
 }

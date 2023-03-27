@@ -50,6 +50,7 @@ public class CommentDefaultResponseDto {
 
     public CommentDefaultResponseDto(Comment comment) {
 
+        this.memberId = comment.getMember().getId();
         this.commentId = comment.getId();
         this.parentCommentId = comment.getParentCommentId();
         this.isDeleted = comment.getIsDeleted();
@@ -58,22 +59,21 @@ public class CommentDefaultResponseDto {
         this.isAnonymous = comment.getIsAnonymous();
         this.postId = comment.getPost().getId();
 
-        if (comment.getMember() != null)
-            this.memberId = comment.getMember().getId();
-
-        if (comment.getMember() == null) {
+        if (comment.getMember().getIsDeleted()) {
             this.nickname = null;
-        } else if(comment.getIsAnonymous() == true) {
+            this.memberId = null;
+        } else if(comment.getIsAnonymous()) {
             this.nickname = "익명";
-        } else if(comment.getIsAnonymous() == false) {
+        } else if(!comment.getIsAnonymous()) {
             this.nickname = comment.getMember().getNickname();
-            if(comment.getMember().getProfilePhoto() != null) {
-                this.profileUrl = comment.getMember().getProfilePhoto().getPhotoUrl();
+            if(comment.getMember().getMemberPhoto() != null) {
+                this.profileUrl = comment.getMember().getMemberPhoto().getPhotoUrl();
             }
         }
     }
     public CommentDefaultResponseDto(String anonymousNickname, Comment comment) {
 
+        this.memberId = comment.getMember().getId();
         this.commentId = comment.getId();
         this.parentCommentId = comment.getParentCommentId();
         this.isDeleted = comment.getIsDeleted();
@@ -81,17 +81,15 @@ public class CommentDefaultResponseDto {
         this.createdAt = comment.getCreatedAt();
         this.isAnonymous = comment.getIsAnonymous();
 
-        if (comment.getMember() != null)
-            this.memberId = comment.getMember().getId();
-
-        if (comment.getMember() == null) {
+        if (comment.getMember().getIsDeleted()) {
+            this.memberId = null;
             this.nickname = null;
-        } else if(comment.getIsAnonymous() == true) {
+        } else if(comment.getIsAnonymous()) {
             this.nickname = anonymousNickname;
-        } else if(comment.getIsAnonymous() == false) {
+        } else if(!comment.getIsAnonymous()) {
             this.nickname = comment.getMember().getNickname();
-            if(comment.getMember().getProfilePhoto() != null) {
-                this.profileUrl = comment.getMember().getProfilePhoto().getPhotoUrl();
+            if(comment.getMember().getMemberPhoto() != null) {
+                this.profileUrl = comment.getMember().getMemberPhoto().getPhotoUrl();
             }
         }
     }

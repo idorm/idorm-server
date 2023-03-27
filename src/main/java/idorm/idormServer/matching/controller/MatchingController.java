@@ -17,8 +17,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +32,9 @@ import java.util.List;
 import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Api(tags = "매칭")
+@Validated
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchingController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -39,7 +42,7 @@ public class MatchingController {
     private final MatchingInfoService matchingInfoService;
     private final MatchingService matchingService;
 
-    @ApiOperation(value = "좋아요한 회원 다건 조회", notes = "매칭이미지 공개 여부가 false 인 매칭정보는 클라이언트에서 추가 필터링이 필요합니다.")
+    @ApiOperation(value = "좋아요한 회원 다건 조회")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -54,13 +57,13 @@ public class MatchingController {
     })
     @GetMapping("/member/matching/like")
     public ResponseEntity<DefaultResponseDto<Object>> findLikedMatchingMembers(
-            HttpServletRequest request
+            HttpServletRequest servletRequest
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
-        Member loginMember = memberService.findById(loginMemberId);
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
 
-        List<Member> likedMembers = matchingService.findLikedMembers(loginMember);
+        List<Member> likedMembers = matchingService.findLikedMembers(member);
 
         List<MatchingDefaultResponseDto> response = new ArrayList<>();
 
@@ -77,7 +80,7 @@ public class MatchingController {
                         .build());
     }
 
-    @ApiOperation(value = "싫어요한 회원 다건 조회", notes = "매칭이미지 공개 여부가 false 인 매칭정보는 추가 필터링이 필요합니다.")
+    @ApiOperation(value = "싫어요한 회원 다건 조회")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -92,26 +95,26 @@ public class MatchingController {
     })
     @GetMapping("/member/matching/dislike")
     public ResponseEntity<DefaultResponseDto<Object>> findDislikedMatchingMembers(
-            HttpServletRequest request
+            HttpServletRequest servletRequest
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
 
         List<Member> dislikedMembers = matchingService.findDislikedMembers(loginMember);
 
-        List<MatchingDefaultResponseDto> response = new ArrayList<>();
+        List<MatchingDefaultResponseDto> responses = new ArrayList<>();
 
         if (dislikedMembers != null) {
             for(Member dislikedMember : dislikedMembers) {
-                response.add(new MatchingDefaultResponseDto(dislikedMember.getMatchingInfo()));
+                responses.add(new MatchingDefaultResponseDto(dislikedMember.getMatchingInfo()));
             }
         }
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("DISLIKEDMEMBERS_FOUND")
                         .responseMessage("Matching 싫어요한 회원 다건 조회 완료")
-                        .data(response)
+                        .data(responses)
                         .build());
     }
 
@@ -136,7 +139,7 @@ public class MatchingController {
     })
     @PostMapping("/member/matching/{selected-member-id}")
     public ResponseEntity<DefaultResponseDto<Object>> addMatchingMember(
-            HttpServletRequest request,
+            HttpServletRequest servletRequest,
             @RequestParam(value = "matchingType")
                     boolean matchingType,
             @PathVariable(value = "selected-member-id")
@@ -144,7 +147,7 @@ public class MatchingController {
                     Long selectedMemberId
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
         Member selectedMember = memberService.findById(selectedMemberId);
 
@@ -244,11 +247,12 @@ public class MatchingController {
     })
     @GetMapping("/member/matching")
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingMembers(
-            HttpServletRequest request
+            HttpServletRequest servletRequest
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
+
         matchingInfoService.findByMemberId(loginMemberId);
         matchingInfoService.validateMatchingInfoIsPublic(loginMember);
 
@@ -287,11 +291,11 @@ public class MatchingController {
     })
     @PostMapping("/member/matching/filter")
     public ResponseEntity<DefaultResponseDto<Object>> findFilteredMatchingMembers(
-            HttpServletRequest request2,
+            HttpServletRequest servletRequest,
             @RequestBody @Valid MatchingFilteredMatchingInfoRequestDto request
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member loginMember = memberService.findById(loginMemberId);
         matchingInfoService.findByMemberId(loginMemberId);
         matchingInfoService.validateMatchingInfoIsPublic(loginMember);

@@ -22,7 +22,7 @@ import javax.validation.constraints.NotBlank;
 @ApiModel(value = "Email 인증 요청")
 public class EmailAuthRequestDto {
 
-    @ApiModelProperty(position = 1, required = true, value = "이메일", example = "aaa@inu.ac.kr")
+    @ApiModelProperty(position = 1, required = true, value = "이메일", example = "test1@inu.ac.kr")
     @NotBlank(message = "이메일을 입력해 주세요.", groups = ValidationSequence.NotBlank.class)
     @Email(message = "올바른 이메일 형식이 아닙니다.", groups = ValidationSequence.Email.class)
     private String email;

@@ -205,7 +205,9 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "비밀번호 변경")
+    @ApiOperation(value = "비밀번호 변경", notes = "- 이메일 API에서 /verifyCode/password/{email} 인증 후 5분동안 비밀번호 변경 가능합니다.\n" +
+            "- 비밀번호 변경용 이메일이 인증되지 않았다면 UNAUTHORIZED_EMAIL(401)을 던집니다. \n" +
+            "- 비밀번호 변경용 이메일 인증 성공 시점으로 5분 후에 해당 API 요청 시 EXPIRED_CODE(401)를 던집니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -214,9 +216,9 @@ public class MemberController {
             @ApiResponse(responseCode = "400",
                     description = "FIELD_REQUIRED / *_CHARACTER_INVALID / *_LENGTH_INVALID"),
             @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_EMAIL"),
+                    description = "UNAUTHORIZED_EMAIL / EXPIRED_CODE"),
             @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
+                    description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "SERVER_ERROR"),
     }
@@ -225,13 +227,15 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> updatePassword(
             @RequestBody @Valid MemberUpdatePasswordRequestDto request) {
 
-        Email email = emailService.findByEmail(request.getEmail());
+        emailService.validateEmailDomain(request.getEmail());
 
-        if (!email.getIsCheck())
-            throw new CustomException(null, UNAUTHORIZED_EMAIL);
-        
-        Member member = memberService.findByEmail(request.getEmail());
-        memberService.updatePassword(member, passwordEncoder.encode(request.getPassword()));
+        Email email = emailService.findMemberByEmail(request.getEmail())
+                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
+
+        emailService.validateIsPossibleUpdatePassword(email);
+
+        memberService.updatePassword(email.getMember(), passwordEncoder.encode(request.getPassword()));
+        emailService.updateIsPossibleUpdatePassword(email, false);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -363,7 +367,7 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "[FCM 수정] FCM 토큰 업데이트",
+    @ApiOperation(value = "[FCM 수정] 로그인 시 FCM 토큰 업데이트",
             notes = "- 앱을 실행할 때 로그인이 되어 있으면 타임스탬프 갱신을 위한 FCM 토큰을 서버에 전송해주세요. \n" +
                     "- FCM 토큰이 만료되었을 때 FCM 토큰을 업데이트해주세요.")
     @ApiResponses(value = {
@@ -424,60 +428,6 @@ public class MemberController {
                 .body(DefaultResponseDto.builder()
                         .responseCode("MEMBER_LOGOUT")
                         .responseMessage("회원 로그아웃 완료")
-                        .build());
-    }
-
-    @ApiOperation(value = "[삭제 예정] 로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "MEMBER_LOGIN",
-                    content = @Content(schema = @Schema(implementation = MemberDefaultResponseDto.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / EMAIL_CHARACTER_INVALID"),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_PASSWORD"),
-            @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
-            @ApiResponse(responseCode = "500",
-                    description = "SERVER_ERROR"),
-    }
-    )
-    @PostMapping("/login")
-    public ResponseEntity<DefaultResponseDto<Object>> login(
-            @RequestBody @Valid MemberLoginRequestDto request) {
-
-        Member loginMember = null;
-
-        if(request.getEmail().equals(ENV_USERNAME + "@inu.ac.kr")) {
-            if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
-                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
-            }
-            loginMember = memberService.findById(1L);
-        } else {
-            loginMember = memberService.findByEmail(request.getEmail());
-
-            if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
-                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
-            }
-        }
-
-        Iterator<String> iter = loginMember.getRoles().iterator();
-        List<String> roles = new ArrayList<>();
-
-        while (iter.hasNext()) {
-            roles.add(iter.next());
-        }
-
-        String token = jwtTokenProvider.createToken(loginMember.getUsername(), roles);
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
-
-        return ResponseEntity.status(200)
-                .header(AUTHORIZATION, token)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("MEMBER_LOGIN")
-                        .responseMessage("회원 로그인 완료")
-                        .data(response)
                         .build());
     }
 }

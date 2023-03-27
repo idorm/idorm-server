@@ -35,7 +35,7 @@ public class TestController {
     private final MemberService memberService;
     private final TestService testService;
 
-    @ApiOperation(value = "테스트용 푸시 알람 전송", notes = "- 실제로는 서버에서 전송합니다. \n" +
+    @ApiOperation(value = "[테스트용] 푸시 알람 전송", notes = "- 실제로는 서버에서 전송합니다. \n" +
             "- 실 운영 시 삭제 예정\n")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "TOKEN_RENEWED",
@@ -54,7 +54,7 @@ public class TestController {
                 .notification(FcmRequestDto.Notification.builder()
                         .notifyType(request.getAlertType())
                         .contentId(request.getContentId())
-                        .tite(request.getTitle())
+                        .title(request.getTitle())
                         .content(request.getBody())
                         .build())
                 .build();

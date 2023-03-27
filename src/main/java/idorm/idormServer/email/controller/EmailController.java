@@ -34,7 +34,7 @@ public class EmailController {
 
     private final EmailService emailService;
 
-    @ApiOperation(value = "이메일 인증코드 발송")
+    @ApiOperation(value = "[회원가입용] 이메일 인증코드 발송")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -88,7 +88,7 @@ public class EmailController {
     }
 
 
-    @ApiOperation(value = "이메일 인증코드 검증", notes = "/email 인증코드 확인 용도")
+    @ApiOperation(value = "[회원가입용] 이메일 인증코드 검증", notes = "/email 인증코드 확인 용도")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "EMAIL_VERIFIED",
@@ -139,7 +139,7 @@ public class EmailController {
                         .build());
     }
 
-    @ApiOperation(value = "비밀번호 수정용 이메일 인증코드 전송")
+    @ApiOperation(value = "[비밀번호 수정용] 이메일 인증코드 발송")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "SEND_REGISTERED_EMAIL",
@@ -147,7 +147,7 @@ public class EmailController {
             @ApiResponse(responseCode = "400",
                     description = "EMAIL_CHARACTER_INVALID"),
             @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
+                    description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
                     description = "SERVER_ERROR"),
     }
@@ -158,28 +158,14 @@ public class EmailController {
 
         emailService.validateEmailDomain(request.getEmail());
 
-        Optional<Email> existingEmail = emailService.isExistingEmail(request.getEmail());
-        if (existingEmail.isEmpty())
-            throw new CustomException(null, EMAIL_NOT_FOUND);
-        else {
-
-            if (existingEmail.get().getIsCheck()) {
-                if (existingEmail.get().getMember() != null) {
-                    if (!existingEmail.get().getMember().getIsDeleted()) {
-                        throw new CustomException(null, DUPLICATE_MEMBER);
-                    } else {
-                        emailService.delete(existingEmail.get());
-                    }
-                } else {
-                    emailService.delete(existingEmail.get());
-                }
-            }
-        }
+        Email foundEmail = emailService.findMemberByEmail(request.getEmail())
+                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
 
         String verificationCode = emailService.createVerificationCode();
-        Email email = emailService.save(request.toEntity(verificationCode));
+        emailService.updateVerificationCode(foundEmail, verificationCode);
 
-        emailService.sendVerificationEmail(email);
+        emailService.sendVerificationEmail(foundEmail);
+        emailService.updateIsPossibleUpdatePassword(foundEmail, false);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -189,7 +175,7 @@ public class EmailController {
 
     }
 
-    @ApiOperation(value = "비밀번호 수정용 이메일 인증코드 검증", notes = "/email/password 인증코드 확인 용도")
+    @ApiOperation(value = "[비밀번호 수정용] 이메일 인증코드 검증", notes = "/email/password 인증코드 확인 용도")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "REGISTERED_EMAIL_VERIFIED",
@@ -209,22 +195,12 @@ public class EmailController {
 
         emailService.validateEmailDomain(requestEmail);
 
-        Optional<Email> existingEmail = emailService.isExistingEmail(requestEmail);
-        if (existingEmail.isEmpty())
-            throw new CustomException(null, EMAIL_NOT_FOUND);
+        Email foundEmail = emailService.findMemberByEmail(requestEmail)
+                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
 
-        if (existingEmail.get().getMember() == null) {
-            emailService.delete(existingEmail.get());
-            throw new CustomException(null, MEMBER_NOT_FOUND);
-        }
-
-        if (existingEmail.get().getMember().getIsDeleted()) {
-            emailService.delete(existingEmail.get());
-            throw new CustomException(null, MEMBER_NOT_FOUND);
-        }
-
-        emailService.validateEmailIsExpired(existingEmail.get().getCreatedAt());
-        emailService.validateEmailCodeIsValid(existingEmail.get(), request.getCode());
+        emailService.validateEmailIsExpired(foundEmail.getUpdatedAt());
+        emailService.validateEmailCodeIsValid(foundEmail, request.getCode());
+        emailService.updateIsPossibleUpdatePassword(foundEmail, true);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

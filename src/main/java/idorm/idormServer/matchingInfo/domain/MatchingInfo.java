@@ -37,7 +37,7 @@ public class MatchingInfo extends BaseEntity {
     private String wishText;
     private Boolean isMatchingInfoPublic;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
 
@@ -75,6 +75,11 @@ public class MatchingInfo extends BaseEntity {
         this.openKakaoLink = openKakaoLink;
         this.isMatchingInfoPublic = false;
         this.member = member;
+
+        this.setIsDeleted(false);
+
+        if (!member.getMatchingInfos().contains(this))
+            member.getMatchingInfos().add(this);
     }
 
     public void updateMatchingInfo(MatchingInfoDefaultRequestDto requestDto) {
@@ -97,5 +102,9 @@ public class MatchingInfo extends BaseEntity {
 
     public void updateIsMatchingInfoPublic(Boolean isMatchingInfoPublic) {
         this.isMatchingInfoPublic = isMatchingInfoPublic;
+    }
+
+    public void delete() {
+        this.setIsDeleted(true);
     }
 }

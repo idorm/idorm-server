@@ -18,7 +18,7 @@ public class EmailDefaultResponseDto {
     @ApiModelProperty(position = 1, required = true, value = "식별자", example = "2")
     private Long id;
 
-    @ApiModelProperty(position = 2, required = true, value = "이메일", example = "aaa@inu.ac.kr")
+    @ApiModelProperty(position = 2, required = true, value = "이메일", example = "test1@inu.ac.kr")
     private String email;
 
     @ApiModelProperty(position = 3, required = true, value = "인증번호", example = "123-456")

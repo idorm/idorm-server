@@ -79,10 +79,7 @@ public class CommentService {
     public List<Comment> findSubCommentsByParentCommentId(Long postId, Long parentCommentId) {
 
         try {
-            List<Comment> foundSubComments =
-                    commentRepository.findAllByPostIdAndParentCommentIdOrderByCreatedAt(postId, parentCommentId);
-
-            return foundSubComments;
+            return commentRepository.findAllByPostIdAndParentCommentIdAndIsDeletedIsFalseOrderByCreatedAt(postId, parentCommentId);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -95,7 +92,7 @@ public class CommentService {
     public List<Comment> findCommentsByMember(Member member) {
 
         try {
-            return commentRepository.findAllByMemberIdAndIsDeletedFalseOrderByCreatedAtDesc(member.getId());
+            return commentRepository.findAllByMemberIdAndIsDeletedIsFalseOrderByCreatedAtDesc(member.getId());
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -124,9 +121,7 @@ public class CommentService {
      */
     public List<Comment> findCommentsByPostId(Long postId) {
         try {
-            List<Comment> foundComments =
-                    commentRepository.findAllByPostIdOrderByCreatedAtAsc(postId);
-            return foundComments;
+            return commentRepository.findAllByPostIdAndIsDeletedIsFalseOrderByCreatedAtAsc(postId);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }

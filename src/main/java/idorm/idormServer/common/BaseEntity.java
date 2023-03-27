@@ -1,6 +1,7 @@
 package idorm.idormServer.common;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,11 +18,10 @@ public abstract class BaseEntity {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @Setter
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public void modifyUpdatedAt(LocalDateTime now) {
-        this.updatedAt = now;
-    }
-
+    @Setter
+    private Boolean isDeleted;
 }

@@ -1,6 +1,6 @@
 package idorm.idormServer.community.dto.post;
 
-import idorm.idormServer.photo.domain.Photo;
+import idorm.idormServer.photo.domain.PostPhoto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -18,7 +18,7 @@ public class PostPhotoDefaultResponseDto {
     @ApiModelProperty(position = 2, required = true, value = "사진 URL")
     private String photoUrl;
 
-    public PostPhotoDefaultResponseDto(Photo postPhoto) {
+    public PostPhotoDefaultResponseDto(PostPhoto postPhoto) {
         this.photoId = postPhoto.getId();
         this.photoUrl = postPhoto.getPhotoUrl();
     }

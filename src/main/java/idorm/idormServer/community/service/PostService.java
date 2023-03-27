@@ -6,8 +6,8 @@ import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.photo.domain.Photo;
-import idorm.idormServer.photo.service.PhotoService;
+import idorm.idormServer.photo.domain.PostPhoto;
+import idorm.idormServer.photo.service.PostPhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +24,7 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final PhotoService photoService;
+    private final PostPhotoService postPhotoService;
     private final PostLikedMemberService postLikedMemberService;
     private final CommentService commentService;
 
@@ -71,10 +71,10 @@ public class PostService {
             String title,
             String content,
             Boolean isAnonymous,
-            List<Photo> deletePostPhotos
+            List<PostPhoto> deletePostPhotos
     ) {
         try {
-            for (Photo deletePostPhoto : deletePostPhotos) {
+            for (PostPhoto deletePostPhoto : deletePostPhotos) {
                 deletePostPhoto.delete();
             }
 
@@ -93,7 +93,7 @@ public class PostService {
 
         commentService.deleteAllCommentByDeletedPost(post);
         postLikedMemberService.deleteAllLikeByDeletedPost(post);
-        photoService.deleteAllPostPhotoByDeletedPost(post);
+        postPhotoService.deleteAllPostPhotoByDeletedPost(post);
         try {
             post.delete();
         } catch (RuntimeException e) {
@@ -134,15 +134,11 @@ public class PostService {
 
     /**
      * 기숙사 카테고리 별 인기 Post 조회 |
-     * 실시간으로 조회 가능하게 할지
-     * 일주일 이내의 글만 인기글로 선정
-     * 공감 순으로 상위 10개 조회 (만약 동일 공감이 많다면 더 빠른 최신 날짜로)
+     * 500(SERVER_ERROR)
      */
     public List<Post> findTopPosts(DormCategory dormCategory) {
         try {
-            List<Post> foundPosts = postRepository.findTopPostsByDormCategory(dormCategory.getType());
-
-            return foundPosts;
+            return postRepository.findTopPostsByDormCategory(dormCategory.getType());
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -174,8 +170,8 @@ public class PostService {
     /**
      * 특정 게시글의 삭제되지 않은 게시글 사진들 조회 |
      */
-    public List<Photo> findPostPhotosIsDeletedFalse(Post post) {
-        return post.getPostPhotosIsDeletedFalse();
+    public List<PostPhoto> findAllPostPhotosFromPost(Post post) {
+        return post.getPostPhotos();
     }
 
     /**
@@ -218,5 +214,4 @@ public class PostService {
         if (!(content.length() >= 1 && content.length() <= 300))
             throw new CustomException(null,CONTENT_LENGTH_INVALID);
     }
-
 }

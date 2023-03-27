@@ -14,7 +14,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@GroupSequence({MatchingInfoUpdateIsPublicRequestDto.class
+@GroupSequence({MatchingInfoUpdateIsPublicRequestDto.class,
+        ValidationSequence.NotNull.class
 })
 @ApiModel(value = "MatchingInfo 수정 요청")
 public class MatchingInfoUpdateIsPublicRequestDto {

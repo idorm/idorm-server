@@ -1,6 +1,5 @@
 package idorm.idormServer.development.service;
 
-import idorm.idormServer.calendar.repository.CalendarRepository;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.CommentRepository;
@@ -8,6 +7,7 @@ import idorm.idormServer.community.repository.PostLikedMemberRepository;
 import idorm.idormServer.community.repository.PostRepository;
 import idorm.idormServer.community.service.CommentService;
 import idorm.idormServer.community.service.PostService;
+import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.repository.EmailRepository;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
@@ -20,7 +20,8 @@ import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import idorm.idormServer.member.service.MemberService;
-import idorm.idormServer.photo.repository.PhotoRepository;
+import idorm.idormServer.photo.repository.MemberPhotoRepository;
+import idorm.idormServer.photo.repository.PostPhotoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,14 +43,14 @@ public class TestService {
 
     @PersistenceContext
     private final EntityManager entityManager;
-    private final CalendarRepository calendarRepository;
     private final CommentRepository commentRepository;
     private final PostLikedMemberRepository postLikedMemberRepository;
     private final PostRepository postRepository;
     private final EmailRepository emailRepository;
     private final MatchingInfoRepository matchingInfoRepository;
     private final MemberRepository memberRepository;
-    private final PhotoRepository photoRepository;
+    private final MemberPhotoRepository memberPhotoRepository;
+    private final PostPhotoRepository postPhotoRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
@@ -72,21 +73,21 @@ public class TestService {
     public void resetDatabase() {
 
         try {
-            calendarRepository.deleteAll();
             commentRepository.deleteAll();
             postLikedMemberRepository.deleteAll();
             postRepository.deleteAll();
-            photoRepository.deleteAll();
+            memberPhotoRepository.deleteAll();
+            postPhotoRepository.deleteAll();
             matchingInfoRepository.deleteAll();
             emailRepository.deleteAll();
             memberRepository.deleteAll();
 
             this.entityManager
-                    .createNativeQuery("ALTER TABLE calendar AUTO_INCREMENT = 1")
+                    .createNativeQuery("ALTER TABLE comment AUTO_INCREMENT = 1")
                     .executeUpdate();
 
             this.entityManager
-                    .createNativeQuery("ALTER TABLE comment AUTO_INCREMENT = 1")
+                    .createNativeQuery("ALTER TABLE post_photo AUTO_INCREMENT = 1")
                     .executeUpdate();
 
             this.entityManager
@@ -98,7 +99,7 @@ public class TestService {
                     .executeUpdate();
 
             this.entityManager
-                    .createNativeQuery("ALTER TABLE photo AUTO_INCREMENT = 1")
+                    .createNativeQuery("ALTER TABLE member_photo AUTO_INCREMENT = 1")
                     .executeUpdate();
 
             this.entityManager
@@ -128,7 +129,9 @@ public class TestService {
          * 이메일 / 회원 / 매칭정보 주입
          */
         for (int i = 1; i <= 100; i++) {
-            String email = "test" + i + "@inu.ac.kr";
+            String emailString = "test" + i + "@inu.ac.kr";
+            Email email = emailInject(emailString);
+
             Member member = emailAndMemberDataInject(email,
                     passwordEncoder.encode("idorm2023!"),
                     "응철이" + i);
@@ -443,8 +446,16 @@ public class TestService {
 
     @Transactional
     public void createAdmin() {
-        Member member = Member.builder()
+
+        Email email = Email.builder()
                 .email(id + "@inu.ac.kr")
+                .code("111-111")
+                .build();
+
+        emailService.save(email);
+
+        Member member = Member.builder()
+                .email(email)
                 .password(passwordEncoder.encode(password))
                 .nickname("ADMIN")
                 .build();
@@ -456,16 +467,28 @@ public class TestService {
     }
 
     @Transactional
-    public Member emailAndMemberDataInject(String email, String password, String nickname) {
+    public Email emailInject(String email) {
+        Email createdEmail = Email.builder()
+                .email(email)
+                .code("111-111")
+                .build();
+        return emailService.save(createdEmail);
+    }
 
-        emailService.save(email, "111-111");
+    @Transactional
+    public Member emailAndMemberDataInject(Email email, String password, String nickname) {
 
         Member member = Member.builder()
                 .email(email)
                 .password(password)
                 .nickname(nickname)
                 .build();
-        return memberService.save(member);
+
+        memberService.save(member);
+
+        email.isChecked();
+        emailService.updateIsJoined(email, member);
+        return member;
     }
 
     @Transactional

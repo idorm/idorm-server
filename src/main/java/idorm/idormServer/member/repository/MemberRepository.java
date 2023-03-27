@@ -12,21 +12,19 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByIdAndIsDeletedIsFalse(Long id);
 
-    Optional<Member> findByEmailAndIsDeletedIsFalse(@Param("email") String email);
+    boolean existsByNicknameAndIsDeletedIsFalse(String nickname);
 
-    boolean existsByEmail(String email);
-
-    boolean existsByNickname(String nickname);
+    List<Member> findByIdNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(Long id);
 
     @Query(value = "SELECT liked_member " +
             "FROM liked_members d " +
             "WHERE d.member_id = :memberId", nativeQuery = true)
-    List<Long> findlikedMembersById(@Param("memberId") Long memberId);
+    List<Long> findlikedMembersByLoginMemberId(@Param("memberId") Long memberId);
 
     @Query(value = "SELECT disliked_member " +
             "FROM disliked_members d " +
             "WHERE d.member_id = :memberId", nativeQuery = true)
-    List<Long> findDislikedMembersById(@Param("memberId") Long memberId);
+    List<Long> findDislikedMembersByLoginMemberId(@Param("memberId") Long memberId);
 
     @Query(value = "SELECT EXISTS " +
             "(select * " +

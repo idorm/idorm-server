@@ -21,8 +21,9 @@ import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
-import idorm.idormServer.photo.domain.Photo;
+import idorm.idormServer.photo.domain.PostPhoto;
 import idorm.idormServer.photo.service.PhotoService;
+import idorm.idormServer.photo.service.PostPhotoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,6 +35,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +46,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Api(tags = "커뮤니티")
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
@@ -54,7 +57,7 @@ public class CommunityController {
     private final PostService postService;
     private final PostLikedMemberService postLikedMemberService;
     private final CommentService commentService;
-    private final PhotoService photoService;
+    private final PostPhotoService postPhotoService;
     private final FCMService fcmService;
 
     @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "- 페이징 적용으로 page는 페이지 번호를 의미합니다.\n " +
@@ -165,7 +168,7 @@ public class CommunityController {
 
                 String parentAnonymousNickname = null;
 
-                if (comment.getMember() != null && comment.getIsAnonymous() == true) {
+                if (!comment.getMember().getIsDeleted() && comment.getIsAnonymous()) {
                     if (!anonymousMembers.contains(comment.getMember())) {
                         anonymousMembers.add(comment.getMember());
                     }
@@ -188,7 +191,7 @@ public class CommunityController {
 
                     String subCommentAnonymousNickname = null;
 
-                    if (subComment.getMember() != null && subComment.getIsAnonymous() == true) {
+                    if (!subComment.getMember().getIsDeleted() && subComment.getIsAnonymous()) {
                         if (!anonymousMembers.contains(subComment.getMember())) {
                             anonymousMembers.add(subComment.getMember());
                         }
@@ -249,7 +252,7 @@ public class CommunityController {
 
         Post post = postService.save(member, request.toEntity(member));
 
-        photoService.savePostPhotos(post, request.getFiles());
+        postPhotoService.savePostPhotos(post, request.getFiles());
 
         PostOneResponseDto response = new PostOneResponseDto(post);
 
@@ -263,7 +266,7 @@ public class CommunityController {
     }
 
     @ApiOperation(value = "게시글 수정", notes = "- 첨부 파일이 없다면 null 이 아닌 빈 배열로 보내주세요.\n" +
-            "- 삭제할 게시글 사진(deletePostPhotoIds)이 없다면 404(POST_PHOTO_NOT_FOUND)를 보냅니다.\n" +
+            "- 삭제할 게시글 사진(deletePostPhotoIds)이 없다면 404(POSTPHOTO_NOT_FOUND)를 보냅니다.\n" +
             "- 게시글 수정 후 응답 데이터가 필요하다면 게시들 단건 조회 API를 사용해주세요. ")
     @ApiResponses(value = {
             @ApiResponse(
@@ -276,7 +279,7 @@ public class CommunityController {
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER / UNAUTHORIZED_POST"),
             @ApiResponse(responseCode = "404",
-                    description = "DELETED_POST / POST_NOT_FOUND / POST_PHOTO_NOT_FOUND"),
+                    description = "DELETED_POST / POST_NOT_FOUND / POSTPHOTO_NOT_FOUND"),
             @ApiResponse(responseCode = "413",
                     description = "FILE_SIZE_EXCEED / FILE_COUNT_EXCEED"),
             @ApiResponse(responseCode = "415",
@@ -301,11 +304,11 @@ public class CommunityController {
         postService.validatePostAuthorization(post, member);
         postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
 
-        List<Photo> savedPostPhotos = postService.findPostPhotosIsDeletedFalse(post);
-        List<Photo> deletePostPhotos = new ArrayList<>();
+        List<PostPhoto> savedPostPhotos = postService.findAllPostPhotosFromPost(post);
+        List<PostPhoto> deletePostPhotos = new ArrayList<>();
 
         for (Long deletePostPhotoId : request.getDeletePostPhotoIds()) {
-            deletePostPhotos.add(photoService.findById(post.getId(), deletePostPhotoId));
+            deletePostPhotos.add(postPhotoService.findById(post.getId(), deletePostPhotoId));
         }
 
         postService.validatePostPhotoCountExceeded(savedPostPhotos.size() - deletePostPhotos.size()
@@ -317,7 +320,7 @@ public class CommunityController {
                 request.getIsAnonymous(),
                 deletePostPhotos);
 
-        photoService.savePostPhotos(post, request.getFiles());
+        postPhotoService.savePostPhotos(post, request.getFiles());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -555,7 +558,7 @@ public class CommunityController {
 
             String alertTitle = "새로운 대댓글이 달렸어요: ";
             
-            if (post.getMember() != null) {
+            if (post.getMember().getIsDeleted() == false) {
 
                 if (post.getMember().getFcmToken() != null) {
                     FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
@@ -563,13 +566,13 @@ public class CommunityController {
                             .notification(FcmRequestDto.Notification.builder()
                                     .notifyType(NotifyType.SUBCOMMENT)
                                     .contentId(postId)
-                                    .tite(alertTitle)
+                                    .title(alertTitle)
                                     .content(comment.getContent())
                                     .build())
                             .build();
                     fcmService.sendMessage(fcmRequestDto);
                 }
-            } else if (commentService.findById(request.getParentCommentId()).getMember() != null) {
+            } else if (commentService.findById(request.getParentCommentId()).getMember().getIsDeleted() == false) {
 
                 if (commentService.findById(request.getParentCommentId()).getMember().getFcmToken() != null) {
                     FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
@@ -577,7 +580,7 @@ public class CommunityController {
                             .notification(FcmRequestDto.Notification.builder()
                                     .notifyType(NotifyType.SUBCOMMENT)
                                     .contentId(postId)
-                                    .tite(alertTitle)
+                                    .title(alertTitle)
                                     .content(comment.getContent())
                                     .build())
                             .build();
@@ -589,13 +592,13 @@ public class CommunityController {
 
                 for (Comment subComment : subComments) {
                     if (subComment.getId() != comment.getId())
-                        if (subComment.getMember() != null && subComment.getMember().getFcmToken() != null) {
+                        if (subComment.getMember().getIsDeleted() == false && subComment.getMember().getFcmToken() != null) {
                             FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
                                     .token(subComment.getMember().getFcmToken())
                                     .notification(FcmRequestDto.Notification.builder()
                                             .notifyType(NotifyType.SUBCOMMENT)
                                             .contentId(postId)
-                                            .tite(alertTitle)
+                                            .title(alertTitle)
                                             .content(comment.getContent())
                                             .build())
                                     .build();
@@ -605,13 +608,13 @@ public class CommunityController {
             }
         } else { // 게시글 주인에게 알람
 
-            if (post.getMember() != null && post.getMember().getFcmToken() != null) {
+            if (post.getMember().getIsDeleted() == false && post.getMember().getFcmToken() != null) {
                 FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
                         .token(post.getMember().getFcmToken())
                         .notification(FcmRequestDto.Notification.builder()
                                 .notifyType(NotifyType.COMMENT)
                                 .contentId(postId)
-                                .tite("새로운 댓글이 달렸어요: ")
+                                .title("새로운 댓글이 달렸어요: ")
                                 .content(comment.getContent())
                                 .build())
                         .build();

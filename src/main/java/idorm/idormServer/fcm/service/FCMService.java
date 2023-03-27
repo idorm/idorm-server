@@ -76,31 +76,27 @@ public class FCMService {
                     .setToken(requestDto.getToken())
                     .setNotification(
                             Notification.builder()
-                                    .setTitle(requestDto.getNotification().getTite())
+                                    .setTitle(requestDto.getNotification().getTitle())
                                     .setBody(requestDto.getNotification().getContent())
                                     .build()
                     )
                     .setAndroidConfig(
                             AndroidConfig.builder()
-                                    .setNotification(
-                                            AndroidNotification.builder()
-                                                    .setChannelId(requestDto.getNotification().getNotifyType().toString())
-                                                    .setTitle(requestDto.getNotification().getTite())
-                                                    .setBody(requestDto.getNotification().getContent())
-                                                    .setClickAction("push_click")
-                                                    .build()
-                                    )
+                                    .setNotification(null)
                                     .build()
                     )
                     .setApnsConfig(
                             ApnsConfig.builder()
                                     .setAps(Aps.builder()
                                             .setCategory("push_click")
+                                            .setAlert(requestDto.getNotification().getTitle())
                                             .build())
                                     .build()
                     )
-                    .putData("notifyType", requestDto.getNotification().getNotifyType().toString())
+                    .putData("channelId", requestDto.getNotification().getNotifyType().toString())
                     .putData("contentId", requestDto.getNotification().getContentId().toString())
+                    .putData("title", requestDto.getNotification().getTitle())
+                    .putData("content", requestDto.getNotification().getContent())
                     .build();
 
             return objectMapper.writeValueAsString(message);

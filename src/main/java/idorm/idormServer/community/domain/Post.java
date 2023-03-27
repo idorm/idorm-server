@@ -3,7 +3,7 @@ package idorm.idormServer.community.domain;
 import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.photo.domain.Photo;
+import idorm.idormServer.photo.domain.PostPhoto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,14 +29,13 @@ public class Post extends BaseEntity {
     private Boolean isAnonymous;
     private int reportedCount;
     private int postLikedCnt;
-    private Boolean isDeleted;
 
     @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "post")
-    private List<Photo> photos = new ArrayList<>(); // 업로드 사진들
+    private List<PostPhoto> postPhotos = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PostLikedMember> postLikedMembers = new ArrayList<>(); // 게시글에 공감한 멤버들
@@ -53,17 +52,13 @@ public class Post extends BaseEntity {
         this.isAnonymous = isAnonymous;
         this.reportedCount = 0;
         this.postLikedCnt = 0;
-        this.isDeleted = false;
+        this.setIsDeleted(false);
     }
 
     public void updatePost(String title, String content, Boolean isAnonymous) {
         this.title = title;
         this.content = content;
         this.isAnonymous = isAnonymous;
-    }
-
-    public void addPostPhoto(Photo postPhoto) {
-        this.photos.add(postPhoto);
     }
 
     public void addPostLikedMember(PostLikedMember postLikedMember) {
@@ -74,14 +69,31 @@ public class Post extends BaseEntity {
         this.postLikedMembers.remove(postLikedMember);
     }
 
-    public List<Photo> getPostPhotosIsDeletedFalse() {
-        List<Photo> uploadedPhotos = new ArrayList<>();
-        for (Photo photo : this.photos) {
-            if (!photo.getIsDeleted()) {
-                uploadedPhotos.add(photo);
-            }
+    public List<PostLikedMember> getPostLikedMembers() {
+        List<PostLikedMember> postLikedMembers = new ArrayList<>();
+        for (PostLikedMember postLikedMember : this.postLikedMembers) {
+            if (!postLikedMember.getIsDeleted())
+                postLikedMembers.add(postLikedMember);
         }
-        return uploadedPhotos;
+        return postLikedMembers;
+    }
+
+    public List<PostPhoto> getPostPhotos() {
+        List<PostPhoto> postPhotos = new ArrayList<>();
+        for (PostPhoto postPhoto : this.postPhotos) {
+            if (!postPhoto.getIsDeleted())
+                postPhotos.add(postPhoto);
+        }
+        return postPhotos;
+    }
+
+    public List<Comment> getComments() {
+        List<Comment> comments = new ArrayList<>();
+        for (Comment comment : this.comments) {
+            if (!comment.getIsDeleted())
+                comments.add(comment);
+        }
+        return comments;
     }
 
     public void incrementPostLikedCnt() {
@@ -93,7 +105,7 @@ public class Post extends BaseEntity {
     }
 
     public void delete() {
-        this.isDeleted = true;
+        this.setIsDeleted(true);
     }
 
     public void removeMember() {

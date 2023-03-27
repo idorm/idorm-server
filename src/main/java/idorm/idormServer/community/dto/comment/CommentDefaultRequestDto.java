@@ -11,6 +11,7 @@ import lombok.*;
 import javax.validation.GroupSequence;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -19,7 +20,8 @@ import javax.validation.constraints.Size;
 @GroupSequence({CommentDefaultRequestDto.class,
         ValidationSequence.NotBlank.class,
         ValidationSequence.NotNull.class,
-        ValidationSequence.Size.class
+        ValidationSequence.Size.class,
+        ValidationSequence.Positive.class
 })
 @ApiModel(value = "Comment 기본 요청")
 public class CommentDefaultRequestDto {
@@ -35,6 +37,7 @@ public class CommentDefaultRequestDto {
 
     @ApiModelProperty(position = 3, value = "대댓글일 시 부모 댓글 식별자", allowableValues = "null(댓글), 1(대댓글일 때 댓글 식별자)",
             example = "null")
+    @Positive(message = "부모 댓글 식별자는 양수만 가능합니다.", groups = ValidationSequence.Positive.class)
     private Long parentCommentId;
 
     public Comment toEntity(Member member, Post post) {

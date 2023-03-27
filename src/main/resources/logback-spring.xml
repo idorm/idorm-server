@@ -5,8 +5,8 @@
     <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
     <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
 
-    <property name="ROLLING_LOG_FILEPATH" value="${ROLLING_LOGGING_FILE_PATH}" />
-    <property name="ERROR_LOG_FILEPATH" value="${ERROR_LOGGING_FILE_PATH}" />
+    <property name="LOGGING_ROLLING_FILE_PATH" value="${ROLLING_LOGGING_FILE_PATH}" />
+    <property name="LOGGING_ERROR_FILE_PATH" value="${ERROR_LOGGING_FILE_PATH}" />
     <property name="ROLLING_LOG_FILENAME" value="idorm-rolling" />
     <property name="ERROR_LOG_FILENAME" value="idorm-error" />
     <property name="FILE_LOG_LEVEL" value="info" />
@@ -20,7 +20,7 @@
     </appender>
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${ROLLING_LOG_FILEPATH}/${ROLLING_LOG_FILENAME}.log</file>
+        <file>${LOGGING_ROLLING_FILE_PATH}/${ROLLING_LOG_FILENAME}.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>
@@ -28,7 +28,7 @@
             </pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${ROLLING_LOG_FILEPATH}/${ROLLING_LOG_FILENAME}_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <fileNamePattern>${LOGGING_ROLLING_FILE_PATH}/${ROLLING_LOG_FILENAME}_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>50MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
@@ -41,7 +41,7 @@
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
-        <file>${ERROR_LOG_FILEPATH}/${ERROR_LOG_FILENAME}.log</file>
+        <file>${LOGGING_ERROR_FILE_PATH}/${ERROR_LOG_FILENAME}.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>
@@ -49,7 +49,7 @@
             </pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${ERROR_LOG_FILEPATH}/${ERROR_LOG_FILENAME}_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <fileNamePattern>${LOGGING_ERROR_FILE_PATH}/${ERROR_LOG_FILENAME}_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>

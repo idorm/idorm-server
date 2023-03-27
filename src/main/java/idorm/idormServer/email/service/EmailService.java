@@ -31,6 +31,7 @@ public class EmailService {
      * DB에 이메일 저장 |
      * 500(SERVER_ERROR)
      */
+    @Transactional
     public Email save(Email email) {
 
         try {
@@ -69,6 +70,48 @@ public class EmailService {
     }
 
     /**
+     * 이메일 인증 코드 수정 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void updateVerificationCode(Email email, String code) {
+
+        try {
+            email.updateCode(code);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 비밀번호 변경 가능 여부 수정 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void updateIsPossibleUpdatePassword(Email email, Boolean isPossibleUpdatePassword) {
+        try {
+            if (isPossibleUpdatePassword)
+                updateIsPossibleUpdatePasswordCreatedAt(email);
+
+            email.updateIsPossibleUpdatePassword(isPossibleUpdatePassword);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 비밀번호 변경 가능 시 유효 시작 시간 수정 |
+     */
+    @Transactional
+    public void updateIsPossibleUpdatePasswordCreatedAt(Email email) {
+        try {
+            email.updateIsPossibleUpdatePasswordCreatedAt();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 이메일 단건 조회 |
      * 404(EMAIL_NOT_FOUND)
      */
@@ -79,13 +122,34 @@ public class EmailService {
     }
 
     /**
+     * 이메일로 회원 조회 |
+     * 404(MEMBER_NOT_FOUND)
+     */
+    public Optional<Email> findMemberByEmail(String email) {
+
+        try {
+            return emailRepository.findByEmailAndIsCheckIsTrueAndIsDeletedIsFalseAndMemberIsNotNull(email);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 가입한 이메일 존재 여부 검증 |
      * 409(DUPLICATE_EMAIL)
      * 500(SERVER_ERROR)
      */
     public void isExistingRegisteredEmail(String email) {
-        emailRepository.findByEmailAndIsCheckIsTrueAndIsDeletedIsFalseAndMemberIsNotNull(email)
-                .orElseThrow(() -> new CustomException(null, DUPLICATE_EMAIL));
+        Optional<Email> registeredEmail = null;
+
+        try {
+            registeredEmail = emailRepository.findByEmailAndIsCheckIsTrueAndIsDeletedIsFalseAndMemberIsNotNull(email);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+
+        if (registeredEmail.isPresent())
+            throw new CustomException(null, DUPLICATE_EMAIL);
     }
 
     /**
@@ -115,13 +179,12 @@ public class EmailService {
 
     /**
      * 이메일 유효 시간 검증 |
-     * 400(EXPIRED_CODE)
+     * 401(EXPIRED_CODE)
      */
     public void validateEmailIsExpired(LocalDateTime createdAt) {
 
-        if (LocalDateTime.now().isAfter(createdAt.plusMinutes(5))) {
+        if (LocalDateTime.now().isAfter(createdAt.plusMinutes(5)))
             throw new CustomException(null, EXPIRED_CODE);
-        }
     }
 
     /**
@@ -138,6 +201,20 @@ public class EmailService {
     }
 
     /**
+     * 비밀번호 변경 가능 여부 검증 |
+     * 401(UNAUTHORIZED_EMAIL)
+     * 401(EXPIRED_CODE)
+     */
+    public void validateIsPossibleUpdatePassword(Email email) {
+
+        if (!email.getIsPossibleUpdatePassword())
+            throw new CustomException(null, UNAUTHORIZED_EMAIL);
+
+        if (LocalDateTime.now().isAfter(email.getIsPossibleUpdatePasswordCreatedAt().plusMinutes(5)))
+            throw new CustomException(null, EXPIRED_CODE);
+    }
+
+    /**
      * 인증 메일 전송 |
      * 500(EMAIL_SENDING_ERROR)
      */
@@ -151,9 +228,6 @@ public class EmailService {
             String emailContent = createEmailContent(email.getCode());
 
             mimeMessage.setText(emailContent, "utf-8", "html");
-            mimeMessage.setFrom("idormcs@gmail.com");
-
-            mimeMessage.setText("가입을 위해 아래의 인증코드를 이메일 인증코드란에 입력해주세요.", email.getCode());
             mimeMessage.setFrom("idormServer@gmail.com");
 
             javaMailSender.send(mimeMessage);

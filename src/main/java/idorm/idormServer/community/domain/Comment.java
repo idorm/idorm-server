@@ -19,11 +19,7 @@ public class Comment extends BaseEntity {
     private Long id;
 
     private String content; // 내용
-
     private Boolean isAnonymous; // 익명 여부
-
-    private Boolean isDeleted; // 댓글 삭제 여부
-
     private Long parentCommentId; // 부모 댓글 식별자
     private Integer reportedCount;
 
@@ -41,8 +37,8 @@ public class Comment extends BaseEntity {
         this.isAnonymous = isAnonymous;
         this.member = member;
         this.post = post;
-        this.isDeleted = false;
         this.reportedCount = 0;
+        this.setIsDeleted(false);
     }
 
     public void setParentCommentId(Long parentCommentId) {
@@ -50,7 +46,7 @@ public class Comment extends BaseEntity {
     }
 
     public void delete() {
-        this.isDeleted = true;
+        this.setIsDeleted(true);
     }
 
     public void updateMemberNull() {

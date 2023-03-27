@@ -20,7 +20,7 @@ public class FcmRequestDto {
     public static class Notification {
         private NotifyType notifyType;
         private Long contentId;
-        private String tite;
+        private String title;
         private String content;
     }
 }

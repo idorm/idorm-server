@@ -28,7 +28,6 @@ public class Member extends BaseEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String password;
-    private LocalDateTime passwordUpdatedAt;
     private String nickname;
     private LocalDateTime nicknameUpdatedAt;
     private String fcmToken;
@@ -72,9 +71,8 @@ public class Member extends BaseEntity implements UserDetails {
     public Member(Email email, String password, String nickname) {
         this.emails.add(email);
         this.password = password;
-        this.passwordUpdatedAt = LocalDateTime.now();
         this.nickname = nickname;
-        this.nicknameUpdatedAt = LocalDateTime.now();
+        this.nicknameUpdatedAt = null;
         this.reportedCount = 0;
         this.roles.add("ROLE_USER");
 
@@ -112,7 +110,6 @@ public class Member extends BaseEntity implements UserDetails {
 
     public void updatePassword(String password) {
         this.password = password;
-        this.passwordUpdatedAt = LocalDateTime.now();
     }
 
     public void updateNickname(String nickname) {

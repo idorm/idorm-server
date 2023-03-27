@@ -1,9 +1,7 @@
 package idorm.idormServer.community.dto.post;
 
-import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
-import idorm.idormServer.photo.domain.Photo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -37,20 +35,24 @@ public class PostAbstractResponseDto {
     @ApiModelProperty(position = 6, value = "닉네임", example = "null(탈퇴), 익명, 응철이")
     private String nickname;
 
-    @ApiModelProperty(position = 7, value = "공감 수")
+    @ApiModelProperty(position = 7, value = "익명 여부", example = "null(탈퇴), 익명, 응철이")
+    private Boolean isAnonymous;
+
+    @ApiModelProperty(position = 8, value = "공감 수")
     private int likesCount;
 
-    @ApiModelProperty(position = 8, value = "댓글 수")
+    @ApiModelProperty(position = 9, value = "댓글 수")
     private int commentsCount;
 
-    @ApiModelProperty(position = 9, value = "이미지 수")
+    @ApiModelProperty(position = 10, value = "이미지 수")
     private int imagesCount;
 
-    @ApiModelProperty(position = 10, value = "생성일자")
+    @ApiModelProperty(position = 11, value = "생성일자")
     private LocalDateTime createdAt;
 
-    @ApiModelProperty(position = 11, value = "익명여부")
-    private Boolean isAnonymous;
+    @ApiModelProperty(position = 12, value = "수정일자")
+    private LocalDateTime updatedAt;
+
 
     public PostAbstractResponseDto(Post post) {
         this.postId = post.getId();
@@ -58,35 +60,28 @@ public class PostAbstractResponseDto {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
+        this.updatedAt = post.getUpdatedAt();
         this.isAnonymous = post.getIsAnonymous();
 
-        if (post.getMember() != null)
+        if (!post.getMember().getIsDeleted()) {
             this.memberId = post.getMember().getId();
 
-        if (post.getPostLikedMembers() != null) {
-            this.likesCount = post.getPostLikedMembers().size();
-        }
-        if (post.getComments() != null) {
-            for (Comment comment : post.getComments()) {
-                if (!comment.getIsDeleted()) {
-                    this.commentsCount += 1;
-                }
-            }
-        }
-        if (post.getPhotos() != null) {
-            for (Photo photo : post.getPhotos()) {
-                if (!photo.getIsDeleted()) {
-                    this.imagesCount += 1;
-                }
-            }
+            if (post.getIsAnonymous())
+                this.nickname = "익명";
+            else
+                this.nickname = post.getMember().getNickname();
+        } else {
+            this.nickname = null;
+            this.isAnonymous = null;
         }
 
-        if(post.getMember() == null) { // 회원 탈퇴의 경우
-            this.nickname = null;
-        } else if(post.getIsAnonymous() == false) { // 익명이 아닌 경우
-            this.nickname = post.getMember().getNickname();
-        } else if(post.getIsAnonymous() == true) { // 익명일 경우
-            this.nickname = "익명";
-        }
+        if (post.getPostLikedMembers() != null)
+            this.likesCount = post.getPostLikedMembers().size();
+
+        if (post.getComments() != null)
+            this.commentsCount = post.getComments().size();
+
+        if (post.getPostPhotos() != null)
+            this.imagesCount = post.getPostPhotos().size();
     }
 }

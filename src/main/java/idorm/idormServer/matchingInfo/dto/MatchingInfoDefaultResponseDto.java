@@ -70,7 +70,7 @@ public class MatchingInfoDefaultResponseDto {
     @ApiModelProperty(position = 17, value = "매칭이미지 공개 여부", example = "true")
     private Boolean isMatchingInfoPublic;
 
-    @ApiModelProperty(position = 18, value = "회원 이메일", example = "aaa@inu.ac.kr")
+    @ApiModelProperty(position = 18, value = "회원 이메일", example = "test1@inu.ac.kr")
     private String memberEmail;
 
     public MatchingInfoDefaultResponseDto(MatchingInfo matchingInfo) {
@@ -91,6 +91,6 @@ public class MatchingInfoDefaultResponseDto {
         this.mbti = matchingInfo.getMbti();
         this.wishText = matchingInfo.getWishText();
         this.isMatchingInfoPublic = matchingInfo.getIsMatchingInfoPublic();
-        this.memberEmail = matchingInfo.getMember().getEmail();
+        this.memberEmail = matchingInfo.getMember().getEmail().getEmail();
     }
 }

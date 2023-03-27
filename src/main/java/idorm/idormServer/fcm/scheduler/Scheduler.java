@@ -30,8 +30,6 @@ public class Scheduler {
     public void alertTopPosts() {
 
         List<Member> members = memberService.findAll();
-        Member admin = memberService.findById(1L);
-        members.remove(admin);
 
         Post topPostFromDorm1 = postService.findTopPost(DormCategory.DORM1);
         Post topPostFromDorm2 = postService.findTopPost(DormCategory.DORM2);
@@ -44,8 +42,7 @@ public class Scheduler {
         for (Member member : members) {
 
             if (member.getMatchingInfo() != null) {
-                if (member.getFcmToken() != null
-                        && !member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
+                if (!member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
 
                     FcmRequestDto fcmRequestDto = null;
                     switch (DormCategory.valueOf(member.getMatchingInfo().getDormCategory())) {
@@ -55,7 +52,7 @@ public class Scheduler {
                                     .notification(FcmRequestDto.Notification.builder()
                                             .notifyType(NotifyType.TOPPOST)
                                             .contentId(topPostFromDorm1.getId())
-                                            .tite(titleOfDorm1)
+                                            .title(titleOfDorm1)
                                             .content(topPostFromDorm1.getContent())
                                             .build())
                                     .build();
@@ -68,7 +65,7 @@ public class Scheduler {
                                     .notification(FcmRequestDto.Notification.builder()
                                             .notifyType(NotifyType.TOPPOST)
                                             .contentId(topPostFromDorm2.getId())
-                                            .tite(titleOfDorm2)
+                                            .title(titleOfDorm2)
                                             .content(topPostFromDorm2.getContent())
                                             .build())
                                     .build();
@@ -81,7 +78,7 @@ public class Scheduler {
                                     .notification(FcmRequestDto.Notification.builder()
                                             .notifyType(NotifyType.TOPPOST)
                                             .contentId(topPostFromDorm3.getId())
-                                            .tite(titleOfDorm3)
+                                            .title(titleOfDorm3)
                                             .content(topPostFromDorm3.getContent())
                                             .build())
                                     .build();

@@ -72,7 +72,8 @@ public enum ExceptionCode {
     COMMENT_NOT_FOUND(NOT_FOUND, "등록된 댓글이 없습니다."),
     POSTLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "멤버가 게시글에 공감하지 않았습니다."),
     POST_NOT_FOUND(NOT_FOUND, "등록된 게시글이 없습니다."),
-    POST_PHOTO_NOT_FOUND(NOT_FOUND, "등록된 게시글 사진이 없습니다."),
+    POSTPHOTO_NOT_FOUND(NOT_FOUND, "등록된 게시글 사진이 없습니다."),
+    MEMBERPHOTO_NOT_FOUND(NOT_FOUND, "등록된 프로필 사진이 없습니다."),
     LIKED_NOT_FOUND(NOT_FOUND, "등록된 공감이 없습니다."),
     CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 캘린더 정보가 없습니다."),
 
@@ -117,7 +118,9 @@ public enum ExceptionCode {
     /**
      * 500 SERVER_ERROR : 서버 에러
      */
-    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.");
+    SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다."),
+
+    EMAIL_SENDING_ERROR(INTERNAL_SERVER_ERROR, "이메일 전송 중에 서버 에러가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

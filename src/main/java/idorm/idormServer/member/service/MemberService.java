@@ -1,5 +1,7 @@
 package idorm.idormServer.member.service;
 
+import idorm.idormServer.email.domain.Email;
+import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.member.domain.Member;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
@@ -19,6 +22,7 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final EmailService emailService;
 
     /**
      * DB에 회원 저장 |
@@ -111,12 +115,27 @@ public class MemberService {
 
     /**
      * 이메일로 회원 단건 조회 |
-     * 400(MEMBER_NOT_FOUND)
+     * 404(MEMBER_NOT_FOUND)
      */
     public Member findByEmail(String email) {
 
-        return memberRepository.findByEmailAndIsDeletedIsFalse(email)
+        Email foundEmail = emailService.findMemberByEmail(email)
                 .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
+
+        return findById(foundEmail.getMember().getId());
+    }
+
+    /**
+     * FCM용 전체 회원 조회 |
+     * 404(MEMBER_NOT_FOUND)
+     */
+    public List<Member> findAll() {
+
+        try {
+            return memberRepository.findByIdNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(1L);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
     }
 
     /**
@@ -128,7 +147,7 @@ public class MemberService {
 
         Boolean isExistNicknameResult = false;
         try {
-            isExistNicknameResult = memberRepository.existsByNickname(nickname);
+            isExistNicknameResult = memberRepository.existsByNicknameAndIsDeletedIsFalse(nickname);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -145,13 +164,14 @@ public class MemberService {
      */
     public void validateNicknameUpdatedAt(Member member) {
 
-        if(member.getNicknameUpdatedAt() != member.getCreatedAt()) { // 닉네임이 한 번이라도 변경 되었다면
-            LocalDateTime updatedDate = member.getNicknameUpdatedAt();
-            LocalDateTime possibleUpdateTime = updatedDate.plusMonths(1);
+        if (member.getNicknameUpdatedAt() == null)
+            return;
 
-            if(possibleUpdateTime.isAfter(LocalDateTime.now()))
-                throw new CustomException(null, CANNOT_UPDATE_NICKNAME);
-        }
+        LocalDateTime updatedDate = member.getNicknameUpdatedAt();
+        LocalDateTime possibleUpdateTime = updatedDate.plusMonths(1);
+
+        if(possibleUpdateTime.isAfter(LocalDateTime.now()))
+            throw new CustomException(null, CANNOT_UPDATE_NICKNAME);
     }
 
     /**

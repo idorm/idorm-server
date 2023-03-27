@@ -21,32 +21,34 @@ public class MatchingInfoService {
     private final MatchingInfoRepository matchingInfoRepository;
 
     /**
-     * MatchingInfo DB에 저장 |
+     * 매칭인포 저장 |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void save(MatchingInfo matchingInfo) {
+    public MatchingInfo save(MatchingInfo matchingInfo) {
         try {
-            matchingInfoRepository.save(matchingInfo);
+            return matchingInfoRepository.save(matchingInfo);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     /**
-     * MatchingInfo 생성 |
+     * 매칭정보 삭제 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
-    public MatchingInfo createMatchingInfo(MatchingInfoDefaultRequestDto requestDto, Member member) {
+    public void delete(MatchingInfo matchingInfo) {
 
-        MatchingInfo matchingInfo = requestDto.toEntity(member);
-        save(matchingInfo);
-
-        return matchingInfo;
+        try {
+            matchingInfo.delete();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
     }
 
     /**
-     * MatchingInfo 매칭이미지 공개여부 변경 |
+     * 매칭인포 공개 여부 수정 |
      * 500(SERVER_ERROR)
      */
     @Transactional
@@ -60,53 +62,7 @@ public class MatchingInfoService {
     }
 
     /**
-     * MatchingInfo 단건 조회 |
-     * 404(MATCHINGINFO_NOT_FOUND)
-     */
-    public MatchingInfo findById(Long matchingInfoId) {
-
-        MatchingInfo foundMatchingInfo = matchingInfoRepository.findById(matchingInfoId)
-                .orElseThrow(() -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
-        return foundMatchingInfo;
-    }
-
-    /**
-     * 매칭정보 공개 여부 확인 |
-     * 400(ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC)
-     */
-    public void validateMatchingInfoIsPublic(Member member) {
-        if (!member.getMatchingInfo().getIsMatchingInfoPublic())
-            throw new CustomException(null, ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC);
-    }
-
-    /**
-     * MatchingInfo 단건 조회 |
-     * 404(MATCHINGINFO_NOT_FOUND)
-     */
-    public MatchingInfo findByMemberId(Long memberId) {
-
-        MatchingInfo foundMatchingInfo = matchingInfoRepository.findByMemberId(memberId).orElseThrow(
-                () -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
-
-        return foundMatchingInfo;
-    }
-
-    /**
-     * MatchingInfo 삭제 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void deleteMatchingInfo(MatchingInfo matchingInfo) {
-
-        try {
-            matchingInfoRepository.delete(matchingInfo);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * MatchingInfo 수정 |
+     * 매칭인포 수정 |
      * 500(SERVER_ERROR)
      */
     @Transactional
@@ -117,5 +73,34 @@ public class MatchingInfoService {
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
+    }
+
+    /**
+     * 매칭인포 단건 조회 |
+     * 404(MATCHINGINFO_NOT_FOUND)
+     */
+    public MatchingInfo findById(Long matchingInfoId) {
+
+        return matchingInfoRepository.findByIdAndIsDeletedIsFalse(matchingInfoId)
+                .orElseThrow(() -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
+    }
+
+    /**
+     * 회원 식별자로 매칭정보 단건 조회 |
+     * 404(MATCHINGINFO_NOT_FOUND)
+     */
+    public MatchingInfo findByMemberId(Long memberId) {
+
+        return matchingInfoRepository.findByMemberIdAndIsDeletedIsFalse(memberId)
+                .orElseThrow(() -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
+    }
+
+    /**
+     * 매칭정보 공개 여부 확인 |
+     * 400(ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC)
+     */
+    public void validateMatchingInfoIsPublic(Member member) {
+        if (!member.getMatchingInfo().getIsMatchingInfoPublic())
+            throw new CustomException(null, ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC);
     }
 }

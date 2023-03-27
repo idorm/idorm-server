@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,11 +30,17 @@ public class Email extends BaseEntity {
 
     private Boolean isCheck;
 
+    private Boolean isPossibleUpdatePassword;
+
+    private LocalDateTime isPossibleUpdatePasswordCreatedAt; // 비밀번호 변경 유효 시작 시
+
     @Builder
     public Email(String email, String code) {
         this.email = email;
         this.code = code;
         this.isCheck = false;
+        this.isPossibleUpdatePassword = false;
+        this.isPossibleUpdatePasswordCreatedAt = LocalDateTime.now();
         this.setIsDeleted(false);
     }
 
@@ -46,6 +53,18 @@ public class Email extends BaseEntity {
         if (!member.getEmails().contains(this)) {
             member.getEmails().add(this);
         }
+    }
+
+    public void updateCode(String code) {
+        this.code = code;
+    }
+
+    public void updateIsPossibleUpdatePassword(Boolean isPossibleUpdatePassword) {
+        this.isPossibleUpdatePassword = isPossibleUpdatePassword;
+    }
+
+    public void updateIsPossibleUpdatePasswordCreatedAt() {
+        this.isPossibleUpdatePasswordCreatedAt = LocalDateTime.now();
     }
 
     public void delete() {

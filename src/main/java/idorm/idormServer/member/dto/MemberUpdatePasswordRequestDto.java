@@ -23,7 +23,7 @@ import javax.validation.constraints.Size;
 @ApiModel(value = "Member 비밀번호 변경 요청")
 public class MemberUpdatePasswordRequestDto {
 
-    @ApiModelProperty(position = 1, required = true, value = "이메일", example = "aaa@inu.ac.kr")
+    @ApiModelProperty(position = 1, required = true, value = "이메일", example = "test1@inu.ac.kr")
     @NotBlank(message = "이메일 입력은 필수입니다.", groups = ValidationSequence.NotBlank.class)
     @Email(message = "올바른 형식의 이메일이 아닙니다.", groups = ValidationSequence.Email.class)
     private String email;

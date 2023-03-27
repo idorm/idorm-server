@@ -29,6 +29,86 @@ public class MatchingService {
     private final MatchingInfoRepository matchingInfoRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * 좋아요한 멤버 추가 |
+     * 409(DUPLICATE_LIKED_MEMBER)
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void addLikedMember(Member loginMember, Long likedMemberId) {
+
+        if (isExistLikedMember(loginMember, likedMemberId))
+            throw new CustomException(null, DUPLICATE_LIKED_MEMBER);
+
+        if (isExistDislikedMember(loginMember, likedMemberId))
+            removeDislikedMember(loginMember, likedMemberId);
+
+        try {
+            loginMember.addLikedMember(likedMemberId);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 싫어요한 멤버 추가 |
+     * 409(DUPLICATE_DISLIKED_MEMBER)
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void addDislikedMember(Member loginMember, Long dislikedMemberd) {
+
+        if (isExistDislikedMember(loginMember, dislikedMemberd))
+            throw new CustomException(null, DUPLICATE_DISLIKED_MEMBER);
+
+        if (isExistLikedMember(loginMember, dislikedMemberd))
+            removeLikedMember(loginMember, dislikedMemberd);
+
+        try {
+            loginMember.addDislikedMember(dislikedMemberd);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 좋아요한 회원 삭제 |
+     * 404(LIKEDMEMBER_NOT_FOUND)
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void removeLikedMember(Member loginMember, Long likedMemberId) {
+        if (!isExistLikedMember(loginMember, likedMemberId))
+            throw new CustomException(null, LIKEDMEMBER_NOT_FOUND);
+
+        try {
+            loginMember.removeLikedMember(likedMemberId);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 싫어요한 회원 삭제 |
+     * 404(DISLIKEDMEMBER_NOT_FOUND)
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void removeDislikedMember(Member loginMember, Long dislikedMemberId) {
+        if (!isExistDislikedMember(loginMember, dislikedMemberId))
+            throw new CustomException(null, DISLIKEDMEMBER_NOT_FOUND);
+
+        try {
+            loginMember.removeDislikedMember(dislikedMemberId);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 매칭 회원 전체 조회 |
+     * 500(SERVER_ERROR)
+     */
     public List<MatchingInfo> findMatchingMembers(Member member) {
 
         List<MatchingInfo> foundMatchingInfos = null;
@@ -36,7 +116,7 @@ public class MatchingService {
         
         try {
             foundMatchingInfos = 
-                    matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
+                    matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrueAndIsDeletedIsFalse(
                         member.getId(),
                         loginMemberMatchingInfo.getDormCategory(),
                         loginMemberMatchingInfo.getJoinPeriod(),
@@ -58,9 +138,10 @@ public class MatchingService {
             MatchingInfo matchingInfo = iterator.next();
 
             for (Member dislikedMember : dislikedMembers) {
-                if (matchingInfo.getMember().getId() == dislikedMember.getId()) {
+                if (matchingInfo.getMember().getIsDeleted())
                     iterator.remove();
-                }
+                else if (matchingInfo.getMember().getId() == dislikedMember.getId())
+                    iterator.remove();
             }
         }
 
@@ -68,7 +149,7 @@ public class MatchingService {
     }
 
     /**
-     * Matching 매칭멤버 필터링 조회 |
+     * 매칭 회원 필터링 조회 |
      * 500(SERVER_ERROR)
      */
     public List<MatchingInfo> findFilteredMatchingMembers(Member member,
@@ -106,18 +187,29 @@ public class MatchingService {
             MatchingInfo matchingInfo = iterator.next();
 
             for (Member dislikedMember : dislikedMembers) {
-                if (matchingInfo.getMember().getId() == dislikedMember.getId()) {
+
+                if (matchingInfo.getMember().getIsDeleted())
                     iterator.remove();
-                }
+                else if (matchingInfo.getMember().getId() == dislikedMember.getId())
+                    iterator.remove();
             }
         }
 
         return foundMatchingInfos;
     }
 
-
+    /**
+     * 좋아요한 회원 전체 조회 |
+     * 500(SERVER_ERROR)
+     */
     public List<Member> findLikedMembers(Member member) {
-        List<Long> likedMembersId = memberRepository.findlikedMembersById(member.getId());
+        List<Long> likedMembersId = null;
+
+        try {
+            likedMembersId = memberRepository.findlikedMembersByLoginMemberId(member.getId());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
 
         if (likedMembersId == null)
             return null;
@@ -125,20 +217,35 @@ public class MatchingService {
         List<Member> likedMembers = new ArrayList<>();
 
         for (Long memberId : likedMembersId) {
-            Optional<Member> likedMember = memberRepository.findById(memberId);
+            Optional<Member> likedMember = null;
 
-            if (likedMember.isEmpty() || !likedMember.get().getMatchingInfo().getIsMatchingInfoPublic()){
-                removeLikedMember(member, memberId);
-                continue;
+            try {
+                likedMember = memberRepository.findByIdAndIsDeletedIsFalse(memberId);
+            } catch (RuntimeException e) {
+                throw new CustomException(e, SERVER_ERROR);
             }
 
-            likedMembers.add(likedMember.get());
+            if (likedMember.isEmpty() || !likedMember.get().getMatchingInfo().getIsMatchingInfoPublic())
+                removeLikedMember(member, memberId);
+            else
+                likedMembers.add(likedMember.get());
+
         }
         return likedMembers;
     }
 
+    /**
+     * 싫어요한 회원 전체 조회 |
+     * 500(SERVER_ERROR)
+     */
     public List<Member> findDislikedMembers(Member member) {
-        List<Long> dislikedMembersId = memberRepository.findDislikedMembersById(member.getId());
+        List<Long> dislikedMembersId = null;
+
+        try {
+            dislikedMembersId = memberRepository.findDislikedMembersByLoginMemberId(member.getId());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
 
         if (dislikedMembersId == null)
             return null;
@@ -146,88 +253,34 @@ public class MatchingService {
         List<Member> dislikedMembers = new ArrayList<>();
 
         for (Long memberId : dislikedMembersId) {
-            Optional<Member> dislikedMember = memberRepository.findById(memberId);
+            Optional<Member> dislikedMember = null;
 
-            if (dislikedMember.isEmpty() || !dislikedMember.get().getMatchingInfo().getIsMatchingInfoPublic()){
-                removeDislikedMember(member, memberId);
-                continue;
+            try {
+                dislikedMember = memberRepository.findByIdAndIsDeletedIsFalse(memberId);
+            } catch (RuntimeException e) {
+                throw new CustomException(e, SERVER_ERROR);
             }
 
-            dislikedMembers.add(dislikedMember.get());
+            if (dislikedMember.isEmpty() || !dislikedMember.get().getMatchingInfo().getIsMatchingInfoPublic())
+                removeDislikedMember(member, memberId);
+            else
+                dislikedMembers.add(dislikedMember.get());
+
         }
         return dislikedMembers;
     }
 
     /**
-     * 좋아요한 멤버 추가 |
-     * 409(DUPLICATE_LIKED_MEMBER)
-     * 500(SERVER_ERROR)
+     * 매칭 좋아요 여부 확인 |
      */
-    @Transactional
-    public void addLikedMember(Member loginMember, Long likedMemberId) {
-
-        if (isExistLikedMember(loginMember, likedMemberId)) {
-            throw new CustomException(null, DUPLICATE_LIKED_MEMBER);
-        }
-        if (isExistDislikedMember(loginMember, likedMemberId)) {
-            removeDislikedMember(loginMember, likedMemberId);
-        }
-
-        try {
-            loginMember.addLikedMember(likedMemberId);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    @Transactional
-    public void addDislikedMember(Member loginMember, Long dislikedMemberd) {
-
-        if (isExistDislikedMember(loginMember, dislikedMemberd)) {
-            throw new CustomException(null, DUPLICATE_DISLIKED_MEMBER);
-        }
-        if (isExistLikedMember(loginMember, dislikedMemberd)) {
-            removeLikedMember(loginMember, dislikedMemberd);
-        }
-
-        try {
-            loginMember.addDislikedMember(dislikedMemberd);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    @Transactional
-    public void removeLikedMember(Member loginMember, Long likedMemberId) {
-        if (!isExistLikedMember(loginMember, likedMemberId)) {
-            throw new CustomException(null, LIKEDMEMBER_NOT_FOUND);
-        }
-
-        try {
-            loginMember.removeLikedMember(likedMemberId);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    @Transactional
-    public void removeDislikedMember(Member loginMember, Long dislikedMemberId) {
-        if (!isExistDislikedMember(loginMember, dislikedMemberId)) {
-            throw new CustomException(null, DISLIKEDMEMBER_NOT_FOUND);
-        }
-
-        try {
-            loginMember.removeDislikedMember(dislikedMemberId);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
     private boolean isExistLikedMember(Member loginMember, Long likedMemberId) {
         int result = memberRepository.isExistLikedMember(loginMember.getId(), likedMemberId);
         return result == 1 ? true : false;
     }
 
+    /**
+     * 매칭 싫어요 여부 확인 |
+     */
     private boolean isExistDislikedMember(Member loginMember, Long dislikedMemberId) {
         int result = memberRepository.isExistDislikedMember(loginMember.getId(), dislikedMemberId);
         return result == 1 ? true : false;

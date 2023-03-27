@@ -18,7 +18,7 @@ public class MatchingDefaultResponseDto {
     @ApiModelProperty(position = 1, value="멤버 식별자", example = "2")
     private Long memberId;
 
-    @ApiModelProperty(position = 2, value="매칭정보 식별자", example = "1")
+    @ApiModelProperty(position = 2, value= "매칭정보 식별자", example = "1")
     private Long matchingInfoId;
 
     @ApiModelProperty(position = 3, required = true, value = "기숙사 분류", allowableValues = "DORM1, DORM2, DORM3",

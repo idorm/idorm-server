@@ -43,13 +43,6 @@ public class MemberSaveRequestDto {
             groups = ValidationSequence.Pattern.class)
     private String nickname;
 
-    public idorm.idormServer.email.domain.Email toEmailEntity(String code) {
-        return idorm.idormServer.email.domain.Email.builder()
-                .email(this.email)
-                .code(code)
-                .build();
-    }
-
     public Member toMemberEntity(idorm.idormServer.email.domain.Email email, String encodedPassword) {
         return Member.builder()
                 .email(email)

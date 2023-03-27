@@ -54,6 +54,7 @@ public class CommentParentResponseDto {
                                     Comment parentComment,
                                     List<CommentDefaultResponseDto> subComments) {
 
+        this.memberId = parentComment.getMember().getId();
         this.commentId = parentComment.getId();
         this.isDeleted = parentComment.getIsDeleted();
         this.content = parentComment.getContent();
@@ -61,17 +62,15 @@ public class CommentParentResponseDto {
         this.isAnonymous = parentComment.getIsAnonymous();
         this.postId = parentComment.getPost().getId();
 
-        if (parentComment.getMember() != null)
-            this.memberId = parentComment.getMember().getId();
-
-        if (parentComment.getMember() == null) {
+        if (parentComment.getMember().getIsDeleted()) {
+            this.memberId = null;
             this.nickname = null;
-        } else if(parentComment.getIsAnonymous() == true) {
+        } else if(parentComment.getIsAnonymous()) {
             this.nickname = anonymousNickname;
-        } else if(parentComment.getIsAnonymous() == false) {
+        } else if(!parentComment.getIsAnonymous()) {
             this.nickname = parentComment.getMember().getNickname();
-            if(parentComment.getMember().getProfilePhoto() != null) {
-                this.profileUrl = parentComment.getMember().getProfilePhoto().getPhotoUrl();
+            if(parentComment.getMember().getMemberPhoto() != null) {
+                this.profileUrl = parentComment.getMember().getMemberPhoto().getPhotoUrl();
             }
         }
 
