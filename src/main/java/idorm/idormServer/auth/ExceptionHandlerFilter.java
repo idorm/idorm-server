@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,17 +24,21 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) {
+                                    FilterChain filterChain) throws IOException, ServletException {
 
         try {
             filterChain.doFilter(request, response);
         } catch (UsernameNotFoundException e) {
             setExceptionResponse(response, ExceptionCode.UNAUTHORIZED_DELETED_MEMBER);
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            log.error("[THROWING] ExceptionHandlerFilter | doFilterInternal | throwing = {}", e.getMessage());
-            setExceptionResponse(response, SERVER_ERROR);
         }
+
+        /**
+         * catch (IOException | ServletException e) {
+         *             Sentry.captureException(e);
+         *             log.error("[THROWING] ExceptionHandlerFilter | doFilterInternal | throwing = {}", e.getMessage());
+         *             setExceptionResponse(response, SERVER_ERROR);
+         *         }
+         */
     }
 
     private void setExceptionResponse(

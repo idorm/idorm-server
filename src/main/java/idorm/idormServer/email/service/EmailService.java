@@ -7,6 +7,7 @@ import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,9 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final EmailRepository emailRepository;
+
+    @Value("${MAIL_USERNAME}")
+    private String adminMail;
 
     /**
      * DB에 이메일 저장 |
@@ -228,7 +232,7 @@ public class EmailService {
             String emailContent = createEmailContent(email.getCode());
 
             mimeMessage.setText(emailContent, "utf-8", "html");
-            mimeMessage.setFrom("idormServer@gmail.com");
+            mimeMessage.setFrom(adminMail);
 
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {

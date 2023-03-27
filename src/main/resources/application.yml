@@ -24,6 +24,19 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
 servlet:
   multipart:
     max-file-size: ${MAX_FILE_SIZE}
