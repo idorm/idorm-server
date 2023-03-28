@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.util.List;
 
+import static idorm.idormServer.exception.ExceptionCode.FIREBASE_SERER_ERROR;
 import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 import static org.springframework.http.HttpHeaders.*;
 
@@ -60,50 +61,91 @@ public class FCMService {
             return;
 
         try {
-            String API_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
-            String message = createMessage(fcmRequestDto);
-
-            OkHttpClient client = new OkHttpClient();
-            RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
-            Request request = new Request.Builder()
-                    .url(API_URL)
-                    .post(requestBody)
-                    .addHeader(AUTHORIZATION, "Bearer " + getAccessToken())
-                    .addHeader(CONTENT_TYPE, "application/json; UTF-8")
+            Message message = Message.builder()
+                    .putData("channelId", fcmRequestDto.getNotification().getNotifyType().toString())
+                    .putData("contentId", fcmRequestDto.getNotification().getContentId().toString())
+                    .putData("title", fcmRequestDto.getNotification().getTitle())
+                    .putData("content", fcmRequestDto.getNotification().getContent())
+                    .setNotification(Notification.builder()
+                            .setTitle(fcmRequestDto.getNotification().getTitle())
+                            .setBody(fcmRequestDto.getNotification().getContent())
+                            .build()
+                    )
+                    .setAndroidConfig(AndroidConfig.builder()
+                            .setTtl(3600*1000) // 1hr
+                            .setPriority(AndroidConfig.Priority.HIGH)
+                            .setNotification(AndroidNotification.builder()
+                                    .setClickAction("FCM_PLUGIN_ACTIVITY") // background에서 onNotification 실행
+                                    .build())
+                            .build()
+                    )
+                    .setApnsConfig(ApnsConfig.builder()
+                            .setAps(Aps.builder()
+                                    .setCategory("push_click")
+                                    .setSound("default")
+                                    .build())
+                            .build()
+                    )
+                    .setToken(fcmRequestDto.getToken())
                     .build();
 
-            log.info("========= [PROCESSING createMessage] ========");
-            log.info(message.toString());
+            String response = FirebaseMessaging.getInstance().send(message);
+            log.info("=============== Send Message Firebase Response ============");
+            log.info(response);
 
-            client.newCall(request).execute();
-        } catch (RuntimeException | IOException e) {
+//            String API_URL = "https://fcm.googleapis.com/v1/projects/" + projectId + "/messages:send";
+//            String message = createMessage(fcmRequestDto);
+//
+//            OkHttpClient client = new OkHttpClient();
+//            RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
+//            Request request = new Request.Builder()
+//                    .url(API_URL)
+//                    .post(requestBody)
+//                    .addHeader(AUTHORIZATION, "Bearer " + getAccessToken())
+//                    .addHeader(CONTENT_TYPE, "application/json; UTF-8")
+//                    .build();
+//
+//            log.info("========== [Processing sendMessage] =========");
+//            log.info(request.body().toString());
+//            log.info(request.toString());
+//
+//            Response response = client.newCall(request).execute();
+//
+//            log.info("========== [Finish sendMessage] =========");
+//            log.info(response.body().toString());
+//            log.info(response.toString());
+
+        } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
+        } catch (FirebaseMessagingException e) {
+            throw new CustomException(e, FIREBASE_SERER_ERROR);
         }
     }
 
-    public String createMessage(FcmRequestDto requestDto) {
+    private String createMessage(FcmRequestDto requestDto) {
         try {
 
             Message message = Message.builder()
                     .setToken(requestDto.getToken())
-                    .setNotification(
-                            Notification.builder()
-                                    .setTitle(requestDto.getNotification().getTitle())
-                                    .setBody(requestDto.getNotification().getContent())
-                                    .build()
+                    .setNotification(Notification.builder()
+                            .setTitle(requestDto.getNotification().getTitle())
+                            .setBody(requestDto.getNotification().getContent())
+                            .build()
                     )
-                    .setAndroidConfig(
-                            AndroidConfig.builder()
-                                    .setNotification(null)
-                                    .build()
+                    .setAndroidConfig(AndroidConfig.builder()
+                            .setTtl(3600*1000) // 1hr
+                            .setPriority(AndroidConfig.Priority.HIGH)
+                            .setNotification(AndroidNotification.builder()
+                                    .setClickAction("FCM_PLUGIN_ACTIVITY") // background에서 onNotification 실행
+                                    .build())
+                            .build()
                     )
-                    .setApnsConfig(
-                            ApnsConfig.builder()
-                                    .setAps(Aps.builder()
-                                            .setCategory("push_click")
-                                            .setAlert(requestDto.getNotification().getTitle())
-                                            .build())
-                                    .build()
+                    .setApnsConfig(ApnsConfig.builder()
+                            .setAps(Aps.builder()
+                                    .setCategory("push_click")
+                                    .setSound("default")
+                                    .build())
+                                .build()
                     )
                     .putData("channelId", requestDto.getNotification().getNotifyType().toString())
                     .putData("contentId", requestDto.getNotification().getContentId().toString())
@@ -138,7 +180,11 @@ public class FCMService {
                     .fromStream(is)
                     .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
+            // accessToken 생성
             googleCredentials.refreshIfExpired();
+
+            // GoogleCredential의 getAccessToken()으로 토큰을 받아온 뒤, getTokenValue()로 최종적으로 받음
+            // REST API로 FCM에 push 요청 보낼 때 Header에 설정하여 인증을 위해 사용
             return googleCredentials.getAccessToken().getTokenValue();
         } catch (RuntimeException | IOException e) {
             throw new CustomException(e, SERVER_ERROR);
