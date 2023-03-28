@@ -36,4 +36,11 @@ out/
 ### VS Code ###
 .vscode/
 
+### Firebase Key ###
 src/main/resources/serviceAccountKey.json
+
+### Logging File ###
+ROLLING_LOGGING_FILE_PATH_IS_UNDEFINED
+ERROR_LOGGING_FILE_PATH_IS_UNDEFINED
+idorm-rolling.log
+

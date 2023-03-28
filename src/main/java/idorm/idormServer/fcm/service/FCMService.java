@@ -7,6 +7,7 @@ import com.google.firebase.messaging.*;
 import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.fcm.dto.FcmRequestDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 import static org.springframework.http.HttpHeaders.*;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -47,6 +49,13 @@ public class FCMService {
 
     public void sendMessage(FcmRequestDto fcmRequestDto) {
 
+        log.info("========== [Before sendMessage] =========");
+        log.info("token: " + fcmRequestDto.getToken() +
+                "\n notifyType: " + fcmRequestDto.getNotification().getNotifyType() +
+                "\n contentId: " + fcmRequestDto.getNotification().getContentId() +
+                "\n title: " + fcmRequestDto.getNotification().getTitle() +
+                "\n content: " + fcmRequestDto.getNotification().getContent());
+
         if (fcmRequestDto.getToken() == null)
             return;
 
@@ -62,6 +71,9 @@ public class FCMService {
                     .addHeader(AUTHORIZATION, "Bearer " + getAccessToken())
                     .addHeader(CONTENT_TYPE, "application/json; UTF-8")
                     .build();
+
+            log.info("========= [PROCESSING createMessage] ========");
+            log.info(message.toString());
 
             client.newCall(request).execute();
         } catch (RuntimeException | IOException e) {
