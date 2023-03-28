@@ -133,10 +133,6 @@ public class Member extends BaseEntity implements UserDetails {
         this.dislikedMembers.remove(memberId);
     }
 
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
-    }
-
     public void updateFcmToken(String token) {
         this.fcmToken = token;
         this.fcmTokenUpdatedAt = LocalDate.now();
