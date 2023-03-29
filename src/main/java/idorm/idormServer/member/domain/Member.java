@@ -148,6 +148,12 @@ public class Member extends BaseEntity implements UserDetails {
     }
 
     public void delete() {
+        this.fcmToken = null;
+        this.fcmTokenUpdatedAt = null;
+        this.nickname = null;
+        this.nicknameUpdatedAt = null;
+        this.password = null;
+        this.reportedCount =  null;
         this.setIsDeleted(true);
     }
 

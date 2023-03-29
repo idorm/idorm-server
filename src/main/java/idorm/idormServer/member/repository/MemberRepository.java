@@ -2,8 +2,10 @@ package idorm.idormServer.member.repository;
 
 import idorm.idormServer.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,9 +38,25 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query(value = "SELECT EXISTS " +
             "(select * " +
-            "FROM liked_members d " +
-            "WHERE d.member_id = :loginMemberId " +
-            "AND d.liked_member = :likedMemberId limit 1)", nativeQuery = true)
+            "FROM liked_members l " +
+            "WHERE l.member_id = :loginMemberId " +
+            "AND l.liked_member = :likedMemberId limit 1)", nativeQuery = true)
     int isExistLikedMember(@Param("loginMemberId") Long loginMemberId,
                               @Param("likedMemberId") Long likedMemberId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE " +
+            "FROM liked_members l " +
+            "WHERE l.member_id = :memberId || " +
+            "l.liked_member = :memberId", nativeQuery = true)
+    void deleteAllLikedMembersByDeletedMember(@Param("memberId") Long deletedMemberId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE " +
+            "FROM disliked_members d " +
+            "WHERE d.member_id = :memberId || " +
+            "d.disliked_member = :memberId", nativeQuery = true)
+    void deleteAllDislikedMembersByDeletedMember(@Param("memberId") Long deletedMemberId);
 }

@@ -4,8 +4,11 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
 
+import idorm.idormServer.matching.service.MatchingService;
+import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
+import idorm.idormServer.photo.service.MemberPhotoService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -23,6 +26,9 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final EmailService emailService;
+    private final MemberPhotoService memberPhotoService;
+    private final MatchingService matchingService;
+    private final MatchingInfoService matchingInfoService;
 
     /**
      * DB에 회원 저장 |
@@ -38,7 +44,7 @@ public class MemberService {
     }
 
     /**
-     * DB에 회원 삭제 |
+     * 회원 삭제 |
      * 500(SERVER_ERROR)
      */
     @Transactional
@@ -47,6 +53,29 @@ public class MemberService {
             member.delete();
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 회원 탈퇴 |
+     */
+    @Transactional
+    public void deactivateMember(Member member) {
+        matchingService.removeAllLikedMembersByDeletedMember(member);
+        matchingService.removeAllDislikedMembersByDeletedMember(member);
+
+        if (member.getMatchingInfo() != null) {
+            matchingInfoService.deleteData(member.getMatchingInfo());
+            matchingInfoService.delete(member.getMatchingInfo());
+        }
+
+        emailService.deleteData(member.getEmail());
+        emailService.delete(member.getEmail());
+        delete(member);
+
+        if (member.getMemberPhoto() != null) {
+            memberPhotoService.deleteFromS3(member);
+            memberPhotoService.delete(member.getMemberPhoto());
         }
     }
 

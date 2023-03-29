@@ -67,6 +67,14 @@ public class Email extends BaseEntity {
         this.isPossibleUpdatePasswordCreatedAt = LocalDateTime.now();
     }
 
+    public void deleteData() {
+        this.email = null;
+        this.code = null;
+        this.isCheck = null;
+        this.isPossibleUpdatePassword = null;
+        this.isPossibleUpdatePasswordCreatedAt = null;
+    }
+
     public void delete() {
         this.setIsDeleted(true);
     }

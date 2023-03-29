@@ -35,6 +35,10 @@ public class MemberPhoto extends BaseEntity {
             member.getMemberPhotos().add(this);
     }
 
+    public void removePhotoUrl() {
+        this.photoUrl = null;
+    }
+
     public void delete() {
         this.setIsDeleted(true);
     }

@@ -38,7 +38,7 @@ public class MemberPhotoService {
     }
 
     /**
-     * DB에 회원 사진 삭제 |
+     * 회원 사진 삭제 |
      * 500(SERVER_ERROR)
      */
     @Transactional
@@ -68,5 +68,32 @@ public class MemberPhotoService {
                 .build();
 
         return save(memberPhoto);
+    }
+
+    /**
+     * 회원 사진 S3에서 삭제 및 DB에서 photoUrl 삭제 |
+     * 회원 탈퇴 시 사용한다. |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void deleteFromS3(Member member) {
+
+        String photoUrl = member.getMemberPhoto().getPhotoUrl();
+
+        if (photoUrl == null)
+            return;
+
+        int filePathFirstIndexFromPhotoUrl = photoUrl.indexOf("profile-photo/");
+        if (filePathFirstIndexFromPhotoUrl == -1)
+            return;
+
+        try {
+            member.getMemberPhoto().removePhotoUrl();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+
+        String filePath = photoUrl.substring(filePathFirstIndexFromPhotoUrl);
+        photoService.deleteFileFromS3(memberPhotoBucketName, filePath);
     }
 }

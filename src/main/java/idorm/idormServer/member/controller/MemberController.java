@@ -301,10 +301,7 @@ public class MemberController {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(memberId);
 
-        // TODO: 회원 관련 추가 정보 삭제
-
-        memberService.deleteFcmToken(member);
-        memberService.delete(member);
+        memberService.deactivateMember(member);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

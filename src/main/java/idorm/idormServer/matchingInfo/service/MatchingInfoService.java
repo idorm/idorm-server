@@ -48,6 +48,20 @@ public class MatchingInfoService {
     }
 
     /**
+     * 매칭정보 데이터 삭제 |
+     * 회원 탈퇴 시 사용한다. |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void deleteData(MatchingInfo matchingInfo) {
+        try {
+            matchingInfo.deleteData();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 매칭인포 공개 여부 수정 |
      * 500(SERVER_ERROR)
      */

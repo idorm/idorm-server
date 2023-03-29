@@ -1,5 +1,6 @@
 package idorm.idormServer.photo.service;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -78,7 +79,7 @@ public class PhotoService {
             String url = amazonS3Client.getUrl(bucketName, uploadingFileName).toString();
             return url;
         } catch (IOException e) {
-            throw new CustomException(e, SERVER_ERROR);
+            throw new CustomException(e, S3_SERVER_ERROR);
         }
     }
 
@@ -86,14 +87,13 @@ public class PhotoService {
      * S3에 파일 삭제 |
      * 500(SERVER_ERROR)
      */
-//    public void deleteFileFromS3(String bucketname, String folderName, String fileName) {
-//        String deletingFileName = folderName + "/" + fileName;
-//        try {
-//            amazonS3Client.deleteObject(bucketName, deletingFileName);
-//        } catch (SdkClientException e) {
-//            throw new CustomException(e, SERVER_ERROR);
-//        }
-//    }
+    public void deleteFileFromS3(String bucketname, String filePath) {;
+        try {
+            amazonS3Client.deleteObject(bucketname, filePath);
+        } catch (SdkClientException e) {
+            throw new CustomException(e, S3_SERVER_ERROR);
+        }
+    }
 
     /**
      * 캘린더 사진 저장 |

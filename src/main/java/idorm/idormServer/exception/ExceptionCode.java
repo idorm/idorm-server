@@ -123,7 +123,8 @@ public enum ExceptionCode {
      */
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다."),
     EMAIL_SENDING_ERROR(INTERNAL_SERVER_ERROR, "이메일 전송 중에 서버 에러가 발생했습니다."),
-    FIREBASE_SERER_ERROR(INTERNAL_SERVER_ERROR, "푸시 알람 전송 중에 서버 에러가 발생했습니다.");
+    FIREBASE_SERER_ERROR(INTERNAL_SERVER_ERROR, "푸시 알람 전송 중에 서버 에러가 발생했습니다."),
+    S3_SERVER_ERROR(INTERNAL_SERVER_ERROR, "S3 사진 저장 중에 서버 에러가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

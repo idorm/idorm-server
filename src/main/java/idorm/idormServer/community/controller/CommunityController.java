@@ -259,7 +259,8 @@ public class CommunityController {
 
         Post post = postService.save(request.toEntity(member));
 
-        postPhotoService.savePostPhotos(post, request.getFiles());
+        if (request.getFiles().size() != 0)
+            postPhotoService.savePostPhotos(post, request.getFiles());
 
         PostOneResponseDto response = new PostOneResponseDto(post);
 
@@ -327,7 +328,8 @@ public class CommunityController {
                 request.getIsAnonymous(),
                 deletePostPhotos);
 
-        postPhotoService.savePostPhotos(post, request.getFiles());
+        if (request.getFiles().size() != 0)
+            postPhotoService.savePostPhotos(post, request.getFiles());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

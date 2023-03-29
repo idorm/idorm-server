@@ -104,6 +104,25 @@ public class MatchingInfo extends BaseEntity {
         this.isMatchingInfoPublic = isMatchingInfoPublic;
     }
 
+    public void deleteData() {
+        this.age = null;
+        this.cleanUpStatus = null;
+        this.dormCategory = null;
+        this.gender = null;
+        this.isAllowedFood = null;
+        this.isGrinding = null;
+        this.isMatchingInfoPublic = null;
+        this.isSmoking = null;
+        this.isSnoring = null;
+        this.isWearEarphones = null;
+        this.joinPeriod = null;
+        this.mbti = null;
+        this.openKakaoLink = null;
+        this.showerTime = null;
+        this.wakeUpTime = null;
+        this.wishText = null;
+    }
+
     public void delete() {
         this.setIsDeleted(true);
     }

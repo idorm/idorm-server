@@ -106,6 +106,34 @@ public class MatchingService {
     }
 
     /**
+     * 좋아요한 회원 다건 삭제 |
+     * 탈퇴한 회원 식별자가 포함된 모든 likedMembers row를 삭제합니다. |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void removeAllLikedMembersByDeletedMember(Member deletedMember) {
+        try {
+            memberRepository.deleteAllLikedMembersByDeletedMember(deletedMember.getId());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 싫어요한 회원 다건 삭제 |
+     * 탈퇴한 회원 식별자가 포함된 모든 dislikedMembers row를 삭제합니다. |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void removeAllDislikedMembersByDeletedMember(Member deletedMember) {
+        try {
+            memberRepository.deleteAllDislikedMembersByDeletedMember(deletedMember.getId());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 매칭 회원 전체 조회 |
      * 500(SERVER_ERROR)
      */

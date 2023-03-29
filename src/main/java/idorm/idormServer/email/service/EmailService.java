@@ -60,6 +60,21 @@ public class EmailService {
     }
 
     /**
+     * 이메일 데이터 삭제 |
+     * 회원 탈퇴 시 사용한다. |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void deleteData(Email email){
+
+        try {
+            email.deleteData();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 이메일 가입 여부 변경 |
      * 500(SERVER_ERROR)
      */
