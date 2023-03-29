@@ -74,9 +74,7 @@ public class FCMService {
                     .setAndroidConfig(AndroidConfig.builder()
                             .setTtl(3600*1000) // 1hr
                             .setPriority(AndroidConfig.Priority.HIGH)
-                            .setNotification(AndroidNotification.builder()
-                                    .setClickAction("FCM_PLUGIN_ACTIVITY") // background에서 onNotification 실행
-                                    .build())
+                            .setNotification(null)
                             .build()
                     )
                     .setApnsConfig(ApnsConfig.builder()
