@@ -12,6 +12,7 @@ import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,7 +27,9 @@ public class Scheduler {
     private final MemberService memberService;
     private final PostService postService;
 
-    @Scheduled(cron = "* 55 8 * * 1,2,3,4,5")
+//    @Scheduled(cron = "* 55 8 * * 1,2,3,4,5")
+    @Transactional
+    @Scheduled(cron = "* 15 21 * * 1,2,3,4,5")
     public void alertTopPosts() {
 
         List<Member> members = memberService.findAll();
