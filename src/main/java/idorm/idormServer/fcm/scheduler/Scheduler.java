@@ -29,7 +29,7 @@ public class Scheduler {
 
 //    @Scheduled(cron = "* 55 8 * * 1,2,3,4,5")
     @Transactional
-    @Scheduled(cron = "* 15 21 * * 1,2,3,4,5")
+    @Scheduled(cron = "* 25 12 * * 1,2,3,4,5")
     public void alertTopPosts() {
 
         List<Member> members = memberService.findAll();
