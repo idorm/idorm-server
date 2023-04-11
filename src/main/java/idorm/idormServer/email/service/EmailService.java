@@ -50,7 +50,7 @@ public class EmailService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void delete(Email email){
+    public void delete(Email email) {
 
         try {
             email.delete();
@@ -65,7 +65,7 @@ public class EmailService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deleteData(Email email){
+    public void deleteData(Email email) {
 
         try {
             email.deleteData();
@@ -191,8 +191,8 @@ public class EmailService {
 
         String[] mailSplit = email.split("@");
 
-        if(!(mailSplit.length == 2) || !mailSplit[1].equals("inu.ac.kr")) {
-            throw new CustomException(null,EMAIL_CHARACTER_INVALID);
+        if (!(mailSplit.length == 2) || !mailSplit[1].equals("inu.ac.kr")) {
+            throw new CustomException(null, EMAIL_CHARACTER_INVALID);
         }
     }
 
@@ -277,15 +277,12 @@ public class EmailService {
      */
     private String createEmailContent(String verificationCode) {
 
-        String message = "";
-        message += "<img width=\"120\" height=\"36\" style=\"margin-top: 0; margin-right: 0; margin-bottom: 32px; margin-left: 0px; padding-right: 30px; padding-left: 30px;\" src=\"https://slack.com/x-a1607371436052/img/slack_logo_240.png\" alt=\"\" loading=\"lazy\">";
-        message += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">이메일 주소 확인</h1>";
-        message += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">아래 확인 코드를 Slack 가입 창이 있는 브라우저 창에 입력하세요.</p>";
-        message += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
-        message += verificationCode;
-        message += "</td></tr></tbody></table></div>";
-        message += "<a href=\"https://slack.com\" style=\"text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">Slack Clone Technologies, Inc</a>";
-
-        return message;
+        // 이 버전의 lang 에서 StringTemplate 나 String Block Literal 기능을 지원하지 않아서.. 알아서 리팩터링 해주세요..
+        // 로고 URL 은 S3에 올리든 Static Resource 로 두든.. 알아서 해주세요.
+        String imageUrl = "https://i.imgur.com/JM4CM2Q.png";
+        String template = "<head> <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" /> <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin /> <link href=\"https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap\" rel=\"stylesheet\" /></head><body style=\" background-color: #f2f5fa; display: flex; justify-content: center; align-items: center; font-family: 'Noto Sans KR', sans-serif; \"> <div style=\"width: 400px; background-color: #ffffff; padding: 70px 30px\"> <img src=\"${logoUrl}\" width=\"70\" /> <p style=\" font-size: 25px; font-weight: 500; margin-top: 60px; color: #5b5b5b; \" > <span>요청하신 </span> <span style=\"color: #71a1fe; font-weight: 700\">인증번호</span> <br />발송해드립니다. </p> <p style=\"font-weight: 400; font-size: 20px\"> 아래 인증번호를 입력창에 입력해 주세요. </p> <p style=\" border: 1px #e3e1ec; border-top-style: solid; padding: 25px; background-color: #f2f5fa; \" > 인증번호 <span style=\"color: #ff6868\">${verificationCode}</span> </p> </div></body>";
+        template = template.replace("${verificationCode}", verificationCode);
+        template = template.replace("${logoUrl}", imageUrl);
+        return template;
     }
 }
