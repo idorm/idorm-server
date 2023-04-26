@@ -607,7 +607,7 @@ public class CommunityController {
                                     .content(comment.getContent())
                                     .build())
                             .build();
-                    fcmService.sendMessage(fcmRequestDto);
+                    fcmService.sendMessage(member, fcmRequestDto);
                 }
             }
 
@@ -628,7 +628,7 @@ public class CommunityController {
                                         .content(comment.getContent())
                                         .build())
                                 .build();
-                        fcmService.sendMessage(fcmRequestDto);
+                        fcmService.sendMessage(member, fcmRequestDto);
                     }
                 }
             }
@@ -653,7 +653,7 @@ public class CommunityController {
                                         .content(comment.getContent())
                                         .build())
                                 .build();
-                        fcmService.sendMessage(fcmRequestDto);
+                        fcmService.sendMessage(member, fcmRequestDto);
                     }
                 }
             }
@@ -670,7 +670,7 @@ public class CommunityController {
                                 .content(comment.getContent())
                                 .build())
                         .build();
-                fcmService.sendMessage(fcmRequestDto);
+                fcmService.sendMessage(member, fcmRequestDto);
             }
         }
 

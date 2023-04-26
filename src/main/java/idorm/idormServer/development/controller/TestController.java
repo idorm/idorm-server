@@ -46,8 +46,7 @@ public class TestController {
     public ResponseEntity pushMessage(
             @RequestBody TestRequestDto request) {
 
-        System.out.println(request.getTargetToken() + " "
-                +request.getTitle() + " " + request.getBody());
+        Member member = memberService.findById(request.getMemberId());
 
         FcmRequestDto fcmRequest = FcmRequestDto.builder()
                 .token(request.getTargetToken())
@@ -59,7 +58,7 @@ public class TestController {
                         .build())
                 .build();
 
-        firebaseCloudMessageService.sendMessage(fcmRequest);
+        firebaseCloudMessageService.sendMessage(member, fcmRequest);
 
         return ResponseEntity.status(204).build();
     }

@@ -34,6 +34,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Post findTopPostByDormCategory(@Param("dormCategory") Character dormCategory);
 
     List<Post> findAllByMemberIdAndIsDeletedIsFalseOrderByUpdatedAtDesc(Long memberId);
-
-    List<Post> findAllByMemberIdAndIsDeletedIsFalse(Long memberId);
 }

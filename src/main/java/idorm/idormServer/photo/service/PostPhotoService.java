@@ -102,7 +102,7 @@ public class PostPhotoService {
      * 404(POSTPHOTO_NOT_FOUND)
      */
     public PostPhoto findById(Long postId, Long photoId) {
-        return postPhotoRepository.findByIdAndPostIdAndIsDeletedFalse(photoId, postId)
+        return postPhotoRepository.findByIdAndPostIdAndIsDeletedIsFalse(photoId, postId)
                 .orElseThrow(() -> {
                     throw new CustomException(null, POSTPHOTO_NOT_FOUND);
                 });

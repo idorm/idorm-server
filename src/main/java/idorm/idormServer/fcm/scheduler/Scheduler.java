@@ -27,9 +27,8 @@ public class Scheduler {
     private final MemberService memberService;
     private final PostService postService;
 
-//    @Scheduled(cron = "* 55 8 * * 1,2,3,4,5")
     @Transactional
-    @Scheduled(cron = "* 25 12 * * 1,2,3,4,5")
+    @Scheduled(cron = "* 55 23 * * 1,2,3,4,5") // UTC 23:55 ASIA/SEOUL 8:55
     public void alertTopPosts() {
 
         List<Member> members = memberService.findAll();
@@ -44,53 +43,61 @@ public class Scheduler {
 
         for (Member member : members) {
 
-            if (member.getMatchingInfo() != null) {
-                if (!member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
+            if (member.getMatchingInfo() == null ||
+                    member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
+                memberService.deleteFcmToken(member);
+                continue;
+            }
 
-                    FcmRequestDto fcmRequestDto = null;
-                    switch (DormCategory.valueOf(member.getMatchingInfo().getDormCategory())) {
-                        case DORM1:
-                            fcmRequestDto = FcmRequestDto.builder()
-                                    .token(member.getFcmToken())
-                                    .notification(FcmRequestDto.Notification.builder()
-                                            .notifyType(NotifyType.TOPPOST)
-                                            .contentId(topPostFromDorm1.getId())
-                                            .title(titleOfDorm1)
-                                            .content(topPostFromDorm1.getContent())
-                                            .build())
-                                    .build();
-                            fcmService.sendMessage(fcmRequestDto);
-                            break;
+            DormCategory dormCategory = DormCategory.valueOf(member.getMatchingInfo().getDormCategory());
+            FcmRequestDto fcmRequestDto = null;
+            switch (dormCategory) {
+                case DORM1:
+                    if (topPostFromDorm1 == null)
+                        continue;
+                    fcmRequestDto = FcmRequestDto.builder()
+                            .token(member.getFcmToken())
+                            .notification(FcmRequestDto.Notification.builder()
+                                    .notifyType(NotifyType.TOPPOST)
+                                    .contentId(topPostFromDorm1.getId())
+                                    .title(titleOfDorm1)
+                                    .content(topPostFromDorm1.getContent())
+                                    .build())
+                            .build();
+                    fcmService.sendMessage(member, fcmRequestDto);
+                    break;
 
-                        case DORM2:
-                            fcmRequestDto = FcmRequestDto.builder()
-                                    .token(member.getFcmToken())
-                                    .notification(FcmRequestDto.Notification.builder()
-                                            .notifyType(NotifyType.TOPPOST)
-                                            .contentId(topPostFromDorm2.getId())
-                                            .title(titleOfDorm2)
-                                            .content(topPostFromDorm2.getContent())
-                                            .build())
-                                    .build();
-                            fcmService.sendMessage(fcmRequestDto);
-                            break;
+                case DORM2:
+                    if (topPostFromDorm2 == null)
+                        continue;
+                    fcmRequestDto = FcmRequestDto.builder()
+                            .token(member.getFcmToken())
+                            .notification(FcmRequestDto.Notification.builder()
+                                    .notifyType(NotifyType.TOPPOST)
+                                    .contentId(topPostFromDorm2.getId())
+                                    .title(titleOfDorm2)
+                                    .content(topPostFromDorm2.getContent())
+                                    .build())
+                            .build();
+                    fcmService.sendMessage(member, fcmRequestDto);
+                    break;
 
-                        case DORM3:
-                            fcmRequestDto = FcmRequestDto.builder()
-                                    .token(member.getFcmToken())
-                                    .notification(FcmRequestDto.Notification.builder()
-                                            .notifyType(NotifyType.TOPPOST)
-                                            .contentId(topPostFromDorm3.getId())
-                                            .title(titleOfDorm3)
-                                            .content(topPostFromDorm3.getContent())
-                                            .build())
-                                    .build();
-                            fcmService.sendMessage(fcmRequestDto);
-                            break;
-                        default:
-                            throw new CustomException(null, SERVER_ERROR);
-                    }
-                }
+                case DORM3:
+                    if (topPostFromDorm3 == null)
+                        continue;
+                    fcmRequestDto = FcmRequestDto.builder()
+                            .token(member.getFcmToken())
+                            .notification(FcmRequestDto.Notification.builder()
+                                    .notifyType(NotifyType.TOPPOST)
+                                    .contentId(topPostFromDorm3.getId())
+                                    .title(titleOfDorm3)
+                                    .content(topPostFromDorm3.getContent())
+                                    .build())
+                            .build();
+                    fcmService.sendMessage(member, fcmRequestDto);
+                    break;
+                default:
+                    throw new CustomException(null, SERVER_ERROR);
             }
         }
     }

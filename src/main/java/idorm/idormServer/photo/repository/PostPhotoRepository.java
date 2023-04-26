@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface PostPhotoRepository extends JpaRepository<PostPhoto, Long> {
 
-    Optional<PostPhoto> findByIdAndPostIdAndIsDeletedFalse(Long id, Long postId);
+    Optional<PostPhoto> findByIdAndPostIdAndIsDeletedIsFalse(Long id, Long postId);
 
     List<PostPhoto> findAllByPostAndIsDeletedIsFalse(Post post);
 }
