@@ -31,6 +31,9 @@ public class EmailService {
     @Value("${MAIL_USERNAME}")
     private String adminMail;
 
+    @Value("${s3.logo}")
+    private String s3LogoImgUrl;
+
     /**
      * DB에 이메일 저장 |
      * 500(SERVER_ERROR)
@@ -277,12 +280,20 @@ public class EmailService {
      */
     private String createEmailContent(String verificationCode) {
 
-        // 이 버전의 lang 에서 StringTemplate 나 String Block Literal 기능을 지원하지 않아서.. 알아서 리팩터링 해주세요..
-        // 로고 URL 은 S3에 올리든 Static Resource 로 두든.. 알아서 해주세요.
-        String imageUrl = "https://i.imgur.com/JM4CM2Q.png";
-        String template = "<head> <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" /> <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin /> <link href=\"https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap\" rel=\"stylesheet\" /></head><body style=\" background-color: #f2f5fa; display: flex; justify-content: center; align-items: center; font-family: 'Noto Sans KR', sans-serif; \"> <div style=\"width: 400px; background-color: #ffffff; padding: 70px 30px\"> <img src=\"${logoUrl}\" width=\"70\" /> <p style=\" font-size: 25px; font-weight: 500; margin-top: 60px; color: #5b5b5b; \" > <span>요청하신 </span> <span style=\"color: #71a1fe; font-weight: 700\">인증번호</span> <br />발송해드립니다. </p> <p style=\"font-weight: 400; font-size: 20px\"> 아래 인증번호를 입력창에 입력해 주세요. </p> <p style=\" border: 1px #e3e1ec; border-top-style: solid; padding: 25px; background-color: #f2f5fa; \" > 인증번호 <span style=\"color: #ff6868\">${verificationCode}</span> </p> </div></body>";
+        String template = "<head> " +
+                "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" /> " +
+                "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin /> " +
+                "<link href=\"https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap\" rel=\"stylesheet\" />" +
+                "</head>" +
+                "<body style=\" background-color: #f2f5fa; display: flex; justify-content: center; align-items: center; font-family: 'Noto Sans KR', sans-serif; \"> " +
+                "<div style=\"width: 400px; background-color: #ffffff; padding: 70px 30px\"> <img src=\"${logoUrl}\" width=\"70\" /> " +
+                "<p style=\" font-size: 25px; font-weight: 500; margin-top: 60px; color: #5b5b5b; \" > " +
+                "<span>요청하신 </span> <span style=\"color: #71a1fe; font-weight: 700\">인증번호</span> <br />발송해드립니다. </p> " +
+                "<p style=\"font-weight: 400; font-size: 20px\"> 아래 인증번호를 입력창에 입력해 주세요. </p> " +
+                "<p style=\" border: 1px #e3e1ec; border-top-style: solid; padding: 25px; background-color: #f2f5fa; \" > 인증번호 <span style=\"color: #ff6868\">${verificationCode}</span> </p> </div>" +
+                "</body>";
         template = template.replace("${verificationCode}", verificationCode);
-        template = template.replace("${logoUrl}", imageUrl);
+        template = template.replace("${logoUrl}", s3LogoImgUrl);
         return template;
     }
 }

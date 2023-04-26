@@ -52,6 +52,7 @@ s3:
     member-photo: ${S3_MEMBER_PHOTO_BUCKET_NAME}
     post-photo: ${S3_POST_PHOTO_BUCKET_NAME}
   region: ${S3_REGION}
+  logo: ${S3_LOGO_IMG_URL}
 
 sentry:
   dsn: ${SENTRY_DSN}
