@@ -65,7 +65,7 @@ public class FCMService {
             throw new CustomException(e, SERVER_ERROR);
         } catch (FirebaseMessagingException e) {
 
-            if (e.getHttpResponse().getStatusCode() == 404)
+            if (e.getHttpResponse().getStatusCode() == 400 || e.getHttpResponse().getStatusCode() == 404)
                 memberService.deleteFcmToken(member);
             else
                 throw new CustomException(e, FIREBASE_SERER_ERROR);

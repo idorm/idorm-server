@@ -72,6 +72,15 @@ public class Post extends BaseEntity {
         return postLikedMembers;
     }
 
+    public int getPostLikedMembersCnt() {
+        int size = 0;
+        for (PostLikedMember postLikedMember : this.postLikedMembers) {
+            if (!postLikedMember.getIsDeleted())
+                size++;
+        }
+        return size;
+    }
+
     public List<PostPhoto> getPostPhotosIsDeletedIsFalse() {
         List<PostPhoto> postPhotos = new ArrayList<>();
         for (PostPhoto postPhoto : this.postPhotos) {
@@ -81,6 +90,15 @@ public class Post extends BaseEntity {
         return postPhotos;
     }
 
+    public int getPostPhotosCount() {
+        int count = 0;
+        for (PostPhoto postPhoto : this.postPhotos) {
+            if (!postPhoto.getIsDeleted())
+                count++;
+        }
+        return count;
+    }
+
     public List<Comment> getCommentsIsDeletedIsFalse() {
         List<Comment> comments = new ArrayList<>();
         for (Comment comment : this.comments) {
@@ -88,6 +106,15 @@ public class Post extends BaseEntity {
                 comments.add(comment);
         }
         return comments;
+    }
+
+    public int getCommentsCount() {
+        int size = 0;
+        for (Comment comment : this.comments) {
+            if (!comment.getIsDeleted())
+                size++;
+        }
+        return size;
     }
 
     public void delete() {

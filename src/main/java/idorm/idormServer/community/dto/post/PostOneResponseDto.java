@@ -82,6 +82,7 @@ public class PostOneResponseDto {
         this.updatedAt = post.getUpdatedAt();
         this.likesCount = 0;
         this.commentsCount = 0;
+        this.imagesCount = 0;
         this.isAnonymous = post.getIsAnonymous();
 
         if(post.getMember().getIsDeleted()) { // 회원 탈퇴의 경우
@@ -97,9 +98,10 @@ public class PostOneResponseDto {
         }
 
         if(post.getPostPhotosIsDeletedIsFalse() != null) {
-            this.imagesCount = post.getPostPhotosIsDeletedIsFalse().size();
+            List<PostPhoto> postPhotos = post.getPostPhotosIsDeletedIsFalse();
+            this.imagesCount = postPhotos.size();
 
-            for (PostPhoto postPhoto : post.getPostPhotosIsDeletedIsFalse())
+            for (PostPhoto postPhoto : postPhotos)
                 this.postPhotos.add(new PostPhotoDefaultResponseDto(postPhoto));
         }
     }
@@ -111,15 +113,18 @@ public class PostOneResponseDto {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.isLiked = isLiked;
+        this.likesCount = 0;
+        this.commentsCount = 0;
+        this.imagesCount = 0;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
         this.isAnonymous = post.getIsAnonymous();
 
         if (post.getPostLikedMembersIsDeletedIsFalse() != null)
-            this.likesCount = post.getPostLikedMembersIsDeletedIsFalse().size();
+            this.likesCount = post.getPostLikedMembersCnt();
 
         if (post.getCommentsIsDeletedIsFalse() != null)
-            this.commentsCount = post.getCommentsIsDeletedIsFalse().size();
+            this.commentsCount = post.getCommentsCount();
 
         if(post.getMember().getIsDeleted()) { // 회원 탈퇴의 경우
             this.memberId = null;
@@ -134,9 +139,10 @@ public class PostOneResponseDto {
         }
 
         if(post.getPostPhotosIsDeletedIsFalse() != null) {
-            this.imagesCount = post.getPostPhotosIsDeletedIsFalse().size();
+            List<PostPhoto> postPhotos = post.getPostPhotosIsDeletedIsFalse();
+            this.imagesCount = postPhotos.size();
 
-            for (PostPhoto postPhoto : post.getPostPhotosIsDeletedIsFalse())
+            for (PostPhoto postPhoto : postPhotos)
                 this.postPhotos.add(new PostPhotoDefaultResponseDto(postPhoto));
         }
 

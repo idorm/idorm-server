@@ -76,12 +76,12 @@ public class PostAbstractResponseDto {
         }
 
         if (post.getPostLikedMembersIsDeletedIsFalse() != null)
-            this.likesCount = post.getPostLikedMembersIsDeletedIsFalse().size();
+            this.likesCount = post.getPostLikedMembersCnt();
 
         if (post.getCommentsIsDeletedIsFalse() != null)
-            this.commentsCount = post.getCommentsIsDeletedIsFalse().size();
+            this.commentsCount = post.getCommentsCount();
 
         if (post.getPostPhotosIsDeletedIsFalse() != null)
-            this.imagesCount = post.getPostPhotosIsDeletedIsFalse().size();
+            this.imagesCount = post.getPostPhotosCount();
     }
 }
