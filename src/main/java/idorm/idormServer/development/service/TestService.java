@@ -1,5 +1,6 @@
 package idorm.idormServer.development.service;
 
+import idorm.idormServer.calendar.repository.CalendarRepository;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.CommentRepository;
@@ -22,6 +23,7 @@ import idorm.idormServer.member.repository.MemberRepository;
 import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.photo.repository.MemberPhotoRepository;
 import idorm.idormServer.photo.repository.PostPhotoRepository;
+import idorm.idormServer.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,7 +53,8 @@ public class TestService {
     private final MemberRepository memberRepository;
     private final MemberPhotoRepository memberPhotoRepository;
     private final PostPhotoRepository postPhotoRepository;
-
+    private final ReportRepository reportRepository;
+    private final CalendarRepository calendarRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final MemberService memberService;
@@ -75,12 +78,22 @@ public class TestService {
         try {
             commentRepository.deleteAll();
             postLikedMemberRepository.deleteAll();
-            postRepository.deleteAll();
             memberPhotoRepository.deleteAll();
             postPhotoRepository.deleteAll();
+            postRepository.deleteAll();
             matchingInfoRepository.deleteAll();
             emailRepository.deleteAll();
+            reportRepository.deleteAll();
+            calendarRepository.deleteAll();
             memberRepository.deleteAll();
+
+            this.entityManager
+                    .createNativeQuery("ALTER TABLE calendar AUTO_INCREMENT = 1")
+                    .executeUpdate();
+
+            this.entityManager
+                    .createNativeQuery("ALTER TABLE report AUTO_INCREMENT = 1")
+                    .executeUpdate();
 
             this.entityManager
                     .createNativeQuery("ALTER TABLE comment AUTO_INCREMENT = 1")
@@ -464,6 +477,9 @@ public class TestService {
         member.getRoles().add("ROLE_ADMIN");
 
         memberService.save(member);
+
+        email.isChecked();
+        emailService.updateIsJoined(email, member);
     }
 
     @Transactional

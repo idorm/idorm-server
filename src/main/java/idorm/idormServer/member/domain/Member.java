@@ -80,7 +80,10 @@ public class Member extends BaseEntity implements UserDetails {
     }
 
     public Email getEmail() {
-        Email email = this.emails.get(this.emails.size() - 1);
+        int size = this.emails.size();
+        if (size < 1)
+            return null;
+        Email email = this.emails.get(size - 1);
         if (email.getIsDeleted())
             return null;
         return email;

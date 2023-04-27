@@ -26,9 +26,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "SELECT *" +
             "FROM post p " +
-            "WHERE p.dorm_category = :dormCategory AND " +
-            "p.created_at BETWEEN DATE_ADD(NOW(), INTERVAL -1 WEEK) AND NOW() AND " +
-            "p.is_deleted = 0 " +
+            "WHERE p.dorm_category = :dormCategory " +
+            "AND p.created_at BETWEEN DATE_ADD(DATE_SUB(NOW(), INTERVAL 1 WEEK), INTERVAL 9 HOUR) AND DATE_ADD(NOW(), INTERVAL 9 HOUR) " +
+            "AND p.is_deleted = 0 " +
             "ORDER BY p.post_liked_cnt DESC, p.created_at DESC " +
             "LIMIT 1", nativeQuery = true)
     Post findTopPostByDormCategory(@Param("dormCategory") Character dormCategory);

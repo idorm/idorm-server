@@ -29,13 +29,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { CustomException.class })
     protected ResponseEntity<DefaultExceptionResponseDto> handleCustomException(CustomException e) {
 
-        if (e.getExceptionCode().getHttpStatus().equals(INTERNAL_SERVER_ERROR)) {
-            System.out.println("-------------------------");
-            System.out.println("-------------------------");
-            System.out.println("-------------------------");
-            System.out.println("센트리 알람 날려~~~~~~");
+        if (e.getExceptionCode().getHttpStatus().equals(INTERNAL_SERVER_ERROR))
             Sentry.captureException(e);
-        }
 
         return DefaultExceptionResponseDto.exceptionResponse(e.getExceptionCode());
     }

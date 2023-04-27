@@ -1,46 +1,59 @@
-//package idorm.idormServer.calendar.domain;
-//
-//import idorm.idormServer.common.BaseEntity;
-//import lombok.AccessLevel;
-//import lombok.Getter;
-//import lombok.NoArgsConstructor;
-//import javax.persistence.*;
-//import java.time.LocalDateTime;
-//
-//@Entity
-//@Getter
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
-//public class Calendar extends BaseEntity {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long calendarId;
-//    private Long memberId;
-//    private String url;
-//    private String title;
-//    private String content;
-//
-//    private LocalDateTime startTime;
-//    private LocalDateTime endTime;
-//    private String imageUrl;
-//    private String notificationYn;
-//    private String officialYn;
-//    private String together;
-//
-//    public Calendar(Long calendarId, Long memberId, String url, String title,
-//                    String content, LocalDateTime startTime, LocalDateTime endTime,
-//                    String imageUrl, String notificationYn, String officialYn, String together) {
-//        this.calendarId = calendarId;
-//        this.memberId = memberId;
-//        this.url = url;
-//        this.title = title;
-//        this.content = content;
-//        this.startTime = startTime;
-//        this.endTime = endTime;
-//        this.imageUrl = imageUrl;
-//        this.notificationYn = notificationYn;
-//        this.officialYn = officialYn;
-//        this.together = together;
-//        this.setIsDeleted(false);
-//    }
-//}
+package idorm.idormServer.calendar.domain;
+
+import idorm.idormServer.common.BaseEntity;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Calendar extends BaseEntity {
+
+    @Id
+    @Column(name = "calendar_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Boolean isDorm1Yn;
+    private Boolean isDorm2Yn;
+    private Boolean isDorm3Yn;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private LocalTime startTime;
+    private String content;
+    private String location;
+    private String url;
+
+    @Builder
+    public Calendar(Boolean isDorm1Yn,
+                    Boolean isDorm2Yn,
+                    Boolean isDorm3Yn,
+                    LocalDate startDate,
+                    LocalDate endDate,
+                    LocalTime startTime,
+                    String content,
+                    String location,
+                    String url) {
+        this.isDorm1Yn = isDorm1Yn;
+        this.isDorm2Yn = isDorm2Yn;
+        this.isDorm3Yn = isDorm3Yn;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.content = content;
+        this.location = location;
+        this.url = url;
+
+        this.setIsDeleted(false);
+    }
+
+    public void delete() {
+        this.setIsDeleted(true);
+    }
+}

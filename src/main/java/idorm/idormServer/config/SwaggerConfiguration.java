@@ -1,6 +1,7 @@
 package idorm.idormServer.config;
 
 import com.fasterxml.classmate.TypeResolver;
+import idorm.idormServer.calendar.dto.CalendarDefaultResponseDto;
 import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
 import idorm.idormServer.community.dto.comment.CommentParentResponseDto;
 import idorm.idormServer.community.dto.post.PostAbstractResponseDto;
@@ -42,7 +43,8 @@ public class SwaggerConfiguration {
                         typeResolver.resolve(PostAbstractResponseDto.class),
                         typeResolver.resolve(PostOneResponseDto.class),
                         typeResolver.resolve(CommentDefaultResponseDto.class),
-                        typeResolver.resolve(CommentParentResponseDto.class)
+                        typeResolver.resolve(CommentParentResponseDto.class),
+                        typeResolver.resolve(CalendarDefaultResponseDto.class)
                         )
                 .useDefaultResponseMessages(false)
                 .select()

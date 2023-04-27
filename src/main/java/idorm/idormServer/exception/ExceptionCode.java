@@ -43,6 +43,7 @@ public enum ExceptionCode {
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
 
     ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(BAD_REQUEST, "매칭정보가 비공개 입니다."),
+    DATE_SET_INVALID(BAD_REQUEST, "시작일자가 종료일자보다 빠르거나 같아야 합니다."),
 
     /**
      * 401 UNAUTHORIZED : 인증되지 않은 사용자
@@ -77,7 +78,7 @@ public enum ExceptionCode {
     POSTPHOTO_NOT_FOUND(NOT_FOUND, "등록된 게시글 사진이 없습니다."),
     MEMBERPHOTO_NOT_FOUND(NOT_FOUND, "등록된 프로필 사진이 없습니다."),
     LIKED_NOT_FOUND(NOT_FOUND, "등록된 공감이 없습니다."),
-    CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 캘린더 정보가 없습니다."),
+    CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 일정 정보가 없습니다."),
 
     DELETED_POST(NOT_FOUND, "삭제된 게시글 입니다."),
     DELETED_COMMENT(NOT_FOUND, "삭제된 댓글 입니다."),
