@@ -12,7 +12,7 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
     Optional<Calendar> findByIdAndIsDeletedIsFalse(Long id);
 
     @Query(value = "SELECT * " +
-            "FROM Calendar c " +
+            "FROM calendar c " +
             "WHERE c.start_date LIKE :yearMonth " +
             "AND c.is_deleted = 0", nativeQuery = true)
     List<Calendar>  findByIsDeletedIsFalseAndStartDateLike(String yearMonth);
