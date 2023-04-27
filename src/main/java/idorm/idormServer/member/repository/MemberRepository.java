@@ -47,16 +47,16 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Modifying
     @Transactional
     @Query(value = "DELETE " +
-            "FROM liked_members l " +
-            "WHERE l.member_id = :memberId || " +
-            "l.liked_member = :memberId", nativeQuery = true)
+            "FROM liked_members " +
+            "WHERE liked_members.member_id = :memberId || " +
+            "liked_members.liked_member = :memberId", nativeQuery = true)
     void deleteAllLikedMembersByDeletedMember(@Param("memberId") Long deletedMemberId);
 
     @Modifying
     @Transactional
     @Query(value = "DELETE " +
-            "FROM disliked_members d " +
-            "WHERE d.member_id = :memberId || " +
-            "d.disliked_member = :memberId", nativeQuery = true)
+            "FROM disliked_members " +
+            "WHERE disliked_members.member_id = :memberId || " +
+            "disliked_members.disliked_member = :memberId", nativeQuery = true)
     void deleteAllDislikedMembersByDeletedMember(@Param("memberId") Long deletedMemberId);
 }

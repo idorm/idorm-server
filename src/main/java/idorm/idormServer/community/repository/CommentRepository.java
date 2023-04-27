@@ -30,9 +30,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      * 부모 댓글 식별자와 게시글 식별자로 해당하는 댓글이 있는지 확인
      */
     boolean existsByIdAndPostId(Long commentId, Long postId);
-
-    /**
-     * 멤버가 작성한 삭제된 댓글을 포함한 모든 댓글 반환
-     */
-    List<Comment> findAllByMemberId(Long memberId);
 }
