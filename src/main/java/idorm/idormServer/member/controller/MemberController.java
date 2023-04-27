@@ -9,6 +9,7 @@ import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.MemberService;
+import idorm.idormServer.member.service.MemberServiceFacade;
 import idorm.idormServer.photo.service.MemberPhotoService;
 import idorm.idormServer.photo.service.PhotoService;
 import io.swagger.annotations.Api;
@@ -48,6 +49,7 @@ public class MemberController {
     private final EmailService emailService;
     private final PhotoService photoService;
     private final MemberPhotoService memberPhotoService;
+    private final MemberServiceFacade memberServiceFacade;
 
     @Value("${DB_NAME}")
     private String ENV_USERNAME;
@@ -119,9 +121,7 @@ public class MemberController {
         emailService.isExistingRegisteredEmail(request.getEmail());
         memberService.isExistingNickname(request.getNickname());
 
-        Member member = memberService.save(request.toMemberEntity(email, passwordEncoder.encode(request.getPassword())));
-
-        emailService.updateIsJoined(email, member);
+        Member member = memberServiceFacade.saveMember(request, email);
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
 
@@ -163,10 +163,7 @@ public class MemberController {
         photoService.validateFileExistence(file);
         photoService.validateFileType(file);
 
-        if (member.getMemberPhoto() != null)
-            memberPhotoService.delete(member.getMemberPhoto());
-
-        memberPhotoService.createMemberPhoto(member, file);
+        memberServiceFacade.saveMemberPhoto(member, file);
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -234,8 +231,7 @@ public class MemberController {
 
         emailService.validateIsPossibleUpdatePassword(email);
 
-        memberService.updatePassword(email.getMember(), passwordEncoder.encode(request.getPassword()));
-        emailService.updateIsPossibleUpdatePassword(email, false);
+        memberServiceFacade.updatePassword(email, request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -301,7 +297,7 @@ public class MemberController {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(memberId);
 
-        memberService.deactivateMember(member);
+        memberServiceFacade.deleteMember(member);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

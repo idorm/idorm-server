@@ -11,6 +11,7 @@ import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
 import idorm.idormServer.community.dto.post.PostAbstractResponseDto;
 import idorm.idormServer.community.dto.post.PostOneResponseDto;
 import idorm.idormServer.community.service.CommentService;
+import idorm.idormServer.community.service.CommunityServiceFacade;
 import idorm.idormServer.community.service.PostLikedMemberService;
 import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.community.dto.post.PostSaveRequestDto;
@@ -63,6 +64,7 @@ public class CommunityController {
     private final CommentService commentService;
     private final PostPhotoService postPhotoService;
     private final FCMService fcmService;
+    private final CommunityServiceFacade communityServiceFacade;
 
     @ApiOperation(value = "기숙사별 홈화면 게시글 목록 조회", notes = "- 페이징 적용으로 page는 페이지 번호를 의미합니다.\n " +
             "- page는 0부터 시작하며 서버에서 10개 단위로 페이징해서 반환합니다.\n " +
@@ -257,10 +259,7 @@ public class CommunityController {
         postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
         postService.validatePostPhotoCountExceeded(request.getFiles().size());
 
-        Post post = postService.save(request.toEntity(member));
-
-        if (request.getFiles().size() != 0)
-            postPhotoService.savePostPhotos(post, request.getFiles());
+        Post post = communityServiceFacade.savePost(member, request);
 
         PostOneResponseDto response = new PostOneResponseDto(post);
 
@@ -322,14 +321,7 @@ public class CommunityController {
         postService.validatePostPhotoCountExceeded(savedPostPhotos.size() - deletePostPhotos.size()
                 + request.getFiles().size());
 
-        postService.updatePost(post,
-                request.getTitle(),
-                request.getContent(),
-                request.getIsAnonymous(),
-                deletePostPhotos);
-
-        if (request.getFiles().size() != 0)
-            postPhotoService.savePostPhotos(post, request.getFiles());
+        communityServiceFacade.updatePost(post, request, deletePostPhotos);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -486,8 +478,7 @@ public class CommunityController {
 
         PostLikedMember postLikedMember = postLikedMemberService.findOneByPostAndMember(post, member);
 
-        postLikedMemberService.decrementLikedCountsOfPost(post);
-        postLikedMemberService.delete(postLikedMember);
+        communityServiceFacade.deletePostLikes(post, postLikedMember);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -528,19 +519,7 @@ public class CommunityController {
         List<PostLikedMember> postLikedMembersFromPost = postLikedMemberService.findAllByPost(post);
         List<PostPhoto> postPhotosFromPost = postPhotoService.findAllByPost(post);
 
-        if (postLikedMembersFromPost != null) {
-            for (PostLikedMember postLikedMember : postLikedMembersFromPost) {
-                postLikedMemberService.delete(postLikedMember);
-            }
-        }
-        
-        if (postPhotosFromPost != null) {
-            for (PostPhoto postPhoto : postPhotosFromPost) {
-                postPhotoService.delete(postPhoto);
-            }
-        }
-        
-        postService.delete(post);
+        communityServiceFacade.deletePost(post, postLikedMembersFromPost, postPhotosFromPost);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -587,10 +566,9 @@ public class CommunityController {
         if(request.getParentCommentId() != null)
             commentService.isExistCommentFromPost(postId, request.getParentCommentId());
 
-        Comment comment = commentService.save(request.toEntity(member, post));
+        Comment comment = communityServiceFacade.saveComment(member, post, request);
 
         if(request.getParentCommentId() != null) { // 대댓글 달림, 게시글 주인 /부모댓글 주인 / 대댓글 단 사람들한테 알람
-            commentService.saveParentCommentId(request.getParentCommentId(), comment);
 
             String alertTitle = "새로운 대댓글이 달렸어요: ";
 

@@ -27,9 +27,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final EmailService emailService;
-    private final MemberPhotoService memberPhotoService;
-    private final MatchingService matchingService;
-    private final MatchingInfoService matchingInfoService;
 
     /**
      * DB에 회원 저장 |
@@ -54,29 +51,6 @@ public class MemberService {
             member.delete();
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 회원 탈퇴 |
-     */
-    @Transactional
-    public void deactivateMember(Member member) {
-        matchingService.removeAllLikedMembersByDeletedMember(member);
-        matchingService.removeAllDislikedMembersByDeletedMember(member);
-
-        if (member.getAllMatchingInfo() != null) {
-            matchingInfoService.deleteData(member);
-            matchingInfoService.delete(member.getMatchingInfo());
-        }
-
-        emailService.deleteData(member.getEmail());
-        emailService.delete(member.getEmail());
-        delete(member);
-
-        if (member.getAllMemberPhoto() != null) {
-            memberPhotoService.deleteFromS3(member);
-            memberPhotoService.delete(member.getMemberPhoto());
         }
     }
 

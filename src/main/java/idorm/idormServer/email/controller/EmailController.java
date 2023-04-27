@@ -5,6 +5,7 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.dto.EmailAuthRequestDto;
 import idorm.idormServer.email.dto.EmailVerifyRequestDto;
 import idorm.idormServer.email.service.EmailService;
+import idorm.idormServer.email.service.EmailServiceFacade;
 import idorm.idormServer.exception.CustomException;
 
 import io.swagger.annotations.Api;
@@ -33,6 +34,7 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 public class EmailController {
 
     private final EmailService emailService;
+    private final EmailServiceFacade emailServiceFacade;
 
     @ApiOperation(value = "[회원가입용] 이메일 인증코드 발송")
     @ApiResponses(value = {
@@ -56,28 +58,9 @@ public class EmailController {
         emailService.validateEmailDomain(request.getEmail());
 
         Optional<Email> existingEmail = emailService.isExistingEmail(request.getEmail());
-
-        if (existingEmail.isPresent()) {
-
-            if (existingEmail.get().getIsCheck()) {
-                if (existingEmail.get().getMember() != null) {
-                    if (!existingEmail.get().getMember().getIsDeleted()) {
-                        throw new CustomException(null, DUPLICATE_EMAIL);
-                    } else {
-                        emailService.delete(existingEmail.get());
-                    }
-                } else {
-                    emailService.delete(existingEmail.get());
-                }
-            } else {
-                emailService.delete(existingEmail.get());
-            }
-        }
-
         String verificationCode = emailService.createVerificationCode();
-        Email email = emailService.save(request.toEntity(verificationCode));
 
-        emailService.sendVerificationEmail(email);
+        emailServiceFacade.sendAuthEmail(existingEmail, request, verificationCode);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -112,25 +95,7 @@ public class EmailController {
 
         Optional<Email> existingEmail = emailService.isExistingEmail(requestEmail);
 
-        if (existingEmail.isEmpty())
-            throw new CustomException(null, EMAIL_NOT_FOUND);
-        else {
-
-            if (existingEmail.get().getIsCheck()) {
-                if (existingEmail.get().getMember() != null) {
-                    if (!existingEmail.get().getMember().getIsDeleted()) {
-                        throw new CustomException(null, DUPLICATE_MEMBER);
-                    } else {
-                        emailService.delete(existingEmail.get());
-                    }
-                } else {
-                    emailService.delete(existingEmail.get());
-                }
-            }
-        }
-
-        emailService.validateEmailIsExpired(existingEmail.get().getCreatedAt());
-        emailService.validateEmailCodeIsValid(existingEmail.get(), request.getCode());
+        emailServiceFacade.verifyCode(existingEmail, request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -161,11 +126,7 @@ public class EmailController {
         Email foundEmail = emailService.findMemberByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
 
-        String verificationCode = emailService.createVerificationCode();
-        emailService.updateVerificationCode(foundEmail, verificationCode);
-
-        emailService.sendVerificationEmail(foundEmail);
-        emailService.updateIsPossibleUpdatePassword(foundEmail, false);
+        emailServiceFacade.findPassword(foundEmail);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
