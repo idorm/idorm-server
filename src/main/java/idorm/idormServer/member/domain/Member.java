@@ -100,6 +100,11 @@ public class Member extends BaseEntity implements UserDetails {
         return matchingInfo;
     }
 
+    // 회원 탈퇴 시 사용
+    public List<MatchingInfo> getAllMatchingInfo() {
+        return this.matchingInfos;
+    }
+
     public MemberPhoto getMemberPhoto() {
         int profilePhotoSize = this.memberPhotos.size();
         if (profilePhotoSize == 0)
@@ -109,6 +114,13 @@ public class Member extends BaseEntity implements UserDetails {
         if (memberPhoto.getIsDeleted())
             return null;
         return memberPhoto;
+    }
+
+    /**
+     * 회원 탈퇴 시 사용
+     */
+    public List<MemberPhoto> getAllMemberPhoto() {
+        return this.memberPhotos;
     }
 
     public void updatePassword(String password) {

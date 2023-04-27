@@ -8,6 +8,7 @@ import idorm.idormServer.matching.service.MatchingService;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
+import idorm.idormServer.photo.domain.MemberPhoto;
 import idorm.idormServer.photo.service.MemberPhotoService;
 import lombok.RequiredArgsConstructor;
 
@@ -64,8 +65,8 @@ public class MemberService {
         matchingService.removeAllLikedMembersByDeletedMember(member);
         matchingService.removeAllDislikedMembersByDeletedMember(member);
 
-        if (member.getMatchingInfo() != null) {
-            matchingInfoService.deleteData(member.getMatchingInfo());
+        if (member.getAllMatchingInfo() != null) {
+            matchingInfoService.deleteData(member);
             matchingInfoService.delete(member.getMatchingInfo());
         }
 
@@ -73,7 +74,7 @@ public class MemberService {
         emailService.delete(member.getEmail());
         delete(member);
 
-        if (member.getMemberPhoto() != null) {
+        if (member.getAllMemberPhoto() != null) {
             memberPhotoService.deleteFromS3(member);
             memberPhotoService.delete(member.getMemberPhoto());
         }

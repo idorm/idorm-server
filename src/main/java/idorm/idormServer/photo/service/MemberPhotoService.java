@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
@@ -78,22 +79,26 @@ public class MemberPhotoService {
     @Transactional
     public void deleteFromS3(Member member) {
 
-        String photoUrl = member.getMemberPhoto().getPhotoUrl();
+        List<MemberPhoto> memberPhotos = member.getAllMemberPhoto();
 
-        if (photoUrl == null)
-            return;
+        for (MemberPhoto memberPhoto : memberPhotos) {
+            String photoUrl = memberPhoto.getPhotoUrl();
 
-        int filePathFirstIndexFromPhotoUrl = photoUrl.indexOf("profile-photo/");
-        if (filePathFirstIndexFromPhotoUrl == -1)
-            return;
+            if (photoUrl == null)
+                continue;
 
-        try {
-            member.getMemberPhoto().removePhotoUrl();
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
+            int filePathFirstIndexFromPhotoUrl = photoUrl.indexOf("profile-photo/");
+            if (filePathFirstIndexFromPhotoUrl == -1)
+                continue;
+
+            try {
+                memberPhoto.removePhotoUrl();
+            } catch (RuntimeException e) {
+                throw new CustomException(e, SERVER_ERROR);
+            }
+
+            String filePath = photoUrl.substring(filePathFirstIndexFromPhotoUrl);
+            photoService.deleteFileFromS3(memberPhotoBucketName, filePath);
         }
-
-        String filePath = photoUrl.substring(filePathFirstIndexFromPhotoUrl);
-        photoService.deleteFileFromS3(memberPhotoBucketName, filePath);
     }
 }

@@ -53,9 +53,11 @@ public class MatchingInfoService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deleteData(MatchingInfo matchingInfo) {
+    public void deleteData(Member member) {
         try {
-            matchingInfo.deleteData();
+            for (MatchingInfo matchingInfo : member.getAllMatchingInfo()) {
+                matchingInfo.deleteData();
+            }
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
