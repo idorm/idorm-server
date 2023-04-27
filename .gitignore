@@ -40,8 +40,8 @@ out/
 src/main/resources/serviceAccountKey.json
 
 ### Logging File ###
-ROLLING_LOGGING_FILE_PATH_IS_UNDEFINED
-ERROR_LOGGING_FILE_PATH_IS_UNDEFINED
+LOGGING_ROLLING_FILE_PATH_IS_UNDEFINED
+LOGGING_ERROR_FILE_PATH_IS_UNDEFINED
 idorm-rolling.log
 
 ### Not Useed

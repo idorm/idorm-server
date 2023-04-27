@@ -5,8 +5,8 @@
     <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
     <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
 
-    <property name="LOGGING_ROLLING_FILE_PATH" value="${ROLLING_LOGGING_FILE_PATH}" />
-    <property name="LOGGING_ERROR_FILE_PATH" value="${ERROR_LOGGING_FILE_PATH}" />
+    <property name="LOGGING_ROLLING_FILE_PATH" value="${LOGGING_ROLLING_FILE_PATH}" />
+    <property name="LOGGING_ERROR_FILE_PATH" value="${LOGGING_ERROR_FILE_PATH}" />
     <property name="ROLLING_LOG_FILENAME" value="idorm-rolling" />
     <property name="ERROR_LOG_FILENAME" value="idorm-error" />
     <property name="FILE_LOG_LEVEL" value="info" />
