@@ -133,7 +133,7 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "프로필 사진 저장")
+    @ApiOperation(value = "프로필 사진 저장", notes = "- 기존 프로필 사진을 삭제 후 새로운 프로필 사진을 저장합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",

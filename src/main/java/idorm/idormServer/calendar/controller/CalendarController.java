@@ -37,7 +37,7 @@ public class CalendarController {
             @ApiResponse(
                     responseCode = "201",
                     description = "CALENDAR_SAVED",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "403",
@@ -52,12 +52,14 @@ public class CalendarController {
     ) {
         calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
 
-        calendarService.save(request.toEntity());
+        Calendar calendar = calendarService.save(request.toEntity());
+        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
                         .responseCode("CALENDAR_SAVED")
                         .responseMessage("Calendar 일정 저장 완료")
+                        .data(response)
                         .build());
     }
 

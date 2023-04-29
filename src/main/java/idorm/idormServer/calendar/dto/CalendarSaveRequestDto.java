@@ -51,18 +51,22 @@ public class CalendarSaveRequestDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    @ApiModelProperty(position = 6, notes = "string", value = "시작시간", example = "15:43:01")
+    @ApiModelProperty(position = 6, notes = "string", value = "시작시간", example = "15:40:00")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
-    @ApiModelProperty(position = 7, required = true, example = "내용", value = "기숙사 화재 훈련")
+
+    @ApiModelProperty(position = 6, notes = "string", value = "종료시간", example = "16:50:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    private LocalTime endTime;
+    @ApiModelProperty(position = 8, required = true, example = "내용", value = "기숙사 화재 훈련")
     @NotBlank(message = "내용을 입력해 주세요.", groups = ValidationSequence.NotBlank.class)
     private String content;
 
-    @ApiModelProperty(position = 8, example = "장소", value = "3기숙사 1층")
+    @ApiModelProperty(position = 9, example = "장소", value = "3기숙사 1층")
     @Size(max = 50, message = "장소는 ~50자 이내로 입력해 주세요.", groups = ValidationSequence.Size.class)
     private String location;
 
-    @ApiModelProperty(position = 9, example = "참고용 웹 링크",
+    @ApiModelProperty(position = 10, example = "참고용 웹 링크",
             value = "https://www.inu.ac.kr/user/indexMain.do?command=&siteId=dorm")
     @Size(max = 300, message = "링크는 ~300자 이내로 입력해 주세요.", groups = ValidationSequence.Size.class)
     private String url;
@@ -75,6 +79,7 @@ public class CalendarSaveRequestDto {
                 .startDate(this.startDate)
                 .endDate(this.endDate)
                 .startTime(this.startTime)
+                .endTime(this.endTime)
                 .content(this.content)
                 .location(this.location)
                 .url(this.url)

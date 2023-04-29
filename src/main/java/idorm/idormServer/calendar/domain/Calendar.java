@@ -26,6 +26,7 @@ public class Calendar extends BaseEntity {
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalTime startTime;
+    private LocalTime endTime;
     private String content;
     private String location;
     private String url;
@@ -37,6 +38,7 @@ public class Calendar extends BaseEntity {
                     LocalDate startDate,
                     LocalDate endDate,
                     LocalTime startTime,
+                    LocalTime endTime,
                     String content,
                     String location,
                     String url) {
@@ -46,6 +48,7 @@ public class Calendar extends BaseEntity {
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
+        this.endTime = endTime;
         this.content = content;
         this.location = location;
         this.url = url;
