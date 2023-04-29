@@ -28,7 +28,7 @@ public class Scheduler {
     private final PostService postService;
 
     @Transactional
-    @Scheduled(cron = "* 55 23 * * 1,2,3,4,5") // UTC 23:55 ASIA/SEOUL 8:55
+    @Scheduled(cron = "0 55 23 ? * MON,TUE,WED,THU,SUN") // UTC 23:55 ASIA/SEOUL 8:55
     public void alertTopPosts() {
 
         List<Member> members = memberService.findAll();
