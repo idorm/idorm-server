@@ -59,7 +59,7 @@ public class CommentDefaultResponseDto {
         this.createdAt = comment.getCreatedAt();
         this.isAnonymous = comment.getIsAnonymous();
 
-        if (!comment.getPost().getIsDeleted())
+        if (comment.getPost().getIsDeleted())
             this.postId = null;
 
         if (comment.getMember().getIsDeleted()) {
