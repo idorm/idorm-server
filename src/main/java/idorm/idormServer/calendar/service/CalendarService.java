@@ -71,6 +71,30 @@ public class CalendarService {
     }
 
     /**
+     * 1 기숙사 오늘의 일정 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<Calendar> findTodayCalendarsFromDorm1() {
+        return calendarRepository.findCalendarsByDorm1AndTodayStartDate();
+    }
+
+    /**
+     * 2 기숙사 오늘의 일정 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<Calendar> findTodayCalendarsFromDorm2() {
+        return calendarRepository.findCalendarsByDorm2AndTodayStartDate();
+    }
+
+    /**
+     * 3 기숙사 오늘의 일정 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<Calendar> findTodayCalendarsFromDorm3() {
+        return calendarRepository.findCalendarsByDorm3AndTodayStartDate();
+    }
+
+    /**
      * 일정 시작 및 종료 일자 검증 |
      * 400(DATE_SET_INVALID)
      */

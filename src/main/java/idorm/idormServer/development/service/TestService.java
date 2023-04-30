@@ -1,6 +1,8 @@
 package idorm.idormServer.development.service;
 
+import idorm.idormServer.calendar.domain.Calendar;
 import idorm.idormServer.calendar.repository.CalendarRepository;
+import idorm.idormServer.calendar.service.CalendarService;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.CommentRepository;
@@ -12,6 +14,9 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.repository.EmailRepository;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.fcm.domain.NotifyType;
+import idorm.idormServer.fcm.dto.FcmRequestDto;
+import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.matchingInfo.domain.Gender;
 import idorm.idormServer.matchingInfo.domain.JoinPeriod;
@@ -26,6 +31,7 @@ import idorm.idormServer.photo.repository.PostPhotoRepository;
 import idorm.idormServer.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,12 +68,74 @@ public class TestService {
     private final MatchingInfoService matchingInfoService;
     private final PostService postService;
     private final CommentService commentService;
+    private final CalendarService calendarService;
+    private final FCMService fcmService;
 
     @Value("${DB_USERNAME}")
     private String id;
 
     @Value("${ADMIN_PASSWORD}")
     private String password;
+
+    @Transactional
+    public void alertDorm3() {
+        List<Member> members = memberService.findAllOfDorm3();
+
+        Post topPost = postService.findTopPost(DormCategory.DORM3);
+        List<Calendar> todayCalendars = calendarService.findTodayCalendarsFromDorm3();
+
+        if (topPost == null && todayCalendars == null)
+            return;
+
+        List<FcmRequestDto> fcmMessages = createFcmMessages("3", topPost, todayCalendars);
+        sendFcmMessage(members, fcmMessages);
+    }
+
+    public List<FcmRequestDto> createFcmMessages(String dormCategory, Post topPost, List<Calendar> todayCalendars) {
+        List<FcmRequestDto> fcmMessages = new ArrayList<>();
+
+        if (topPost != null) {
+            FcmRequestDto topPostFcmMessage = FcmRequestDto.builder()
+                    .notification(FcmRequestDto.Notification.builder()
+                            .notifyType(NotifyType.TOPPOST)
+                            .contentId(topPost.getId())
+                            .title("어제 " + dormCategory + " 기숙사의 인기 게시글 입니다.")
+                            .content(topPost.getContent())
+                            .build())
+                    .build();
+            fcmMessages.add(topPostFcmMessage);
+        }
+        if (todayCalendars != null) {
+            for (Calendar calendar : todayCalendars) {
+                FcmRequestDto calendarFcmMessage = FcmRequestDto.builder()
+                        .notification(FcmRequestDto.Notification.builder()
+                                .notifyType(NotifyType.CALENDAR)
+                                .contentId(calendar.getId())
+                                .title("오늘의 " + dormCategory + " 기숙사 일정 입니다.")
+                                .content(calendar.getContent())
+                                .build())
+                        .build();
+                fcmMessages.add(calendarFcmMessage);
+            }
+        }
+        return fcmMessages;
+    }
+
+    public void sendFcmMessage(List<Member> members, List<FcmRequestDto> fcmMessages) {
+        for (Member member : members) {
+            if (member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
+                memberService.deleteFcmToken(member);
+                continue;
+            }
+
+            String fcmToken = member.getFcmToken();
+
+            for (FcmRequestDto request : fcmMessages) {
+                request.setToken(fcmToken);
+                fcmService.sendMessage(member, request);
+            }
+        }
+    }
 
     /**
      * 데이커베이스 초기화 |

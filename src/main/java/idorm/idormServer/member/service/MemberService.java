@@ -5,6 +5,7 @@ import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
 
 import idorm.idormServer.matching.service.MatchingService;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
@@ -130,13 +131,39 @@ public class MemberService {
     }
 
     /**
-     * FCM용 전체 회원 조회 |
-     * 404(MEMBER_NOT_FOUND)
+     * FCM용 1 기숙사 회원 조회 |
+     * 500(SERVER_ERROR)
      */
-    public List<Member> findAll() {
+    public List<Member> findAllOfDorm1() {
 
         try {
-            return memberRepository.findByIdNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(1L);
+            return memberRepository.findMembersByDormCategoryAndFcmIsNotNull(DormCategory.DORM1.getType());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * FCM용 2 기숙사 회원 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<Member> findAllOfDorm2() {
+
+        try {
+            return memberRepository.findMembersByDormCategoryAndFcmIsNotNull(DormCategory.DORM2.getType());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * FCM용 3 기숙사 회원 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<Member> findAllOfDorm3() {
+
+        try {
+            return memberRepository.findMembersByDormCategoryAndFcmIsNotNull(DormCategory.DORM3.getType());
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }

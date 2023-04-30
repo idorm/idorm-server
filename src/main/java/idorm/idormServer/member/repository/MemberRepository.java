@@ -16,7 +16,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsByNicknameAndIsDeletedIsFalse(String nickname);
 
-    List<Member> findByIdNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(Long id);
+    @Query(value = "SELECT m " +
+            "FROM Member m, MatchingInfo mi " +
+            "WHERE mi.dormCategory = :dormCategory " +
+            "AND m.id != 1 " +
+            "AND m.isDeleted = false " +
+            "AND m.fcmToken != null")
+    List<Member> findMembersByDormCategoryAndFcmIsNotNull(@Param("dormCategory") Character dormCategory);
 
     @Query(value = "SELECT liked_member " +
             "FROM liked_members d " +

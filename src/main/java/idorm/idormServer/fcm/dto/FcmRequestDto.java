@@ -1,10 +1,7 @@
 package idorm.idormServer.fcm.dto;
 
 import idorm.idormServer.fcm.domain.NotifyType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
@@ -12,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FcmRequestDto {
 
+    @Setter
     private String token;
     private Notification notification;
     @Getter

@@ -108,4 +108,19 @@ public class TestController {
 
         return ResponseEntity.status(204).build();
     }
+
+    @ApiOperation(value = "[테스트용] 3 기숙사 오전 푸시알림 기능 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "OK",
+                    content = @Content(schema = @Schema(implementation = Object.class))),
+            @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
+    })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @PostMapping("/fcm/scheduled")
+    public ResponseEntity<DefaultResponseDto<Object>> sendScheduledFcmMessage() {
+
+        testService.alertDorm3();
+
+        return ResponseEntity.status(204).build();
+    }
 }

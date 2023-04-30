@@ -1,7 +1,7 @@
 package idorm.idormServer.fcm.domain;
 
 public enum NotifyType {
-    ANNOUNCEMENT,
+    CALENDAR,
     COMMENT,
     SUBCOMMENT,
     TOPPOST
