@@ -5,7 +5,6 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.dto.EmailAuthRequestDto;
 import idorm.idormServer.email.dto.EmailVerifyRequestDto;
 import idorm.idormServer.email.service.EmailService;
-import idorm.idormServer.email.service.EmailServiceFacade;
 import idorm.idormServer.exception.CustomException;
 
 import io.swagger.annotations.Api;
@@ -34,7 +33,6 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 public class EmailController {
 
     private final EmailService emailService;
-    private final EmailServiceFacade emailServiceFacade;
 
     @ApiOperation(value = "[회원가입용] 이메일 인증코드 발송")
     @ApiResponses(value = {

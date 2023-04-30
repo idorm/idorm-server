@@ -27,7 +27,9 @@ public class MatchingInfoService {
     @Transactional
     public MatchingInfo save(MatchingInfo matchingInfo) {
         try {
-            return matchingInfoRepository.save(matchingInfo);
+            MatchingInfo savedMatchingInfo = matchingInfoRepository.save(matchingInfo);
+            savedMatchingInfo.getMember().updateDormCategory(savedMatchingInfo.getDormCategory());
+            return savedMatchingInfo;
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -42,6 +44,7 @@ public class MatchingInfoService {
 
         try {
             matchingInfo.delete();
+            matchingInfo.getMember().updateDormCategory(null);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -86,6 +89,7 @@ public class MatchingInfoService {
 
         try {
             updateMatchingInfo.updateMatchingInfo(request);
+            updateMatchingInfo.getMember().updateDormCategory(updateMatchingInfo.getDormCategory());
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }

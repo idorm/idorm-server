@@ -28,7 +28,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'io.sentry:sentry-spring-boot-starter:6.2.1'
-    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
     implementation 'com.amazonaws:aws-java-sdk-s3'
@@ -38,7 +37,8 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.2'
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+//    developmentOnly 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
+//    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

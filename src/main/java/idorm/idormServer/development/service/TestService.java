@@ -31,7 +31,6 @@ import idorm.idormServer.photo.repository.PostPhotoRepository;
 import idorm.idormServer.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,6 +78,7 @@ public class TestService {
 
     @Transactional
     public void alertDorm3() {
+
         List<Member> members = memberService.findAllOfDorm3();
 
         Post topPost = postService.findTopPost(DormCategory.DORM3);
@@ -615,6 +615,8 @@ public class TestService {
                 .build();
         matchingInfoService.updateMatchingInfoIsPublic(matchingInfo, true);
         matchingInfoService.save(matchingInfo);
+
+        matchingInfo.getMember().updateDormCategory(matchingInfo.getDormCategory());
     }
 
     @Transactional

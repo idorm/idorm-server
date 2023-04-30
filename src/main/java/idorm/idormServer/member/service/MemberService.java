@@ -4,13 +4,9 @@ import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
 
-import idorm.idormServer.matching.service.MatchingService;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
-import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
-import idorm.idormServer.photo.domain.MemberPhoto;
-import idorm.idormServer.photo.service.MemberPhotoService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -137,7 +133,7 @@ public class MemberService {
     public List<Member> findAllOfDorm1() {
 
         try {
-            return memberRepository.findMembersByDormCategoryAndFcmIsNotNull(DormCategory.DORM1.getType());
+            return memberRepository.findByDormCategoryAndIdIsNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(DormCategory.DORM1.getType(), 1L);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -150,7 +146,7 @@ public class MemberService {
     public List<Member> findAllOfDorm2() {
 
         try {
-            return memberRepository.findMembersByDormCategoryAndFcmIsNotNull(DormCategory.DORM2.getType());
+            return memberRepository.findByDormCategoryAndIdIsNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(DormCategory.DORM2.getType(), 1L);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -163,7 +159,7 @@ public class MemberService {
     public List<Member> findAllOfDorm3() {
 
         try {
-            return memberRepository.findMembersByDormCategoryAndFcmIsNotNull(DormCategory.DORM3.getType());
+            return memberRepository.findByDormCategoryAndIdIsNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(DormCategory.DORM3.getType(), 1L);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }

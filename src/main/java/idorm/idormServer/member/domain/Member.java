@@ -5,6 +5,7 @@ import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.email.domain.Email;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.MemberPhoto;
 import lombok.*;
@@ -32,6 +33,7 @@ public class Member extends BaseEntity implements UserDetails {
     private LocalDateTime nicknameUpdatedAt;
     private String fcmToken;
     private LocalDate fcmTokenUpdatedAt;
+    private Character dormCategory;
     private Integer reportedCount;
 
     @OneToMany(mappedBy = "member")
@@ -74,6 +76,7 @@ public class Member extends BaseEntity implements UserDetails {
         this.nickname = nickname;
         this.nicknameUpdatedAt = null;
         this.reportedCount = 0;
+        this.dormCategory = null;
         this.roles.add("ROLE_USER");
 
         this.setIsDeleted(false);
@@ -127,6 +130,10 @@ public class Member extends BaseEntity implements UserDetails {
         this.password = password;
     }
 
+    public void updateDormCategory(Character dormCategory) {
+        this.dormCategory = dormCategory;
+    }
+
     public void updateNickname(String nickname) {
         this.nickname = nickname;
         this.nicknameUpdatedAt = LocalDateTime.now();
@@ -163,6 +170,7 @@ public class Member extends BaseEntity implements UserDetails {
     }
 
     public void delete() {
+        this.dormCategory = null;
         this.fcmToken = null;
         this.fcmTokenUpdatedAt = null;
         this.nickname = null;
