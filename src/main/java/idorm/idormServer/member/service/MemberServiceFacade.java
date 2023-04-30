@@ -58,7 +58,7 @@ public class MemberServiceFacade {
         emailService.delete(member.getEmail());
         memberService.delete(member);
 
-        if (member.getAllMemberPhoto() != null) {
+        if (!member.getAllMemberPhoto().isEmpty()) {
             memberPhotoService.deleteFromS3(member);
             memberPhotoService.delete(member.getMemberPhoto());
         }
