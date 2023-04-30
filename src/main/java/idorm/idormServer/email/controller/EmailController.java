@@ -60,7 +60,25 @@ public class EmailController {
         Optional<Email> existingEmail = emailService.isExistingEmail(request.getEmail());
         String verificationCode = emailService.createVerificationCode();
 
-        emailServiceFacade.sendAuthEmail(existingEmail, request, verificationCode);
+        if (existingEmail.isPresent()) {
+
+            if (existingEmail.get().getIsCheck()) {
+                if (existingEmail.get().getMember() != null) {
+                    if (!existingEmail.get().getMember().getIsDeleted()) {
+                        throw new CustomException(null, DUPLICATE_EMAIL);
+                    } else {
+                        emailService.delete(existingEmail.get());
+                    }
+                } else {
+                    emailService.delete(existingEmail.get());
+                }
+            } else {
+                emailService.delete(existingEmail.get());
+            }
+        }
+
+        Email email = emailService.save(request.toEntity(verificationCode));
+        emailService.sendVerificationEmail(email);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -95,7 +113,25 @@ public class EmailController {
 
         Optional<Email> existingEmail = emailService.isExistingEmail(requestEmail);
 
-        emailServiceFacade.verifyCode(existingEmail, request);
+        if (existingEmail.isEmpty())
+            throw new CustomException(null, EMAIL_NOT_FOUND);
+        else {
+
+            if (existingEmail.get().getIsCheck()) {
+                if (existingEmail.get().getMember() != null) {
+                    if (!existingEmail.get().getMember().getIsDeleted()) {
+                        throw new CustomException(null, DUPLICATE_MEMBER);
+                    } else {
+                        emailService.delete(existingEmail.get());
+                    }
+                } else {
+                    emailService.delete(existingEmail.get());
+                }
+            }
+        }
+
+        emailService.validateEmailIsExpired(existingEmail.get().getCreatedAt());
+        emailService.validateEmailCodeIsValid(existingEmail.get(), request.getCode());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -126,7 +162,11 @@ public class EmailController {
         Email foundEmail = emailService.findMemberByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
 
-        emailServiceFacade.findPassword(foundEmail);
+        String verificationCode = emailService.createVerificationCode();
+        emailService.updateVerificationCode(foundEmail, verificationCode);
+
+        emailService.sendVerificationEmail(foundEmail);
+        emailService.updateIsPossibleUpdatePassword(foundEmail, false);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

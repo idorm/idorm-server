@@ -39,6 +39,7 @@ public class EmailServiceFacade {
                 emailService.delete(existingEmail.get());
             }
         }
+
         Email email = emailService.save(request.toEntity(verificationCode));
         emailService.sendVerificationEmail(email);
     }
