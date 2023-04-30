@@ -1,10 +1,12 @@
 package idorm.idormServer.development.service;
 
 import idorm.idormServer.calendar.domain.Calendar;
+import idorm.idormServer.calendar.dto.CalendarDefaultResponseDto;
 import idorm.idormServer.calendar.repository.CalendarRepository;
 import idorm.idormServer.calendar.service.CalendarService;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.dto.post.PostAbstractResponseDto;
 import idorm.idormServer.community.repository.CommentRepository;
 import idorm.idormServer.community.repository.PostLikedMemberRepository;
 import idorm.idormServer.community.repository.PostRepository;
@@ -41,6 +43,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
@@ -135,6 +138,17 @@ public class TestService {
                 fcmService.sendMessage(member, request);
             }
         }
+    }
+
+    /**
+     * 3 기숙사 오늘의 일정 조회 |
+     */
+    public List<CalendarDefaultResponseDto> findTodayCalendarOfDorm3() {
+
+        List<Calendar> calendars = calendarService.findTodayCalendarsFromDorm3();
+
+        return calendars.stream()
+                .map(c -> new CalendarDefaultResponseDto(c)).collect(Collectors.toList());
     }
 
     /**

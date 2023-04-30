@@ -1,6 +1,7 @@
 package idorm.idormServer.development.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
+import idorm.idormServer.calendar.dto.CalendarDefaultResponseDto;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.development.dto.TestRequestDto;
 import idorm.idormServer.development.service.TestService;
@@ -122,5 +123,24 @@ public class TestController {
         testService.alertDorm3();
 
         return ResponseEntity.status(204).build();
+    }
+
+    @ApiOperation(value = "[테스트용] 3 기숙사 오늘의 일정 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "DORM3_TODAY_CALENDAR_FOUND",
+                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
+    })
+    @PostMapping("/fcm/calendar")
+    public ResponseEntity<DefaultResponseDto<Object>> findTodayCalendarFromDorm3() {
+
+        List<CalendarDefaultResponseDto> responses = testService.findTodayCalendarOfDorm3();
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("DORM3_TODAY_CALENDAR_FOUND")
+                        .responseMessage("3 기숙사 오늘의 일정 조회 완료")
+                        .data(responses)
+                        .build());
     }
 }
