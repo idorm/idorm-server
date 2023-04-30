@@ -1,11 +1,11 @@
-package idorm.idormServer.auth;
+package idorm.idormServer.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import idorm.idormServer.exception.ExceptionCode;
 import io.sentry.Sentry;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,6 +17,7 @@ import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
+@Aspect
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     @Override
@@ -27,6 +28,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (UsernameNotFoundException e) {
+            log.error("[THROWING] ExceptionHandlerFilter | doFilterInternal | throwing = UsernameNotFoundException");
             setExceptionResponse(response, ExceptionCode.UNAUTHORIZED_DELETED_MEMBER);
         }
     }

@@ -1,6 +1,6 @@
 package idorm.idormServer.config;
 
-import idorm.idormServer.auth.ExceptionHandlerFilter;
+import idorm.idormServer.exception.ExceptionHandlerFilter;
 import idorm.idormServer.exception.CustomAccessDeniedHandler;
 import idorm.idormServer.exception.CustomAuthenticationEntryPointHandler;
 import idorm.idormServer.auth.JwtAuthenticationFilter;

@@ -7,7 +7,6 @@ import idorm.idormServer.fcm.dto.FcmRequestDto;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +15,6 @@ import static idorm.idormServer.exception.ExceptionCode.FIREBASE_SERER_ERROR;
 import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
