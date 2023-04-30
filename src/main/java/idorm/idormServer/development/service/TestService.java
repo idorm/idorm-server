@@ -6,7 +6,6 @@ import idorm.idormServer.calendar.repository.CalendarRepository;
 import idorm.idormServer.calendar.service.CalendarService;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.dto.post.PostAbstractResponseDto;
 import idorm.idormServer.community.repository.CommentRepository;
 import idorm.idormServer.community.repository.PostLikedMemberRepository;
 import idorm.idormServer.community.repository.PostRepository;

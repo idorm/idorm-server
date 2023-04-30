@@ -253,7 +253,7 @@ public class MatchingService {
                 throw new CustomException(e, SERVER_ERROR);
             }
 
-            if (likedMember.isEmpty() || !likedMember.get().getMatchingInfo().getIsMatchingInfoPublic())
+            if (likedMember == null || likedMember.isEmpty() || !likedMember.get().getMatchingInfo().getIsMatchingInfoPublic())
                 removeLikedMember(member, memberId);
             else
                 likedMembers.add(likedMember.get());
@@ -289,7 +289,8 @@ public class MatchingService {
                 throw new CustomException(e, SERVER_ERROR);
             }
 
-            if (dislikedMember.isEmpty() || !dislikedMember.get().getMatchingInfo().getIsMatchingInfoPublic())
+            if (dislikedMember == null || dislikedMember.isEmpty() ||
+                    !dislikedMember.get().getMatchingInfo().getIsMatchingInfoPublic())
                 removeDislikedMember(member, memberId);
             else
                 dislikedMembers.add(dislikedMember.get());
