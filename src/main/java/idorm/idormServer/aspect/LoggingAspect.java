@@ -253,7 +253,7 @@ public class LoggingAspect {
 
             if (exception.getExceptionCode().getHttpStatus().equals(INTERNAL_SERVER_ERROR)) {
                 if (exception.getException() != null)
-                    log.error("***** SERVER ERROR DESCRIPTION *****", exception.getException());
+                    log.error("========= SERVER ERROR DESCRIPTION =========", exception.getException());
             }
         } catch (Exception e) {
             throw new CustomException(e, SERVER_ERROR);
