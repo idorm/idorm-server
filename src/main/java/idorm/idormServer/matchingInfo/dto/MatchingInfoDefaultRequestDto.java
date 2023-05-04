@@ -88,7 +88,7 @@ public class MatchingInfoDefaultRequestDto {
     private String openKakaoLink;
 
     @ApiModelProperty(position = 14, example = "ISTP", value = "MBTI")
-    @Size(min = 3, max = 5, message = "mbti는 3~5자로 입력해 주세요.", groups = ValidationSequence.Size.class)
+    @Size(max = 5, message = "mbti는 ~5자로 입력해 주세요.", groups = ValidationSequence.Size.class)
     private String mbti;
 
     @ApiModelProperty(position = 15, example = "적당한 선을 지키면서 친해질 수 있는 룸메이트 구해요 :)", value = "룸메에게 보내는 한마디")
