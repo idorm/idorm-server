@@ -49,9 +49,10 @@ public class MemberServiceFacade {
         matchingService.removeAllLikedMembersByDeletedMember(member);
         matchingService.removeAllDislikedMembersByDeletedMember(member);
 
-        if (member.getAllMatchingInfo() != null) {
+        if (!member.getAllMatchingInfo().isEmpty()) {
             matchingInfoService.deleteData(member);
-            matchingInfoService.delete(member.getMatchingInfo());
+            if (member.getMatchingInfo() != null)
+                matchingInfoService.delete(member.getMatchingInfo());
         }
 
         emailService.deleteData(member.getEmail());
