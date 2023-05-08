@@ -139,7 +139,7 @@ public class CommentService {
     }
 
     /**
-     * 게시글에 특정 댓글의 존재 여부 확인 |
+     * 게시글에 부모 댓글의 존재 여부 확인 |
      * 404(COMMENT_NOT_FOUND)
      */
     public void isExistCommentFromPost(Long postId, Long commentId) {

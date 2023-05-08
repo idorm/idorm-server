@@ -568,77 +568,53 @@ public class CommunityController {
 
         Comment comment = communityServiceFacade.saveComment(member, post, request);
 
-        if(request.getParentCommentId() != null) { // 대댓글 달림, 게시글 주인 /부모댓글 주인 / 대댓글 단 사람들한테 알람
+        // 대댓글 달림, 게시글 주인 / 부모댓글 주인 / 대댓글 단 사람들한테 알람
+        List<String> alertSubCommentMembersFcmTokens = new ArrayList<>();
 
-            String alertTitle = "새로운 대댓글이 달렸어요: ";
+        if (request.getParentCommentId() != null) { // 대댓글 알림
 
-            // 게시글 주인에게 알람
-            if (post.getMember().getIsDeleted() == false) {
+            // 게시글 주인
+            if (post.getMember().getFcmToken() != null && !post.getMember().equals(member))
+                alertSubCommentMembersFcmTokens.add(post.getMember().getFcmToken());
 
-                if (post.getMember().getFcmToken() != null) {
-                    FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
-                            .token(post.getMember().getFcmToken())
-                            .notification(FcmRequestDto.Notification.builder()
-                                    .notifyType(NotifyType.SUBCOMMENT)
-                                    .contentId(postId)
-                                    .title(alertTitle)
-                                    .content(comment.getContent())
-                                    .build())
-                            .build();
-                    fcmService.sendMessage(member, fcmRequestDto);
-                }
-            }
-
-            // 부모 댓글 주인에게 알람
+            // 부모 댓글 주인
             Optional<Comment> parentComment = commentService.findOptionalById(request.getParentCommentId());
 
-            if (parentComment.isPresent()) {
-                if (!parentComment.get().getMember().getIsDeleted()
-                        && !parentComment.get().getMember().equals(post.getMember())) {
-
-                    if (parentComment.get().getMember().getFcmToken() != null) {
-                        FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
-                                .token(parentComment.get().getMember().getFcmToken())
-                                .notification(FcmRequestDto.Notification.builder()
-                                        .notifyType(NotifyType.SUBCOMMENT)
-                                        .contentId(postId)
-                                        .title(alertTitle)
-                                        .content(comment.getContent())
-                                        .build())
-                                .build();
-                        fcmService.sendMessage(member, fcmRequestDto);
-                    }
-                }
+            if (parentComment.isPresent() && parentComment.get().getMember().getFcmToken() != null
+                    && !parentComment.get().getMember().equals(member)) {
+                if (!alertSubCommentMembersFcmTokens.contains(parentComment.get().getMember().getFcmToken()))
+                    alertSubCommentMembersFcmTokens.add(parentComment.get().getMember().getFcmToken());
             }
 
             // 대댓글 주인들에게 알람
-            List<Comment> subComments = commentService.findSubCommentsByParentCommentId(post.getId(),
-                    request.getParentCommentId());
+            List<Comment> subComments = commentService.findSubCommentsByParentCommentId(post.getId(), request.getParentCommentId());
 
             for (Comment subComment : subComments) {
-                if ((subComment.getId() != comment.getId())
-                        && !subComment.getIsDeleted()
-                        && !subComment.getMember().equals(post.getMember())
-                        && !subComment.getMember().equals(parentComment.get().getMember())) {
 
-                    if (!subComment.getMember().getIsDeleted() && subComment.getMember().getFcmToken() != null) {
-                        FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
-                                .token(subComment.getMember().getFcmToken())
-                                .notification(FcmRequestDto.Notification.builder()
-                                        .notifyType(NotifyType.SUBCOMMENT)
-                                        .contentId(postId)
-                                        .title(alertTitle)
-                                        .content(comment.getContent())
-                                        .build())
-                                .build();
-                        fcmService.sendMessage(member, fcmRequestDto);
-                    }
+                if (!subComment.getIsDeleted() && !subComment.getMember().equals(member)
+                        && subComment.getMember().getFcmToken() != null) {
+                    if (!alertSubCommentMembersFcmTokens.contains(subComment.getMember().getFcmToken()))
+                        alertSubCommentMembersFcmTokens.add(subComment.getMember().getFcmToken());
                 }
             }
 
-        } else { // 댓글 달림, 게시글 주인에게 알람
+            for (String fcmToken : alertSubCommentMembersFcmTokens) {
+                FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
+                        .token(fcmToken)
+                        .notification(FcmRequestDto.Notification.builder()
+                                .notifyType(NotifyType.SUBCOMMENT)
+                                .contentId(postId)
+                                .title("새로운 대댓글이 달렸어요: ")
+                                .content(comment.getContent())
+                                .build())
+                        .build();
+                fcmService.sendMessage(member, fcmRequestDto);
+            }
+            
+        } else { // 댓글 알림
 
-            if (post.getMember().getIsDeleted() == false && post.getMember().getFcmToken() != null) {
+            // 게시글 주인에게 알람
+            if (post.getMember().getFcmToken() != null && !post.getMember().equals(member)) {
                 FcmRequestDto fcmRequestDto = FcmRequestDto.builder()
                         .token(post.getMember().getFcmToken())
                         .notification(FcmRequestDto.Notification.builder()
@@ -648,7 +624,7 @@ public class CommunityController {
                                 .content(comment.getContent())
                                 .build())
                         .build();
-                fcmService.sendMessage(member, fcmRequestDto);
+                fcmService.sendMessage(post.getMember(), fcmRequestDto);
             }
         }
 
