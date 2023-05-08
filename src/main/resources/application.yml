@@ -38,11 +38,11 @@ spring:
           starttls:
             enable: false
 
-servlet:
-  multipart:
-    max-file-size: ${MAX_FILE_SIZE}
-    max-request-size: ${MAX_REQUEST_SIZE}
-    enabled: true
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_REQUEST_SIZE}
+      enabled: true
 
 s3:
   key:
