@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -130,12 +132,13 @@ public class CalendarController {
                 );
     }
 
-    @ApiOperation(value = "일정 다건 조회", notes = "- 모든 기숙사의 일정을 반환합니다.")
+    @ApiOperation(value = "일정 다건 조회", notes = "- 모든 기숙사의 일정을 반환합니다. \n" +
+            "- 서버에서 종료된 일정은 제거 및 일정의 시작일자 순으로 정렬하여 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "CALENDAR_MANY_FOUND",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "DATE_SET_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -151,6 +154,9 @@ public class CalendarController {
     ) {
 
         List<Calendar> calendars = calendarService.findManyByYearMonth(request.getYearMonth());
+
+        calendars.removeIf(calendar -> calendar.getEndDate().isBefore(LocalDateTime.now().plusHours(9).toLocalDate()));
+        calendars.sort(Comparator.comparing(Calendar::getStartDate));
 
         List<CalendarDefaultResponseDto> responses = calendars.stream()
                 .map(calendar -> new CalendarDefaultResponseDto(calendar)).collect(Collectors.toList());
