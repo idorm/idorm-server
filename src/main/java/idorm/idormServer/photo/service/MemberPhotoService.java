@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 
+import static idorm.idormServer.exception.ExceptionCode.FILE_NOT_FOUND;
 import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 
 @Service
@@ -69,6 +70,15 @@ public class MemberPhotoService {
                 .build();
 
         return save(memberPhoto);
+    }
+
+    /**
+     * 회원 사진 존재 여부 검증 |
+     * 404(FILE_NOT_FOUND)
+     */
+    public void validateMemberPhotoIsExistence(Member member) {
+        if (member.getMemberPhoto() == null)
+            throw new CustomException(null, FILE_NOT_FOUND);
     }
 
     /**

@@ -193,6 +193,7 @@ public class MemberController {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(memberId);
 
+        memberPhotoService.validateMemberPhotoIsExistence(member);
         memberPhotoService.delete(member.getMemberPhoto());
 
         return ResponseEntity.status(200)
