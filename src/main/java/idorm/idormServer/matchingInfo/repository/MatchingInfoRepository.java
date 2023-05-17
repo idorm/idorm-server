@@ -28,8 +28,8 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
             "(m.isSnoring = :isSnoring OR m.isSnoring = false) AND " +
             "(m.isSmoking = :isSmoking OR m.isSmoking = false) AND " +
             "(m.isGrinding = :isGrinding OR m.isGrinding = false) AND " +
-            "m.isWearEarphones = :isWearEarphones AND " +
-            "m.isAllowedFood = :isAllowedFood AND " +
+            "(m.isWearEarphones = :isWearEarphones OR m.isWearEarphones = false) AND " +
+            "(m.isAllowedFood = :isAllowedFood OR m.isAllowedFood = false) AND " +
             "m.age >= :minAge AND " +
             "m.age <= :maxAge AND " +
             "m.isMatchingInfoPublic = true")
