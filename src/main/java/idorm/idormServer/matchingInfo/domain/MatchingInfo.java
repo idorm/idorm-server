@@ -95,7 +95,7 @@ public class MatchingInfo extends BaseEntity {
         this.wakeUpTime = requestDto.getWakeupTime();
         this.cleanUpStatus = requestDto.getCleanUpStatus();
         this.showerTime = requestDto.getShowerTime();
-        this.mbti = requestDto.getMbti();
+        this.mbti = requestDto.getMbti().toUpperCase();
         this.wishText = requestDto.getWishText();
         this.openKakaoLink = requestDto.getOpenKakaoLink();
     }

@@ -123,4 +123,22 @@ public class MatchingInfoService {
         if (!member.getMatchingInfo().getIsMatchingInfoPublic())
             throw new CustomException(null, ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC);
     }
+
+    /**
+     * MBTI 요청 검증 |
+     * 400(MBTI_CHARACTER_INVALID)
+     */
+    public String validateMBTI(String mbti) {
+
+        if (mbti.charAt(0) != 'E' && mbti.charAt(0) != 'I')
+            throw new CustomException(null, MBTI_CHARACTER_INVALID);
+        if (mbti.charAt(1) != 'S' && mbti.charAt(1) != 'N')
+            throw new CustomException(null, MBTI_CHARACTER_INVALID);
+        if (mbti.charAt(2) != 'T' && mbti.charAt(2) != 'F')
+            throw new CustomException(null, MBTI_CHARACTER_INVALID);
+        if (mbti.charAt(3) != 'J' && mbti.charAt(3) != 'P')
+            throw new CustomException(null, MBTI_CHARACTER_INVALID);
+
+        return mbti.toUpperCase();
+    }
 }

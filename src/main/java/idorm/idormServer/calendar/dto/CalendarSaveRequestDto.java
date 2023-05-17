@@ -63,12 +63,12 @@ public class CalendarSaveRequestDto {
     private String content;
 
     @ApiModelProperty(position = 9, example = "장소", value = "3기숙사 1층")
-    @Size(max = 50, message = "장소는 ~50자 이내로 입력해 주세요.", groups = ValidationSequence.Size.class)
+    @Size(max = 50, message = "장소는 ~50자 이내여야 합니다.", groups = ValidationSequence.Size.class)
     private String location;
 
     @ApiModelProperty(position = 10, example = "참고용 웹 링크",
             value = "https://www.inu.ac.kr/user/indexMain.do?command=&siteId=dorm")
-    @Size(max = 300, message = "링크는 ~300자 이내로 입력해 주세요.", groups = ValidationSequence.Size.class)
+    @Size(max = 300, message = "링크는 ~300자 이내여야 합니다.", groups = ValidationSequence.Size.class)
     private String url;
 
     public Calendar toEntity() {

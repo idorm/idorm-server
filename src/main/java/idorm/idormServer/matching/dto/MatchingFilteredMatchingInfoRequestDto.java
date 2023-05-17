@@ -33,12 +33,12 @@ public class MatchingFilteredMatchingInfoRequestDto {
 
     @ApiModelProperty(position = 3, required = true, value = "필터링 최소 나이", example = "20")
     @NotNull(message = "매칭을 원하는 룸메이트의 최소 나이 입력은 필수입니다.", groups = ValidationSequence.NotNull.class)
-    @Range(min = 20, max = 100, message = "나이는 20~100살 사이여야 합니다.", groups = ValidationSequence.Range.class)
+    @Range(min = 20, max = 100, message = "나이는 20~100살 이내여야 합니다.", groups = ValidationSequence.Range.class)
     private Integer minAge;
 
     @ApiModelProperty(position = 4, required = true, value = "필터링 최대 나이", example = "30")
     @NotNull(message = "매칭을 원하는 룸메이트의 최대 나이 입력은 필수입니다.")
-    @Range(min = 20, max = 100, message = "나이는 20~100살 사이여야 합니다.", groups = ValidationSequence.Range.class)
+    @Range(min = 20, max = 100, message = "나이는 20~100살 이내여야 합니다.", groups = ValidationSequence.Range.class)
     private Integer maxAge;
 
     @ApiModelProperty(position = 5, required = true, example = "true", value = "코골이 여부")

@@ -28,7 +28,7 @@ public class CommentDefaultRequestDto {
 
     @ApiModelProperty(position = 1, required = true, value = "내용", example = "댓글내용")
     @NotBlank(message = "댓글 내용을 입력 해주세요.", groups = ValidationSequence.NotBlank.class)
-    @Size(min = 1, max = 50, message = "댓글 내용은 1~50자로 입력해 주세요.", groups = ValidationSequence.Size.class)
+    @Size(min = 1, max = 50, message = "댓글 내용은 1~50자 이내여야 합니다.", groups = ValidationSequence.Size.class)
     private String content;
 
     @ApiModelProperty(position = 2, required = true, value = "익명 여부", example = "true")

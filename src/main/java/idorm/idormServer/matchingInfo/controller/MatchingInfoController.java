@@ -63,6 +63,8 @@ public class MatchingInfoController {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(memberId);
 
+        matchingInfoService.validateMBTI(request.getMbti().toUpperCase());
+
         if(member.getMatchingInfo() != null) {
             throw new CustomException(null, DUPLICATE_MATCHINGINFO);
         }
@@ -102,6 +104,8 @@ public class MatchingInfoController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
         Member member = memberService.findById(loginMemberId);
+
+        matchingInfoService.validateMBTI(request.getMbti().toUpperCase());
 
         if(member.getMatchingInfo() == null) {
             throw new CustomException(null, MATCHINGINFO_NOT_FOUND);

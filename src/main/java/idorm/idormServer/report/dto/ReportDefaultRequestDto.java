@@ -48,7 +48,7 @@ public class ReportDefaultRequestDto {
     private String reasonType;
 
     @ApiModelProperty(position = 4, value = "사유", example = "사유")
-    @Size(max = 200, message = "사유는 0~200자만 가능합니다.", groups = ValidationSequence.Size.class)
+    @Size(max = 200, message = "사유는 0~200자 이내여야 합니다.", groups = ValidationSequence.Size.class)
     private String reason;
 
     public Report toMemberReportEntity(Member reporterMember, Member reportedMember) {

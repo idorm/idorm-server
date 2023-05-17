@@ -30,7 +30,7 @@ public class MemberUpdatePasswordRequestDto {
 
     @ApiModelProperty(position = 2, required = true, value = "비밀번호", example = "aaaaaaa7!")
     @NotBlank(message = "비밀번호 입력은 필수입니다.", groups = ValidationSequence.NotBlank.class)
-    @Size(min = 8, max = 15, message = "비밀번호는 8~15자만 가능합니다.", groups = ValidationSequence.Size.class)
+    @Size(min = 8, max = 15, message = "비밀번호는 8~15자 이내여야 합니다.", groups = ValidationSequence.Size.class)
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,15}$",
             message = "비밀번호는 영소문자, 숫자, 특수문자는 필수이고 대문자는 선택인 형식만 가능합니다.",
             groups = ValidationSequence.Pattern.class)
