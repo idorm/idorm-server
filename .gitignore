@@ -45,4 +45,4 @@ LOGGING_ERROR_FILE_PATH_IS_UNDEFINED
 idorm-rolling.log
 
 ### Not Useed
-src/main/not_used_calendar
+src/main/**/master
