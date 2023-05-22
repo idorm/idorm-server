@@ -14,6 +14,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByIdAndIsDeletedIsFalse(Long id);
 
+    Optional<Member> findById(Long id); // UserDetail 처리용
+
     boolean existsByNicknameAndIsDeletedIsFalse(String nickname);
 
     List<Member> findByDormCategoryAndIdIsNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(Character dormCategory, Long id);

@@ -22,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
+    private final CustomUserDetailService customUserDetailService;
     @Value("${JWTSECRET}")
     private String secretKey;
 
@@ -50,6 +51,13 @@ public class JwtTokenProvider {
                     .compact();
 
         return token;
+    }
+
+    // 회원정보로 DB에 사용자 정보 존재 여부 확인
+    public boolean isUserExistByUsername(String username) {
+        if (customUserDetailService.loadUserByUsername(username) == null)
+            return false;
+        return true;
     }
 
     // JWT 토큰에서 인증 정보 조회
