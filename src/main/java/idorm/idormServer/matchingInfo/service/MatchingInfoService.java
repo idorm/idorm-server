@@ -130,6 +130,11 @@ public class MatchingInfoService {
      */
     public String validateMBTI(String mbti) {
 
+        if (mbti == null || mbti.length() == 0)
+            return null;
+
+        if (mbti.length() < 4)
+            throw new CustomException(null, MBTI_LENGTH_INVALID);
         if (mbti.charAt(0) != 'E' && mbti.charAt(0) != 'I')
             throw new CustomException(null, MBTI_CHARACTER_INVALID);
         if (mbti.charAt(1) != 'S' && mbti.charAt(1) != 'N')
