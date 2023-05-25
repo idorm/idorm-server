@@ -34,9 +34,9 @@ spring:
     properties:
       mail:
         smtp:
-          auth: false
+          auth: true
           starttls:
-            enable: false
+            enable: true
 
   servlet:
     multipart:
