@@ -35,7 +35,7 @@ public class CalendarAdminController {
             @ApiResponse(
                     responseCode = "201",
                     description = "CALENDAR_SAVED",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "403",
@@ -51,7 +51,7 @@ public class CalendarAdminController {
         calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
 
         Calendar calendar = calendarService.save(request.toEntity());
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
+        CalendarAdminResponseDto response = new CalendarAdminResponseDto(calendar);
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -69,7 +69,7 @@ public class CalendarAdminController {
             @ApiResponse(
                     responseCode = "200",
                     description = "CALENDAR_UPDATED",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "CALENDARID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -89,7 +89,7 @@ public class CalendarAdminController {
         Calendar calendar = calendarService.findOneById(request.getCalendarId());
         calendarService.updateContent(calendar, request);
 
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
+        CalendarAdminResponseDto response = new CalendarAdminResponseDto(calendar);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -104,7 +104,7 @@ public class CalendarAdminController {
             @ApiResponse(
                     responseCode = "200",
                     description = "CALENDAR_UPDATED",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "CALENDARID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -124,7 +124,7 @@ public class CalendarAdminController {
         Calendar calendar = calendarService.findOneById(request.getCalendarId());
         calendarService.updateIsDormYn(calendar, request);
 
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
+        CalendarAdminResponseDto response = new CalendarAdminResponseDto(calendar);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -139,7 +139,7 @@ public class CalendarAdminController {
             @ApiResponse(
                     responseCode = "200",
                     description = "CALENDAR_UPDATED",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "CALENDARID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -159,7 +159,7 @@ public class CalendarAdminController {
         Calendar calendar = calendarService.findOneById(request.getCalendarId());
         calendarService.updateLocation(calendar, request);
 
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
+        CalendarAdminResponseDto response = new CalendarAdminResponseDto(calendar);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -174,7 +174,7 @@ public class CalendarAdminController {
             @ApiResponse(
                     responseCode = "200",
                     description = "CALENDAR_UPDATED",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "CALENDARID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -196,7 +196,7 @@ public class CalendarAdminController {
         calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
         calendarService.updateDate(calendar, request);
 
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
+        CalendarAdminResponseDto response = new CalendarAdminResponseDto(calendar);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -211,7 +211,7 @@ public class CalendarAdminController {
             @ApiResponse(
                     responseCode = "200",
                     description = "CALENDAR_UPDATED",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "CALENDARID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -232,7 +232,7 @@ public class CalendarAdminController {
 
         calendarService.updateTime(calendar, request);
 
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
+        CalendarAdminResponseDto response = new CalendarAdminResponseDto(calendar);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -247,7 +247,7 @@ public class CalendarAdminController {
             @ApiResponse(
                     responseCode = "200",
                     description = "CALENDAR_UPDATED",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "CALENDARID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "401",
@@ -267,7 +267,7 @@ public class CalendarAdminController {
         Calendar calendar = calendarService.findOneById(request.getCalendarId());
         calendarService.updateUrl(calendar, request);
 
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
+        CalendarAdminResponseDto response = new CalendarAdminResponseDto(calendar);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -321,7 +321,7 @@ public class CalendarAdminController {
             @ApiResponse(
                     responseCode = "200",
                     description = "CALENDAR_MANY_FOUND",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "500",
                     description = "SERVER_ERROR"),
     })
@@ -330,8 +330,8 @@ public class CalendarAdminController {
 
         List<Calendar> calendars = calendarService.findMany();
 
-        List<CalendarDefaultResponseDto> responses = calendars.stream()
-                .map(calendar -> new CalendarDefaultResponseDto(calendar)).collect(Collectors.toList());
+        List<CalendarAdminResponseDto> responses = calendars.stream()
+                .map(calendar -> new CalendarAdminResponseDto(calendar)).collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -347,7 +347,7 @@ public class CalendarAdminController {
             @ApiResponse(
                     responseCode = "200",
                     description = "CALENDAR_FOUND",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "CALENDARID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "404",
@@ -363,7 +363,7 @@ public class CalendarAdminController {
     ) {
 
         Calendar calendar = calendarService.findOneById(calendarId);
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
+        CalendarAdminResponseDto response = new CalendarAdminResponseDto(calendar);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
