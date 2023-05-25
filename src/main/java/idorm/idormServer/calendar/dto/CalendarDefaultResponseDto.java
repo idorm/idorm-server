@@ -27,16 +27,12 @@ public class CalendarDefaultResponseDto {
     @ApiModelProperty(position = 4, required = true, value= "3기숙사 대상 여부")
     private Boolean isDorm3Yn;
     @ApiModelProperty(position = 5, value= "시작 일자")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
     private LocalDate startDate;
     @ApiModelProperty(position = 6, value= "종료 일자")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
     private LocalDate endDate;
     @ApiModelProperty(position = 7, value= "시작 시간")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
     @ApiModelProperty(position = 8, value= "종료 시간")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
     @ApiModelProperty(position = 9, value= "내용")
     private String content;
