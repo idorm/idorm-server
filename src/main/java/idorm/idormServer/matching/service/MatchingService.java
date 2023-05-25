@@ -191,11 +191,11 @@ public class MatchingService {
                     DormCategory.validateType(request.getDormCategory()).getType(),
                     JoinPeriod.validateType(request.getJoinPeriod()).getType(),
                     member.getMatchingInfo().getGender(),
-                    request.getIsSnoring(),
-                    request.getIsSmoking(),
-                    request.getIsGrinding(),
-                    request.getIsWearEarphones(),
-                    request.getIsAllowedFood(),
+                    !request.getIsSnoring(),
+                    !request.getIsSmoking(),
+                    !request.getIsGrinding(),
+                    !request.getIsWearEarphones(),
+                    !request.getIsAllowedFood(),
                     request.getMinAge(),
                     request.getMaxAge()
             );
