@@ -1,5 +1,6 @@
 package idorm.idormServer.calendar.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import idorm.idormServer.calendar.domain.Calendar;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,7 +18,7 @@ import java.time.LocalTime;
 @ApiModel(value = "Calendar 기본 응답")
 public class CalendarDefaultResponseDto {
 
-    @ApiModelProperty(position = 1, required = true, value="캘린더 식별자")
+    @ApiModelProperty(position = 1, required = true, value= "캘린더 식별자")
     private Long calendarId;
     @ApiModelProperty(position = 2, required = true, value= "1기숙사 대상 여부")
     private Boolean isDorm1Yn;
@@ -26,12 +27,16 @@ public class CalendarDefaultResponseDto {
     @ApiModelProperty(position = 4, required = true, value= "3기숙사 대상 여부")
     private Boolean isDorm3Yn;
     @ApiModelProperty(position = 5, value= "시작 일자")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
     private LocalDate startDate;
     @ApiModelProperty(position = 6, value= "종료 일자")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
     private LocalDate endDate;
     @ApiModelProperty(position = 7, value= "시작 시간")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
     @ApiModelProperty(position = 8, value= "종료 시간")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
     @ApiModelProperty(position = 9, value= "내용")
     private String content;

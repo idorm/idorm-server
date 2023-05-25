@@ -1,6 +1,7 @@
 package idorm.idormServer.calendar.service;
 
 import idorm.idormServer.calendar.domain.Calendar;
+import idorm.idormServer.calendar.dto.*;
 import idorm.idormServer.calendar.repository.CalendarRepository;
 import idorm.idormServer.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,68 @@ public class CalendarService {
     }
 
     /**
+     * 일정 수정 |
+     * 500(SERVER_ERROR)
+     */
+
+    @Transactional
+    public void updateContent(Calendar calendar, CalendarUpdateContentRequestDto request) {
+        try {
+            calendar.updateContent(request.getContent());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+    @Transactional
+    public void updateIsDormYn(Calendar calendar, CalendarUpdateIsDormYnRequestDto request) {
+        try {
+            calendar.updateIsDorm1Yn(request.getIsDorm1Yn());
+            calendar.updateIsDorm2Yn(request.getIsDorm2Yn());
+            calendar.updateIsDorm3Yn(request.getIsDorm3Yn());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public void updateLocation(Calendar calendar, CalendarUpdateLocationRequestDto request) {
+        try {
+            calendar.updateLocation(request.getLocation());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public void updateDate(Calendar calendar, CalendarUpdateStartAndEndDateRequestDto request) {
+        try {
+            calendar.updateStartDate(request.getStartDate());
+            calendar.updateEndDate(request.getEndDate());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public void updateTime(Calendar calendar, CalendarUpdateStartAndEndTimeRequestDto request) {
+        try {
+            calendar.updateStartTime(request.getStartTime());
+            calendar.updateEndTime(request.getEndTime());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public void updateUrl(Calendar calendar, CalendarUpdateUrlRequestDto request) {
+        try {
+            calendar.updateUrl(request.getUrl());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 일정 삭제 |
      * 500(SERVER_ERROR)
      */
@@ -55,6 +118,18 @@ public class CalendarService {
                 .orElseThrow(() -> {
                     throw new CustomException(null, CALENDAR_NOT_FOUND);
                 });
+    }
+
+    /**
+     * 일정 전체 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<Calendar> findMany() {
+        try {
+            return calendarRepository.findByIsDeletedIsFalse();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
     }
 
     /**

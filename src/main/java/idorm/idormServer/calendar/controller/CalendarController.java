@@ -1,9 +1,7 @@
 package idorm.idormServer.calendar.controller;
 
 import idorm.idormServer.calendar.domain.Calendar;
-import idorm.idormServer.calendar.dto.CalendarDefaultResponseDto;
-import idorm.idormServer.calendar.dto.CalendarFindManyRequestDto;
-import idorm.idormServer.calendar.dto.CalendarSaveRequestDto;
+import idorm.idormServer.calendar.dto.*;
 import idorm.idormServer.calendar.service.CalendarService;
 import idorm.idormServer.common.DefaultResponseDto;
 import io.swagger.annotations.Api;
@@ -14,13 +12,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -33,104 +29,6 @@ import java.util.stream.Collectors;
 public class CalendarController {
 
     private final CalendarService calendarService;
-
-    @ApiOperation(value = "[스웨거용] 일정 저장", notes = "관리자 계정으로 로그인 후 사용하세요.")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "CALENDAR_SAVED",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
-            @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_AUTHORIZATION"),
-            @ApiResponse(responseCode = "500",
-                    description = "SERVER_ERROR"),
-    })
-    @PostMapping("/admin/calendar")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DefaultResponseDto<Object>> save(
-            @RequestBody @Valid CalendarSaveRequestDto request
-    ) {
-        calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
-
-        Calendar calendar = calendarService.save(request.toEntity());
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
-
-        return ResponseEntity.status(201)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("CALENDAR_SAVED")
-                        .responseMessage("Calendar 일정 저장 완료")
-                        .data(response)
-                        .build());
-    }
-
-    @ApiOperation(value = "[스웨거용] 일정 삭제", notes = "관리자 계정으로 로그인 후 사용하세요.")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "CALENDAR_DELETED",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "CALENDARID_NEGATIVEORZERO_INVALID"),
-            @ApiResponse(responseCode = "401",
-                    description = "UNAUTHORIZED_MEMBER"),
-            @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_AUTHORIZATION"),
-            @ApiResponse(responseCode = "404",
-                    description = "CALENDAR_NOT_FOUND"),
-            @ApiResponse(responseCode = "500",
-                    description = "SERVER_ERROR"),
-    })
-    @DeleteMapping("/admin/calendar/{calendar-id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DefaultResponseDto<Object>> delete(
-            @PathVariable(value = "calendar-id")
-            @Positive(message = "삭제할 일정 식별자는 양수만 가능합니다.")
-                Long calendarId
-    ) {
-
-        Calendar calendar = calendarService.findOneById(calendarId);
-        calendarService.delete(calendar);
-
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("CALENDAR_DELETED")
-                        .responseMessage("Calendar 일정 삭제 완료")
-                        .build());
-    }
-
-    @ApiOperation(value = "[스웨거용] 일정 단건 조회", notes = "- 로그인하지 않아도 확인 가능합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "CALENDAR_FOUND",
-                    content = @Content(schema = @Schema(implementation = CalendarDefaultResponseDto.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "CALENDARID_NEGATIVEORZERO_INVALID"),
-            @ApiResponse(responseCode = "404",
-                    description = "CALENDAR_NOT_FOUND"),
-            @ApiResponse(responseCode = "500",
-                    description = "SERVER_ERROR"),
-    })
-    @GetMapping("/calendar/{calendar-id}")
-    public ResponseEntity<DefaultResponseDto<Object>> findOne(
-            @PathVariable(value = "calendar-id")
-            @Positive(message = "삭제할 일정 식별자는 양수만 가능합니다.")
-                Long calendarId
-    ) {
-
-        Calendar calendar = calendarService.findOneById(calendarId);
-        CalendarDefaultResponseDto response = new CalendarDefaultResponseDto(calendar);
-
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("CALENDAR_FOUND")
-                        .responseMessage("Calendar 일정 단건 조회")
-                        .data(response)
-                        .build()
-                );
-    }
 
     @ApiOperation(value = "일정 다건 조회", notes = "- 모든 기숙사의 일정을 반환합니다. \n" +
             "- 서버에서 종료된 일정은 제거 및 일정의 시작일자 순으로 정렬하여 반환합니다.")

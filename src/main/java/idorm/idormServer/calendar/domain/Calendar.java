@@ -56,6 +56,46 @@ public class Calendar extends BaseEntity {
         this.setIsDeleted(false);
     }
 
+    public void updateIsDorm1Yn(Boolean isDorm1Yn) {
+        this.isDorm1Yn = isDorm1Yn;
+    }
+
+    public void updateIsDorm2Yn(Boolean isDorm2Yn) {
+        this.isDorm2Yn = isDorm2Yn;
+    }
+
+    public void updateIsDorm3Yn(Boolean isDorm3Yn) {
+        this.isDorm3Yn = isDorm3Yn;
+    }
+
+    public void updateStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void updateEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public void updateStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void updateEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void updateLocation(String location) {
+        this.location = location;
+    }
+
+    public void updateUrl(String url) {
+        this.url = url;
+    }
+
     public void delete() {
         this.setIsDeleted(true);
     }
