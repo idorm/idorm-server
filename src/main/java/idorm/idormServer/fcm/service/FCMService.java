@@ -59,6 +59,8 @@ public class FCMService {
                     .setToken(fcmRequestDto.getToken())
                     .build();
             FirebaseMessaging.getInstance().send(message);
+        } catch (IllegalArgumentException e) {
+            memberService.deleteFcmToken(member);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         } catch (FirebaseMessagingException e) {
