@@ -34,9 +34,9 @@ spring:
     properties:
       mail:
         smtp:
-          auth: true
+          auth: ${MAIL_AUTH}
           starttls:
-            enable: true
+            enable: ${MAIL_TLS}
 
   servlet:
     multipart:
