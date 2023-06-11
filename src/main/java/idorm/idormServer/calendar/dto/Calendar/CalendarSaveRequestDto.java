@@ -1,4 +1,4 @@
-package idorm.idormServer.calendar.dto;
+package idorm.idormServer.calendar.dto.Calendar;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import idorm.idormServer.calendar.domain.Calendar;
@@ -25,7 +25,7 @@ import java.time.LocalTime;
         ValidationSequence.NotNull.class,
         ValidationSequence.Size.class,
 })
-@ApiModel(value = "일정 저장 요청")
+@ApiModel(value = "공식 일정 저장 요청")
 public class CalendarSaveRequestDto {
 
     @ApiModelProperty(position = 1, required = true, value = "1기숙사 대상 여부", allowableValues = "true, false",
@@ -51,11 +51,11 @@ public class CalendarSaveRequestDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    @ApiModelProperty(position = 6, notes = "string", value = "시작시간", example = "15:40:00")
+    @ApiModelProperty(position = 6, notes = "string", value = "시작시간", example = "15:00:00")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
 
-    @ApiModelProperty(position = 6, notes = "string", value = "종료시간", example = "16:50:00")
+    @ApiModelProperty(position = 6, notes = "string", value = "종료시간", example = "16:00:00")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
     @ApiModelProperty(position = 8, required = true, value = "내용", example = "기숙사 화재 훈련")

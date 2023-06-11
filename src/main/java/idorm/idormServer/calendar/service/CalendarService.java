@@ -1,7 +1,7 @@
 package idorm.idormServer.calendar.service;
 
 import idorm.idormServer.calendar.domain.Calendar;
-import idorm.idormServer.calendar.dto.*;
+import idorm.idormServer.calendar.dto.Calendar.*;
 import idorm.idormServer.calendar.repository.CalendarRepository;
 import idorm.idormServer.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -139,7 +139,7 @@ public class CalendarService {
     public List<Calendar> findManyByYearMonth(YearMonth yearMonth) {
 
         try {
-            return calendarRepository.findByIsDeletedIsFalseAndStartDateLike(yearMonth + "-%");
+            return calendarRepository.findByIsDeletedIsFalseAndDateLike(yearMonth + "-%");
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }

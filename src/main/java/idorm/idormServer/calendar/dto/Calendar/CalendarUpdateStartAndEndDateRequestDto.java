@@ -1,4 +1,4 @@
-package idorm.idormServer.calendar.dto;
+package idorm.idormServer.calendar.dto.Calendar;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import idorm.idormServer.common.ValidationSequence;

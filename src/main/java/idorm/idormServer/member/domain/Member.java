@@ -1,11 +1,11 @@
 package idorm.idormServer.member.domain;
 
+import idorm.idormServer.calendar.domain.Team;
 import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.email.domain.Email;
-import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.MemberPhoto;
 import lombok.*;
@@ -35,6 +35,7 @@ public class Member extends BaseEntity implements UserDetails {
     private LocalDate fcmTokenUpdatedAt;
     private Character dormCategory;
     private Integer reportedCount;
+    private Integer teamOrder;
 
     @OneToMany(mappedBy = "member")
     private List<Email> emails = new ArrayList<>();
@@ -66,6 +67,10 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private Team team;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
 
@@ -77,6 +82,8 @@ public class Member extends BaseEntity implements UserDetails {
         this.nicknameUpdatedAt = null;
         this.reportedCount = 0;
         this.dormCategory = null;
+        this.team = null;
+        this.teamOrder = -999;
         this.roles.add("ROLE_USER");
 
         this.setIsDeleted(false);
@@ -119,9 +126,7 @@ public class Member extends BaseEntity implements UserDetails {
         return memberPhoto;
     }
 
-    /**
-     * 회원 탈퇴 시 사용
-     */
+    // 회원 탈퇴 시 사용
     public List<MemberPhoto> getAllMemberPhoto() {
         return this.memberPhotos;
     }
@@ -163,6 +168,23 @@ public class Member extends BaseEntity implements UserDetails {
     public void deleteFcmToken() {
         this.fcmToken = null;
         this.fcmTokenUpdatedAt = LocalDate.now();
+    }
+
+    public void updateTeam(Team team, Integer teamOrder) {
+        this.team = team;
+        this.teamOrder = teamOrder;
+    }
+
+    public void updateTeamOrder(Team team, Integer teamOrder) {
+        if (this.team.equals(team))
+            this.teamOrder = teamOrder;
+    }
+
+    public void deleteTeam(Team team) {
+        if (this.team.getId().equals(team.getId())) {
+            this.team = null;
+            this.teamOrder = -999;
+        }
     }
 
     public void incrementreportedCount() {

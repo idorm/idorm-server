@@ -14,6 +14,7 @@ public enum ExceptionCode {
      * 400 BAD_REQUEST : 잘못된 요청
      */
     FIELD_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
+    TARGETS_FIELD_REQUIRED(BAD_REQUEST, "대상자 입력은 필수 입니다."),
 
     // 형식
     EMAIL_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
@@ -44,6 +45,7 @@ public enum ExceptionCode {
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
 
     ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(BAD_REQUEST, "매칭정보가 비공개 입니다."),
+    ILLEGAL_STATEMENT_EXPLODEDTEAM(CONFLICT, "폭발한 팀은 요청 대상이 될 수 없습니다."),
     DATE_SET_INVALID(BAD_REQUEST, "시작일자가 종료일자보다 빠르거나 같아야 합니다."),
 
     /**
@@ -63,6 +65,8 @@ public enum ExceptionCode {
      * 403 FORBIDDEN : 권한이 없는 사용자
      */
     FORBIDDEN_AUTHORIZATION(FORBIDDEN, "접근 권한이 없습니다."),
+    FORBIDDEN_TARGET_ADMIN(FORBIDDEN, "관리자는 대상이 될 수 없습니다."),
+    FORBIDDEN_TEAMCALENDAR(FORBIDDEN, "팀 일정 접근 권한이 없습니다."),
 
     /**
      * 404 NOT_FOUND : Resource 를 찾을 수 없음
@@ -80,6 +84,9 @@ public enum ExceptionCode {
     MEMBERPHOTO_NOT_FOUND(NOT_FOUND, "등록된 프로필 사진이 없습니다."),
     LIKED_NOT_FOUND(NOT_FOUND, "등록된 공감이 없습니다."),
     CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 일정 정보가 없습니다."),
+    TEAM_NOT_FOUND(NOT_FOUND, "등록된 팀이 없습니다."),
+    TEAMMEMBER_NOT_FOUND(NOT_FOUND, "동록되지 않은 팀 회원이 있습니다."),
+    TEAMCALENDAR_NOT_FOUND(NOT_FOUND, "등록된 팀 일정이 없습니다."),
 
     DELETED_POST(NOT_FOUND, "삭제된 게시글 입니다."),
     DELETED_COMMENT(NOT_FOUND, "삭제된 댓글 입니다."),
@@ -101,13 +108,16 @@ public enum ExceptionCode {
     DUPLICATE_LIKED_MEMBER(CONFLICT, "이미 좋아요한 멤버 입니다."),
     DUPLICATE_DISLIKED_MEMBER(CONFLICT, "이미 싫어요한 멤버 입니다."),
     DUPLICATE_LIKED(CONFLICT, "공감은 한 번만 가능합니다."),
+    DUPLICATE_TEAM(CONFLICT, "등록된 팀이 존재합니다."),
 
     CANNOT_UPDATE_NICKNAME(CONFLICT, "닉네임은 30일마다 변경할 수 있습니다."),
     CANNOT_LIKED_SELF(CONFLICT, "본인의 글에 공감할 수 없습니다."),
     CANNOT_LIKED_POST_BY_DELETED_MEMBER(CONFLICT, "게시글 작성자가 탈퇴한 글은 공감할 수 없습니다."),
+    CANNOT_EXPLODE_TEAM(CONFLICT, "팀원이 존재하므로 팀을 삭제할 수 없습니다."),
     MEMBER_CANNOT_SELFREPORT(CONFLICT, "본인은 신고할 수 없습니다."),
     POST_CANNOT_SELFREPORT(CONFLICT, "본인의 게시글은 신고할 수 없습니다."),
     COMMENT_CANNOT_SELFREPORT(CONFLICT, "본인의 댓글은 신고할 수 없습니다."),
+    TEAM_STATUS_FULL(CONFLICT, "등록하려는 팀이 이미 만석입니다."),
 
     /**
      * 413 PAYLOAD_TOO_LARGE

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
@@ -115,6 +116,18 @@ public class MemberService {
     }
 
     /**
+     * 회원 단건 조회 Optional |
+     * 500(SERVER_ERROR)
+     */
+    public Optional<Member> findByIdOptional(Long memberId) {
+        try {
+            return memberRepository.findByIdAndIsDeletedIsFalse(memberId);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 이메일로 회원 단건 조회 |
      * 404(MEMBER_NOT_FOUND)
      */
@@ -208,5 +221,23 @@ public class MemberService {
     public void validateUpdateNicknameIsChanged(Member member, String newNickname) {
         if (member.getNickname().equals(newNickname))
             throw new CustomException(null, DUPLICATE_SAME_NICKNAME);
+    }
+
+    /**
+     * 관리자 대상 여부 검증 |
+     * 403(FORBIDDEN_TARGET_ADMIN)
+     */
+    public void validateTargetAdmin(Member member) {
+        if(member.getRoles().contains("ROLE_ADMIN"))
+            throw new CustomException(null, FORBIDDEN_TARGET_ADMIN);
+    }
+
+    /**
+     * 본인 대상 여부 검증 |
+     * 400(ILLEGAL_ARGUMENT_SELF)
+     */
+    public void validateTargetSelf(Member loginMember, Member targetMember) {
+        if (loginMember.equals(targetMember))
+            throw new CustomException(null,ILLEGAL_ARGUMENT_SELF);
     }
 }

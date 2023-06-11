@@ -1,4 +1,4 @@
-package idorm.idormServer.calendar.dto;
+package idorm.idormServer.calendar.dto.Calendar;
 
 import idorm.idormServer.common.ValidationSequence;
 import io.swagger.annotations.ApiModel;

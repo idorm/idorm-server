@@ -49,6 +49,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
                 .antMatchers("/email/**", "/verifyCode/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/member/**").hasRole("USER")
+                .antMatchers("/**/admin/**").hasRole("ADMIN")
+                .antMatchers("/**/member/**").hasRole("USER")
 
                 .and()
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())

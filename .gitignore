@@ -46,3 +46,5 @@ idorm-rolling.log
 
 ### Not Useed
 src/main/**/master
+
+src/main/**/util

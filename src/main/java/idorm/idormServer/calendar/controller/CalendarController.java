@@ -1,7 +1,8 @@
 package idorm.idormServer.calendar.controller;
 
 import idorm.idormServer.calendar.domain.Calendar;
-import idorm.idormServer.calendar.dto.*;
+import idorm.idormServer.calendar.dto.Calendar.CalendarDefaultResponseDto;
+import idorm.idormServer.calendar.dto.Calendar.CalendarFindManyRequestDto;
 import idorm.idormServer.calendar.service.CalendarService;
 import idorm.idormServer.common.DefaultResponseDto;
 import io.swagger.annotations.Api;
@@ -31,7 +32,7 @@ public class CalendarController {
     private final CalendarService calendarService;
 
     @ApiOperation(value = "일정 다건 조회", notes = "- 모든 기숙사의 일정을 반환합니다. \n" +
-            "- 서버에서 종료된 일정은 제거 및 일정의 시작일자 순으로 정렬하여 반환합니다.")
+            "- 종료된 일정은 제거한 후, 최신 등록 순으로 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -54,7 +55,7 @@ public class CalendarController {
         List<Calendar> calendars = calendarService.findManyByYearMonth(request.getYearMonth());
 
         calendars.removeIf(calendar -> calendar.getEndDate().isBefore(LocalDateTime.now().plusHours(9).toLocalDate()));
-        calendars.sort(Comparator.comparing(Calendar::getStartDate));
+        calendars.sort(Comparator.comparing(Calendar::getId, Comparator.reverseOrder()));
 
         List<CalendarDefaultResponseDto> responses = calendars.stream()
                 .map(calendar -> new CalendarDefaultResponseDto(calendar)).collect(Collectors.toList());

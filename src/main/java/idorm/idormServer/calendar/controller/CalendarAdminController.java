@@ -1,7 +1,7 @@
 package idorm.idormServer.calendar.controller;
 
 import idorm.idormServer.calendar.domain.Calendar;
-import idorm.idormServer.calendar.dto.*;
+import idorm.idormServer.calendar.dto.Calendar.*;
 import idorm.idormServer.calendar.service.CalendarService;
 import idorm.idormServer.common.DefaultResponseDto;
 import io.swagger.annotations.Api;
@@ -36,6 +36,8 @@ public class CalendarAdminController {
                     responseCode = "201",
                     description = "CALENDAR_SAVED",
                     content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "DATE_SET_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "403",
@@ -176,7 +178,7 @@ public class CalendarAdminController {
                     description = "CALENDAR_UPDATED",
                     content = @Content(schema = @Schema(implementation = CalendarAdminResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "CALENDARID_NEGATIVEORZERO_INVALID"),
+                    description = "CALENDARID_NEGATIVEORZERO_INVALID / DATE_SET_INVALID"),
             @ApiResponse(responseCode = "401",
                     description = "UNAUTHORIZED_MEMBER"),
             @ApiResponse(responseCode = "403",
