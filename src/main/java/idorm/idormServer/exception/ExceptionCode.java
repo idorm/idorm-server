@@ -68,7 +68,7 @@ public enum ExceptionCode {
     FORBIDDEN_AUTHORIZATION(FORBIDDEN, "접근 권한이 없습니다."),
     FORBIDDEN_TARGET_ADMIN(FORBIDDEN, "관리자는 대상이 될 수 없습니다."),
     FORBIDDEN_TEAMCALENDAR_AUTHORIZATION(FORBIDDEN, "팀 일정 접근 권한이 없습니다."),
-    FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION(FORBIDDEN, "숙박 일정 수정 권한이 없습니다."),
+    FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION(FORBIDDEN, "외박 일정 수정 권한이 없습니다."),
 
     /**
      * 404 NOT_FOUND : Resource 를 찾을 수 없음
