@@ -47,10 +47,14 @@ public class TeamCalendarDefaultResponseDto {
     @ApiModelProperty(position = 8, required = true, value = "일정 대상자의 식별자")
     private List<TeamMemberFindResponseDto> targets = new ArrayList<>();
 
+    @ApiModelProperty(position = 9, required = true, value = "외박 일정 여부", example = "false")
+    private Boolean isSleepover;
+
     @Builder
     public TeamCalendarDefaultResponseDto(TeamCalendar teamCalendar, List<TeamMemberFindResponseDto> targets) {
         this.teamCalendarId = teamCalendar.getId();
         this.title = teamCalendar.getTitle();
+        this.isSleepover = teamCalendar.getIsSleepover();
         if (teamCalendar.getContent() != null)
             this.content = teamCalendar.getContent();
         if (teamCalendar.getStartDate() != null)

@@ -23,20 +23,24 @@ public class TeamCalendarAbstractResponseDto {
     @ApiModelProperty(position = 1, required = true, value = "팀일정 식별자", example = "1")
     private Long teamCalendarId;
 
-    @ApiModelProperty(position = 2, required = true, value = "내용", example = "청소")
+    @ApiModelProperty(position = 2, required = true, value = "외박 일정 여부", example = "false")
+    private Boolean isSleepover;
+
+    @ApiModelProperty(position = 3, required = true, value = "내용", example = "청소")
     private String title;
 
     @ApiModelProperty(position = 4, notes = "string", value = "시작일자", example = "2023-04-27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @ApiModelProperty(position = 8, required = true, value = "일정 대상자의 식별자")
+    @ApiModelProperty(position = 5, required = true, value = "일정 대상자의 식별자")
     private List<TeamMemberFindResponseDto> targets = new ArrayList<>();
 
     @Builder
     public TeamCalendarAbstractResponseDto(TeamCalendar teamCalendar, List<TeamMemberFindResponseDto> targets) {
         this.teamCalendarId = teamCalendar.getId();
         this.title = teamCalendar.getTitle();
+        this.isSleepover = teamCalendar.getIsSleepover();
 
         if (teamCalendar.getStartDate() != null)
             this.startDate = teamCalendar.getStartDate();

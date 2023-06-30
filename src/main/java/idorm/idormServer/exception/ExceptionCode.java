@@ -43,6 +43,7 @@ public enum ExceptionCode {
 
     ILLEGAL_ARGUMENT_ADMIN(BAD_REQUEST, "관리자는 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
+    ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR(BAD_REQUEST, "외박 일정은 수정할 수 없습니다."),
 
     ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(BAD_REQUEST, "매칭정보가 비공개 입니다."),
     ILLEGAL_STATEMENT_EXPLODEDTEAM(CONFLICT, "폭발한 팀은 요청 대상이 될 수 없습니다."),
@@ -66,7 +67,8 @@ public enum ExceptionCode {
      */
     FORBIDDEN_AUTHORIZATION(FORBIDDEN, "접근 권한이 없습니다."),
     FORBIDDEN_TARGET_ADMIN(FORBIDDEN, "관리자는 대상이 될 수 없습니다."),
-    FORBIDDEN_TEAMCALENDAR(FORBIDDEN, "팀 일정 접근 권한이 없습니다."),
+    FORBIDDEN_TEAMCALENDAR_AUTHORIZATION(FORBIDDEN, "팀 일정 접근 권한이 없습니다."),
+    FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION(FORBIDDEN, "숙박 일정 수정 권한이 없습니다."),
 
     /**
      * 404 NOT_FOUND : Resource 를 찾을 수 없음

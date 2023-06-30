@@ -27,7 +27,7 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Api(tags = "팀 관리")
+@Api(tags = "공유 캘린더_팀 관리")
 @Validated
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)

@@ -189,11 +189,11 @@ public class TeamCalendarService {
 
     /**
      * 팀일정 수정 권한 검증 |
-     * 403(FORBIDDEN_TEAMCALENDAR)
+     * 403(FORBIDDEN_TEAMCALENDAR_AUTHORIZATION)
      */
     public void validateTeamCalendarAuthorization(Team team, TeamCalendar teamCalendar) {
         if (!teamCalendar.getTeam().equals(team))
-            throw new CustomException(null, FORBIDDEN_TEAMCALENDAR);
+            throw new CustomException(null, FORBIDDEN_TEAMCALENDAR_AUTHORIZATION);
     }
 
     /**
@@ -203,5 +203,23 @@ public class TeamCalendarService {
     public void validateTargetExistence(List<Long> targets) {
         if (targets.size() < 1)
             throw new CustomException(null, TARGETS_FIELD_REQUIRED);
+    }
+
+    /**
+     * 외박일정 여부 검증 |
+     * 400(ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR)
+     */
+    public void validateSleepoverCalendar(TeamCalendar teamCalendar) {
+        if (teamCalendar.getIsSleepover())
+            throw new CustomException(null, ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR);
+    }
+
+    /**
+     * 외박일정 삭제 권한 검증 |
+     * 403(FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION)
+     */
+    public void validateSleepoverCalendarAuthorization(TeamCalendar teamCalendar, Member member) {
+        if (!teamCalendar.getTargets().contains(member.getId()))
+            throw new CustomException(null, FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION);
     }
 }

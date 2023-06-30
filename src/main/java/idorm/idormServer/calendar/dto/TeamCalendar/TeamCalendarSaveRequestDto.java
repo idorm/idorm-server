@@ -62,6 +62,7 @@ public class TeamCalendarSaveRequestDto {
         return TeamCalendar.builder()
                 .team(team)
                 .targets(this.targets)
+                .isSleepover(false)
                 .title(title)
                 .content(content)
                 .startDate(this.startDate)

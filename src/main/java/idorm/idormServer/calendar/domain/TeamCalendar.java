@@ -29,6 +29,7 @@ public class TeamCalendar extends BaseEntity {
     private LocalTime endTime;
     private String title;
     private String content;
+    private Boolean isSleepover;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
@@ -47,6 +48,7 @@ public class TeamCalendar extends BaseEntity {
                         LocalTime endTime,
                         String title,
                         String content,
+                        Boolean isSleepover,
                         Team team,
                         List<Long> targets) {
         this.startDate = startDate;
@@ -55,6 +57,7 @@ public class TeamCalendar extends BaseEntity {
         this.endTime = endTime;
         this.title = title;
         this.content = content;
+        this.isSleepover = isSleepover;
 
         for (Long target : targets)
             this.targets.add(target);

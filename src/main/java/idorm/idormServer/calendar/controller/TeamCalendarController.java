@@ -5,10 +5,7 @@ import idorm.idormServer.calendar.domain.Team;
 import idorm.idormServer.calendar.domain.TeamCalendar;
 import idorm.idormServer.calendar.dto.Calendar.CalendarFindManyRequestDto;
 import idorm.idormServer.calendar.dto.Team.TeamMemberFindResponseDto;
-import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarAbstractResponseDto;
-import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarDefaultResponseDto;
-import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarSaveRequestDto;
-import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarUpdateRequestDto;
+import idorm.idormServer.calendar.dto.TeamCalendar.*;
 import idorm.idormServer.calendar.service.CalendarService;
 import idorm.idormServer.calendar.service.TeamCalendarService;
 import idorm.idormServer.calendar.service.TeamService;
@@ -33,12 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static idorm.idormServer.exception.ExceptionCode.TEAMCALENDAR_NOT_FOUND;
 
-@Api(tags = "팀 일정")
+@Api(tags = "공유 캘린더_일정 관리")
 @Validated
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -50,7 +48,7 @@ public class TeamCalendarController {
     private final TeamService teamService;
     private final CalendarService calendarService;
 
-    @ApiOperation(value = "팀 일정 생성")
+    @ApiOperation(value = "[팀] 일정 생성")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
@@ -101,7 +99,51 @@ public class TeamCalendarController {
                 );
     }
 
-    @ApiOperation(value = "팀 일정 수정")
+    @ApiOperation(value = "[외박] 일정 생성")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "SLEEPOVER_CALENDAR_CREATED",
+                    content = @Content(schema = @Schema(implementation = TeamCalendarDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "ILLEGAL_STATEMENT_EXPLODEDTEAM"),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND"),
+            @ApiResponse(responseCode = "500",
+                    description = "SERVER_ERROR")
+    })
+    @PostMapping("/api/v1/member/team/calendar/sleepover")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<DefaultResponseDto<Object>> createSleepoverCalender(
+            HttpServletRequest servletRequest,
+            @RequestBody @Valid SleepoverCalendarDefaultRequestDto request
+    ) {
+
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
+        Team team = teamService.findByMember(member);
+
+        teamService.validateIsDeletedTeam(team);
+
+        TeamCalendar teamCalendar = teamCalendarService.save(request.toEntity(team, member.getId()));
+
+        TeamMemberFindResponseDto childResponse = new TeamMemberFindResponseDto(member);
+
+        TeamCalendarDefaultResponseDto response = TeamCalendarDefaultResponseDto.builder()
+                .teamCalendar(teamCalendar)
+                .targets(new ArrayList<>(Arrays.asList(childResponse)))
+                .build();
+
+        return ResponseEntity.status(201)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("SLEEPOVER_CALENDAR_CREATED")
+                        .responseMessage("외박 일정 생성 완료")
+                        .data(response)
+                        .build()
+                );
+    }
+
+    @ApiOperation(value = "[팀] 일정 수정", notes = "- 외박 일정은 수정이 불가합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -109,9 +151,10 @@ public class TeamCalendarController {
                     content = @Content(schema = @Schema(implementation = TeamCalendarDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "*_FIELD_REQUIRED / *_LENGTH_INVALID / TEAMCALENDARID_NEGATIVEORZERO_INVALID " +
-                            "/ DATE_SET_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM / TARGETS_FIELD_REQUIRED"),
+                            "/ DATE_SET_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM / TARGETS_FIELD_REQUIRED / " +
+                            "ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR"),
             @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_TEAMCALENDAR"),
+                    description = "FORBIDDEN_TEAMCALENDAR_AUTHORIZATION"),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND / TEAMMEMBER_NOT_FOUND / TEAMCALENDAR_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
@@ -129,6 +172,7 @@ public class TeamCalendarController {
 
         TeamCalendar teamCalendar = teamCalendarService.findById(request.getTeamCalendarId());
         teamCalendarService.validateTeamCalendarAuthorization(team, teamCalendar);
+        teamCalendarService.validateSleepoverCalendar(teamCalendar);
 
         teamService.validateIsDeletedTeam(team);
         teamCalendarService.validateTargetExistence(request.getTargets());
@@ -156,7 +200,7 @@ public class TeamCalendarController {
                 );
     }
 
-    @ApiOperation(value = "팀 일정 삭제")
+    @ApiOperation(value = "[팀 / 외박] 일정 삭제")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -165,7 +209,7 @@ public class TeamCalendarController {
             @ApiResponse(responseCode = "400",
                     description = "TEAMCALENDARID_NEGATIVEORZERO_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM"),
             @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_TEAMCALENDAR"),
+                    description = "FORBIDDEN_TEAMCALENDAR_AUTHORIZATION / FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION"),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND / TEAMCALENDAR_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
@@ -187,6 +231,9 @@ public class TeamCalendarController {
         teamCalendarService.validateTeamCalendarAuthorization(team, teamCalendar);
         teamService.validateIsDeletedTeam(team);
 
+        if (teamCalendar.getIsSleepover())
+            teamCalendarService.validateSleepoverCalendarAuthorization(teamCalendar, member);
+
         teamCalendarService.delete(teamCalendar);
 
         return ResponseEntity.status(200)
@@ -197,7 +244,7 @@ public class TeamCalendarController {
                 );
     }
 
-    @ApiOperation(value = "팀 일정 단건 조회")
+    @ApiOperation(value = "[팀 / 외박] 일정 단건 조회")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -206,7 +253,7 @@ public class TeamCalendarController {
             @ApiResponse(responseCode = "400",
                     description = "TEAMCALENDARID_NEGATIVEORZERO_INVALID"),
             @ApiResponse(responseCode = "403",
-                    description = "FORBIDDEN_TEAMCALENDAR"),
+                    description = "FORBIDDEN_TEAMCALENDAR_AUTHORIZATION"),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND / TEAMCALENDAR_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
@@ -250,7 +297,7 @@ public class TeamCalendarController {
                 );
     }
 
-    @ApiOperation(value = "팀 일정 월별 조회", notes = "- 종료일이 지난 일정도 전부 응답합니다.")
+    @ApiOperation(value = "[팀 / 외박] 일정 월별 조회", notes = "- 종료일이 지난 일정도 전부 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
