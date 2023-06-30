@@ -87,7 +87,7 @@ public class TeamCalendarService {
     @Transactional
     public void deleteManyByContainedTarget(Team team, Member member) {
         try {
-            List<TeamCalendar> teamCalendars = team.getTeamCalendars();
+            List<TeamCalendar> teamCalendars = new ArrayList<>(team.getTeamCalendars());
 
             if (teamCalendars.size() < 1) return;
 
