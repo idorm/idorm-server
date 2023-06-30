@@ -1,5 +1,6 @@
 package idorm.idormServer.member.service;
 
+import idorm.idormServer.calendar.service.CalendarServiceFacade;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.matching.service.MatchingService;
@@ -25,6 +26,7 @@ public class MemberServiceFacade {
     private final MemberPhotoService memberPhotoService;
     private final MatchingService matchingService;
     private final MatchingInfoService matchingInfoService;
+    private final CalendarServiceFacade calendarServiceFacade;
 
     public Member saveMember(MemberSaveRequestDto request, Email email) {
         Member member = memberService.save(request.toMemberEntity(email, passwordEncoder.encode(request.getPassword())));
@@ -46,6 +48,10 @@ public class MemberServiceFacade {
     }
 
     public void deleteMember(Member member) {
+
+        if (member.getTeam() != null)
+            calendarServiceFacade.deleteTeamMember(member.getTeam(), member);
+
         matchingService.removeAllLikedMembersByDeletedMember(member);
         matchingService.removeAllDislikedMembersByDeletedMember(member);
 
