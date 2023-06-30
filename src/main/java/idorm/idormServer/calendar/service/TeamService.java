@@ -77,11 +77,16 @@ public class TeamService {
     @Transactional
     public void removeMember(Team team, Member member) {
         try {
+            int deletedMemberTeamOrder = member.getTeamOrder();
             boolean result = team.removeMember(member);
             if (result) {
-                AtomicInteger index = new AtomicInteger();
-                for (Member remainMembers : team.getMembers())
-                    remainMembers.updateTeamOrder(team, index.getAndIncrement());
+                if (team.getMembers().size() < 1) return;
+
+                for (Member remainMember : team.getMembers()) {
+                    int remainMemberTeamOrder = remainMember.getTeamOrder();
+                    if (remainMemberTeamOrder > deletedMemberTeamOrder)
+                        remainMember.updateTeamOrder(team, remainMemberTeamOrder - 1);
+                }
             }
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);

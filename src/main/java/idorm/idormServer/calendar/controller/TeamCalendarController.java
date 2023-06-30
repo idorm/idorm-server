@@ -58,7 +58,7 @@ public class TeamCalendarController {
                     content = @Content(schema = @Schema(implementation = TeamCalendarDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "DATE_SET_INVALID / *_FIELD_REQUIRED / *_LENGTH_INVALID / " +
-                            "ILLEGAL_STATEMENT_EXPLODEDTEAM"),
+                            "ILLEGAL_STATEMENT_EXPLODEDTEAM / TARGETS_FIELD_REQUIRED"),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND / TEAMMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
@@ -109,7 +109,7 @@ public class TeamCalendarController {
                     content = @Content(schema = @Schema(implementation = TeamCalendarDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "*_FIELD_REQUIRED / *_LENGTH_INVALID / TEAMCALENDARID_NEGATIVEORZERO_INVALID " +
-                            "/ DATE_SET_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM"),
+                            "/ DATE_SET_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM / TARGETS_FIELD_REQUIRED"),
             @ApiResponse(responseCode = "403",
                     description = "FORBIDDEN_TEAMCALENDAR"),
             @ApiResponse(responseCode = "404",
@@ -241,7 +241,6 @@ public class TeamCalendarController {
                 .targets(childResponses)
                 .build();
 
-
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
                         .responseCode("TEAM_CALENDER_FOUND")
@@ -290,7 +289,6 @@ public class TeamCalendarController {
 
             responses.add(new TeamCalendarAbstractResponseDto(teamCalendar, childResponses));
         }
-
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

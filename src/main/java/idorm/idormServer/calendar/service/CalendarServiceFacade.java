@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CalendarServiceFacade {
 
     private final TeamService teamService;
+    private final TeamCalendarService teamCalendarService;
 
     public void addTeamMember(Team team, Member loginMember, Member registerMember) {
         if (team != null) { // 룸메이트 초대
@@ -25,6 +26,7 @@ public class CalendarServiceFacade {
     }
 
     public void deleteTeamMember(Team team, Member member) {
+        teamCalendarService.deleteManyByContainedTarget(team, member);
         teamService.removeMember(team, member);
 
         if (team.getMemberCount() < 1) { // 팀 삭제

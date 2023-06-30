@@ -26,7 +26,6 @@ public class TeamCalendarService {
 
     private final TeamCalendarRepository teamCalendarRepository;
     private final MemberService memberService;
-    private final TeamService teamService;
 
     /**
      * DB에 팀일정 저장 |
@@ -82,6 +81,35 @@ public class TeamCalendarService {
     }
 
     /**
+     * 특정 회원을 대상으로 설정된 팀일정 다건 삭제 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void deleteManyByContainedTarget(Team team, Member member) {
+        try {
+            List<TeamCalendar> teamCalendars = team.getTeamCalendars();
+
+            if (teamCalendars.size() < 1) return;
+
+            for (TeamCalendar teamCalendar : teamCalendars) {
+
+                List<Long> targetsId = teamCalendar.getTargets();
+
+                if (!targetsId.contains(member.getId())) {
+                    continue;
+                } else if (targetsId.size() == 1){
+                    teamCalendar.deleteTarget(member.getId());
+                    teamCalendar.delete();
+                } else {
+                    teamCalendar.deleteTarget(member.getId());
+                }
+            }
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 팀일정 월별 조회 |
      * 500(SERVER_ERROR)
      */
@@ -104,6 +132,7 @@ public class TeamCalendarService {
                     throw new CustomException(null, TEAMCALENDAR_NOT_FOUND);
                 });
     }
+
 
     /**
      * 팀일정 대상자의 팀 존재 여부 검증 |
