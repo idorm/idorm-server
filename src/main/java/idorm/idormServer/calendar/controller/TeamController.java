@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -118,7 +120,7 @@ public class TeamController {
 
     @ApiOperation(value = "팀원 전체 조회", notes = "- 팀에 소속된 팀원이 1명이라면, isNeedToConfirmDeleted: true 로 응답합니다. \n" +
             "- 남은 팀원 1명이 팀 폭발 여부를 확인했다면, 팀 폭발 인지 OK 요청 을 서버에게 보내주세요. \n" +
-            "- 팀원이 없다면 팀 식별자(teamId)가 -999 이고, members는 빈 배열로 응답합니다. \n" +
+            "- 팀원이 없다면 팀 식별자(teamId)가 -999 이고, members는 로그인한 회원만 담은 배열로 응답합니다. \n" +
             "- json 내부의 회원 배열에서, 회원의 order는 0부터 시작합니다.")
     @ApiResponses(value = {
             @ApiResponse(
@@ -144,7 +146,7 @@ public class TeamController {
 
             responses = new TeamMemberFindManyResponseDto(-999L,
                     false,
-                    null);
+                    new ArrayList<>(Arrays.asList(new TeamMemberFindResponseDto(member))));
         } else {
             List<Member> members = teamService.findTeamMembers(team);
 
@@ -152,7 +154,7 @@ public class TeamController {
                 teamService.updateIsNeedToConfirmDeleted(team);
                 responses = new TeamMemberFindManyResponseDto(team.getId(),
                         true,
-                        null);
+                        new ArrayList<>(Arrays.asList(new TeamMemberFindResponseDto(member))));
             } else {
                 List<TeamMemberFindResponseDto> childResponses = members.stream()
                         .map(m -> new TeamMemberFindResponseDto(m)).collect(Collectors.toList());
