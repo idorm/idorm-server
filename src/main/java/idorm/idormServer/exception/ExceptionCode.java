@@ -15,6 +15,7 @@ public enum ExceptionCode {
      */
     FIELD_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
     TARGETS_FIELD_REQUIRED(BAD_REQUEST, "대상자 입력은 필수 입니다."),
+    DATE_SET_REQUIRED(BAD_REQUEST, "일자 입력은 필수 입니다."),
 
     // 형식
     EMAIL_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),

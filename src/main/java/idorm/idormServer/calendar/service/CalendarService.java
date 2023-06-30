@@ -171,13 +171,14 @@ public class CalendarService {
 
     /**
      * 일정 시작 및 종료 일자 검증 |
+     * 400(DATE_SET_REQUIRED)
      * 400(DATE_SET_INVALID)
      */
 
     public void validateStartAndEndDate(LocalDate startDate, LocalDate endDate) {
 
         if (startDate == null || endDate == null)
-            return;
+            throw new CustomException(null, DATE_SET_REQUIRED);
 
         if (startDate.isAfter(endDate))
             throw new CustomException(null, DATE_SET_INVALID);

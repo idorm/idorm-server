@@ -56,7 +56,7 @@ public class TeamCalendarController {
                     content = @Content(schema = @Schema(implementation = TeamCalendarDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "DATE_SET_INVALID / *_FIELD_REQUIRED / *_LENGTH_INVALID / " +
-                            "ILLEGAL_STATEMENT_EXPLODEDTEAM / TARGETS_FIELD_REQUIRED"),
+                            "ILLEGAL_STATEMENT_EXPLODEDTEAM / TARGETS_FIELD_REQUIRED / DATE_SET_REQUIRED"),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND / TEAMMEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
@@ -152,7 +152,7 @@ public class TeamCalendarController {
             @ApiResponse(responseCode = "400",
                     description = "*_FIELD_REQUIRED / *_LENGTH_INVALID / TEAMCALENDARID_NEGATIVEORZERO_INVALID " +
                             "/ DATE_SET_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM / TARGETS_FIELD_REQUIRED / " +
-                            "ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR"),
+                            "ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR / DATE_SET_REQUIRED"),
             @ApiResponse(responseCode = "403",
                     description = "FORBIDDEN_TEAMCALENDAR_AUTHORIZATION"),
             @ApiResponse(responseCode = "404",
