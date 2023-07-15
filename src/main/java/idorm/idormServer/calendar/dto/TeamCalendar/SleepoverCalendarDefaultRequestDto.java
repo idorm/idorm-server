@@ -23,9 +23,13 @@ import java.util.Arrays;
 @ApiModel(value = "외박일정 기본 요청")
 public class SleepoverCalendarDefaultRequestDto {
 
-    @ApiModelProperty(position = 1, notes = "string", value = "외박일자", example = "2023-04-27")
+    @ApiModelProperty(position = 1, notes = "string", value = "시작일자", example = "2023-04-27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate sleepoverDate;
+    private LocalDate startDate;
+
+    @ApiModelProperty(position = 2, notes = "string", value = "종료일자", example = "2023-04-28")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
 
     public TeamCalendar toEntity(Team team, Long target) {
         return TeamCalendar.builder()
@@ -33,8 +37,8 @@ public class SleepoverCalendarDefaultRequestDto {
                 .targets(new ArrayList<>(Arrays.asList(target)))
                 .isSleepover(true)
                 .title("외박")
-                .startDate(sleepoverDate)
-                .endDate(sleepoverDate)
+                .startDate(this.startDate)
+                .endDate(this.endDate)
                 .build();
     }
 }
