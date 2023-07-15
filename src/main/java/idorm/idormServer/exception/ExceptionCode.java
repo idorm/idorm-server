@@ -44,7 +44,7 @@ public enum ExceptionCode {
 
     ILLEGAL_ARGUMENT_ADMIN(BAD_REQUEST, "관리자는 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
-    ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR(BAD_REQUEST, "외박 일정은 수정할 수 없습니다."),
+    ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR(BAD_REQUEST, "해당 요청으로 외박 일정은 수정할 수 없습니다."),
 
     ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(BAD_REQUEST, "매칭정보가 비공개 입니다."),
     ILLEGAL_STATEMENT_EXPLODEDTEAM(CONFLICT, "폭발한 팀은 요청 대상이 될 수 없습니다."),

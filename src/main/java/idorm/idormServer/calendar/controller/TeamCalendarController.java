@@ -48,7 +48,7 @@ public class TeamCalendarController {
     private final TeamService teamService;
     private final CalendarService calendarService;
 
-    @ApiOperation(value = "[팀] 일정 생성")
+    @ApiOperation(value = "[팀] 일정 생성", notes = "- targets 필드는 회원 식별자 배열을 주세요")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
@@ -99,14 +99,14 @@ public class TeamCalendarController {
                 );
     }
 
-    @ApiOperation(value = "[외박] 일정 생성")
+    @ApiOperation(value = "[외박] 일정 생성", notes = "- 외박일정은 본인의 것만 생성 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
                     description = "SLEEPOVER_CALENDAR_CREATED",
                     content = @Content(schema = @Schema(implementation = TeamCalendarDefaultResponseDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "ILLEGAL_STATEMENT_EXPLODEDTEAM"),
+                    description = "ILLEGAL_STATEMENT_EXPLODEDTEAM / DATE_SET_INVALID / DATE_SET_REQUIRED"),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
@@ -124,6 +124,7 @@ public class TeamCalendarController {
         Team team = teamService.findByMember(member);
 
         teamService.validateIsDeletedTeam(team);
+        calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
 
         TeamCalendar teamCalendar = teamCalendarService.save(request.toEntity(team, member.getId()));
 
@@ -143,7 +144,56 @@ public class TeamCalendarController {
                 );
     }
 
-    @ApiOperation(value = "[팀] 일정 수정", notes = "- 외박 일정은 수정이 불가합니다.")
+    @ApiOperation(value = "[외박] 일정 수정", notes = "- 본인의 외박일정만 수정 가능합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "SLEEPOVER_CALENDAR_UPDATED",
+                    content = @Content(schema = @Schema(implementation = TeamCalendarDefaultResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "ILLEGAL_STATEMENT_EXPLODEDTEAM / TEAMCALENDARID_FIELD_REQUIRED / " +
+                            "TEAMCALENDARID_NEGATIVEORZERO_INVALID / DATE_SET_INVALID / DATE_SET_REQUIRED"),
+            @ApiResponse(responseCode = "403",
+                    description = "FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION"),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND / TEAMCALENDAR_NOT_FOUND"),
+            @ApiResponse(responseCode = "500",
+                    description = "SERVER_ERROR")
+    })
+    @PutMapping("/api/v1/member/team/calendar/sleepover")
+    public ResponseEntity<DefaultResponseDto<Object>> updateSleepoverCalender(
+            HttpServletRequest servletRequest,
+            @RequestBody @Valid SleepoverCalendarUpdateRequestDto request
+    ) {
+
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
+        Team team = teamService.findByMember(member);
+
+        teamService.validateIsDeletedTeam(team);
+        calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
+        TeamCalendar teamCalendar = teamCalendarService.findById(request.getTeamCalendarId());
+        teamCalendarService.validateSleepoverCalendarAuthorization(teamCalendar, member);
+
+        teamCalendarService.updateDates(teamCalendar, request);
+
+        TeamMemberFindResponseDto childResponse = new TeamMemberFindResponseDto(member);
+
+        TeamCalendarDefaultResponseDto response = TeamCalendarDefaultResponseDto.builder()
+                .teamCalendar(teamCalendar)
+                .targets(new ArrayList<>(Arrays.asList(childResponse)))
+                .build();
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("SLEEPOVER_CALENDAR_UPDATED")
+                        .responseMessage("외박 일정 수정 완료")
+                        .data(response)
+                        .build()
+                );
+    }
+
+    @ApiOperation(value = "[팀] 일정 수정", notes = "- targets 필드는 회원 식별자 배열을 주세요")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -200,7 +250,8 @@ public class TeamCalendarController {
                 );
     }
 
-    @ApiOperation(value = "[팀 / 외박] 일정 삭제")
+    @ApiOperation(value = "[팀 / 외박] 일정 삭제", notes = "- 팀일정은 팀에 소속된 회원이라면 누구나 삭제 가능합니다.\n" +
+            "- 외박 일정은 본인의 것만 삭제 가능합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",

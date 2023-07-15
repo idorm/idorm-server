@@ -2,6 +2,7 @@ package idorm.idormServer.calendar.service;
 
 import idorm.idormServer.calendar.domain.Team;
 import idorm.idormServer.calendar.domain.TeamCalendar;
+import idorm.idormServer.calendar.dto.TeamCalendar.SleepoverCalendarUpdateRequestDto;
 import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarUpdateRequestDto;
 import idorm.idormServer.calendar.repository.TeamCalendarRepository;
 import idorm.idormServer.exception.CustomException;
@@ -42,6 +43,7 @@ public class TeamCalendarService {
 
     /**
      * 팀일정 수정 |
+     * 500(SERVER_ERROR)
      */
     @Transactional
     public void update(TeamCalendar teamCalendar,
@@ -49,6 +51,19 @@ public class TeamCalendarService {
                        List<Long> targets) {
         try {
             teamCalendar.updateContents(request, targets);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 외박일정 수정 |
+     * 500(SERVER_ERROR)
+     */
+    @Transactional
+    public void updateDates(TeamCalendar teamCalendar, SleepoverCalendarUpdateRequestDto request) {
+        try {
+            teamCalendar.updateDates(request);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -215,7 +230,7 @@ public class TeamCalendarService {
     }
 
     /**
-     * 외박일정 삭제 권한 검증 |
+     * 외박일정 수정/삭제 권한 검증 |
      * 403(FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION)
      */
     public void validateSleepoverCalendarAuthorization(TeamCalendar teamCalendar, Member member) {

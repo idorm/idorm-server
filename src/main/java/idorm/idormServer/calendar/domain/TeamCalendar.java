@@ -1,5 +1,6 @@
 package idorm.idormServer.calendar.domain;
 
+import idorm.idormServer.calendar.dto.TeamCalendar.SleepoverCalendarUpdateRequestDto;
 import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarUpdateRequestDto;
 import idorm.idormServer.common.BaseEntity;
 import lombok.AccessLevel;
@@ -79,6 +80,11 @@ public class TeamCalendar extends BaseEntity {
         this.content = request.getContent();
 
         this.updateTargets(targets);
+    }
+
+    public void updateDates(SleepoverCalendarUpdateRequestDto request) {
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
     }
 
     private void updateTargets(List<Long> newTargets) {
