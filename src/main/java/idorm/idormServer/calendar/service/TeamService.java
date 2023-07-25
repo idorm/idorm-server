@@ -8,8 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
@@ -138,6 +139,7 @@ public class TeamService {
                 if (member.getIsDeleted())
                     team.removeMember(member);
             }
+            Collections.sort(members, Comparator.comparingInt(Member::getTeamOrder));
             return members;
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);

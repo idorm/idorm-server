@@ -20,8 +20,8 @@ public class CalendarServiceFacade {
             teamService.validateIsDeletedTeam(team);
             teamService.addMember(team, registerMember);
         } else { // 팀 생성 후 룸메이트 초대
-            Team createdTeam = teamService.create(loginMember);
-            teamService.addMember(createdTeam, registerMember);
+            Team createdTeam = teamService.create(registerMember);
+            teamService.addMember(createdTeam, loginMember);
         }
     }
 
