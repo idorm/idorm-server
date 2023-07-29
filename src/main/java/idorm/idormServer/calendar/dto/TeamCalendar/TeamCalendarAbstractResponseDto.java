@@ -33,7 +33,11 @@ public class TeamCalendarAbstractResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @ApiModelProperty(position = 5, required = true, value = "일정 대상자의 식별자")
+    @ApiModelProperty(position = 5, notes = "string", value = "종료일자", example = "2023-04-27")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
+
+    @ApiModelProperty(position = 6, required = true, value = "일정 대상자의 식별자")
     private List<TeamMemberFindResponseDto> targets = new ArrayList<>();
 
     @Builder
@@ -44,6 +48,8 @@ public class TeamCalendarAbstractResponseDto {
 
         if (teamCalendar.getStartDate() != null)
             this.startDate = teamCalendar.getStartDate();
+        if (teamCalendar.getEndDate() != null)
+            this.endDate = teamCalendar.getEndDate();
 
         if (targets != null)
             this.targets = targets.stream().collect(Collectors.toList());
