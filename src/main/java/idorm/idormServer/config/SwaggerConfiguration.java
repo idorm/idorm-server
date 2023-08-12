@@ -5,6 +5,7 @@ import idorm.idormServer.calendar.dto.Calendar.CalendarAdminResponseDto;
 import idorm.idormServer.calendar.dto.Calendar.CalendarDefaultResponseDto;
 import idorm.idormServer.calendar.dto.Team.TeamMemberFindManyResponseDto;
 import idorm.idormServer.calendar.dto.Team.TeamMemberFindResponseDto;
+import idorm.idormServer.calendar.dto.TeamCalendar.SleepoverCalendarAbstractResponseDto;
 import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarAbstractResponseDto;
 import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarDefaultResponseDto;
 import idorm.idormServer.community.dto.comment.CommentDefaultResponseDto;
@@ -51,7 +52,8 @@ public class SwaggerConfiguration {
                         typeResolver.resolve(TeamMemberFindManyResponseDto.class),
                         typeResolver.resolve(TeamMemberFindResponseDto.class),
                         typeResolver.resolve(TeamCalendarDefaultResponseDto.class),
-                        typeResolver.resolve(TeamCalendarAbstractResponseDto.class)
+                        typeResolver.resolve(TeamCalendarAbstractResponseDto.class),
+                        typeResolver.resolve(SleepoverCalendarAbstractResponseDto.class)
                 )
                 .useDefaultResponseMessages(false)
                 .select()

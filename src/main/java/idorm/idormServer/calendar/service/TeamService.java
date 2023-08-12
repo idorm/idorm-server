@@ -116,7 +116,7 @@ public class TeamService {
 
     /**
      * 팀원으로 팀 조회 |
-     * 500(TEAM_NOT_FOUND)
+     * 404(TEAM_NOT_FOUND)
      */
     public Team findByMember(Member member) {
         Team team = member.getTeam();
@@ -165,15 +165,6 @@ public class TeamService {
     }
 
     /**
-     * 등록된 팀 미존재 여부 검증 |
-     * 409(TEAM_NOT_FOUND)
-     */
-    public void validateTeamNotExistence(Member member) {
-        if (member.getTeam() == null)
-            throw new CustomException(null, TEAM_NOT_FOUND);
-    }
-
-    /**
      * 팀 폭발 가능 여부 검증 |
      * 409(CANNOT_EXPLODE_TEAM)
      */
@@ -189,5 +180,17 @@ public class TeamService {
     public void validateIsDeletedTeam(Team team) {
         if (team.getIsNeedToConfirmDeleted())
             throw new CustomException(null, ILLEGAL_STATEMENT_EXPLODEDTEAM);
+    }
+
+    /**
+     * 팀원 접근 여부 검증 |
+     * 403(ACCESS_DENIED_TEAM)
+     */
+    public void validateTeamMember(Team loginMemberTeam, Member deleteMember) {
+        if (deleteMember.getTeam() == null)
+            throw new CustomException(null, ACCESS_DENIED_TEAM);
+
+        if (!loginMemberTeam.equals(deleteMember.getTeam()))
+            throw new CustomException(null, ACCESS_DENIED_TEAM);
     }
 }

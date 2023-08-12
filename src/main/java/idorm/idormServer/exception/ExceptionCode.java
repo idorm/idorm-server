@@ -71,6 +71,8 @@ public enum ExceptionCode {
     FORBIDDEN_TEAMCALENDAR_AUTHORIZATION(FORBIDDEN, "팀 일정 접근 권한이 없습니다."),
     FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION(FORBIDDEN, "외박 일정 수정 권한이 없습니다."),
 
+    ACCESS_DENIED_TEAM(FORBIDDEN, "팀 접근 권한이 없습니다."),
+
     /**
      * 404 NOT_FOUND : Resource 를 찾을 수 없음
      */
@@ -112,6 +114,7 @@ public enum ExceptionCode {
     DUPLICATE_DISLIKED_MEMBER(CONFLICT, "이미 싫어요한 멤버 입니다."),
     DUPLICATE_LIKED(CONFLICT, "공감은 한 번만 가능합니다."),
     DUPLICATE_TEAM(CONFLICT, "등록된 팀이 존재합니다."),
+    DUPLICATE_SLEEPOVER_DATE(CONFLICT, "요청한 일정 기간 중에 이미 등록된 외박일정이 있습니다."),
 
     CANNOT_UPDATE_NICKNAME(CONFLICT, "닉네임은 30일마다 변경할 수 있습니다."),
     CANNOT_LIKED_SELF(CONFLICT, "본인의 글에 공감할 수 없습니다."),

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -109,6 +110,8 @@ public class TeamCalendarController {
                     description = "ILLEGAL_STATEMENT_EXPLODEDTEAM / DATE_SET_INVALID / DATE_SET_REQUIRED"),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND"),
+            @ApiResponse(responseCode = "409",
+                    description = "DUPLICATE_SLEEPOVER_DATE"),
             @ApiResponse(responseCode = "500",
                     description = "SERVER_ERROR")
     })
@@ -125,6 +128,11 @@ public class TeamCalendarController {
 
         teamService.validateIsDeletedTeam(team);
         calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
+        teamCalendarService.validateDuplicateDate(null,
+                team,
+                member,
+                request.getStartDate(),
+                request.getEndDate());
 
         TeamCalendar teamCalendar = teamCalendarService.save(request.toEntity(team, member.getId()));
 
@@ -157,6 +165,8 @@ public class TeamCalendarController {
                     description = "FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION"),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND / TEAMCALENDAR_NOT_FOUND"),
+            @ApiResponse(responseCode = "409",
+                    description = "DUPLICATE_SLEEPOVER_DATE"),
             @ApiResponse(responseCode = "500",
                     description = "SERVER_ERROR")
     })
@@ -174,6 +184,12 @@ public class TeamCalendarController {
         calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
         TeamCalendar teamCalendar = teamCalendarService.findById(request.getTeamCalendarId());
         teamCalendarService.validateSleepoverCalendarAuthorization(teamCalendar, member);
+
+        teamCalendarService.validateDuplicateDate(teamCalendar,
+                team,
+                member,
+                request.getStartDate(),
+                request.getEndDate());
 
         teamCalendarService.updateDates(teamCalendar, request);
 
@@ -348,7 +364,7 @@ public class TeamCalendarController {
                 );
     }
 
-    @ApiOperation(value = "[팀 / 외박] 일정 월별 조회", notes = "- 종료일이 지난 일정도 전부 응답합니다.")
+    @ApiOperation(value = "[팀] 일정 월별 조회", notes = "- 종료일이 지난 일정도 전부 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -392,6 +408,65 @@ public class TeamCalendarController {
                 .body(DefaultResponseDto.builder()
                         .responseCode("TEAM_CALENDERS_FOUND")
                         .responseMessage("팀 일정 월별 조회 완료")
+                        .data(responses)
+                        .build()
+                );
+    }
+
+    @ApiOperation(value = "[외박] 일정 월별 조회", notes = "- 팀원 한 명의 외박 일정들을 응답합니다.\n" +
+            "- 종료일이 지난 일정은 빼고 응답합니다.\n" +
+            "- 예시 성공 응답이 리스트로 파바박- 담겨서 응답합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "TEAM_SLEEPOVER_CALENDERS_FOUND",
+                    content = @Content(schema = @Schema(implementation = SleepoverCalendarAbstractResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "YEARMONTH_FIELD_REQUIRED"),
+            @ApiResponse(responseCode = "403",
+                    description = "ACCESS_DENIED_TEAM"),
+            @ApiResponse(responseCode = "404",
+                    description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND"),
+            @ApiResponse(responseCode = "500",
+                    description = "SERVER_ERROR"),
+    })
+    @PostMapping("/api/v1/member/team/calendars/sleepover")
+    public ResponseEntity<DefaultResponseDto<Object>> findTeamSleepoverCalenders(
+            HttpServletRequest servletRequest,
+            @RequestBody @Valid SleepoverCalendarFindManyRequestDto request
+    ) {
+
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member member = memberService.findById(memberId);
+        Member searchMember = memberService.findById(request.getMemberId());
+
+        Team loginMemberTeam = teamService.findByMember(member);
+
+        if (!member.equals(searchMember))
+            teamService.validateTeamMember(loginMemberTeam, searchMember);
+
+        List<TeamCalendar> teamCalendars = teamCalendarService.findSleepOverCalendarsByYearMonth(loginMemberTeam,
+                request.getYearMonth());
+
+        List<TeamCalendar> responseCalendars = new ArrayList<>();
+
+        for (TeamCalendar c : teamCalendars) {
+            if (c.getEndDate().isBefore(LocalDateTime.now().plusHours(9).toLocalDate()))
+                continue;
+            if (!c.getTargets().contains(searchMember.getId()))
+                continue;
+
+            responseCalendars.add(c);
+        }
+
+        List<SleepoverCalendarAbstractResponseDto> responses = responseCalendars.stream()
+                .map(c -> new SleepoverCalendarAbstractResponseDto(c))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("TEAM_SLEEPOVER_CALENDERS_FOUND")
+                        .responseMessage("팀 외박 일정 월별 조회 완료")
                         .data(responses)
                         .build()
                 );

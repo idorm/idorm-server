@@ -86,12 +86,18 @@ public class TeamController {
                 );
     }
 
-    @ApiOperation(value = "팀 나가기")
+    @ApiOperation(value = "팀원 삭제", notes = "- 본인 혹은 팀의 다른 회원을 팀에서 삭제시킬 때 사용합니다.\n" +
+            "- 로그인한 유저가 팀이 없는 경우는 404(TEAM_NOT_FOUND) 를 응답합니다.\n" +
+            "- 다른 팀원을 삭제하려는 경우, 삭제하려는 팀원의 팀이 없거나 같은 팀이 아닐 경우 403(ACCESS_DENIED_TEAM) 을 응답합니다.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "TEAM_MEMBER_DELETED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
+            @ApiResponse(responseCode = "400",
+                    description = "MEMBERID_NEGATIVEORZERO_INVALID"),
+            @ApiResponse(responseCode = "403",
+                    description = "ACCESS_DENIED_TEAM"),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
@@ -99,16 +105,23 @@ public class TeamController {
     })
     @DeleteMapping("/api/v1/member/team")
     public ResponseEntity<DefaultResponseDto<Object>> deleteTeamMember(
-            HttpServletRequest servletRequest
+            HttpServletRequest servletRequest,
+            @RequestParam(value = "memberId")
+            @Positive(message = "삭제할 회원 식별자는 양수만 가능합니다.")
+            Long memberId
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
-        Member member = memberService.findById(memberId);
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        Member loginMember = memberService.findById(loginMemberId);
+        Member deleteMember = memberService.findById(memberId);
 
-        teamService.validateTeamNotExistence(member);
-        Team team = teamService.findByMember(member);
+        Team loginMemberTeam = teamService.findByMember(loginMember);
 
-        calendarServiceFacade.deleteTeamMember(team, member);
+        if (!loginMember.equals(deleteMember)) {
+            teamService.validateTeamMember(loginMemberTeam, deleteMember);
+        }
+
+        calendarServiceFacade.deleteTeamMember(loginMemberTeam, deleteMember);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

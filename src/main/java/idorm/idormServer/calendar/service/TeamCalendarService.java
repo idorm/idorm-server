@@ -12,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -130,8 +133,21 @@ public class TeamCalendarService {
      */
     public List<TeamCalendar> findManyByYearMonth(Team team, YearMonth yearMonth) {
         try {
-            return teamCalendarRepository.findByTeamAndIsDeletedIsFalseAndDateLike(team.getId(),
-                    yearMonth + "-%");
+            return teamCalendarRepository.findTeamCalendars(team.getId(),
+                    yearMonth + "-%", 0);
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 외박 일정 월별 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<TeamCalendar> findSleepOverCalendarsByYearMonth(Team team, YearMonth yearMonth) {
+        try {
+            return teamCalendarRepository.findTeamCalendars(team.getId(),
+                    yearMonth + "-%", 1);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
@@ -236,5 +252,29 @@ public class TeamCalendarService {
     public void validateSleepoverCalendarAuthorization(TeamCalendar teamCalendar, Member member) {
         if (!teamCalendar.getTargets().contains(member.getId()))
             throw new CustomException(null, FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION);
+    }
+
+    /**
+     * 외박 일정 날짜 중복 등록 여부 검증
+     * 409(DUPLICATE_SLEEPOVER_DATE)
+     */
+    public void validateDuplicateDate(TeamCalendar teamCalendar,
+                                               Team team,
+                                               Member member,
+                                               LocalDate startDate,
+                                               LocalDate endDate) {
+
+        String startDateStr = startDate.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
+        String endDateStr = endDate.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
+
+        List<TeamCalendar> teamCalendars = teamCalendarRepository.findTeamCalendarsByDate(team.getId(), startDateStr, endDateStr);
+
+        teamCalendars.removeIf(c -> !c.getTargets().contains(member.getId()));
+
+        if (teamCalendar != null)
+            teamCalendars.removeIf(c -> c.getId().equals(teamCalendar.getId()));
+
+        if (teamCalendars.size() > 0)
+            throw new CustomException(null, DUPLICATE_SLEEPOVER_DATE);
     }
 }
