@@ -12,10 +12,16 @@ import java.io.OutputStream;
 
 import static idorm.idormServer.exception.ExceptionCode.UNAUTHORIZED_MEMBER;
 
-@Component("customAuthenticationEntryPoint")
+@Component("AuthenticationEntryPoint")
 public class CustomAuthenticationEntryPointHandler implements AuthenticationEntryPoint {
 
-    private static DefaultExceptionResponseDto errorResponse =
+    private final ObjectMapper mapper;
+
+    public CustomAuthenticationEntryPointHandler(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
+
+    private static DefaultExceptionResponseDto EXCEPTION_RESPONSE =
             new DefaultExceptionResponseDto(
                     UNAUTHORIZED_MEMBER.name(),
                     UNAUTHORIZED_MEMBER.getMessage());
@@ -31,7 +37,7 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         try (OutputStream os = response.getOutputStream()) {
-            objectMapper.writeValue(os, errorResponse);
+            mapper.writeValue(os, EXCEPTION_RESPONSE);
             os.flush();
         }
     }

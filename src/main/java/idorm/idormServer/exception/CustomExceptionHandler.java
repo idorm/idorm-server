@@ -1,6 +1,5 @@
 package idorm.idormServer.exception;
 
-import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,20 +23,14 @@ import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { CustomException.class })
     protected ResponseEntity<DefaultExceptionResponseDto> handleCustomException(CustomException e) {
 
-        if (e.getExceptionCode().getHttpStatus().equals(INTERNAL_SERVER_ERROR))
-            Sentry.captureException(e);
-
         return DefaultExceptionResponseDto.exceptionResponse(e.getExceptionCode());
     }
 
-    /**
-     * 400 Bad Request |
-     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers,

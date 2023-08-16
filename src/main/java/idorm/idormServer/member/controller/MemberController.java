@@ -30,12 +30,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
+import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
+import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.exception.ExceptionCode.*;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Api(tags = "회원")
 @Validated
@@ -307,7 +305,8 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "[FCM 수정] 로그인", notes = "- 헤더에 토큰을 담아 응답합니다.")
+    @ApiOperation(value = "로그인", notes = "- 헤더에 토큰을 담아 응답합니다.\n" +
+            "- /v2/login : deprecated")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -323,40 +322,23 @@ public class MemberController {
                     description = "SERVER_ERROR"),
     }
     )
-    @PostMapping("/v2/login")
-    public ResponseEntity<DefaultResponseDto<Object>> loginV2(
+    @PostMapping({"/v2/login", API_ROOT_URL_V1+ "/login"})
+    public ResponseEntity<DefaultResponseDto<Object>> login(
             @RequestHeader(name = "fcm-token", required = false) String fcmToken,
             @RequestBody @Valid MemberLoginRequestDto request) {
 
-        Member loginMember = null;
 
-        if(request.getEmail().equals(ENV_USERNAME + "@inu.ac.kr")) {
-            if (!passwordEncoder.matches(request.getPassword(), passwordEncoder.encode(ENV_PASSWORD))) {
-                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
-            }
-            loginMember = memberService.findById(1L);
-        } else {
-            loginMember = memberService.findByEmail(request.getEmail());
+        Member member = memberService.findByEmail(request.getEmail());
 
-            if (!passwordEncoder.matches(request.getPassword(), loginMember.getPassword())) {
-                throw new CustomException(null, UNAUTHORIZED_PASSWORD);
-            }
-        }
+        memberService.validatePassword(member, request.getPassword());
 
-        Iterator<String> iter = loginMember.getRoles().iterator();
-        List<String> roles = new ArrayList<>();
+        String token = jwtTokenProvider.createToken(String.valueOf(member.getId()), member.getRoles());
+        memberService.updateFcmToken(member, fcmToken);
 
-        while (iter.hasNext()) {
-            roles.add(iter.next());
-        }
-
-        String token = jwtTokenProvider.createToken(loginMember.getUsername(), roles);
-        memberService.updateFcmToken(loginMember, fcmToken);
-
-        MemberDefaultResponseDto response = new MemberDefaultResponseDto(loginMember);
+        MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
 
         return ResponseEntity.status(200)
-                .header(AUTHORIZATION, token)
+                .header(AUTHENTICATION_HEADER_NAME, token)
                 .body(DefaultResponseDto.builder()
                         .responseCode("MEMBER_LOGIN")
                         .responseMessage("회원 로그인 완료")
@@ -364,7 +346,7 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "[FCM 수정] 로그인 시 FCM 토큰 업데이트",
+    @ApiOperation(value = "로그인 시 FCM 토큰 업데이트",
             notes = "- 앱을 실행할 때 로그인이 되어 있으면 타임스탬프 갱신을 위한 FCM 토큰을 서버에 전송해주세요. \n" +
                     "- FCM 토큰이 만료되었을 때 FCM 토큰을 업데이트해주세요.")
     @ApiResponses(value = {
@@ -398,7 +380,7 @@ public class MemberController {
                         .build());
     }
 
-    @ApiOperation(value = "[FCM 수정] 로그아웃 / FCM 제거 용도",
+    @ApiOperation(value = "로그아웃 / FCM 제거 용도",
             notes = "- FCM 토큰 관리를 위해 로그아웃 시 해당 API를 호출해주세요.")
     @ApiResponses(value = {
             @ApiResponse(

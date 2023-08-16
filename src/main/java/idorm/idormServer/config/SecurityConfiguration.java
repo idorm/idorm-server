@@ -1,64 +1,67 @@
 package idorm.idormServer.config;
 
-import idorm.idormServer.exception.ExceptionHandlerFilter;
 import idorm.idormServer.exception.CustomAccessDeniedHandler;
 import idorm.idormServer.exception.CustomAuthenticationEntryPointHandler;
-import idorm.idormServer.auth.JwtAuthenticationFilter;
+import idorm.idormServer.auth.CustomJwtAuthenticationFilter;
 import idorm.idormServer.auth.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    public static final String AUTHENTICATION_HEADER_NAME = "authorization";
+    public static final String AUTHENTICATION_URL = "/api/auth";
+    public static final String API_ROOT_URL_V1 = "/api/v1";
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private CustomAuthenticationEntryPointHandler authenticationEntryPointHandler;
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().disable()
+    protected void configure(final HttpSecurity http) throws Exception {
 
+        http
+                .httpBasic().disable()
                 .csrf().disable()
                 .cors()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/email/**", "/verifyCode/**").permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/member/**").hasRole("USER")
-                .antMatchers("/**/admin/**").hasRole("ADMIN")
-                .antMatchers("/**/member/**").hasRole("USER")
 
                 .and()
-                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
                 .and()
-                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPointHandler())
+                .authorizeRequests()
+                .antMatchers("/swagger-ui/**", "/swagger-resources/**", AUTHENTICATION_URL,
+                        "/email/**", "/verifyCode/**").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/member/**", API_ROOT_URL_V1 + "/member/**").hasRole("USER")
+                .anyRequest().permitAll()
+
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class);
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPointHandler)
+                .accessDeniedHandler(accessDeniedHandler)
+
+                .and()
+                .addFilterBefore(new CustomJwtAuthenticationFilter(jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class);
     }
 }

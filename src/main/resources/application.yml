@@ -15,7 +15,6 @@ spring:
         format_sql: false
         highlight_sql: false
         use_sql_comments: false
-    generate-ddl: ${DB_DDL_GENERATE_YN}
 
   jackson:
     serialization:
@@ -43,6 +42,9 @@ spring:
       max-file-size: ${MAX_FILE_SIZE}
       max-request-size: ${MAX_REQUEST_SIZE}
       enabled: true
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
 
 s3:
   key:

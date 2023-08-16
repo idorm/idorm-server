@@ -9,6 +9,8 @@ import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +25,12 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final MemberRepository memberRepository;
-    private final EmailService emailService;
+    @Autowired
+    public MemberRepository memberRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
 
     /**
      * DB에 회원 저장 |
@@ -239,5 +245,15 @@ public class MemberService {
     public void validateTargetSelf(Member loginMember, Member targetMember) {
         if (loginMember.equals(targetMember))
             throw new CustomException(null,ILLEGAL_ARGUMENT_SELF);
+    }
+
+    /**
+     * 비밀번호 일치 여부 검증 |
+     * 401(UNAUTHORIZED_PASSWORD)
+     */
+    public void validatePassword(Member member, String password) {
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new CustomException(null, UNAUTHORIZED_PASSWORD);
+        }
     }
 }

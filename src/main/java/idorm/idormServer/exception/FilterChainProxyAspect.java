@@ -39,7 +39,7 @@ public class FilterChainProxyAspect {
         response.setStatus(exceptionCode.getHttpStatus().value());
         response.setContentType("application/json;charset=UTF-8");
 
-        ExceptionHandlerFilter.ErrorResponse errorResponse = new ExceptionHandlerFilter.ErrorResponse(exceptionCode.toString(), exceptionCode.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(exceptionCode.toString(), exceptionCode.getMessage());
         try {
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         } catch (IOException e) {
@@ -49,7 +49,7 @@ public class FilterChainProxyAspect {
     }
 
     @Data
-    public static class ErrorResponse{
+    private static class ErrorResponse{
         private final String responseCode;
         private final String responseMessage;
     }

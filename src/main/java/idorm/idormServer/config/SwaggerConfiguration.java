@@ -30,6 +30,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import java.util.Arrays;
 import java.util.List;
 
+import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
+
 @Configuration
 public class SwaggerConfiguration {
 
@@ -66,7 +68,7 @@ public class SwaggerConfiguration {
 
     private ApiKey apiKey() {
 
-        return new ApiKey("X-AUTH-TOKEN", "X-AUTH-TOKEN", "header");
+        return new ApiKey(AUTHENTICATION_HEADER_NAME, AUTHENTICATION_HEADER_NAME, "header");
     }
 
     private SecurityContext securityContext() {
@@ -83,12 +85,9 @@ public class SwaggerConfiguration {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("X-AUTH-TOKEN", authorizationScopes));
+        return Arrays.asList(new SecurityReference(AUTHENTICATION_HEADER_NAME, authorizationScopes));
     }
 
-    /**
-     * api 정보 설정 부분
-     */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("idorm API")

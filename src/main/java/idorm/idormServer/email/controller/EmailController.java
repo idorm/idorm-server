@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.*;
 
+import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_URL;
 import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Api(tags = "이메일 인증")
@@ -48,7 +49,7 @@ public class EmailController {
                     description = "SERVER_ERROR / EMAIL_SENDING_ERROR"),
     }
     )
-    @PostMapping("/email")
+    @PostMapping({"/email", AUTHENTICATION_URL + "/email"})
     public ResponseEntity<DefaultResponseDto<Object>> sendAuthEmail(
             @RequestBody @Valid EmailAuthRequestDto request) {
 
@@ -104,7 +105,7 @@ public class EmailController {
                     description = "SERVER_ERROR"),
     }
     )
-    @PostMapping("/verifyCode/{email}")
+    @PostMapping({"/verifyCode/{email}", AUTHENTICATION_URL + "/verifyCode/{email}"})
     public ResponseEntity<DefaultResponseDto<Object>> verifyCode(
             @PathVariable("email") String requestEmail,
             @RequestBody @Valid EmailVerifyRequestDto request) {

@@ -1,39 +1,43 @@
 package idorm.idormServer.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import static idorm.idormServer.exception.ExceptionCode.FORBIDDEN_AUTHORIZATION;
-import static org.springframework.http.HttpStatus.*;
 
-@Slf4j
-@Component
+@Component("accessDeniedHandler")
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    private static DefaultExceptionResponseDto errorResponse =
+    private final ObjectMapper mapper;
+
+    public CustomAccessDeniedHandler(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
+
+    private static DefaultExceptionResponseDto EXCEPTION_RESPONSE =
             new DefaultExceptionResponseDto(
                     FORBIDDEN_AUTHORIZATION.name(),
-                    FORBIDDEN_AUTHORIZATION.getMessage());
+                    FORBIDDEN_AUTHORIZATION.getMessage()
+            );
 
     @Override
-    public void handle(HttpServletRequest httpServletRequest,
-                       HttpServletResponse httpServletResponse,
-                       AccessDeniedException exception) throws IOException {
+    public void handle(HttpServletRequest request,
+                       HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        httpServletResponse.setStatus(FORBIDDEN.value());
-        try (OutputStream os = httpServletResponse.getOutputStream()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(os, errorResponse);
+        response.setStatus(403);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        try (OutputStream os = response.getOutputStream()) {
+            mapper.writeValue(os, EXCEPTION_RESPONSE);
             os.flush();
         }
     }
