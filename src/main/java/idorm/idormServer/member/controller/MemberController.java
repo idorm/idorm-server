@@ -32,6 +32,7 @@ import javax.validation.Valid;
 import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
 import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.exception.ExceptionCode.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Api(tags = "회원")
 @Validated
@@ -63,7 +64,7 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> findOneMember(
             HttpServletRequest servletRequest
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
@@ -145,7 +146,7 @@ public class MemberController {
             HttpServletRequest servletRequest,
             @RequestPart(value = "file", required = false) MultipartFile file) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
         photoService.validateFileExistence(file);
@@ -178,7 +179,7 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> deleteMemberPhoto(
             HttpServletRequest servletRequest) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
         memberPhotoService.validateMemberPhotoIsExistence(member);
@@ -251,7 +252,7 @@ public class MemberController {
             HttpServletRequest servletRequest,
             @RequestBody @Valid MemberUpdateNicknameRequestDto request) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
         memberService.validateUpdateNicknameIsChanged(member, request.getNickname());
@@ -283,7 +284,7 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> deleteMember(
             HttpServletRequest servletRequest
     ) {
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
         memberServiceFacade.deleteMember(member);
@@ -328,7 +329,7 @@ public class MemberController {
         MemberDefaultResponseDto response = new MemberDefaultResponseDto(member);
 
         return ResponseEntity.status(200)
-                .header(AUTHENTICATION_HEADER_NAME, token)
+                .header(AUTHORIZATION, token)
                 .body(DefaultResponseDto.builder()
                         .responseCode("MEMBER_LOGIN")
                         .responseMessage("회원 로그인 완료")
@@ -358,7 +359,7 @@ public class MemberController {
             HttpServletRequest request,
             @RequestHeader("fcm-token") String fcmToken) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         memberService.updateFcmToken(member, fcmToken);
@@ -388,7 +389,7 @@ public class MemberController {
     public ResponseEntity<DefaultResponseDto<Object>> logout(
             HttpServletRequest request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         memberService.deleteFcmToken(member);

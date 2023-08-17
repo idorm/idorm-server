@@ -29,6 +29,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
+
 @Api(tags = "공유 캘린더_팀 관리")
 @Validated
 @RestController
@@ -66,7 +68,7 @@ public class TeamController {
             Long registerMemberId
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Member registerMember = memberService.findById(registerMemberId);
 
@@ -111,7 +113,7 @@ public class TeamController {
             Long memberId
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member loginMember = memberService.findById(loginMemberId);
         Member deleteMember = memberService.findById(memberId);
 
@@ -149,7 +151,7 @@ public class TeamController {
     public ResponseEntity<DefaultResponseDto<Object>> findTeamMembers(
             HttpServletRequest servletRequest
     ) {
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Team team = teamService.findByMemberOptional(member);
 
@@ -202,7 +204,7 @@ public class TeamController {
     public ResponseEntity<DefaultResponseDto<Object>> isConfirmTeamExploded(
             HttpServletRequest servletRequest
     ) {
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Team team = teamService.findByMemberOptional(member);
 

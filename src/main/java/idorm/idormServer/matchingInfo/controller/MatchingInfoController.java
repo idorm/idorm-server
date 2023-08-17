@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Api(tags = "온보딩 매칭 정보")
@@ -60,7 +61,7 @@ public class MatchingInfoController {
             HttpServletRequest servletRequest,
             @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
         matchingInfoService.validateMBTI(request.getMbti().toUpperCase());
@@ -102,7 +103,7 @@ public class MatchingInfoController {
             HttpServletRequest servletRequest,
             @RequestBody @Valid MatchingInfoDefaultRequestDto request) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         matchingInfoService.validateMBTI(request.getMbti().toUpperCase());
@@ -142,7 +143,7 @@ public class MatchingInfoController {
             HttpServletRequest servletRequest,
             MatchingInfoUpdateIsPublicRequestDto request) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
         if(member.getMatchingInfo() == null) {
@@ -176,7 +177,7 @@ public class MatchingInfoController {
     public ResponseEntity<DefaultResponseDto<Object>> findMatchingInfo(
             HttpServletRequest servletRequest) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
@@ -211,7 +212,7 @@ public class MatchingInfoController {
     })
     public ResponseEntity<DefaultResponseDto<Object>> deleteMatchingInfo(HttpServletRequest request2) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없는 경우

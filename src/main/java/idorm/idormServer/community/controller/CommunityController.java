@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Api(tags = "커뮤니티")
@@ -87,7 +88,7 @@ public class CommunityController {
             @PathVariable(value = "dormitory-category") String dormCategoryRequest,
             @RequestParam(value = "page") int pageNum
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         memberService.findById(loginMemberId);
         
         DormCategory dormCategory = DormCategory.validateType(dormCategoryRequest);
@@ -125,7 +126,7 @@ public class CommunityController {
             HttpServletRequest servletRequest,
             @PathVariable("dormitory-category") String dormCategoryRequest
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         memberService.findById(loginMemberId);
         
         DormCategory dormCategory = DormCategory.validateType(dormCategoryRequest);
@@ -166,7 +167,7 @@ public class CommunityController {
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
         Post foundPost = postService.findById(postId);
 
@@ -253,7 +254,7 @@ public class CommunityController {
             HttpServletRequest servletRequest,
             @ModelAttribute PostSaveRequestDto request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         postService.validatePostRequest(request.getTitle(), request.getContent(), request.getIsAnonymous());
@@ -304,7 +305,7 @@ public class CommunityController {
                 Long postId,
             @ModelAttribute PostUpdateRequestDto request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
@@ -348,7 +349,7 @@ public class CommunityController {
             HttpServletRequest servletRequest
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
         List<Post> posts = postService.findPostsByMember(member);
 
@@ -380,7 +381,7 @@ public class CommunityController {
     public ResponseEntity<DefaultResponseDto<Object>> findLikedPostsByMember(
             HttpServletRequest servletRequest
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         memberService.findById(loginMemberId);
 
         List<Long> likedPostIds = postLikedMemberService.findAllLikedPostIdByMemberId(loginMemberId);
@@ -427,7 +428,7 @@ public class CommunityController {
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
@@ -472,7 +473,7 @@ public class CommunityController {
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
@@ -510,7 +511,7 @@ public class CommunityController {
             @Positive(message = "게시글 식별자는 양수만 가능합니다.")
                 Long postId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         Post post = postService.findById(postId);
@@ -559,7 +560,7 @@ public class CommunityController {
                 Long postId,
             @RequestBody @Valid CommentDefaultRequestDto request
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         Post post = postService.findById(postId);
@@ -664,7 +665,7 @@ public class CommunityController {
             @Positive(message = "댓글 식별자는 양수만 가능합니다.")
                 Long commentId
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         Post post = postService.findById(postId);
@@ -698,7 +699,7 @@ public class CommunityController {
     public ResponseEntity<DefaultResponseDto<Object>> findCommentsByMember(
             HttpServletRequest servletRequest
     ) {
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         List<Comment> foundComments = commentService.findCommentsByMember(member);

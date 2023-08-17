@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
 
-    public static final String AUTHENTICATION_HEADER_NAME = "authorization";
+    public static final String AUTHENTICATION_HEADER_NAME = "X-AUTH-TOKEN";
     public static final String AUTHENTICATION_URL = "/api/auth";
     public static final String API_ROOT_URL_V1 = "/api/v1";
 

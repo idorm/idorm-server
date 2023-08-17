@@ -29,6 +29,7 @@ import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 
+import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Api(tags = "매칭")
@@ -60,7 +61,7 @@ public class MatchingController {
             HttpServletRequest servletRequest
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
         List<Member> likedMembers = matchingService.findLikedMembers(member);
@@ -98,7 +99,7 @@ public class MatchingController {
             HttpServletRequest servletRequest
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member loginMember = memberService.findById(loginMemberId);
 
         List<Member> dislikedMembers = matchingService.findDislikedMembers(loginMember);
@@ -147,7 +148,7 @@ public class MatchingController {
                     Long selectedMemberId
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member loginMember = memberService.findById(loginMemberId);
         Member selectedMember = memberService.findById(selectedMemberId);
 
@@ -208,7 +209,7 @@ public class MatchingController {
                     Long selectedMemberId
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member loginMember = memberService.findById(loginMemberId);
 
         if (matchingType == true) {
@@ -250,7 +251,7 @@ public class MatchingController {
             HttpServletRequest servletRequest
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member loginMember = memberService.findById(loginMemberId);
 
         matchingInfoService.findByMemberId(loginMemberId);
@@ -295,7 +296,7 @@ public class MatchingController {
             @RequestBody @Valid MatchingFilteredMatchingInfoRequestDto request
     ) {
 
-        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member loginMember = memberService.findById(loginMemberId);
         matchingInfoService.findByMemberId(loginMemberId);
         matchingInfoService.validateMatchingInfoIsPublic(loginMember);

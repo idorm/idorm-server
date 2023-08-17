@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.exception.ExceptionCode.TEAMCALENDAR_NOT_FOUND;
 
 @Api(tags = "공유 캘린더_일정 관리")
@@ -70,7 +71,7 @@ public class TeamCalendarController {
             @RequestBody @Valid TeamCalendarSaveRequestDto request
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Team team = teamService.findByMember(member);
 
@@ -122,7 +123,7 @@ public class TeamCalendarController {
             @RequestBody @Valid SleepoverCalendarDefaultRequestDto request
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Team team = teamService.findByMember(member);
 
@@ -176,7 +177,7 @@ public class TeamCalendarController {
             @RequestBody @Valid SleepoverCalendarUpdateRequestDto request
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Team team = teamService.findByMember(member);
 
@@ -232,7 +233,7 @@ public class TeamCalendarController {
             @RequestBody @Valid TeamCalendarUpdateRequestDto request
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Team team = teamService.findByMember(member);
 
@@ -290,7 +291,7 @@ public class TeamCalendarController {
             Long teamCalendarId
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Team team = teamService.findByMember(member);
 
@@ -334,7 +335,8 @@ public class TeamCalendarController {
             Long teamCalendarId
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME
+        )));
         Member member = memberService.findById(memberId);
 
         Team team = teamService.findByMember(member);
@@ -383,7 +385,7 @@ public class TeamCalendarController {
             @RequestBody @Valid CalendarFindManyRequestDto request
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Team team = teamService.findByMember(member);
 
@@ -436,7 +438,7 @@ public class TeamCalendarController {
             @RequestBody @Valid SleepoverCalendarFindManyRequestDto request
     ) {
 
-        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+        long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         Member searchMember = memberService.findById(request.getMemberId());
 

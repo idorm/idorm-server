@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
+
 @Api(tags = "신고")
 @Validated
 @RestController
@@ -59,7 +61,7 @@ public class ReportController {
             @RequestBody @Valid ReportDefaultRequestDto request) {
 
         long loginMemberId =
-                Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader("X-AUTH-TOKEN")));
+                Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
         ReportType reportType = ReportType.validateType(request.getReportType());
