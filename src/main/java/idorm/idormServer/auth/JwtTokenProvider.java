@@ -1,9 +1,8 @@
 package idorm.idormServer.auth;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.exception.ExceptionCode;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,11 +49,15 @@ public class JwtTokenProvider {
     }
 
     public String getUsername(String token) {
-        return Jwts.parser()
-                .setSigningKey(JWT_SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(JWT_SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (IllegalArgumentException | JwtException e) {
+            throw new CustomException(null, ExceptionCode.UNAUTHORIZED_MEMBER);
+        }
     }
 
     public String resolveToken(HttpServletRequest servletRequest) {
