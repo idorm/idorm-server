@@ -20,10 +20,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,19 +40,11 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 public class MemberController {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final PasswordEncoder passwordEncoder;
     private final MemberService memberService;
     private final EmailService emailService;
     private final PhotoService photoService;
     private final MemberPhotoService memberPhotoService;
     private final MemberServiceFacade memberServiceFacade;
-
-    @Value("${DB_NAME}")
-    private String ENV_USERNAME;
-
-    @Value("${ADMIN_PASSWORD}")
-    private String ENV_PASSWORD;
-
 
     @ApiOperation(value = "회원 단건 조회")
     @ApiResponses(value = {
