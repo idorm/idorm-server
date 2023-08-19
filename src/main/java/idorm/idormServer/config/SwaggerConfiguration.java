@@ -3,8 +3,8 @@ package idorm.idormServer.config;
 import com.fasterxml.classmate.TypeResolver;
 import idorm.idormServer.calendar.dto.Calendar.CalendarAdminResponseDto;
 import idorm.idormServer.calendar.dto.Calendar.CalendarDefaultResponseDto;
-import idorm.idormServer.calendar.dto.Team.TeamMemberFindManyResponseDto;
 import idorm.idormServer.calendar.dto.Team.TeamMemberFindResponseDto;
+import idorm.idormServer.calendar.dto.Team.TeamMemberManyFullResponseDto;
 import idorm.idormServer.calendar.dto.TeamCalendar.SleepoverCalendarAbstractResponseDto;
 import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarAbstractResponseDto;
 import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarDefaultResponseDto;
@@ -51,11 +51,11 @@ public class SwaggerConfiguration {
                         typeResolver.resolve(CommentParentResponseDto.class),
                         typeResolver.resolve(CalendarDefaultResponseDto.class),
                         typeResolver.resolve(CalendarAdminResponseDto.class),
-                        typeResolver.resolve(TeamMemberFindManyResponseDto.class),
                         typeResolver.resolve(TeamMemberFindResponseDto.class),
                         typeResolver.resolve(TeamCalendarDefaultResponseDto.class),
                         typeResolver.resolve(TeamCalendarAbstractResponseDto.class),
-                        typeResolver.resolve(SleepoverCalendarAbstractResponseDto.class)
+                        typeResolver.resolve(SleepoverCalendarAbstractResponseDto.class),
+                        typeResolver.resolve(TeamMemberManyFullResponseDto.class)
                 )
                 .useDefaultResponseMessages(false)
                 .select()

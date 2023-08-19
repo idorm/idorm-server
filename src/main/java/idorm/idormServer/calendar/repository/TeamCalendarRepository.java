@@ -32,4 +32,14 @@ public interface TeamCalendarRepository extends JpaRepository<TeamCalendar, Long
             "AND :endDate <= str_to_date(c.end_date, '%Y-%m-%d'))) ", nativeQuery = true
     )
     List<TeamCalendar> findTeamCalendarsByDate(Long teamId, String startDate, String endDate);
+
+    @Query(value = "SELECT * " +
+            "FROM team_calendar c " +
+            "WHERE c.is_deleted = 0 " +
+            "AND c.team_id = :teamId " +
+            "AND c.is_sleepover = 1 " +
+            "AND (str_to_date(c.start_date, '%Y-%m-%d') <= str_to_date(DATE_ADD(NOW(), INTERVAL 9 HOUR), '%Y-%m-%d') " +
+            "AND str_to_date(DATE_ADD(NOW(), INTERVAL 9 HOUR), '%Y-%m-%d') <= str_to_date(c.end_date, '%Y-%m-%d'));"
+            , nativeQuery = true)
+    List<TeamCalendar> findTodaySleepoverMembersByTeam(Long teamId);
 }

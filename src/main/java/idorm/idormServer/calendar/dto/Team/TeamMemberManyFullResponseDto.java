@@ -3,6 +3,7 @@ package idorm.idormServer.calendar.dto.Team;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,8 +13,8 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ApiModel(value = "팀 회원 다건 조회 응답")
-public class TeamMemberFindManyResponseDto {
+@ApiModel(value = "팀 회원 다건 조회 응답 - 당일 외박 여부 포함")
+public class TeamMemberManyFullResponseDto {
 
     @ApiModelProperty(position = 1, required = true, value= "팀 식별자", example = "1")
     private Long teamId;
@@ -22,11 +23,12 @@ public class TeamMemberFindManyResponseDto {
     private Boolean isNeedToConfirmDeleted;
 
     @ApiModelProperty(position = 3, required = true, value= "팀 회원들")
-    private List<TeamMemberFindResponseDto> members = new ArrayList<>();
+    private List<TeamMemberFullResponseDto> members = new ArrayList<>();
 
-    public TeamMemberFindManyResponseDto(Long teamId,
+    @Builder
+    public TeamMemberManyFullResponseDto(Long teamId,
                                          Boolean isNeedToConfirmDeleted,
-                                         List<TeamMemberFindResponseDto> members) {
+                                         List<TeamMemberFullResponseDto> members) {
         this.teamId = teamId;
         this.isNeedToConfirmDeleted = isNeedToConfirmDeleted;
 

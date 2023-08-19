@@ -2,9 +2,10 @@ package idorm.idormServer.calendar.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.calendar.domain.Team;
-import idorm.idormServer.calendar.dto.Team.TeamMemberFindManyResponseDto;
-import idorm.idormServer.calendar.dto.Team.TeamMemberFindResponseDto;
+import idorm.idormServer.calendar.dto.Team.TeamMemberFullResponseDto;
+import idorm.idormServer.calendar.dto.Team.TeamMemberManyFullResponseDto;
 import idorm.idormServer.calendar.service.CalendarServiceFacade;
+import idorm.idormServer.calendar.service.TeamCalendarService;
 import idorm.idormServer.calendar.service.TeamService;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.member.domain.Member;
@@ -41,6 +42,7 @@ public class TeamController {
     private final MemberService memberService;
     private final TeamService teamService;
     private final CalendarServiceFacade calendarServiceFacade;
+    private final TeamCalendarService teamCalendarService;
 
     @ApiOperation(value = "룸메이트 초대 수락", notes = "- 초대를 보낼 때가 아닌, 초대를 수락할 때 요청을 보내주세요.")
     @ApiResponses(value = {
@@ -141,7 +143,7 @@ public class TeamController {
             @ApiResponse(
                     responseCode = "200",
                     description = "TEAM_MEMBERS_FOUND",
-                    content = @Content(schema = @Schema(implementation = TeamMemberFindManyResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = TeamMemberManyFullResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "MEMBER_NOT_FOUND"),
             @ApiResponse(responseCode = "500",
@@ -155,26 +157,29 @@ public class TeamController {
         Member member = memberService.findById(memberId);
         Team team = teamService.findByMemberOptional(member);
 
-        TeamMemberFindManyResponseDto responses = null;
+        TeamMemberManyFullResponseDto responses = null;
 
         if (team == null) {
 
-            responses = new TeamMemberFindManyResponseDto(-999L,
+            responses = new TeamMemberManyFullResponseDto(-999L,
                     false,
-                    new ArrayList<>(Arrays.asList(new TeamMemberFindResponseDto(member))));
+                    new ArrayList<>(Arrays.asList(new TeamMemberFullResponseDto(member, null))));
         } else {
             List<Member> members = teamService.findTeamMembers(team);
 
             if (members.size() < 2) {
                 teamService.updateIsNeedToConfirmDeleted(team);
-                responses = new TeamMemberFindManyResponseDto(team.getId(),
+                responses = new TeamMemberManyFullResponseDto(team.getId(),
                         true,
-                        new ArrayList<>(Arrays.asList(new TeamMemberFindResponseDto(member))));
+                        new ArrayList<>(Arrays.asList(new TeamMemberFullResponseDto(member, null))));
             } else {
-                List<TeamMemberFindResponseDto> childResponses = members.stream()
-                        .map(m -> new TeamMemberFindResponseDto(m)).collect(Collectors.toList());
+                List<Long> sleepoverMembers = teamCalendarService.findSleepoverYnByTeam(team);
 
-                responses = new TeamMemberFindManyResponseDto(team.getId(),
+                List<TeamMemberFullResponseDto> childResponses = members.stream()
+                        .map(m -> new TeamMemberFullResponseDto(m, sleepoverMembers.contains(m.getId())))
+                        .collect(Collectors.toList());
+
+                responses = new TeamMemberManyFullResponseDto(team.getId(),
                         false,
                         childResponses);
             }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -164,6 +163,23 @@ public class TeamCalendarService {
                 });
     }
 
+    /**
+     * 팀으로 당일 외박 일정 여부 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<Long> findSleepoverYnByTeam(Team team) {
+        try {
+            List<TeamCalendar> todaySleepoverTeamCalendars =
+                    teamCalendarRepository.findTodaySleepoverMembersByTeam(team.getId());
+
+            List<Long> members = new ArrayList<>();
+            todaySleepoverTeamCalendars.forEach(teamCalendar -> members.add(teamCalendar.getTargets().get(0)));
+
+            return members;
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
 
     /**
      * 팀일정 대상자의 팀 존재 여부 검증 |
