@@ -44,7 +44,10 @@ LOGGING_ROLLING_FILE_PATH_IS_UNDEFINED
 LOGGING_ERROR_FILE_PATH_IS_UNDEFINED
 idorm-rolling.log
 
-### Not Useed
 src/main/**/master
 
 src/main/**/util
+
+src/main/resources/application-local.yml
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml

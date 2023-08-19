@@ -12,17 +12,19 @@ spring:
     properties:
       hibernate:
         show_sql: false
-        format_sql: false
-        highlight_sql: false
-        use_sql_comments: false
-
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
 
   mvc:
-    pathmatch:
+    path match:
       matching-strategy: ant_path_matcher
+
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_REQUEST_SIZE}
+      enabled: true
 
   mail:
     host: ${MAIL_HOST}
@@ -33,15 +35,9 @@ spring:
     properties:
       mail:
         smtp:
-          auth: ${MAIL_AUTH}
+          auth: false
           starttls:
-            enable: ${MAIL_TLS}
-
-  servlet:
-    multipart:
-      max-file-size: ${MAX_FILE_SIZE}
-      max-request-size: ${MAX_REQUEST_SIZE}
-      enabled: true
+            enable: false
 
 jwt:
   secret: ${JWT_SECRET_KEY}
@@ -74,3 +70,7 @@ logging:
   file:
     path: ${LOGGING_ROLLING_FILE_PATH}
     name: idorm-rolling.log
+  level:
+    org:
+      springframework.web: info
+      hibernate: info

@@ -28,7 +28,7 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     private final EmailRepository emailRepository;
 
-    @Value("${MAIL_USERNAME}")
+    @Value("${spring.mail.username}")
     private String adminMail;
 
     @Value("${s3.logo}")
