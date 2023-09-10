@@ -19,28 +19,57 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // spring web
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // spring data jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // spring database
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+    // spring validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // spring mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // spring security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // spring aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // sentry
     implementation 'io.sentry:sentry-spring-boot-starter:6.2.1'
-    implementation 'io.springfox:springfox-boot-starter:3.0.0'
-    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+    // crawling
+    implementation 'org.jsoup:jsoup:1.16.1'
+
+    // swagger ui
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+
+    // aws s3
     implementation 'com.amazonaws:aws-java-sdk-s3'
-    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-    implementation 'com.google.firebase:firebase-admin:9.1.1'
-    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
-    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.2'
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
-    compileOnly 'org.projectlombok:lombok'
-//    developmentOnly 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
-//    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'mysql:mysql-connector-java'
+
+    // fcm
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
+
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
+
+    // jwt
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.2'
+
+    // lombok
     annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+
+    // mysql
+    runtimeOnly 'mysql:mysql-connector-java'
+
+    // spring test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
