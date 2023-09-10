@@ -5,7 +5,7 @@ import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matching.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.MemberPhoto;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,6 +1,6 @@
-package idorm.idormServer.matchingInfo.repository;
+package idorm.idormServer.matching.repository;
 
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matching.domain.MatchingInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,10 +15,10 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
     Optional<MatchingInfo> findByIdAndIsDeletedIsFalse(Long id);
 
     List<MatchingInfo> findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrueAndIsDeletedIsFalse(
-                                                                              Long memberId,
-                                                                              Character dormCategory,
-                                                                              Character joinPeriod,
-                                                                              Character gender);
+            Long memberId,
+            Character dormCategory,
+            Character joinPeriod,
+            Character gender);
 
     @Query(value = "SELECT m FROM MatchingInfo m " +
             "WHERE m.member.id <> :memberId AND " +

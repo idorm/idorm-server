@@ -1,4 +1,4 @@
-package idorm.idormServer.matchingInfo.domain;
+package idorm.idormServer.matching.domain;
 
 import idorm.idormServer.exception.CustomException;
 import lombok.Getter;

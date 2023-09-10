@@ -1,7 +1,7 @@
-package idorm.idormServer.matchingInfo.domain;
+package idorm.idormServer.matching.domain;
 
 import idorm.idormServer.common.BaseEntity;
-import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
+import idorm.idormServer.matching.dto.MatchingInfoRequest;
 import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -82,7 +82,7 @@ public class MatchingInfo extends BaseEntity {
             member.getMatchingInfos().add(this);
     }
 
-    public void updateMatchingInfo(MatchingInfoDefaultRequestDto requestDto) {
+    public void updateMatchingInfo(MatchingInfoRequest requestDto) {
         this.dormCategory = DormCategory.validateType(requestDto.getDormCategory()).getType();
         this.joinPeriod = JoinPeriod.validateType(requestDto.getJoinPeriod()).getType();
         this.gender = Gender.validateType(requestDto.getGender()).getType();

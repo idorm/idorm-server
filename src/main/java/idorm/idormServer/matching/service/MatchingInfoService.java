@@ -1,17 +1,16 @@
-package idorm.idormServer.matchingInfo.service;
+package idorm.idormServer.matching.service;
 
 import idorm.idormServer.exception.CustomException;
-
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
-import idorm.idormServer.matchingInfo.dto.MatchingInfoDefaultRequestDto;
+import idorm.idormServer.matching.domain.MatchingInfo;
+import idorm.idormServer.matching.dto.MatchingInfoRequest;
+import idorm.idormServer.matching.repository.MatchingInfoRepository;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -85,7 +84,7 @@ public class MatchingInfoService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void updateMatchingInfo(MatchingInfo updateMatchingInfo, MatchingInfoDefaultRequestDto request) {
+    public void updateMatchingInfo(MatchingInfo updateMatchingInfo, MatchingInfoRequest request) {
 
         try {
             updateMatchingInfo.updateMatchingInfo(request);

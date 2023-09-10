@@ -1,7 +1,7 @@
 package idorm.idormServer.member.service;
 
 import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matching.domain.DormCategory;
 import idorm.idormServer.member.domain.Email;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
