@@ -1,11 +1,11 @@
 package idorm.idormServer.matching.service;
 
 import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.matching.dto.MatchingFilteredMatchingInfoRequestDto;
-import idorm.idormServer.matchingInfo.domain.DormCategory;
-import idorm.idormServer.matchingInfo.domain.JoinPeriod;
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
-import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
+import idorm.idormServer.matching.domain.DormCategory;
+import idorm.idormServer.matching.domain.JoinPeriod;
+import idorm.idormServer.matching.domain.MatchingInfo;
+import idorm.idormServer.matching.dto.MatchingMateFilterRequest;
+import idorm.idormServer.matching.repository.MatchingInfoRepository;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class MatchingService {
+public class MatchingMateService {
 
     private final MatchingInfoRepository matchingInfoRepository;
     private final MemberRepository memberRepository;
@@ -141,14 +141,14 @@ public class MatchingService {
 
         List<MatchingInfo> foundMatchingInfos = null;
         MatchingInfo loginMemberMatchingInfo = member.getMatchingInfo();
-        
+
         try {
-            foundMatchingInfos = 
+            foundMatchingInfos =
                     matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrueAndIsDeletedIsFalse(
-                        member.getId(),
-                        loginMemberMatchingInfo.getDormCategory(),
-                        loginMemberMatchingInfo.getJoinPeriod(),
-                        loginMemberMatchingInfo.getGender()
+                            member.getId(),
+                            loginMemberMatchingInfo.getDormCategory(),
+                            loginMemberMatchingInfo.getJoinPeriod(),
+                            loginMemberMatchingInfo.getGender()
                     );
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
@@ -161,7 +161,7 @@ public class MatchingService {
         List<Member> dislikedMembers = findDislikedMembers(member);
 
         Iterator<MatchingInfo> iterator = foundMatchingInfos.iterator();
-        
+
         while (iterator.hasNext()) {
             MatchingInfo matchingInfo = iterator.next();
 
@@ -181,7 +181,7 @@ public class MatchingService {
      * 500(SERVER_ERROR)
      */
     public List<MatchingInfo> findFilteredMatchingMembers(Member member,
-                                                          MatchingFilteredMatchingInfoRequestDto request) {
+                                                          MatchingMateFilterRequest request) {
 
         List<MatchingInfo> foundMatchingInfos = null;
 
