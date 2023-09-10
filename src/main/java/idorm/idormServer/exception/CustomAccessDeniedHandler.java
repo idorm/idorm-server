@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static idorm.idormServer.exception.ExceptionCode.FORBIDDEN_AUTHORIZATION;
+import static idorm.idormServer.exception.ExceptionCode.ACCESS_DENIED;
 
 @Component("accessDeniedHandler")
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
@@ -22,10 +22,10 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         this.mapper = mapper;
     }
 
-    private static DefaultExceptionResponseDto EXCEPTION_RESPONSE =
+    private static final DefaultExceptionResponseDto EXCEPTION_RESPONSE =
             new DefaultExceptionResponseDto(
-                    FORBIDDEN_AUTHORIZATION.name(),
-                    FORBIDDEN_AUTHORIZATION.getMessage()
+                    ACCESS_DENIED.name(),
+                    ACCESS_DENIED.getMessage()
             );
 
     @Override

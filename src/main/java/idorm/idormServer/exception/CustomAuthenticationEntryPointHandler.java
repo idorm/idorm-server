@@ -21,7 +21,7 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
         this.mapper = mapper;
     }
 
-    private static DefaultExceptionResponseDto EXCEPTION_RESPONSE =
+    private static final DefaultExceptionResponseDto EXCEPTION_RESPONSE =
             new DefaultExceptionResponseDto(
                     UNAUTHORIZED_MEMBER.name(),
                     UNAUTHORIZED_MEMBER.getMessage());

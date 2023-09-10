@@ -1,9 +1,9 @@
 package idorm.idormServer.config;
 
-import idorm.idormServer.exception.CustomAccessDeniedHandler;
-import idorm.idormServer.exception.CustomAuthenticationEntryPointHandler;
 import idorm.idormServer.auth.CustomJwtAuthenticationFilter;
 import idorm.idormServer.auth.JwtTokenProvider;
+import idorm.idormServer.exception.CustomAccessDeniedHandler;
+import idorm.idormServer.exception.CustomAuthenticationEntryPointHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
 
-    public static final String AUTHENTICATION_HEADER_NAME = "X-AUTH-TOKEN";
-    public static final String AUTHENTICATION_URL = "/api/auth";
+    public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
+    public static final String AUTHENTICATION_URL = "/auth";
     public static final String API_ROOT_URL_V1 = "/api/v1";
 
     @Autowired
@@ -49,11 +49,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/swagger-ui/**", "/swagger-resources/**").permitAll()
-                .antMatchers(AUTHENTICATION_URL, "/email/**", "/verifyCode/**").permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/member/**", API_ROOT_URL_V1 + "/member/**").hasRole("USER")
-                .anyRequest().permitAll()
+                .antMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**",
+                        API_ROOT_URL_V1 + AUTHENTICATION_URL +"/**").permitAll()
+                .antMatchers("/test/**", API_ROOT_URL_V1 + "/calendar/**", API_ROOT_URL_V1 +"/calendars").permitAll() // TODO: 운영 서버 삭제
+                .antMatchers(API_ROOT_URL_V1 + "/admin/**").hasRole("ADMIN")
+                .antMatchers(API_ROOT_URL_V1 + "/member/**").hasRole("USER")
+                .anyRequest().denyAll()
 
                 .and()
                 .exceptionHandling()
