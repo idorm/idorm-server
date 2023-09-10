@@ -1,7 +1,7 @@
 package idorm.idormServer.community.domain;
 
 import idorm.idormServer.common.BaseEntity;
-import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matching.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.PostPhoto;
 import lombok.AccessLevel;
