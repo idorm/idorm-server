@@ -1,10 +1,9 @@
-package idorm.idormServer.community.dto.post;
+package idorm.idormServer.community.dto;
 
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matching.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,23 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ApiModel(value = "Post 저장 요청")
-public class PostSaveRequestDto {
+@Schema(title = "Post 저장 요청")
+public class PostSaveRequest {
 
-    @ApiModelProperty(position = 1, required = true, value = "커뮤니티 기숙사 분류", allowableValues = "DORM1, DORM2, DORM3",
+    @Schema(required = true, description = "커뮤니티 기숙사 분류", allowableValues = "DORM1, DORM2, DORM3",
             example = "DORM1")
     private String dormCategory;
 
-    @ApiModelProperty(position = 2, required = true, value = "제목", example = "제에목")
+    @Schema(required = true, description = "제목", example = "제에목")
     private String title;
 
-    @ApiModelProperty(position = 3, required = true, value = "내용", example = "내애용")
+    @Schema(required = true, description = "내용", example = "내애용")
     private String content;
 
-    @ApiModelProperty(position = 4, required = true, value = "익명 여부")
+    @Schema(required = true, description = "익명 여부")
     private Boolean isAnonymous;
 
-    @ApiModelProperty(position = 5, dataType = "List<MultipartFile>", value = "게시글 사진들")
+    @Schema(description = "게시글 사진들")
     private List<MultipartFile> files = new ArrayList<>();
 
     public Post toEntity(Member member) {
