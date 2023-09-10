@@ -1,13 +1,16 @@
 package idorm.idormServer.application;
 
-import idorm.idormServer.calendar.domain.Calendar;
-import idorm.idormServer.calendar.service.CalendarService;
+import com.google.firebase.messaging.Message;
+import idorm.idormServer.calendar.domain.OfficialCalendar;
+import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import idorm.idormServer.calendar.service.OfficialCalendarService;
+import idorm.idormServer.calendar.service.RoomMateTeamCalendarService;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.service.PostService;
-import idorm.idormServer.fcm.domain.NotifyType;
-import idorm.idormServer.fcm.dto.FcmRequestDto;
+import idorm.idormServer.fcm.dto.FcmRequest;
+import idorm.idormServer.fcm.dto.NotifyType;
 import idorm.idormServer.fcm.service.FCMService;
-import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matching.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +30,9 @@ public class Scheduler {
     private final FCMService fcmService;
     private final MemberService memberService;
     private final PostService postService;
-    private final CalendarService calendarService;
+    private final OfficialCalendarService calendarService;
+    private final RoomMateTeamCalendarService teamCalendarService;
+    private final OfficialCalendarCrawler officialCalendarCrawler;
 
     @Transactional
     @Scheduled(cron = "0 49 23 ? * MON,TUE,WED,THU,SUN") // UTC 23:49 ASIA/SEOUL 8:49
@@ -35,12 +40,12 @@ public class Scheduler {
         List<Member> members = memberService.findAllOfDorm1();
 
         Post topPost = postService.findTopPost(DormCategory.DORM1);
-        List<Calendar> todayCalendars = calendarService.findTodayCalendarsFromDorm1();
+        List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendarsFromDorm1();
 
         if (topPost == null && todayCalendars == null)
             return;
 
-        List<FcmRequestDto> fcmMessages = createFcmMessages("1", topPost, todayCalendars);
+        List<FcmRequest> fcmMessages = createFcmMessages("1", topPost, todayCalendars);
         sendFcmMessage(members, fcmMessages);
     }
 
@@ -50,12 +55,12 @@ public class Scheduler {
         List<Member> members = memberService.findAllOfDorm2();
 
         Post topPost = postService.findTopPost(DormCategory.DORM2);
-        List<Calendar> todayCalendars = calendarService.findTodayCalendarsFromDorm2();
+        List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendarsFromDorm2();
 
         if (topPost == null && todayCalendars == null)
             return;
 
-        List<FcmRequestDto> fcmMessages = createFcmMessages("2", topPost, todayCalendars);
+        List<FcmRequest> fcmMessages = createFcmMessages("2", topPost, todayCalendars);
         sendFcmMessage(members, fcmMessages);
     }
 
@@ -65,21 +70,58 @@ public class Scheduler {
         List<Member> members = memberService.findAllOfDorm3();
 
         Post topPost = postService.findTopPost(DormCategory.DORM3);
-        List<Calendar> todayCalendars = calendarService.findTodayCalendarsFromDorm3();
+        List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendarsFromDorm3();
 
         if (topPost == null && todayCalendars == null)
             return;
 
-        List<FcmRequestDto> fcmMessages = createFcmMessages("3", topPost, todayCalendars);
+        List<FcmRequest> fcmMessages = createFcmMessages("3", topPost, todayCalendars);
         sendFcmMessage(members, fcmMessages);
     }
 
-    private List<FcmRequestDto> createFcmMessages(String dormCategory, Post topPost, List<Calendar> todayCalendars) {
-        List<FcmRequestDto> fcmMessages = new ArrayList<>();
+    @Transactional
+    @Scheduled(cron = "0 0 0 ? * MON,TUE,WED,THU,SUN") // UTC 00:00 ASIA/SEOUL 9:00
+    public void alertTeamCalendars() {
+
+        List<RoomMateTeamCalendar> teamCalendars = teamCalendarService.findTeamCalendarsByStartDateIsToday();
+
+        // createFcmMessages
+        List<FcmRequest> fcmRequestDtos = new ArrayList<>();
+
+        for (RoomMateTeamCalendar teamCalendar : teamCalendars) {
+
+            List<Long> targets = teamCalendar.getTargets(); // 일정 대상자들
+
+            if (targets.isEmpty())
+                continue;
+
+            List<Member> teamTargetMembers = memberService.findTeamTargetMembers(targets);
+
+            for (Member member : teamTargetMembers) {
+                FcmRequest topPostFcmMessage = FcmRequest.builder()
+                        .token(member.getFcmToken())
+                        .notification(FcmRequest.Notification.builder()
+                                .notifyType(NotifyType.TEAMCALENDAR)
+                                .contentId(teamCalendar.getId())
+                                .title("오늘의 팀 일정 입니다.")
+                                .content(teamCalendar.getTitle())
+                                .build())
+                        .build();
+                fcmRequestDtos.add(topPostFcmMessage);
+            }
+        }
+
+        // sendFcmMessages
+        List<Message> messages = fcmService.createMessageOfTeamCalendar(fcmRequestDtos);
+        fcmService.sendManyMessages(messages);
+    }
+
+    private List<FcmRequest> createFcmMessages(String dormCategory, Post topPost, List<OfficialCalendar> todayCalendars) {
+        List<FcmRequest> fcmMessages = new ArrayList<>();
 
         if (topPost != null) {
-            FcmRequestDto topPostFcmMessage = FcmRequestDto.builder()
-                    .notification(FcmRequestDto.Notification.builder()
+            FcmRequest topPostFcmMessage = FcmRequest.builder()
+                    .notification(FcmRequest.Notification.builder()
                             .notifyType(NotifyType.TOPPOST)
                             .contentId(topPost.getId())
                             .title("어제 " + dormCategory + " 기숙사의 인기 게시글 입니다.")
@@ -89,9 +131,9 @@ public class Scheduler {
             fcmMessages.add(topPostFcmMessage);
         }
         if (todayCalendars != null) {
-            for (Calendar calendar : todayCalendars) {
-                FcmRequestDto calendarFcmMessage = FcmRequestDto.builder()
-                        .notification(FcmRequestDto.Notification.builder()
+            for (OfficialCalendar calendar : todayCalendars) {
+                FcmRequest calendarFcmMessage = FcmRequest.builder()
+                        .notification(FcmRequest.Notification.builder()
                                 .notifyType(NotifyType.CALENDAR)
                                 .contentId(calendar.getId())
                                 .title("오늘의 " + dormCategory + " 기숙사 일정 입니다.")
@@ -104,19 +146,29 @@ public class Scheduler {
         return fcmMessages;
     }
 
-    private void sendFcmMessage(List<Member> members, List<FcmRequestDto> fcmMessages) {
+    private void sendFcmMessage(List<Member> members, List<FcmRequest> fcmMessages) {
+        List<Message> messages = new ArrayList<>();
+
         for (Member member : members) {
             if (member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
                 memberService.deleteFcmToken(member);
                 continue;
             }
 
-            String fcmToken = member.getFcmToken();
-
-            for (FcmRequestDto request : fcmMessages) {
-                request.setToken(fcmToken);
-                fcmService.sendMessage(member, request);
-            }
+            List<Message> messageList = fcmService.createMessage(member, fcmMessages);
+            messages.addAll(messageList);
         }
+
+        fcmService.sendManyMessages(messages);
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 14 ? * MON,TUE,WED,THU,FRI,SAT,SUN") // UTC 14:00 ASIA/SEOUL 23:00
+    public void crawlingOfficialCalendars() {
+
+        int updatedCalenderCount = officialCalendarCrawler.crawling();
+        String alertMsg = "[관리자 알림] " + updatedCalenderCount + " 개의 새로운 공식 일정이 있습니다.";
+        // TODO: 관리자 메일 및 푸시 알림 발송
+
     }
 }
