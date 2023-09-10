@@ -1,10 +1,8 @@
-package idorm.idormServer.calendar.dto.Calendar;
+package idorm.idormServer.calendar.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import idorm.idormServer.calendar.domain.Calendar;
 import idorm.idormServer.common.ValidationSequence;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,69 +18,68 @@ import java.time.LocalTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@GroupSequence({CalendarSaveRequestDto.class,
+@GroupSequence({OfficialCalendarUpdateRequest.class,
         ValidationSequence.NotBlank.class,
         ValidationSequence.NotNull.class,
         ValidationSequence.Size.class,
 })
-@ApiModel(value = "공식 일정 저장 요청")
-public class CalendarSaveRequestDto {
+@Schema(title = "공식 일정 수정 요청")
+public class OfficialCalendarUpdateRequest {
 
-    @ApiModelProperty(position = 1, required = true, value = "1기숙사 대상 여부", allowableValues = "true, false",
-    example = "true")
+    @Schema(description = "공식 일정 식별자", example = "1")
+    @NotNull(message = "공식 일정 식별자를 입력해 주세요.", groups = ValidationSequence.NotNull.class)
+    private Long calendarId;
+
+    @Schema(description = "생활원 공식일정 게시글 번호", example = "731406")
+    @Size(message = "게시글 번호는 4~10자 이내여야 합니다.", groups = ValidationSequence.NotNull.class)
+    private String inuPostId;
+
+    @Schema(required = true, description = "1기숙사 대상 여부", allowableValues = "true, false",
+            example = "true")
     @NotNull(message = "1기숙사 대상 여부를 입력해 주세요.", groups = ValidationSequence.NotNull.class)
     private Boolean isDorm1Yn;
 
-    @ApiModelProperty(position = 2, required = true, value = "2기숙사 대상 여부", allowableValues = "true, false",
+    @Schema(required = true, description = "2기숙사 대상 여부", allowableValues = "true, false",
             example = "true")
     @NotNull(message = "2기숙사 대상 여부를 입력해 주세요.", groups = ValidationSequence.NotNull.class)
     private Boolean isDorm2Yn;
 
-    @ApiModelProperty(position = 3, required = true, value = "3기숙사 대상 여부", allowableValues = "true, false",
+    @Schema(required = true, description = "3기숙사 대상 여부", allowableValues = "true, false",
             example = "true")
     @NotNull(message = "3기숙사 대상 여부를 입력해 주세요.", groups = ValidationSequence.NotNull.class)
     private Boolean isDorm3Yn;
 
-    @ApiModelProperty(position = 4, notes = "string", value = "시작일자", example = "2023-04-27")
+    @Schema(format = "string", description = "시작일자", example = "2023-04-27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @ApiModelProperty(position = 5, notes = "string", value = "종료일자", example = "2023-04-28")
+    @Schema(format = "string", description = "종료일자", example = "2023-04-28")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    @ApiModelProperty(position = 6, notes = "string", value = "시작시간", example = "15:00:00")
+    @Schema(format = "string", description = "시작시간", example = "15:00:00")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
 
-    @ApiModelProperty(position = 6, notes = "string", value = "종료시간", example = "16:00:00")
+    @Schema(format = "string", description = "종료시간", example = "16:00:00")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
-    @ApiModelProperty(position = 8, required = true, value = "내용", example = "기숙사 화재 훈련")
+
+    @Schema(required = true, description = "제목", example = "기숙사 화재 훈련")
+    @NotBlank(message = "제목을 입력해 주세요.", groups = ValidationSequence.NotBlank.class)
+    private String title;
+
+    @Schema(required = true, description = "내용", example = "기숙사 화재 훈련")
     @NotBlank(message = "내용을 입력해 주세요.", groups = ValidationSequence.NotBlank.class)
     private String content;
 
-    @ApiModelProperty(position = 9, value = "장소", example = "3기숙사 1층")
+    @Schema(description = "장소", example = "3기숙사 1층")
     @Size(max = 50, message = "장소는 ~50자 이내여야 합니다.", groups = ValidationSequence.Size.class)
     private String location;
 
-    @ApiModelProperty(position = 10, value = "참고용 웹 링크",
+    @Schema(description = "참고용 웹 링크",
             example = "https://www.inu.ac.kr/user/indexMain.do?command=&siteId=dorm")
     @Size(max = 300, message = "링크는 ~300자 이내여야 합니다.", groups = ValidationSequence.Size.class)
     private String url;
-
-    public Calendar toEntity() {
-        return Calendar.builder()
-                .isDorm1Yn(this.isDorm1Yn)
-                .isDorm2Yn(this.isDorm2Yn)
-                .isDorm3Yn(this.isDorm3Yn)
-                .startDate(this.startDate)
-                .endDate(this.endDate)
-                .startTime(this.startTime)
-                .endTime(this.endTime)
-                .content(this.content)
-                .location(this.location)
-                .url(this.url)
-                .build();
-    }
 }
+
