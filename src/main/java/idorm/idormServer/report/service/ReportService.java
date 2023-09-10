@@ -10,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.exception.ExceptionCode.ILLEGAL_ARGUMENT_SELF;
+import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -48,28 +49,28 @@ public class ReportService {
 
     /**
      * 회원 신고 검증 |
-     * 409(MEMBER_CANNOT_SELFREPORT)
+     * 400(ILLEGAL_ARGUMENT_SELF)
      */
     public void validateReportMember(Member reporterMember, Member reportedMember) {
         if (reportedMember.equals(reporterMember))
-            throw new CustomException(null, MEMBER_CANNOT_SELFREPORT);
+            throw new CustomException(null, ILLEGAL_ARGUMENT_SELF);
     }
 
     /**
      * 게시글 신고 검증 |
-     * 409(POST_CANNOT_SELFREPORT)
+     * 400(ILLEGAL_ARGUMENT_SELF)
      */
     public void validateReportPost(Member reporterMember, Post reportedPost) {
         if (reportedPost.getMember().equals(reporterMember))
-            throw new CustomException(null, POST_CANNOT_SELFREPORT);
+            throw new CustomException(null, ILLEGAL_ARGUMENT_SELF);
     }
 
     /**
      * 댓글 신고 검증 |
-     * 409(COMMENT_CANNOT_SELFREPORT)
+     * 400(ILLEGAL_ARGUMENT_SELF)
      */
     public void validateReportComment(Member reporterMember, Comment reportedComment) {
         if (reportedComment.getMember().equals(reporterMember))
-            throw new CustomException(null, COMMENT_CANNOT_SELFREPORT);
+            throw new CustomException(null, ILLEGAL_ARGUMENT_SELF);
     }
 }
