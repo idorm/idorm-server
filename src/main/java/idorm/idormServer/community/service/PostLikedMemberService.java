@@ -4,7 +4,6 @@ import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
 import idorm.idormServer.community.repository.PostLikedMemberRepository;
 import idorm.idormServer.exception.CustomException;
-
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.exception.ExceptionCode.POSTLIKEDMEMBER_NOT_FOUND;
+import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
 
 @Service
 @Transactional(readOnly = true)

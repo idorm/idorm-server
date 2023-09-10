@@ -3,8 +3,7 @@ package idorm.idormServer.community.service;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.PostRepository;
 import idorm.idormServer.exception.CustomException;
-
-import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matching.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.domain.PostPhoto;
 import lombok.RequiredArgsConstructor;
@@ -161,11 +160,11 @@ public class PostService {
 
     /**
      * 게시글 수정 / 삭제 권한 검증 |
-     * 401(UNAUTHORIZED_POST)
+     * 403(ACCESS_DENIED_POST)
      */
     public void validatePostAuthorization(Post post, Member member) {
         if (post.getMember() == null || !member.getId().equals(post.getMember().getId())) {
-            throw new CustomException(null, UNAUTHORIZED_POST);
+            throw new CustomException(null, ACCESS_DENIED_POST);
         }
     }
 

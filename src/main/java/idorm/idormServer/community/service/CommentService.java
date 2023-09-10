@@ -4,7 +4,6 @@ import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.CommentRepository;
 import idorm.idormServer.exception.CustomException;
-
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -150,11 +149,11 @@ public class CommentService {
 
     /**
      * 댓글 삭제 권한 검증 |
-     * 401(UNAUTHORIZED_COMMENT)
+     * 403(ACCESS_DENIED_COMMENT)
      */
     public void validateCommentAuthorization(Comment comment, Member member) {
         if (comment.getMember() == null || !member.getId().equals(comment.getMember().getId())) {
-            throw new CustomException(null, UNAUTHORIZED_COMMENT);
+            throw new CustomException(null, ACCESS_DENIED_COMMENT);
         }
     }
 }
