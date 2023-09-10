@@ -1,12 +1,10 @@
-package idorm.idormServer.email.service;
+package idorm.idormServer.member.service;
 
-import idorm.idormServer.email.domain.Email;
-import idorm.idormServer.email.repository.EmailRepository;
 import idorm.idormServer.exception.CustomException;
-
+import idorm.idormServer.member.domain.Email;
 import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.repository.EmailRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -237,8 +235,33 @@ public class EmailService {
     }
 
     /**
+     * 이메일 존재 여부 검증 |
+     * 409(DUPLICATE_EMAIL)
+     */
+    public boolean validateEmailExistence(Optional<Email> email) {
+        if (email.isPresent()) {
+
+            if (email.get().getIsCheck()) {
+                if (email.get().getMember() != null) {
+                    if (!email.get().getMember().getIsDeleted()) {
+                        throw new CustomException(null, DUPLICATE_EMAIL);
+                    } else {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 인증 메일 전송 |
-     * 500(EMAIL_SENDING_ERROR)
+     * 500(EMAIL_SERVER_ERROR)
      */
     public void sendVerificationEmail(Email email) {
         try {
@@ -254,7 +277,7 @@ public class EmailService {
 
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new CustomException(e, EMAIL_SENDING_ERROR);
+            throw new CustomException(e, EMAIL_SERVER_ERROR);
         }
     }
 

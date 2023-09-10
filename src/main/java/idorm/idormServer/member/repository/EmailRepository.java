@@ -1,6 +1,6 @@
-package idorm.idormServer.email.repository;
+package idorm.idormServer.member.repository;
 
-import idorm.idormServer.email.domain.Email;
+import idorm.idormServer.member.domain.Email;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

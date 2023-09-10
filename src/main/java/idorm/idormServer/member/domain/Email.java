@@ -1,7 +1,6 @@
-package idorm.idormServer.email.domain;
+package idorm.idormServer.member.domain;
 
 import idorm.idormServer.common.BaseEntity;
-import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,7 +31,7 @@ public class Email extends BaseEntity {
 
     private Boolean isPossibleUpdatePassword;
 
-    private LocalDateTime isPossibleUpdatePasswordCreatedAt; // 비밀번호 변경 유효 시작 시
+    private LocalDateTime isPossibleUpdatePasswordCreatedAt; // 비밀번호 변경 유효 시작 시간
 
     @Builder
     public Email(String email, String code) {
