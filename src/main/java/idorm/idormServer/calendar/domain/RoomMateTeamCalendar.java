@@ -1,7 +1,7 @@
 package idorm.idormServer.calendar.domain;
 
-import idorm.idormServer.calendar.dto.TeamCalendar.SleepoverCalendarUpdateRequestDto;
-import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarUpdateRequestDto;
+import idorm.idormServer.calendar.dto.RoomMateCalendarUpdateRequest;
+import idorm.idormServer.calendar.dto.SleepoverCalendarUpdateRequest;
 import idorm.idormServer.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,10 +17,10 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TeamCalendar extends BaseEntity {
+public class RoomMateTeamCalendar extends BaseEntity {
 
     @Id
-    @Column(name = "team_calendar_id")
+    @Column(name = "room_mate_team_calendar_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -34,7 +34,7 @@ public class TeamCalendar extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
-    private Team team;
+    private RoomMateTeam team;
 
     @ElementCollection
     @CollectionTable(name = "targets",
@@ -43,15 +43,15 @@ public class TeamCalendar extends BaseEntity {
     private List<Long> targets = new ArrayList<>(); // 일정 대상자들
 
     @Builder
-    public TeamCalendar(LocalDate startDate,
-                        LocalDate endDate,
-                        LocalTime startTime,
-                        LocalTime endTime,
-                        String title,
-                        String content,
-                        Boolean isSleepover,
-                        Team team,
-                        List<Long> targets) {
+    public RoomMateTeamCalendar(LocalDate startDate,
+                                LocalDate endDate,
+                                LocalTime startTime,
+                                LocalTime endTime,
+                                String title,
+                                String content,
+                                Boolean isSleepover,
+                                RoomMateTeam team,
+                                List<Long> targets) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
@@ -71,7 +71,7 @@ public class TeamCalendar extends BaseEntity {
             team.addTeamCalendar(this);
     }
 
-    public void updateContents(TeamCalendarUpdateRequestDto request, List<Long> targets) {
+    public void updateContents(RoomMateCalendarUpdateRequest request, List<Long> targets) {
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
         this.startTime = request.getStartTime();
@@ -82,7 +82,7 @@ public class TeamCalendar extends BaseEntity {
         this.updateTargets(targets);
     }
 
-    public void updateDates(SleepoverCalendarUpdateRequestDto request) {
+    public void updateDates(SleepoverCalendarUpdateRequest request) {
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
     }

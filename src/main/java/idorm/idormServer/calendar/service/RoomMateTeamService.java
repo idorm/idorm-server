@@ -1,7 +1,7 @@
 package idorm.idormServer.calendar.service;
 
-import idorm.idormServer.calendar.domain.Team;
-import idorm.idormServer.calendar.repository.TeamRepository;
+import idorm.idormServer.calendar.domain.RoomMateTeam;
+import idorm.idormServer.calendar.repository.RoomMateTeamRepository;
 import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -17,16 +17,16 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class TeamService {
+public class RoomMateTeamService {
 
-    private final TeamRepository teamRepository;
+    private final RoomMateTeamRepository teamRepository;
 
     /**
      * DB에 팀 저장 |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public Team save(Team team) {
+    public RoomMateTeam save(RoomMateTeam team) {
         try {
             return teamRepository.save(team);
         } catch (RuntimeException e) {
@@ -38,8 +38,8 @@ public class TeamService {
      * 팀 생성 |
      */
     @Transactional
-    public Team create(Member member) {
-        Team team = Team.builder()
+    public RoomMateTeam create(Member member) {
+        RoomMateTeam team = RoomMateTeam.builder()
                 .member(member)
                 .build();
         return this.save(team);
@@ -50,7 +50,7 @@ public class TeamService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void delete(Team team) {
+    public void delete(RoomMateTeam team) {
         try {
             team.delete();
         } catch (RuntimeException e) {
@@ -63,7 +63,7 @@ public class TeamService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void addMember(Team team, Member member) {
+    public void addMember(RoomMateTeam team, Member member) {
         try {
             team.addMember(member);
         } catch (RuntimeException e) {
@@ -76,7 +76,7 @@ public class TeamService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void removeMember(Team team, Member member) {
+    public void removeMember(RoomMateTeam team, Member member) {
         try {
             int deletedMemberTeamOrder = member.getTeamOrder();
             boolean result = team.removeMember(member);
@@ -99,7 +99,7 @@ public class TeamService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void updateIsNeedToConfirmDeleted(Team team) {
+    public void updateIsNeedToConfirmDeleted(RoomMateTeam team) {
         try {
             team.updateIsNeedToConfirmDeleted();
         } catch (RuntimeException e) {
@@ -110,7 +110,7 @@ public class TeamService {
     /**
      * 팀원으로 팀 조회 Optional |
      */
-    public Team findByMemberOptional(Member member) {
+    public RoomMateTeam findByMemberOptional(Member member) {
         return member.getTeam();
     }
 
@@ -118,8 +118,8 @@ public class TeamService {
      * 팀원으로 팀 조회 |
      * 404(TEAM_NOT_FOUND)
      */
-    public Team findByMember(Member member) {
-        Team team = member.getTeam();
+    public RoomMateTeam findByMember(Member member) {
+        RoomMateTeam team = member.getTeam();
         if (team == null)
             throw new CustomException(null, TEAM_NOT_FOUND);
         else
@@ -131,7 +131,7 @@ public class TeamService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public List<Member> findTeamMembers(Team team) {
+    public List<Member> findTeamMembers(RoomMateTeam team) {
 
         try {
             List<Member> members = team.getMembers();
@@ -148,11 +148,11 @@ public class TeamService {
 
     /**
      * 팀원 만석 여부 검증 |
-     * 409(TEAM_STATUS_FULL)
+     * 409(CANNOT_REGISTER_TEAM_STATUS_FULL)
      */
-    public void validateTeamFull(Team team) {
+    public void validateTeamFull(RoomMateTeam team) {
         if (team.getMemberCount() >= 4)
-            throw new CustomException(null, TEAM_STATUS_FULL);
+            throw new CustomException(null, CANNOT_REGISTER_TEAM_STATUS_FULL);
     }
 
     /**
@@ -168,7 +168,7 @@ public class TeamService {
      * 팀 폭발 가능 여부 검증 |
      * 409(CANNOT_EXPLODE_TEAM)
      */
-    public void validateReadyToDeleteTeam(Team team) {
+    public void validateReadyToDeleteTeam(RoomMateTeam team) {
         if (!team.getIsNeedToConfirmDeleted())
             throw new CustomException(null, CANNOT_EXPLODE_TEAM);
     }
@@ -177,7 +177,7 @@ public class TeamService {
      * 팀 폭발 여부 검증 |
      * 400(ILLEGAL_STATEMENT_EXPLODEDTEAM)
      */
-    public void validateIsDeletedTeam(Team team) {
+    public void validateIsDeletedTeam(RoomMateTeam team) {
         if (team.getIsNeedToConfirmDeleted())
             throw new CustomException(null, ILLEGAL_STATEMENT_EXPLODEDTEAM);
     }
@@ -186,7 +186,7 @@ public class TeamService {
      * 팀원 접근 여부 검증 |
      * 403(ACCESS_DENIED_TEAM)
      */
-    public void validateTeamMember(Team loginMemberTeam, Member deleteMember) {
+    public void validateTeamMember(RoomMateTeam loginMemberTeam, Member deleteMember) {
         if (deleteMember.getTeam() == null)
             throw new CustomException(null, ACCESS_DENIED_TEAM);
 

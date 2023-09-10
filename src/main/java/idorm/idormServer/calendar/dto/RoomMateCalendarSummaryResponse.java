@@ -1,10 +1,9 @@
-package idorm.idormServer.calendar.dto.TeamCalendar;
+package idorm.idormServer.calendar.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import idorm.idormServer.calendar.domain.TeamCalendar;
-import idorm.idormServer.calendar.dto.Team.TeamMemberFindResponseDto;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,28 +16,32 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ApiModel(value = "팀 일정 요약 응답")
-public class TeamCalendarAbstractResponseDto {
+@Schema(title = "팀 일정 요약 응답")
+public class RoomMateCalendarSummaryResponse {
 
-    @ApiModelProperty(position = 1, required = true, value = "팀일정 식별자", example = "1")
+    @Schema(required = true, description = "팀일정 식별자", example = "1")
+    @JsonProperty("teamCalendarId")
     private Long teamCalendarId;
 
-    @ApiModelProperty(position = 2, required = true, value = "내용", example = "청소")
+    @Schema(required = true, description = "내용", example = "청소")
+    @JsonProperty("title")
     private String title;
 
-    @ApiModelProperty(position = 3, notes = "string", value = "시작일자", example = "2023-04-27")
+    @Schema(name = "startDate", format = "string", description = "시작일자", example = "2023-04-27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("startDate")
     private LocalDate startDate;
 
-    @ApiModelProperty(position = 4, notes = "string", value = "종료일자", example = "2023-04-27")
+    @Schema(name = "endDate", format = "string", description = "종료일자", example = "2023-04-27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("endDate")
     private LocalDate endDate;
 
-    @ApiModelProperty(position = 5, required = true, value = "일정 대상자의 식별자")
-    private List<TeamMemberFindResponseDto> targets = new ArrayList<>();
+    @Schema(name = "targets", description = "일정 대상자의 식별자")
+    private List<RoomMateResponse> targets = new ArrayList<>();
 
     @Builder
-    public TeamCalendarAbstractResponseDto(TeamCalendar teamCalendar, List<TeamMemberFindResponseDto> targets) {
+    public RoomMateCalendarSummaryResponse(RoomMateTeamCalendar teamCalendar, List<RoomMateResponse> targets) {
         this.teamCalendarId = teamCalendar.getId();
         this.title = teamCalendar.getTitle();
 

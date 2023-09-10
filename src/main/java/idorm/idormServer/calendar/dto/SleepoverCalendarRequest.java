@@ -1,10 +1,10 @@
-package idorm.idormServer.calendar.dto.TeamCalendar;
+package idorm.idormServer.calendar.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import idorm.idormServer.calendar.domain.Team;
-import idorm.idormServer.calendar.domain.TeamCalendar;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import idorm.idormServer.calendar.domain.RoomMateTeam;
+import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,21 +18,23 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@GroupSequence({SleepoverCalendarDefaultRequestDto.class,
+@GroupSequence({SleepoverCalendarRequest.class,
 })
-@ApiModel(value = "외박일정 기본 요청")
-public class SleepoverCalendarDefaultRequestDto {
+@Schema(title = "외박일정 기본 요청")
+public class SleepoverCalendarRequest {
 
-    @ApiModelProperty(position = 1, notes = "string", value = "시작일자", example = "2023-04-27")
+    @Schema(name = "startDate", format = "string", description = "시작일자", example = "2023-04-27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("startDate")
     private LocalDate startDate;
 
-    @ApiModelProperty(position = 2, notes = "string", value = "종료일자", example = "2023-04-28")
+    @Schema(name = "endDate", format = "string", description = "종료일자", example = "2023-04-27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("endDate")
     private LocalDate endDate;
 
-    public TeamCalendar toEntity(Team team, Long target) {
-        return TeamCalendar.builder()
+    public RoomMateTeamCalendar toEntity(RoomMateTeam team, Long target) {
+        return RoomMateTeamCalendar.builder()
                 .team(team)
                 .targets(new ArrayList<>(Arrays.asList(target)))
                 .isSleepover(true)

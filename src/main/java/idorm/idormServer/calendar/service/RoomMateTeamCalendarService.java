@@ -1,10 +1,10 @@
 package idorm.idormServer.calendar.service;
 
-import idorm.idormServer.calendar.domain.Team;
-import idorm.idormServer.calendar.domain.TeamCalendar;
-import idorm.idormServer.calendar.dto.TeamCalendar.SleepoverCalendarUpdateRequestDto;
-import idorm.idormServer.calendar.dto.TeamCalendar.TeamCalendarUpdateRequestDto;
-import idorm.idormServer.calendar.repository.TeamCalendarRepository;
+import idorm.idormServer.calendar.domain.RoomMateTeam;
+import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import idorm.idormServer.calendar.dto.RoomMateCalendarUpdateRequest;
+import idorm.idormServer.calendar.dto.SleepoverCalendarUpdateRequest;
+import idorm.idormServer.calendar.repository.RoomMateTeamCalendarRepository;
 import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
@@ -25,9 +25,9 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class TeamCalendarService {
+public class RoomMateTeamCalendarService {
 
-    private final TeamCalendarRepository teamCalendarRepository;
+    private final RoomMateTeamCalendarRepository teamCalendarRepository;
     private final MemberService memberService;
 
     /**
@@ -35,7 +35,7 @@ public class TeamCalendarService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public TeamCalendar save(TeamCalendar teamCalendar) {
+    public RoomMateTeamCalendar save(RoomMateTeamCalendar teamCalendar) {
         try {
             return teamCalendarRepository.save(teamCalendar);
         } catch (RuntimeException e) {
@@ -48,8 +48,8 @@ public class TeamCalendarService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void update(TeamCalendar teamCalendar,
-                       TeamCalendarUpdateRequestDto request,
+    public void update(RoomMateTeamCalendar teamCalendar,
+                       RoomMateCalendarUpdateRequest request,
                        List<Long> targets) {
         try {
             teamCalendar.updateContents(request, targets);
@@ -63,7 +63,7 @@ public class TeamCalendarService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void updateDates(TeamCalendar teamCalendar, SleepoverCalendarUpdateRequestDto request) {
+    public void updateDates(RoomMateTeamCalendar teamCalendar, SleepoverCalendarUpdateRequest request) {
         try {
             teamCalendar.updateDates(request);
         } catch (RuntimeException e) {
@@ -76,7 +76,7 @@ public class TeamCalendarService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void delete(TeamCalendar teamCalendar) {
+    public void delete(RoomMateTeamCalendar teamCalendar) {
         try {
             teamCalendar.delete();
         } catch (RuntimeException e) {
@@ -89,7 +89,7 @@ public class TeamCalendarService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deleteTarget(TeamCalendar teamCalendar, Long memberId) {
+    public void deleteTarget(RoomMateTeamCalendar teamCalendar, Long memberId) {
         try {
             teamCalendar.deleteTarget(memberId);
         } catch (RuntimeException e) {
@@ -102,13 +102,13 @@ public class TeamCalendarService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void deleteManyByContainedTarget(Team team, Member member) {
+    public void deleteManyByContainedTarget(RoomMateTeam team, Member member) {
         try {
-            List<TeamCalendar> teamCalendars = new ArrayList<>(team.getTeamCalendars());
+            List<RoomMateTeamCalendar> teamCalendars = new ArrayList<>(team.getTeamCalendars());
 
             if (teamCalendars.size() < 1) return;
 
-            for (TeamCalendar teamCalendar : teamCalendars) {
+            for (RoomMateTeamCalendar teamCalendar : teamCalendars) {
 
                 List<Long> targetsId = teamCalendar.getTargets();
 
@@ -130,7 +130,7 @@ public class TeamCalendarService {
      * 팀일정 월별 조회 |
      * 500(SERVER_ERROR)
      */
-    public List<TeamCalendar> findManyByYearMonth(Team team, YearMonth yearMonth) {
+    public List<RoomMateTeamCalendar> findManyByYearMonth(RoomMateTeam team, YearMonth yearMonth) {
         try {
             return teamCalendarRepository.findTeamCalendars(team.getId(),
                     yearMonth + "-%", 0);
@@ -143,7 +143,7 @@ public class TeamCalendarService {
      * 외박 일정 월별 조회 |
      * 500(SERVER_ERROR)
      */
-    public List<TeamCalendar> findSleepOverCalendarsByYearMonth(Team team, YearMonth yearMonth) {
+    public List<RoomMateTeamCalendar> findSleepOverCalendarsByYearMonth(RoomMateTeam team, YearMonth yearMonth) {
         try {
             return teamCalendarRepository.findTeamCalendars(team.getId(),
                     yearMonth + "-%", 1);
@@ -153,10 +153,22 @@ public class TeamCalendarService {
     }
 
     /**
+     * 오늘의 팀 일정 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<RoomMateTeamCalendar> findTeamCalendarsByStartDateIsToday() {
+        try {
+            return teamCalendarRepository.findTeamCalendarsByStartDateIsToday();
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 팀일정 단건 조회 |
      * 404(TEAMCALENDAR_NOT_FOUND)
      */
-    public TeamCalendar findById(Long teamCalendarId) {
+    public RoomMateTeamCalendar findById(Long teamCalendarId) {
         return teamCalendarRepository.findByIdAndIsDeletedIsFalse(teamCalendarId)
                 .orElseThrow(() -> {
                     throw new CustomException(null, TEAMCALENDAR_NOT_FOUND);
@@ -167,9 +179,9 @@ public class TeamCalendarService {
      * 팀으로 당일 외박 일정 여부 조회 |
      * 500(SERVER_ERROR)
      */
-    public List<Long> findSleepoverYnByTeam(Team team) {
+    public List<Long> findSleepoverYnByTeam(RoomMateTeam team) {
         try {
-            List<TeamCalendar> todaySleepoverTeamCalendars =
+            List<RoomMateTeamCalendar> todaySleepoverTeamCalendars =
                     teamCalendarRepository.findTodaySleepoverMembersByTeam(team.getId());
 
             List<Long> members = new ArrayList<>();
@@ -186,7 +198,7 @@ public class TeamCalendarService {
      * 저장, 수정, 삭제 시 한다. |
      * 404(TEAMMEMBER_NOT_FOUND)
      */
-    public List<Member> validateTeamMemberExistence(Team team, List<Long> targets) {
+    public List<Member> validateTeamMemberExistence(RoomMateTeam team, List<Long> targets) {
         List<Member> teamMembers = team.getMembers();
         List<Member> targetMembers = new ArrayList<>();
 
@@ -206,7 +218,7 @@ public class TeamCalendarService {
      * 404(DELETED_TEAMCALENDAR)
      */
     @Transactional
-    public List<Member> validateTeamMemberExistenceForFind(TeamCalendar teamCalendar) {
+    public List<Member> validateTeamMemberExistenceForFind(RoomMateTeamCalendar teamCalendar) {
         List<Long> targets = teamCalendar.getTargets().stream().collect(Collectors.toList());
         List<Member> teamMembers = teamCalendar.getTeam().getMembers();
         List<Member> returnMembers = new ArrayList<>();
@@ -236,11 +248,11 @@ public class TeamCalendarService {
 
     /**
      * 팀일정 수정 권한 검증 |
-     * 403(FORBIDDEN_TEAMCALENDAR_AUTHORIZATION)
+     * 403(ACCESS_DENIED_TEAM_CALENDAR)
      */
-    public void validateTeamCalendarAuthorization(Team team, TeamCalendar teamCalendar) {
+    public void validateTeamCalendarAuthorization(RoomMateTeam team, RoomMateTeamCalendar teamCalendar) {
         if (!teamCalendar.getTeam().equals(team))
-            throw new CustomException(null, FORBIDDEN_TEAMCALENDAR_AUTHORIZATION);
+            throw new CustomException(null, ACCESS_DENIED_TEAM_CALENDAR);
     }
 
     /**
@@ -256,34 +268,34 @@ public class TeamCalendarService {
      * 외박일정 여부 검증 |
      * 400(ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR)
      */
-    public void validateSleepoverCalendar(TeamCalendar teamCalendar) {
+    public void validateSleepoverCalendar(RoomMateTeamCalendar teamCalendar) {
         if (teamCalendar.getIsSleepover())
             throw new CustomException(null, ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR);
     }
 
     /**
      * 외박일정 수정/삭제 권한 검증 |
-     * 403(FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION)
+     * 403(ACCESS_DENIED_SLEEPOVER_CALENDAR)
      */
-    public void validateSleepoverCalendarAuthorization(TeamCalendar teamCalendar, Member member) {
+    public void validateSleepoverCalendarAuthorization(RoomMateTeamCalendar teamCalendar, Member member) {
         if (!teamCalendar.getTargets().contains(member.getId()))
-            throw new CustomException(null, FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION);
+            throw new CustomException(null, ACCESS_DENIED_SLEEPOVER_CALENDAR);
     }
 
     /**
      * 외박 일정 날짜 중복 등록 여부 검증
      * 409(DUPLICATE_SLEEPOVER_DATE)
      */
-    public void validateDuplicateDate(TeamCalendar teamCalendar,
-                                               Team team,
-                                               Member member,
-                                               LocalDate startDate,
-                                               LocalDate endDate) {
+    public void validateDuplicateDate(RoomMateTeamCalendar teamCalendar,
+                                      RoomMateTeam team,
+                                      Member member,
+                                      LocalDate startDate,
+                                      LocalDate endDate) {
 
         String startDateStr = startDate.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
         String endDateStr = endDate.format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
 
-        List<TeamCalendar> teamCalendars = teamCalendarRepository.findTeamCalendarsByDate(team.getId(), startDateStr, endDateStr);
+        List<RoomMateTeamCalendar> teamCalendars = teamCalendarRepository.findTeamCalendarsByDate(team.getId(), startDateStr, endDateStr);
 
         teamCalendars.removeIf(c -> !c.getTargets().contains(member.getId()));
 
