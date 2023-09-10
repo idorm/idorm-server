@@ -5,9 +5,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import idorm.idormServer.exception.CustomException;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Objects;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
@@ -25,7 +23,6 @@ import static idorm.idormServer.exception.ExceptionCode.*;
 public class PhotoService {
 
     private final AmazonS3Client amazonS3Client;
-//    private final String CALENDAR_FOLDER = "calendar";
 
     /**
      * 파일 형식 검증 |
