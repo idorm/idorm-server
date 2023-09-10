@@ -11,11 +11,11 @@ import static org.springframework.http.HttpStatus.*;
 public enum ExceptionCode {
 
     /**
-     * 400 BAD_REQUEST : 잘못된 요청
+     * 400 BAD_REQUEST
      */
     FIELD_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
-    TARGETS_FIELD_REQUIRED(BAD_REQUEST, "대상자 입력은 필수 입니다."),
-    DATE_SET_REQUIRED(BAD_REQUEST, "일자 입력은 필수 입니다."),
+    TARGETS_FIELD_REQUIRED(BAD_REQUEST, "팀 일정 대상자 입력은 필수 입니다."),
+    DATE_FIELD_REQUIRED(BAD_REQUEST, "일자 입력은 필수 입니다."),
 
     // 형식
     EMAIL_CHARACTER_INVALID(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
@@ -44,92 +44,86 @@ public enum ExceptionCode {
 
     ILLEGAL_ARGUMENT_ADMIN(BAD_REQUEST, "관리자는 해당 요청의 설정 대상이 될 수 없습니다."),
     ILLEGAL_ARGUMENT_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
-    ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR(BAD_REQUEST, "해당 요청으로 외박 일정은 수정할 수 없습니다."),
+    ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR(BAD_REQUEST, "외박 일정은 해당 요청의 설정 대상이 될 수 없습니다."),
+    ILLEGAL_ARGUMENT_FCM_TOKEN(BAD_REQUEST, "유효하지 않은 FCM 토큰 입니다."),
+    ILLEGAL_ARGUMENT_DATE_SET(BAD_REQUEST, "시작일자가 종료일자보다 빠르거나 같아야 합니다."),
 
-    ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(BAD_REQUEST, "매칭정보가 비공개 입니다."),
+    ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(BAD_REQUEST, "비공개 상태의 온보딩 정보 입니다."),
     ILLEGAL_STATEMENT_EXPLODEDTEAM(CONFLICT, "폭발한 팀은 요청 대상이 될 수 없습니다."),
-    DATE_SET_INVALID(BAD_REQUEST, "시작일자가 종료일자보다 빠르거나 같아야 합니다."),
 
     /**
-     * 401 UNAUTHORIZED : 인증되지 않은 사용자
+     * 401 UNAUTHORIZED
      */
     INVALID_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
     EXPIRED_CODE(UNAUTHORIZED, "이메일 인증 유효시간이 초과되었습니다."),
-    UNAUTHORIZED_MEMBER(UNAUTHORIZED, "로그인이 필요합니다."),
-    UNAUTHORIZED_PASSWORD(UNAUTHORIZED, "올바르지 않은 비밀번호 입니다."),
-    UNAUTHORIZED_EMAIL(UNAUTHORIZED, "인증이 되지 않은 이메일입니다."),
 
-    UNAUTHORIZED_POST(UNAUTHORIZED, "게시글 수정 및 삭제 권한이 없습니다"),
-    UNAUTHORIZED_COMMENT(UNAUTHORIZED, "댓글 수정 및 삭제 권한이 없습니다."),
+    UNAUTHORIZED_MEMBER(UNAUTHORIZED, "유효하지 않은 토큰 입니다."),
+    UNAUTHORIZED_PASSWORD(UNAUTHORIZED, "올바르지 않은 비밀번호 입니다."),
+    UNAUTHORIZED_EMAIL(UNAUTHORIZED, "인증이 되지 않은 이메일 입니다."),
     UNAUTHORIZED_DELETED_MEMBER(UNAUTHORIZED, "탈퇴한 회원입니다. 로그아웃이 필요합니다."),
 
     /**
-     * 403 FORBIDDEN : 권한이 없는 사용자
+     * 403 FORBIDDEN
      */
-    FORBIDDEN_AUTHORIZATION(FORBIDDEN, "접근 권한이 없습니다."),
-    FORBIDDEN_TARGET_ADMIN(FORBIDDEN, "관리자는 대상이 될 수 없습니다."),
-    FORBIDDEN_TEAMCALENDAR_AUTHORIZATION(FORBIDDEN, "팀 일정 접근 권한이 없습니다."),
-    FORBIDDEN_SLEEPOVERCALENDAR_AUTHORIZATION(FORBIDDEN, "외박 일정 수정 권한이 없습니다."),
-
+    ACCESS_DENIED(FORBIDDEN, "접근 권한이 없습니다."),
+    ACCESS_DENIED_POST(FORBIDDEN, "게시글 업데이트 권한이 없습니다"),
+    ACCESS_DENIED_COMMENT(FORBIDDEN, "댓글 업데이트 권한이 없습니다"),
     ACCESS_DENIED_TEAM(FORBIDDEN, "팀 접근 권한이 없습니다."),
+    ACCESS_DENIED_TEAM_CALENDAR(FORBIDDEN, "팀 일정 접근 권한이 없습니다."),
+    ACCESS_DENIED_SLEEPOVER_CALENDAR(FORBIDDEN, "팀 외박 일정 접근 권한이 없습니다."),
 
     /**
-     * 404 NOT_FOUND : Resource 를 찾을 수 없음
+     * 404 NOT_FOUND
      */
     EMAIL_NOT_FOUND(NOT_FOUND, "등록된 이메일이 없습니다."),
     MEMBER_NOT_FOUND(NOT_FOUND, "등록된 멤버가 없습니다."),
-    DISLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "싫어요한 멤버가 없습니다."),
-    LIKEDMEMBER_NOT_FOUND(NOT_FOUND, "좋아요한 멤버가 없습니다."),
-    FILE_NOT_FOUND(NOT_FOUND, "등록된 파일이 없습니다."),
-    MATCHINGINFO_NOT_FOUND(NOT_FOUND, "등록된 매칭정보가 없습니다."),
+    DISLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "등록된 싫어요한 멤버가 없습니다."),
+    LIKEDMEMBER_NOT_FOUND(NOT_FOUND, "등록된 좋아요한 멤버가 없습니다."),
+    FILE_NOT_FOUND(NOT_FOUND, "등록된 사진이 없습니다."),
+    MATCHINGINFO_NOT_FOUND(NOT_FOUND, "등록된 온보딩 정보가 없습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "등록된 댓글이 없습니다."),
-    POSTLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "멤버가 게시글에 공감하지 않았습니다."),
+    POSTLIKEDMEMBER_NOT_FOUND(NOT_FOUND, "공감하지 않은 게시글 입니다."),
     POST_NOT_FOUND(NOT_FOUND, "등록된 게시글이 없습니다."),
     POSTPHOTO_NOT_FOUND(NOT_FOUND, "등록된 게시글 사진이 없습니다."),
     MEMBERPHOTO_NOT_FOUND(NOT_FOUND, "등록된 프로필 사진이 없습니다."),
-    LIKED_NOT_FOUND(NOT_FOUND, "등록된 공감이 없습니다."),
-    CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 일정 정보가 없습니다."),
+    CALENDAR_NOT_FOUND(NOT_FOUND, "등록된 공식 일정이 없습니다."),
     TEAM_NOT_FOUND(NOT_FOUND, "등록된 팀이 없습니다."),
-    TEAMMEMBER_NOT_FOUND(NOT_FOUND, "동록되지 않은 팀 회원이 있습니다."),
+    TEAMMEMBER_NOT_FOUND(NOT_FOUND, "등록되지 않은 팀 회원이 있습니다."),
     TEAMCALENDAR_NOT_FOUND(NOT_FOUND, "등록된 팀 일정이 없습니다."),
 
     DELETED_POST(NOT_FOUND, "삭제된 게시글 입니다."),
     DELETED_COMMENT(NOT_FOUND, "삭제된 댓글 입니다."),
 
     /**
-     * 405 METHOD_NOT_ALLOWED : 대상 리소스가 해당 메서드를 지원하지 않음
+     * 405 METHOD_NOT_ALLOWED
      */
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 메서드입니다."),
 
     /**
-     * 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재
+     * 409 CONFLICT
      */
-
-    DUPLICATE_EMAIL(CONFLICT, "이미 등록된 이메일 입니다."),
-    DUPLICATE_MEMBER(CONFLICT, "이미 등록된 멤버 입니다."),
-    DUPLICATE_NICKNAME(CONFLICT, "이미 등록된 닉네임 입니다."),
-    DUPLICATE_SAME_NICKNAME(CONFLICT, "기존의 닉네임과 같습니다."),
-    DUPLICATE_MATCHINGINFO(CONFLICT, "매칭정보가 이미 등록되어 있습니다."),
-    DUPLICATE_LIKED_MEMBER(CONFLICT, "이미 좋아요한 멤버 입니다."),
-    DUPLICATE_DISLIKED_MEMBER(CONFLICT, "이미 싫어요한 멤버 입니다."),
-    DUPLICATE_LIKED(CONFLICT, "공감은 한 번만 가능합니다."),
+    DUPLICATE_EMAIL(CONFLICT, "등록된 이메일 입니다."),
+    DUPLICATE_MEMBER(CONFLICT, "등록된 멤버 입니다."),
+    DUPLICATE_NICKNAME(CONFLICT, "등록된 닉네임 입니다."),
+    DUPLICATE_SAME_NICKNAME(CONFLICT, "기존의 닉네임과 동일합니다."),
+    DUPLICATE_MATCHINGINFO(CONFLICT, "등록된 온보딩 정보가 존재합니다."),
+    DUPLICATE_LIKED_MEMBER(CONFLICT, "좋아요한 멤버 입니다."),
+    DUPLICATE_DISLIKED_MEMBER(CONFLICT, "싫어요한 멤버 입니다."),
+    DUPLICATE_LIKED(CONFLICT, "공감한 게시글 입니다."),
     DUPLICATE_TEAM(CONFLICT, "등록된 팀이 존재합니다."),
-    DUPLICATE_SLEEPOVER_DATE(CONFLICT, "요청한 일정 기간 중에 이미 등록된 외박일정이 있습니다."),
+    DUPLICATE_SLEEPOVER_DATE(CONFLICT, "중복인 외박 일자가 존재합니다."),
 
-    CANNOT_UPDATE_NICKNAME(CONFLICT, "닉네임은 30일마다 변경할 수 있습니다."),
-    CANNOT_LIKED_SELF(CONFLICT, "본인의 글에 공감할 수 없습니다."),
-    CANNOT_LIKED_POST_BY_DELETED_MEMBER(CONFLICT, "게시글 작성자가 탈퇴한 글은 공감할 수 없습니다."),
-    CANNOT_EXPLODE_TEAM(CONFLICT, "팀원이 존재하므로 팀을 삭제할 수 없습니다."),
-    MEMBER_CANNOT_SELFREPORT(CONFLICT, "본인은 신고할 수 없습니다."),
-    POST_CANNOT_SELFREPORT(CONFLICT, "본인의 게시글은 신고할 수 없습니다."),
-    COMMENT_CANNOT_SELFREPORT(CONFLICT, "본인의 댓글은 신고할 수 없습니다."),
-    TEAM_STATUS_FULL(CONFLICT, "등록하려는 팀이 이미 만석입니다."),
+    CANNOT_UPDATE_NICKNAME(CONFLICT, "닉네임은 30일 간격으로 변경 가능합니다."),
+    CANNOT_LIKED_SELF(CONFLICT, "본인 게시글은 공감할 수 없습니다."),
+    CANNOT_LIKED_POST_BY_DELETED_MEMBER(CONFLICT, "탈퇴한 멤버의 게시글은 공감할 수 없습니다."),
+    CANNOT_EXPLODE_TEAM(CONFLICT, "다른 팀원 존재 시 팀을 삭제할 수 없습니다."),
+    CANNOT_REGISTER_TEAM_STATUS_FULL(CONFLICT, "등록하려는 팀이 정원 초과 입니다."),
 
     /**
      * 413 PAYLOAD_TOO_LARGE
      */
-    FILE_SIZE_EXCEED(PAYLOAD_TOO_LARGE, "파일 용량이 초과되었습니다"),
-    FILE_COUNT_EXCEED(PAYLOAD_TOO_LARGE, "파일 개수가 초과되었습니다"),
+    FILE_SIZE_EXCEED(PAYLOAD_TOO_LARGE, "파일 용량이 초과되었습니다."),
+    FILE_COUNT_EXCEED(PAYLOAD_TOO_LARGE, "파일 개수가 초과되었습니다."),
 
     /**
      * 415 UNSUPPORTED_MEDIA_TYPE
@@ -140,10 +134,10 @@ public enum ExceptionCode {
      * 500 SERVER_ERROR : 서버 에러
      */
     SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다."),
-    EMAIL_SENDING_ERROR(INTERNAL_SERVER_ERROR, "이메일 전송 중에 서버 에러가 발생했습니다."),
-    FIREBASE_SERER_ERROR(INTERNAL_SERVER_ERROR, "푸시 알람 전송 중에 서버 에러가 발생했습니다."),
-    S3_SERVER_ERROR(INTERNAL_SERVER_ERROR, "S3 사진 저장 중에 서버 에러가 발생했습니다."),
-    AOP_LOGGING_ERROR(INTERNAL_SERVER_ERROR, "로깅 중 서버 에러가 발생했습니다.")
+    EMAIL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "이메일 전송 중 서버 에러가 발생했습니다."),
+    FIREBASE_SERER_ERROR(INTERNAL_SERVER_ERROR, "푸시알림 처리 중 서버 에러가 발생했습니다."),
+    S3_SERVER_ERROR(INTERNAL_SERVER_ERROR, "S3 처리 중 서버 에러가 발생했습니다."),
+    CRAWLING_SERVER_ERROR(INTERNAL_SERVER_ERROR, "크롤링 중 서버 에러가 발생했습니다.")
     ;
 
     private final HttpStatus httpStatus;
