@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class RoomMateTeam extends BaseEntity {
 
     @Id
-    @Column(name = "team_id")
+    @Column(name = "room_mate_team_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Boolean isNeedToConfirmDeleted; // 최후의 1인이 팀 폭발여부 확인했는지 여부
@@ -27,7 +27,7 @@ public class RoomMateTeam extends BaseEntity {
     private List<Member> members = new ArrayList<>();
 
     @OneToMany(mappedBy = "team")
-    private List<TeamCalendar> teamCalendars = new ArrayList<>();
+    private List<RoomMateTeamCalendar> teamCalendars = new ArrayList<>();
 
     @Builder
     public RoomMateTeam(Member member) {
@@ -61,16 +61,16 @@ public class RoomMateTeam extends BaseEntity {
         return this.members.size();
     }
 
-    public void addTeamCalendar(TeamCalendar teamCalendar) {
+    public void addTeamCalendar(RoomMateTeamCalendar teamCalendar) {
         this.teamCalendars.add(teamCalendar);
     }
 
-    public void removeTeamCalendar(TeamCalendar teamCalendar) {
+    public void removeTeamCalendar(RoomMateTeamCalendar teamCalendar) {
         this.teamCalendars.remove(teamCalendar);
     }
 
-    public List<TeamCalendar> getTeamCalendars() {
-        List<TeamCalendar> teamCalendarList = this.teamCalendars;
+    public List<RoomMateTeamCalendar> getTeamCalendars() {
+        List<RoomMateTeamCalendar> teamCalendarList = this.teamCalendars;
         teamCalendarList.removeIf(teamCalendar -> teamCalendar.getIsDeleted().equals(true));
         return teamCalendarList;
     }
@@ -85,8 +85,8 @@ public class RoomMateTeam extends BaseEntity {
         for (Member member : this.members)
             member.deleteTeam(this);
 
-        List<TeamCalendar> deleteList = this.getTeamCalendars().stream().collect(Collectors.toList());
-        for (TeamCalendar teamCalendar : deleteList)
+        List<RoomMateTeamCalendar> deleteList = this.getTeamCalendars().stream().collect(Collectors.toList());
+        for (RoomMateTeamCalendar teamCalendar : deleteList)
             teamCalendar.delete();
 
     }
