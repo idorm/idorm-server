@@ -1,20 +1,18 @@
 package idorm.idormServer.member.service;
 
-import idorm.idormServer.email.domain.Email;
-import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.exception.CustomException;
-
 import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.member.domain.Email;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -185,6 +183,23 @@ public class MemberService {
     }
 
     /**
+     * FCM용 팀 일정 대상자 회원 조회 |
+     * 500(SERVER_ERROR)
+     */
+    public List<Member> findTeamTargetMembers(List<Long> memberIds) {
+        try {
+            List<Member> members = new ArrayList<>();
+            for (Long memberId : memberIds) {
+                Optional<Member> member = memberRepository.findByIdAndIsDeletedIsFalseAndFcmTokenIsNotNull(memberId);
+                member.ifPresent(members::add);
+            }
+            return members;
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 닉네임 중복 검사 |
      * 409(DUPLICATE_NICKNAME)
      * 500(SERVER_ERROR)
@@ -231,11 +246,11 @@ public class MemberService {
 
     /**
      * 관리자 대상 여부 검증 |
-     * 403(FORBIDDEN_TARGET_ADMIN)
+     * 400(ILLEGAL_ARGUMENT_ADMIN)
      */
     public void validateTargetAdmin(Member member) {
         if(member.getRoles().contains("ROLE_ADMIN"))
-            throw new CustomException(null, FORBIDDEN_TARGET_ADMIN);
+            throw new CustomException(null, ILLEGAL_ARGUMENT_ADMIN);
     }
 
     /**

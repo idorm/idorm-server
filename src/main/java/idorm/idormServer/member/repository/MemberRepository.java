@@ -20,6 +20,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     List<Member> findByDormCategoryAndIdIsNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(Character dormCategory, Long id);
 
+    Optional<Member> findByIdAndIsDeletedIsFalseAndFcmTokenIsNotNull(Long id);
+
     @Query(value = "SELECT liked_member " +
             "FROM liked_members d " +
             "WHERE d.member_id = :memberId", nativeQuery = true)
@@ -36,7 +38,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE d.member_id = :loginMemberId " +
             "AND d.disliked_member = :dislikedMemberId limit 1) as success", nativeQuery = true)
     int isExistDislikedMember(@Param("loginMemberId") Long loginMemberId,
-                                  @Param("dislikedMemberId") Long dislikedMemberId);
+                              @Param("dislikedMemberId") Long dislikedMemberId);
 
     @Query(value = "SELECT EXISTS " +
             "(select * " +
@@ -44,7 +46,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE l.member_id = :loginMemberId " +
             "AND l.liked_member = :likedMemberId limit 1)", nativeQuery = true)
     int isExistLikedMember(@Param("loginMemberId") Long loginMemberId,
-                              @Param("likedMemberId") Long likedMemberId);
+                           @Param("likedMemberId") Long likedMemberId);
 
     @Modifying
     @Transactional

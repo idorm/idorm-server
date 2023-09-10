@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Team extends BaseEntity {
+public class RoomMateTeam extends BaseEntity {
 
     @Id
     @Column(name = "team_id")
@@ -30,7 +30,7 @@ public class Team extends BaseEntity {
     private List<TeamCalendar> teamCalendars = new ArrayList<>();
 
     @Builder
-    public Team(Member member) {
+    public RoomMateTeam(Member member) {
         addMember(member);
         member.updateTeam(this, 0);
         this.isNeedToConfirmDeleted = false;

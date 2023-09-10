@@ -1,14 +1,16 @@
 package idorm.idormServer.member.domain;
 
-import idorm.idormServer.calendar.domain.Team;
+import idorm.idormServer.calendar.domain.RoomMateTeam;
 import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.domain.PostLikedMember;
-import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.photo.domain.MemberPhoto;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -69,7 +71,7 @@ public class Member extends BaseEntity implements UserDetails {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
-    private Team team;
+    private RoomMateTeam team;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
@@ -170,17 +172,17 @@ public class Member extends BaseEntity implements UserDetails {
         this.fcmTokenUpdatedAt = LocalDate.now();
     }
 
-    public void updateTeam(Team team, Integer teamOrder) {
+    public void updateTeam(RoomMateTeam team, Integer teamOrder) {
         this.team = team;
         this.teamOrder = teamOrder;
     }
 
-    public void updateTeamOrder(Team team, Integer teamOrder) {
+    public void updateTeamOrder(RoomMateTeam team, Integer teamOrder) {
         if (this.team.equals(team))
             this.teamOrder = teamOrder;
     }
 
-    public void deleteTeam(Team team) {
+    public void deleteTeam(RoomMateTeam team) {
         if (this.team.getId().equals(team.getId())) {
             this.team = null;
             this.teamOrder = -999;
