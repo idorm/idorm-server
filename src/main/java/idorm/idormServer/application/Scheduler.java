@@ -1,4 +1,4 @@
-package idorm.idormServer.fcm.scheduler;
+package idorm.idormServer.application;
 
 import idorm.idormServer.calendar.domain.Calendar;
 import idorm.idormServer.calendar.service.CalendarService;
