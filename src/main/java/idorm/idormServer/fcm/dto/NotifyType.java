@@ -1,8 +1,9 @@
-package idorm.idormServer.fcm.domain;
+package idorm.idormServer.fcm.dto;
 
 public enum NotifyType {
     CALENDAR,
     COMMENT,
     SUBCOMMENT,
-    TOPPOST
+    TOPPOST,
+    TEAMCALENDAR
 }

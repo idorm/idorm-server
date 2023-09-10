@@ -1,13 +1,12 @@
 package idorm.idormServer.fcm.dto;
 
-import idorm.idormServer.fcm.domain.NotifyType;
 import lombok.*;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FcmRequestDto {
+public class FcmRequest {
 
     @Setter
     private String token;
