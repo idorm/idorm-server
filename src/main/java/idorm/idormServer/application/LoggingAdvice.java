@@ -1,4 +1,4 @@
-package idorm.idormServer.aop;
+package idorm.idormServer.application;
 
 import idorm.idormServer.exception.CustomException;
 import io.sentry.Sentry;
@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @Slf4j
 @Aspect
 @Component
-public class AopLogging {
+public class LoggingAdvice {
 
     @Pointcut("execution(* idorm.idormServer..*Controller.*(..))")
     private void methodFromController(){}
