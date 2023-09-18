@@ -17,9 +17,9 @@ public class SwaggerConfiguration {
     public OpenAPI openAPI() {
 
         final Info info = new Info()
-                .title("아이돔 production api")
-                .description("운영 서버 api description")
-                .version("2.0.1");
+                .title("아이돔 develop api")
+                .description("테스트 서버 api description")
+                .version("2.0.0");
 
         final String tokenSchemaName = AUTHENTICATION_HEADER_NAME;
         final SecurityRequirement tokenRequirement = new SecurityRequirement().addList(tokenSchemaName);
