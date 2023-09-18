@@ -39,17 +39,9 @@ out/
 ### Firebase Key ###
 src/main/resources/serviceAccountKey.json
 
-### Logging File ###
-LOGGING_ROLLING_FILE_PATH_IS_UNDEFINED
-LOGGING_ERROR_FILE_PATH_IS_UNDEFINED
-idorm-rolling.log
-
-src/main/**/master
-
-src/main/**/util
-
+### Config ###
 src/main/resources/application-local.yml
-src/main/resources/application-dev.yml
 src/main/resources/application-prod.yml
 
-src/main/**/config/SwaggerConfiguration.java
+### Local Loggin Files ###
+idorm-rolling.log
