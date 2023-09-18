@@ -41,7 +41,7 @@ src/main/resources/serviceAccountKey.json
 
 ### Config ###
 src/main/resources/application-local.yml
-src/main/resources/application-prod.yml
+src/main/resources/application-develop.yml
 
 ### Local Loggin Files ###
 idorm-rolling.log
