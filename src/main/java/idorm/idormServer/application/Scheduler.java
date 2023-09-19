@@ -3,6 +3,7 @@ package idorm.idormServer.application;
 import com.google.firebase.messaging.Message;
 import idorm.idormServer.calendar.domain.OfficialCalendar;
 import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import idorm.idormServer.calendar.dto.CrawledOfficialCalendarResponse;
 import idorm.idormServer.calendar.service.OfficialCalendarService;
 import idorm.idormServer.calendar.service.RoomMateTeamCalendarService;
 import idorm.idormServer.community.domain.Post;
@@ -40,7 +41,7 @@ public class Scheduler {
         List<Member> members = memberService.findAllOfDorm1();
 
         Post topPost = postService.findTopPost(DormCategory.DORM1);
-        List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendarsFromDorm1();
+        List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendars(1);
 
         if (topPost == null && todayCalendars == null)
             return;
@@ -55,7 +56,7 @@ public class Scheduler {
         List<Member> members = memberService.findAllOfDorm2();
 
         Post topPost = postService.findTopPost(DormCategory.DORM2);
-        List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendarsFromDorm2();
+        List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendars(2);
 
         if (topPost == null && todayCalendars == null)
             return;
@@ -70,7 +71,7 @@ public class Scheduler {
         List<Member> members = memberService.findAllOfDorm3();
 
         Post topPost = postService.findTopPost(DormCategory.DORM3);
-        List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendarsFromDorm3();
+        List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendars(3);
 
         if (topPost == null && todayCalendars == null)
             return;
@@ -137,7 +138,6 @@ public class Scheduler {
                                 .notifyType(NotifyType.CALENDAR)
                                 .contentId(calendar.getId())
                                 .title("오늘의 " + dormCategory + " 기숙사 일정 입니다.")
-                                .content(calendar.getContent())
                                 .build())
                         .build();
                 fcmMessages.add(calendarFcmMessage);
@@ -166,9 +166,8 @@ public class Scheduler {
     @Scheduled(cron = "0 0 14 ? * MON,TUE,WED,THU,FRI,SAT,SUN") // UTC 14:00 ASIA/SEOUL 23:00
     public void crawlingOfficialCalendars() {
 
-        int updatedCalenderCount = officialCalendarCrawler.crawling();
-        String alertMsg = "[관리자 알림] " + updatedCalenderCount + " 개의 새로운 공식 일정이 있습니다.";
-        // TODO: 관리자 메일 및 푸시 알림 발송
+        List<CrawledOfficialCalendarResponse> responses = officialCalendarCrawler.crawlPosts();
 
+        // TODO: 관리자 푸시 알림 발송
     }
 }

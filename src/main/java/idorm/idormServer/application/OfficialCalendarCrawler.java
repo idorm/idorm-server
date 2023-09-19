@@ -1,20 +1,19 @@
 package idorm.idormServer.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import idorm.idormServer.calendar.domain.CrawledOfficialCalendar;
-import idorm.idormServer.calendar.dto.OfficialCalendarCrawlingResponse;
-import idorm.idormServer.calendar.service.CrawledOfficialCalendarService;
+import idorm.idormServer.calendar.domain.OfficialCalendar;
+import idorm.idormServer.calendar.dto.CrawledOfficialCalendarResponse;
+import idorm.idormServer.calendar.service.OfficialCalendarService;
 import idorm.idormServer.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,91 +23,60 @@ import static idorm.idormServer.exception.ExceptionCode.CRAWLING_SERVER_ERROR;
 @RequiredArgsConstructor
 public class OfficialCalendarCrawler {
 
-    @Autowired
-    public ObjectMapper mapper;
+    private final OfficialCalendarService officialCalendarService;
 
-    private final CrawledOfficialCalendarService officialCrawledCalendarService;
+    public List<CrawledOfficialCalendarResponse> crawlPosts() {
 
-    @Transactional
-    public int crawling() {
+        List<CrawledOfficialCalendarResponse> postList = new ArrayList<>();
 
-        try {
-            List<String> urls = parseBoardList(1202839, 447638, 1);
+        String url = "https://bioeng.inu.ac.kr/dorm/6528/subview.do";
 
-            List<CrawledOfficialCalendar> createdCalendars = new ArrayList<>();
+        try{
+            Document doc = Jsoup.connect(url).get();
+            Elements postElements = doc.select("table.board-table tbody tr");
 
-            int newCalendarCount = 0;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+            LocalDate today = LocalDate.now();
 
-            for (String url : urls) {
+            int cnt = 0;
 
-                OfficialCalendarCrawlingResponse result = parseBoardDetail(1202839,
-                        447638,
-                        1,
-                        0,
-                        url);
-                String websiteUrl = result.getWebsiteUrl();
-                String inuPostId = "-999";
+            for (Element postElement : postElements) {
 
-                if (websiteUrl != null){
-                    int startIdx = websiteUrl.indexOf("&boardSeq=", 40) + 10;
-                    int endIdx = websiteUrl.indexOf("&", startIdx + 1);
+                if (cnt >= 10)
+                    break;
 
-                    inuPostId = websiteUrl.substring(startIdx, endIdx);
-                }
+                LocalDate date = LocalDate.parse(postElement.select("td.td-date").text(), formatter);
 
-                //TODO: 30일마다 크롤링 게시글 정리 / 존재 여부는 공식 일정 DB, 크롤링 DB에서 inuPostId 로 체크
-                if (officialCrawledCalendarService.validateCrawledCalendarExistence(inuPostId))
+                if (date.isBefore(today.minusDays(7)))
                     continue;
 
-                String title = result.getTitle().replace("제목 : ", "");
-//                String content = result.getContent();
-                String file = result.getFile();
+                String postUrl = "https://bioeng.inu.ac.kr/" + postElement.select("td.td-subject a").attr("href");
+                String postId = parseInuPostId(postUrl);
 
-                officialCrawledCalendarService.save(title, websiteUrl, inuPostId);
-                // TODO: OfficialCalendarPhoto 저장
+                if (officialCalendarService.validateOfficialCalendarExistence(postId))
+                    continue;
 
-                newCalendarCount++;
+                String postTitle = postElement.select("td.td-subject a strong").text();
+
+                OfficialCalendar createdCalendar = officialCalendarService.save(postId, postTitle, date, postUrl);
+
+                CrawledOfficialCalendarResponse calendarResponse = new CrawledOfficialCalendarResponse(createdCalendar);
+                postList.add(calendarResponse);
+
+                cnt++;
             }
 
-            // TODO: 관리자에게 알림을 보낸다. 00개의 새로운 공식 일정이 있습니다.
-            return newCalendarCount;
+            return postList;
         } catch (IOException e) {
             throw new CustomException(e, CRAWLING_SERVER_ERROR);
         }
     }
 
-    private static List<String> parseBoardList(int codyMenuSeq, int boardId, int page) throws IOException {
+    private String parseInuPostId(String url) {
 
-        String url = String.format("https://www.inu.ac.kr/user/indexSub.do?codyMenuSeq=%d&siteId=dorm&dum=dum&boardId=%d&page=%d&command=list&boardSeq=", codyMenuSeq, boardId, page);
-        Document doc = Jsoup.connect(url).get();
-        Elements titles = doc.select("td.title a");
-
-        List<String> urls = new ArrayList<>();
-
-        for (Element title : titles) {
-            urls.add(title.attr("href"));
-        }
-        return urls;
-    }
-
-    private static OfficialCalendarCrawlingResponse parseBoardDetail(int codyMenuSeq,
-                                                          int boardId,
-                                                          int page,
-                                                          int boardSeq,
-                                                          String url) throws IOException {
-        if (url == null) {
-            url = String.format("https://www.inu.ac.kr/user/indexSub.do?codyMenuSeq=%d&siteId=dorm&dum=dum&boardId=%d&page=%d&command=view&boardSeq=%d&categoryDepth=0007", codyMenuSeq, boardId, page, boardSeq);
-        } else {
-            url = "https://www.inu.ac.kr/user/" + url;
-        }
-
-        Document doc = Jsoup.connect(url).get();
-        Element contentParent = doc.selectFirst("dl.viewdata");
-        String title = contentParent.selectFirst("dt").text();
-//        Element content = contentParent.selectFirst("dd.contents");
-        Element file = contentParent.selectFirst("dd.file a");
-        String fileUrl = (file == null) ? null : "https://inu.ac.kr" + file.attr("href");
-
-        return new OfficialCalendarCrawlingResponse(title, url, fileUrl);
+        return url
+                .replace("https://bioeng.inu.ac.kr//bbs/dorm/", "")
+                .replace("/artclView.do", "")
+                .split("/")[1];
     }
 }
