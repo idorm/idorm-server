@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
@@ -22,20 +23,31 @@ public class OfficialCalendarService {
     private final OfficialCalendarRepository calendarRepository;
 
     /**
-     * DB에 일정 저장 |
+     * DB에 일정 저장 | 크롤링 시 사용 |
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public OfficialCalendar save(OfficialCalendar calendar) {
+    public OfficialCalendar save(String inuPostId,
+                                 String title,
+                                 LocalDate inuPostCreatedAt,
+                                 String postUrl) {
         try {
-            return calendarRepository.save(calendar);
+
+            OfficialCalendar officialCalendar = OfficialCalendar.builder()
+                    .inuPostId(inuPostId)
+                    .title(title)
+                    .inuPostCreatedAt(inuPostCreatedAt)
+                    .postUrl(postUrl)
+                    .build();
+
+            return calendarRepository.save(officialCalendar);
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     /**
-     * 일정 수정 |
+     * 일정 수정 | 관리자 사용 |
      * 500(SERVER_ERROR)
      */
     @Transactional
@@ -66,58 +78,56 @@ public class OfficialCalendarService {
      */
     public OfficialCalendar findOneById(Long id) {
         return calendarRepository.findByIdAndIsDeletedIsFalse(id)
-                .orElseThrow(() -> {
-                    throw new CustomException(null, CALENDAR_NOT_FOUND);
-                });
+                .orElseThrow(() -> new CustomException(null, CALENDAR_NOT_FOUND));
     }
 
     /**
-     * 일정 전체 조회 |
+     * 일정 다건 조회 | 관리자 용 |
      * 500(SERVER_ERROR)
      */
-    public List<OfficialCalendar> findMany() {
+    public List<OfficialCalendar> findManyByAdmin() {
         try {
-            return calendarRepository.findByIsDeletedIsFalse();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+            LocalDate now = LocalDate.now();
+            LocalDate lastWeek = now.minusDays(7);
+            return calendarRepository.findByMonthByAdmin(now.format(formatter) + "-%",
+                    lastWeek.format(formatter) + "-%");
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     /**
-     * 일정 다건 조회 |
+     * 일정 다건 조회 | 회원 용 |
      * 500(SERVER_ERROR)
      */
     public List<OfficialCalendar> findManyByYearMonth(YearMonth yearMonth) {
 
         try {
-            return calendarRepository.findByIsDeletedIsFalseAndDateLike(yearMonth + "-%");
+            return calendarRepository.findByMonthByMember(yearMonth + "-%");
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
         }
     }
 
     /**
-     * 1 기숙사 오늘의 일정 조회 |
+     * 기숙사 별 오늘의 일정 조회 |
      * 500(SERVER_ERROR)
      */
-    public List<OfficialCalendar> findTodayCalendarsFromDorm1() {
-        return calendarRepository.findCalendarsByDorm1AndTodayStartDate();
-    }
+    public List<OfficialCalendar> findTodayCalendars(int dormNum) {
 
-    /**
-     * 2 기숙사 오늘의 일정 조회 |
-     * 500(SERVER_ERROR)
-     */
-    public List<OfficialCalendar> findTodayCalendarsFromDorm2() {
-        return calendarRepository.findCalendarsByDorm2AndTodayStartDate();
-    }
-
-    /**
-     * 3 기숙사 오늘의 일정 조회 |
-     * 500(SERVER_ERROR)
-     */
-    public List<OfficialCalendar> findTodayCalendarsFromDorm3() {
-        return calendarRepository.findCalendarsByDorm3AndTodayStartDate();
+        try {
+            switch (dormNum) {
+                case 1:
+                    return calendarRepository.findCalendarsByDorm1AndTodayStartDate();
+                case 2:
+                    return calendarRepository.findCalendarsByDorm2AndTodayStartDate();
+                default:
+                    return calendarRepository.findCalendarsByDorm3AndTodayStartDate();
+            }
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
     }
 
     /**
@@ -133,5 +143,15 @@ public class OfficialCalendarService {
 
         if (startDate.isAfter(endDate))
             throw new CustomException(null, ILLEGAL_ARGUMENT_DATE_SET);
+    }
+
+    /**
+     * 크롤링한 공식 일정 저장 여부 확인 |
+     * 500(SERVER_ERROR)
+     */
+    public boolean validateOfficialCalendarExistence(String inuPostId) {
+        if (inuPostId == null)
+            return false;
+        return calendarRepository.existsByInuPostIdAndIsDeletedIsFalse(inuPostId);
     }
 }
