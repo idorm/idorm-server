@@ -24,7 +24,7 @@ import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
 import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_URL;
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-@Tag(name = "Email", description = "이메일 인증 api")
+@Tag(name = "9. Email", description = "이메일 인증 api")
 @Validated
 @RestController
 @RequestMapping(API_ROOT_URL_V1 + AUTHENTICATION_URL)

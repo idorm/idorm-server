@@ -30,7 +30,7 @@ import javax.validation.Valid;
 import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
 import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 
-@Tag(name = "Report", description = "신고 api")
+@Tag(name = "X. Report", description = "신고 api")
 @Validated
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)

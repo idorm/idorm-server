@@ -32,7 +32,7 @@ import static idorm.idormServer.config.SecurityConfiguration.*;
 import static idorm.idormServer.exception.ExceptionCode.MEMBER_NOT_FOUND;
 import static idorm.idormServer.exception.ExceptionCode.UNAUTHORIZED_EMAIL;
 
-@Tag(name = "Member", description = "회원 api")
+@Tag(name = "8. Member", description = "회원 api")
 @Validated
 @RestController
 @RequestMapping(API_ROOT_URL_V1)

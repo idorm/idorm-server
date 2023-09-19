@@ -31,7 +31,7 @@ import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEAD
 import static idorm.idormServer.exception.ExceptionCode.DUPLICATE_MATCHINGINFO;
 import static idorm.idormServer.exception.ExceptionCode.MATCHINGINFO_NOT_FOUND;
 
-@Tag(name = "MatchingInfo", description = "온보딩 api")
+@Tag(name = "6. MatchingInfo", description = "온보딩 api")
 @Validated
 @RestController
 @RequestMapping(API_ROOT_URL_V1)

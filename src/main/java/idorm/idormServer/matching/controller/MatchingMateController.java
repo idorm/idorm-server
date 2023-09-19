@@ -33,7 +33,7 @@ import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEAD
 import static idorm.idormServer.exception.ExceptionCode.ILLEGAL_ARGUMENT_ADMIN;
 import static idorm.idormServer.exception.ExceptionCode.ILLEGAL_ARGUMENT_SELF;
 
-@Tag(name = "Matching Mate", description = "룸메이트 매칭 api")
+@Tag(name = "7. Matching Mate", description = "룸메이트 매칭 api")
 @Validated
 @RestController
 @RequestMapping(API_ROOT_URL_V1)

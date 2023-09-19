@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
 import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 
-@Tag(name = "RoomMateTeam", description = "룸메이트 팀원 관리 api")
+@Tag(name = "3. RoomMateTeam", description = "룸메이트 팀원 관리 api")
 @Validated
 @RestController
 @RequestMapping(API_ROOT_URL_V1)

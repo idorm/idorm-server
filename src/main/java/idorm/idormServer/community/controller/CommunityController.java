@@ -45,7 +45,7 @@ import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
 import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.exception.ExceptionCode.*;
 
-@Tag(name = "Community", description = "커뮤니티 api")
+@Tag(name = "5. Community", description = "커뮤니티 api")
 @Validated
 @RestController
 @RequiredArgsConstructor

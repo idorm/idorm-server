@@ -37,7 +37,7 @@ import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
 import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.exception.ExceptionCode.TEAMCALENDAR_NOT_FOUND;
 
-@Tag(name = "RoomMate Team Calendar", description = "룸메이트 팀 일정 api")
+@Tag(name = "4. RoomMate Team Calendar", description = "룸메이트 팀 일정 api")
 @Validated
 @RestController
 @RequestMapping(API_ROOT_URL_V1)
