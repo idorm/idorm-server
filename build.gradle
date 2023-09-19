@@ -45,7 +45,7 @@ dependencies {
     implementation 'io.sentry:sentry-spring-boot-starter:6.2.1'
 
     // crawling
-    implementation 'org.jsoup:jsoup:1.16.1'
+    implementation 'org.jsoup:jsoup:1.15.3'
 
     // swagger ui
     implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
