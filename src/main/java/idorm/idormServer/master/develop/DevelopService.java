@@ -93,15 +93,15 @@ public class DevelopService {
             teamRepository.deleteAll();
 
             this.entityManager
-                    .createNativeQuery("ALTER TABLE calendar AUTO_INCREMENT = 1")
+                    .createNativeQuery("ALTER TABLE official_calendar AUTO_INCREMENT = 1")
                     .executeUpdate();
 
             this.entityManager
-                    .createNativeQuery("ALTER TABLE team AUTO_INCREMENT = 1")
+                    .createNativeQuery("ALTER TABLE room_mate_team AUTO_INCREMENT = 1")
                     .executeUpdate();
 
             this.entityManager
-                    .createNativeQuery("ALTER TABLE team_calendar AUTO_INCREMENT = 1")
+                    .createNativeQuery("ALTER TABLE room_mate_team_calendar AUTO_INCREMENT = 1")
                     .executeUpdate();
 
 

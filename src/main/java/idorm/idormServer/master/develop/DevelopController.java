@@ -1,12 +1,9 @@
 package idorm.idormServer.master.develop;
 
-import com.google.firebase.messaging.Message;
 import idorm.idormServer.application.OfficialCalendarCrawler;
 import idorm.idormServer.auth.JwtTokenProvider;
+import idorm.idormServer.calendar.dto.CrawledOfficialCalendarResponse;
 import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.fcm.dto.FcmRequest;
-import idorm.idormServer.fcm.dto.NotifyType;
-import idorm.idormServer.fcm.service.FCMService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -27,84 +24,16 @@ import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-@Tag(name = "Develop", description = "개발용 api")
+@Tag(name = "1. Develop", description = "개발용 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/test")
 public class DevelopController {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final FCMService fcmService;
     private final MemberService memberService;
     private final DevelopService testService;
-    private final OfficialCalendarCrawler officialCalendarCrawler;
-
-    @Hidden
-    @Operation(summary = "공식 일정 크롤링")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "CRAWLING_COMPLETED",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
-            @ApiResponse(responseCode = "500", description = "CRAWLING_SERVER_ERROR")
-    })
-    @GetMapping("/crawling")
-    public ResponseEntity<DefaultResponseDto<Object>> crawlingOfficialCalendar() {
-
-        officialCalendarCrawler.crawling();
-
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("CRAWLING_COMPLETED")
-                        .responseMessage("공식 일정 크롤링 완료")
-                        .build());
-    }
-
-    @Hidden
-    @Operation(summary = "푸시 알람 전송", description = "- 실제로는 서버에서 전송합니다. \n" +
-            "- 실 운영 시 삭제 예정\n")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "TOKEN_RENEWED",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
-            @ApiResponse(responseCode = "404", description = "MEMBER_NOT_FOUND")
-    })
-    @PostMapping("/fcm")
-    public ResponseEntity pushMessage(
-//            @RequestBody TestRequestDto request
-    ) {
-
-        Member member2 = memberService.findById(2L);
-
-        List<FcmRequest> fcmMessages = new ArrayList<>();
-        for (int i = 2; i < 7; i++) {
-            if (i == 6) {
-                FcmRequest topPostFcmMessage = FcmRequest.builder()
-                        .token(member2.getFcmToken())
-                        .notification(FcmRequest.Notification.builder()
-                                .notifyType(NotifyType.TOPPOST)
-                                .contentId(1L)
-                                .title("어제 " + 1 + " 기숙사의 인기 게시글 입니다.")
-                                .content("test")
-                                .build())
-                        .build();
-                fcmMessages.add(topPostFcmMessage);
-            } else {
-                FcmRequest topPostFcmMessage = FcmRequest.builder()
-                        .token("sfsdfa")
-                        .notification(FcmRequest.Notification.builder()
-                                .notifyType(NotifyType.TOPPOST)
-                                .contentId(1L)
-                                .title("어제 " + 1 + " 기숙사의 인기 게시글 입니다.")
-                                .content("test")
-                                .build())
-                        .build();
-                fcmMessages.add(topPostFcmMessage);
-            }
-        }
-
-        List<Message> messages = fcmService.createMessageOfTeamCalendar(fcmMessages);
-        fcmService.sendManyMessages(messages);
-
-        return ResponseEntity.status(204).build();
-    }
+    private final OfficialCalendarCrawler crawler;
 
     @Operation(summary = "계정 토큰 발급", description = "- 실 운영 시 삭제 예정\n" +
             "- 회원 식별자를 주면 access token을 헤더로 반환합니다.\n" +
@@ -151,5 +80,23 @@ public class DevelopController {
         testService.resetDatabase();
 
         return ResponseEntity.status(204).build();
+    }
+
+    @Operation(summary = "생활원 홈페이지 크롤링")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
+    })
+    @GetMapping("/crawling")
+    public ResponseEntity<DefaultResponseDto<Object>> crawling() {
+
+        List<CrawledOfficialCalendarResponse> crawledOfficialCalendarResponses = crawler.crawlPosts();
+
+        return ResponseEntity.status(200)
+                .body(DefaultResponseDto.builder()
+                        .responseCode("CRAWLING_COMPLETED")
+                        .responseMessage("크롤링 완료")
+                        .data(crawledOfficialCalendarResponses)
+                        .build());
     }
 }
