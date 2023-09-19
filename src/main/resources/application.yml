@@ -77,9 +77,12 @@ logging:
       hibernate: info
 
 springdoc:
+  api-docs:
+    enabled: false
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
+    enabled: false
     path: /index.html
     disable-swagger-default-url: true
     display-request-duration: true
