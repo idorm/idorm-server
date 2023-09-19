@@ -6,7 +6,6 @@ import idorm.idormServer.calendar.dto.CrawledOfficialCalendarResponse;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -65,7 +64,6 @@ public class DevelopController {
                         .build());
     }
 
-    @Hidden
     @Operation(summary = "데이터베이스 초기화", description = "- DB 초기화 후 테스트용 데이터를 다시 주입합니다.\n" +
             "- 400개의 데이터를 재주입하므로 약 10초 소요됩니다.")
     @ApiResponses(value = {
