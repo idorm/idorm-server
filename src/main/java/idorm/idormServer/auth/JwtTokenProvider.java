@@ -44,7 +44,6 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        validateToken(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUsername(token));
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
@@ -69,7 +68,7 @@ public class JwtTokenProvider {
         }
     }
 
-    private boolean validateToken(String token) {
+    public boolean validateToken(String token) {
 
         validateTokenType(token);
         try {
