@@ -91,20 +91,4 @@ public class PhotoService {
             throw new CustomException(e, S3_SERVER_ERROR);
         }
     }
-
-    /**
-     * 캘린더 사진 저장 |
-     */
-//    public String putImage(MultipartFile file) {
-//        String fileName = UUID.randomUUID().toString();
-//
-//        return insertFileToS3(CALENDAR_FOLDER, fileName, file);
-//    }
-
-    /**
-     * 캘린더 사진 삭제 |
-     */
-//    public void deleteImage(String fileName) {
-//        deleteFileFromS3(CALENDAR_FOLDER, fileName);
-//    }
 }
