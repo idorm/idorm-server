@@ -40,6 +40,11 @@ spring:
           starttls:
             enable: false
 
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    locations: ${DB_MIGRATION_SCRIPT_PATH}
+
 jwt:
   secret: ${JWT_SECRET_KEY}
 
@@ -68,15 +73,6 @@ firebase:
   client-id: ${FCM_CLIENT_ID}
   client-url: ${FCM_CLIENT_URL}
 
-logging:
-  file:
-    path: ${LOGGING_ROLLING_FILE_PATH}
-    name: idorm-rolling.log
-  level:
-    org:
-      springframework.web: info
-      hibernate: info
-
 springdoc:
   api-docs:
     enabled: false
@@ -89,3 +85,16 @@ springdoc:
     display-request-duration: true
     tags-sorter: alpha
     operations-sorter: alpha
+
+management:
+  server:
+    port: 8082
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:  health, info, metrics, prometheus
