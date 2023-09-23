@@ -111,7 +111,7 @@ public class RoomMateTeamService {
      * 팀원으로 팀 조회 Optional |
      */
     public RoomMateTeam findByMemberOptional(Member member) {
-        return member.getTeam();
+        return member.getRoomMateTeam();
     }
 
     /**
@@ -119,7 +119,7 @@ public class RoomMateTeamService {
      * 404(TEAM_NOT_FOUND)
      */
     public RoomMateTeam findByMember(Member member) {
-        RoomMateTeam team = member.getTeam();
+        RoomMateTeam team = member.getRoomMateTeam();
         if (team == null)
             throw new CustomException(null, TEAM_NOT_FOUND);
         else
@@ -160,7 +160,7 @@ public class RoomMateTeamService {
      * 409(DUPLICATE_TEAM)
      */
     public void validateTeamExistence(Member member) {
-        if (member.getTeam() != null)
+        if (member.getRoomMateTeam() != null)
             throw new CustomException(null, DUPLICATE_TEAM);
     }
 
@@ -187,10 +187,10 @@ public class RoomMateTeamService {
      * 403(ACCESS_DENIED_TEAM)
      */
     public void validateTeamMember(RoomMateTeam loginMemberTeam, Member deleteMember) {
-        if (deleteMember.getTeam() == null)
+        if (deleteMember.getRoomMateTeam() == null)
             throw new CustomException(null, ACCESS_DENIED_TEAM);
 
-        if (!loginMemberTeam.equals(deleteMember.getTeam()))
+        if (!loginMemberTeam.equals(deleteMember.getRoomMateTeam()))
             throw new CustomException(null, ACCESS_DENIED_TEAM);
     }
 }

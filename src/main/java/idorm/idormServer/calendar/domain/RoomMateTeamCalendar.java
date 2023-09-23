@@ -33,13 +33,13 @@ public class RoomMateTeamCalendar extends BaseEntity {
     private Boolean isSleepover;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
-    private RoomMateTeam team;
+    @JoinColumn(name = "room_mate_team_id")
+    private RoomMateTeam roomMateTeam;
 
     @ElementCollection
-    @CollectionTable(name = "targets",
-            joinColumns = @JoinColumn(name = "team_calendar_id"))
-    @Column(name = "team_calendar_target")
+    @CollectionTable(name = "room_mate_team_calendar_target",
+            joinColumns = @JoinColumn(name = "room_mate_team_calendar_id"))
+    @Column(name = "member_id")
     private List<Long> targets = new ArrayList<>(); // 일정 대상자들
 
     @Builder
@@ -65,7 +65,7 @@ public class RoomMateTeamCalendar extends BaseEntity {
 
         this.setIsDeleted(false);
 
-        this.team = team;
+        this.roomMateTeam = team;
 
         if (!team.getTeamCalendars().contains(this))
             team.addTeamCalendar(this);
@@ -100,7 +100,7 @@ public class RoomMateTeamCalendar extends BaseEntity {
 
     public void delete() {
         this.setIsDeleted(true);
-        if (team.getTeamCalendars().contains(this))
-            this.team.removeTeamCalendar(this);
+        if (roomMateTeam.getTeamCalendars().contains(this))
+            this.roomMateTeam.removeTeamCalendar(this);
     }
 }

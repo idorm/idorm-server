@@ -70,8 +70,8 @@ public class Member extends BaseEntity implements UserDetails {
     private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
-    private RoomMateTeam team;
+    @JoinColumn(name = "room_mate_team_id")
+    private RoomMateTeam roomMateTeam;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
@@ -84,7 +84,7 @@ public class Member extends BaseEntity implements UserDetails {
         this.nicknameUpdatedAt = null;
         this.reportedCount = 0;
         this.dormCategory = null;
-        this.team = null;
+        this.roomMateTeam = null;
         this.teamOrder = -999;
         this.roles.add("ROLE_USER");
 
@@ -173,18 +173,18 @@ public class Member extends BaseEntity implements UserDetails {
     }
 
     public void updateTeam(RoomMateTeam team, Integer teamOrder) {
-        this.team = team;
+        this.roomMateTeam = team;
         this.teamOrder = teamOrder;
     }
 
     public void updateTeamOrder(RoomMateTeam team, Integer teamOrder) {
-        if (this.team.equals(team))
+        if (this.roomMateTeam.equals(team))
             this.teamOrder = teamOrder;
     }
 
     public void deleteTeam(RoomMateTeam team) {
-        if (this.team.getId().equals(team.getId())) {
-            this.team = null;
+        if (this.roomMateTeam.getId().equals(team.getId())) {
+            this.roomMateTeam = null;
             this.teamOrder = -999;
         }
     }

@@ -220,7 +220,7 @@ public class RoomMateTeamCalendarService {
     @Transactional
     public List<Member> validateTeamMemberExistenceForFind(RoomMateTeamCalendar teamCalendar) {
         List<Long> targets = teamCalendar.getTargets().stream().collect(Collectors.toList());
-        List<Member> teamMembers = teamCalendar.getTeam().getMembers();
+        List<Member> teamMembers = teamCalendar.getRoomMateTeam().getMembers();
         List<Member> returnMembers = new ArrayList<>();
 
         for (Long target : targets) {
@@ -251,7 +251,7 @@ public class RoomMateTeamCalendarService {
      * 403(ACCESS_DENIED_TEAM_CALENDAR)
      */
     public void validateTeamCalendarAuthorization(RoomMateTeam team, RoomMateTeamCalendar teamCalendar) {
-        if (!teamCalendar.getTeam().equals(team))
+        if (!teamCalendar.getRoomMateTeam().equals(team))
             throw new CustomException(null, ACCESS_DENIED_TEAM_CALENDAR);
     }
 

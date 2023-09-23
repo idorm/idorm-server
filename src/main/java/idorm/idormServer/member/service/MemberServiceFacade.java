@@ -48,8 +48,8 @@ public class MemberServiceFacade {
 
     public void deleteMember(Member member) {
 
-        if (member.getTeam() != null)
-            calendarServiceFacade.deleteTeamMember(member.getTeam(), member);
+        if (member.getRoomMateTeam() != null)
+            calendarServiceFacade.deleteTeamMember(member.getRoomMateTeam(), member);
 
         matchingService.removeAllLikedMembersByDeletedMember(member);
         matchingService.removeAllDislikedMembersByDeletedMember(member);
