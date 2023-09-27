@@ -57,56 +57,64 @@
 
 ``` java
 dependencies {
-  // spring web
-  implementation 'org.springframework.boot:spring-boot-starter-web'
+    // spring web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
-  // spring data jpa
-  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // spring data jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-  // spring database
-  implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-  implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    // spring database
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
-  // spring validation
-  implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // spring validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-  // spring mail
-  implementation 'org.springframework.boot:spring-boot-starter-mail'
+    // spring mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-  // spring security
-  implementation 'org.springframework.boot:spring-boot-starter-security'
+    // spring security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
-  // spring aop
-  implementation 'org.springframework.boot:spring-boot-starter-aop'
+    // spring aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
-  // sentry
-  implementation 'io.sentry:sentry-spring-boot-starter:6.2.1'
+    // sentry
+    implementation 'io.sentry:sentry-spring-boot-starter:6.2.1'
 
-  // crawling
-  implementation 'org.jsoup:jsoup:1.16.1'
+    // crawling
+    implementation 'org.jsoup:jsoup:1.15.3'
 
-  // swagger ui
-  implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+    // swagger ui
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 
-  // aws s3
-  implementation 'com.amazonaws:aws-java-sdk-s3'
-  implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
+    // aws s3
+    implementation 'com.amazonaws:aws-java-sdk-s3'
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
 
-  // fcm
-  implementation 'com.google.firebase:firebase-admin:9.1.1',
+    // fcm
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
 
-  // jwt
-  implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.2'
+    // jwt
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.2'
 
-  // lombok
-  annotationProcessor 'org.projectlombok:lombok'
-  compileOnly 'org.projectlombok:lombok'
+    // lombok
+    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
 
-  // mysql
-  runtimeOnly 'mysql:mysql-connector-java'
+    // mysql
+    runtimeOnly 'mysql:mysql-connector-java'
 
-  // spring test
-  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // database migration
+    implementation 'org.flywaydb:flyway-core:8.4.4'
+    implementation 'org.flywaydb:flyway-mysql:8.4.4'
+
+    // monitoring
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
+    // spring test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 ```
 

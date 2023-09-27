@@ -1,6 +1,7 @@
 package idorm.idormServer.community.dto;
 
 import idorm.idormServer.community.domain.Comment;
+import idorm.idormServer.photo.domain.MemberPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,7 @@ public class CommentResponse {
     @Schema(description = "게시글 식별자", example = "1, null(삭제된 게시글)")
     private Long postId;
 
-    public CommentResponse(Comment comment) {
+    public CommentResponse(Comment comment, MemberPhoto commentMemberPhoto) {
 
         this.memberId = comment.getMember().getId();
         this.commentId = comment.getId();
@@ -68,12 +69,12 @@ public class CommentResponse {
             this.nickname = "익명";
         } else if(!comment.getIsAnonymous()) {
             this.nickname = comment.getMember().getNickname();
-            if(comment.getMember().getMemberPhoto() != null) {
-                this.profileUrl = comment.getMember().getMemberPhoto().getPhotoUrl();
+            if(commentMemberPhoto != null) {
+                this.profileUrl = commentMemberPhoto.getPhotoUrl();
             }
         }
     }
-    public CommentResponse(String anonymousNickname, Comment comment) {
+    public CommentResponse(String anonymousNickname, Comment comment, MemberPhoto commentMemberPhoto) {
 
         this.memberId = comment.getMember().getId();
         this.commentId = comment.getId();
@@ -94,8 +95,8 @@ public class CommentResponse {
             this.nickname = anonymousNickname;
         } else if(!comment.getIsAnonymous()) {
             this.nickname = comment.getMember().getNickname();
-            if(comment.getMember().getMemberPhoto() != null) {
-                this.profileUrl = comment.getMember().getMemberPhoto().getPhotoUrl();
+            if(commentMemberPhoto != null) {
+                this.profileUrl = commentMemberPhoto.getPhotoUrl();
             }
         }
     }

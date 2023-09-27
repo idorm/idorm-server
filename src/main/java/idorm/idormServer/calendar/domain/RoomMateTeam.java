@@ -23,10 +23,10 @@ public class RoomMateTeam extends BaseEntity {
     private Long id;
     private Boolean isNeedToConfirmDeleted; // 최후의 1인이 팀 폭발여부 확인했는지 여부
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "roomMateTeam")
     private List<Member> members = new ArrayList<>();
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "roomMateTeam")
     private List<RoomMateTeamCalendar> teamCalendars = new ArrayList<>();
 
     @Builder

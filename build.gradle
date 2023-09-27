@@ -64,16 +64,20 @@ dependencies {
     // jwt
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.2'
 
-    // monitoring
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-
     // lombok
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
 
     // mysql
     runtimeOnly 'mysql:mysql-connector-java'
+
+    // database migration
+    implementation 'org.flywaydb:flyway-core:8.4.4'
+    implementation 'org.flywaydb:flyway-mysql:8.4.4'
+
+    // monitoring
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
     // spring test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

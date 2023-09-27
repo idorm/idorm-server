@@ -10,6 +10,8 @@ import idorm.idormServer.calendar.service.RoomMateTeamService;
 import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
+import idorm.idormServer.photo.domain.MemberPhoto;
+import idorm.idormServer.photo.service.MemberPhotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,6 +44,7 @@ public class RoomMateTeamController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
+    private final MemberPhotoService memberPhotoService;
     private final RoomMateTeamService teamService;
     private final OfficialCalendarServiceFacade calendarServiceFacade;
     private final RoomMateTeamCalendarService teamCalendarService;
@@ -146,6 +149,7 @@ public class RoomMateTeamController {
     ) {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
+        MemberPhoto memberPhoto = memberPhotoService.findByMember(member);
         RoomMateTeam team = teamService.findByMemberOptional(member);
 
         RoomMatesFullResponse responses = null;
@@ -154,7 +158,7 @@ public class RoomMateTeamController {
 
             responses = new RoomMatesFullResponse(-999L,
                     false,
-                    new ArrayList<>(Arrays.asList(new RoomMateFullResponse(member, null))));
+                    new ArrayList<>(Arrays.asList(new RoomMateFullResponse(member, null, memberPhoto))));
         } else {
             List<Member> members = teamService.findTeamMembers(team);
 
@@ -162,13 +166,16 @@ public class RoomMateTeamController {
                 teamService.updateIsNeedToConfirmDeleted(team);
                 responses = new RoomMatesFullResponse(team.getId(),
                         true,
-                        new ArrayList<>(Arrays.asList(new RoomMateFullResponse(member, null))));
+                        new ArrayList<>(Arrays.asList(new RoomMateFullResponse(member, null, memberPhoto))));
             } else {
                 List<Long> sleepoverMembers = teamCalendarService.findSleepoverYnByTeam(team);
 
                 List<RoomMateFullResponse> childResponses = members.stream()
-                        .map(m -> new RoomMateFullResponse(m, sleepoverMembers.contains(m.getId())))
+                        .map(mem -> new RoomMateFullResponse(mem,
+                                sleepoverMembers.contains(mem.getId()),
+                                memberPhotoService.findByMember(member)))
                         .collect(Collectors.toList());
+
 
                 responses = new RoomMatesFullResponse(team.getId(),
                         false,

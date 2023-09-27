@@ -1,6 +1,9 @@
+server:
+  shutdown: graceful
+
 spring:
   datasource:
-    name: classpath:application.yml, /home/ec2-user/idorm-test/application-develop.yml
+#    name: classpath:application.yml, /home/ec2-user/idorm-test/application-develop.yml
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
@@ -16,6 +19,8 @@ spring:
         format_sql: true
         highlight_sql: true
         use_sql_comments: true
+    generate-ddl: false
+    open-in-view: false
 
   mvc:
     path match:
@@ -40,6 +45,25 @@ spring:
           starttls:
             enable: false
 
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: ${DB_MIGRATION_SCRIPT_PATH}
+
+logging:
+  level:
+    org.hibernate:
+      SQL: WARN
+      orm.jdbc.bind: WARN
+    idorm.idormServer: WARN
+  file:
+    name: ${LOGGING_FILE_PATH}/idorm.log
+  logback:
+    rolling policy:
+      clean-history-on-start: false
+      file-name-pattern: ${LOGGING_FILE_PATH}/idorm--%d{yyyy-MM-dd}-%i.gz
+      total-size-cap: 10MB
+
 jwt:
   secret: ${JWT_SECRET_KEY}
 
@@ -50,7 +74,6 @@ s3:
   bucket-name:
     member-photo: ${S3_MEMBER_PHOTO_BUCKET_NAME}
     post-photo: ${S3_POST_PHOTO_BUCKET_NAME}
-    calendar-photo: ${S3_CALENDAR_PHOTO_BUCKET_NAME}
   region: ${S3_REGION}
   logo: ${S3_LOGO_IMG_URL}
 
@@ -68,15 +91,6 @@ firebase:
   client-id: ${FCM_CLIENT_ID}
   client-url: ${FCM_CLIENT_URL}
 
-logging:
-  file:
-    path: ${LOGGING_ROLLING_FILE_PATH}
-    name: idorm-rolling.log
-  level:
-    org:
-      springframework.web: info
-      hibernate: info
-
 springdoc:
   api-docs:
     enabled: false
@@ -89,3 +103,18 @@ springdoc:
     display-request-duration: true
     tags-sorter: alpha
     operations-sorter: alpha
+  cache:
+    disabled: true
+
+management:
+  server:
+    port: 8082
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:  health, info, metrics, prometheus

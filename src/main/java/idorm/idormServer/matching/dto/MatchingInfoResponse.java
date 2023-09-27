@@ -69,9 +69,6 @@ public class MatchingInfoResponse {
     @Schema(description = "매칭이미지 공개 여부", example = "true")
     private Boolean isMatchingInfoPublic;
 
-    @Schema(description = "회원 이메일", example = "test1@inu.ac.kr")
-    private String memberEmail;
-
     public MatchingInfoResponse(MatchingInfo matchingInfo) {
         this.matchingInfoId = matchingInfo.getId();
         this.dormCategory = DormCategory.valueOf(matchingInfo.getDormCategory());
@@ -90,6 +87,5 @@ public class MatchingInfoResponse {
         this.mbti = matchingInfo.getMbti();
         this.wishText = matchingInfo.getWishText();
         this.isMatchingInfoPublic = matchingInfo.getIsMatchingInfoPublic();
-        this.memberEmail = matchingInfo.getMember().getEmail().getEmail();
     }
 }

@@ -18,6 +18,7 @@ import idorm.idormServer.matching.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.photo.domain.PostPhoto;
+import idorm.idormServer.photo.service.MemberPhotoService;
 import idorm.idormServer.photo.service.PostPhotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -60,6 +61,7 @@ public class CommunityController {
     private final PostPhotoService postPhotoService;
     private final FCMService fcmService;
     private final CommunityServiceFacade communityServiceFacade;
+    private final MemberPhotoService memberPhotoService;
 
     @Operation(summary = "기숙사별 홈화면 게시글 목록 조회", description = "- 페이징 적용으로 page는 페이지 번호를 의미합니다.\n " +
             "- page는 0부터 시작하며 서버에서 10개 단위로 페이징해서 반환합니다.\n " +
@@ -176,7 +178,10 @@ public class CommunityController {
                         commentService.findSubCommentsByParentCommentId(postId, comment.getId());
 
                 if (subComments.isEmpty()) {
-                    parentCommentResponses.add(new ParentCommentResponse(parentAnonymousNickname, comment, null));
+                    parentCommentResponses.add(new ParentCommentResponse(parentAnonymousNickname,
+                            comment,
+                            memberPhotoService.findByMember(comment.getMember()),
+                            null));
                     continue;
                 }
 
@@ -193,13 +198,21 @@ public class CommunityController {
                         subCommentAnonymousNickname = "익명" + index;
                     }
                     
-                    subCommentDtos.add(new CommentResponse(subCommentAnonymousNickname, subComment));
+                    subCommentDtos.add(new CommentResponse(subCommentAnonymousNickname,
+                            subComment,
+                            memberPhotoService.findByMember(subComment.getMember())));
                 }
-                parentCommentResponses.add(new ParentCommentResponse(parentAnonymousNickname, comment, subCommentDtos));
+                parentCommentResponses.add(new ParentCommentResponse(parentAnonymousNickname,
+                        comment,
+                        memberPhotoService.findByMember(comment.getMember()),
+                        subCommentDtos));
             }
         }
         boolean memberLikedPost = postLikedMemberService.isMemberLikedPost(member, foundPost);
-        PostResponse response = new PostResponse(foundPost, parentCommentResponses, memberLikedPost);
+        PostResponse response = new PostResponse(foundPost,
+                parentCommentResponses,
+                memberPhotoService.findByMember(foundPost.getMember()),
+                memberLikedPost);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -240,7 +253,7 @@ public class CommunityController {
 
         Post post = communityServiceFacade.savePost(member, request);
 
-        PostResponse response = new PostResponse(post);
+        PostResponse response = new PostResponse(post, memberPhotoService.findByMember(member));
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -583,7 +596,7 @@ public class CommunityController {
             }
         }
 
-        CommentResponse response = new CommentResponse(comment);
+        CommentResponse response = new CommentResponse(comment, memberPhotoService.findByMember(comment.getMember()));
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -654,7 +667,8 @@ public class CommunityController {
         List<Comment> foundComments = commentService.findCommentsByMember(member);
 
         List<CommentResponse> response = foundComments.stream()
-                .map(comment -> new CommentResponse(comment)).collect(Collectors.toList());
+                .map(comment -> new CommentResponse(comment, memberPhotoService.findByMember(comment.getMember())))
+                .collect(Collectors.toList());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

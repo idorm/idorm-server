@@ -2,6 +2,7 @@ package idorm.idormServer.community.dto;
 
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.matching.domain.DormCategory;
+import idorm.idormServer.photo.domain.MemberPhoto;
 import idorm.idormServer.photo.domain.PostPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -69,7 +70,7 @@ public class PostResponse {
     private List<ParentCommentResponse> comments = new ArrayList<>();
 
     // 게시글 저장 시에만 사용
-    public PostResponse(Post post) {
+    public PostResponse(Post post, MemberPhoto memberPhoto) {
         this.postId = post.getId();
         this.memberId = post.getMember().getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
@@ -89,8 +90,8 @@ public class PostResponse {
         } else if(!post.getIsAnonymous()) { // 익명이 아닌 경우
             this.nickname = post.getMember().getNickname();
 
-            if(post.getMember().getMemberPhoto() != null)
-                this.profileUrl = post.getMember().getMemberPhoto().getPhotoUrl();
+            if(memberPhoto != null)
+                this.profileUrl = memberPhoto.getPhotoUrl();
         } else if(post.getIsAnonymous()) { // 익명일 경우
             this.nickname = "익명";
         }
@@ -104,7 +105,7 @@ public class PostResponse {
         }
     }
 
-    public PostResponse(Post post, List<ParentCommentResponse> comments, boolean isLiked) {
+    public PostResponse(Post post, List<ParentCommentResponse> comments, MemberPhoto postMemberPhoto, boolean isLiked) {
         this.postId = post.getId();
         this.memberId = post.getMember().getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
@@ -129,8 +130,8 @@ public class PostResponse {
             this.nickname = null;
         } else if(!post.getIsAnonymous()) { // 익명이 아닌 경우
             this.nickname = post.getMember().getNickname();
-            if(post.getMember().getMemberPhoto() != null) {
-                this.profileUrl = post.getMember().getMemberPhoto().getPhotoUrl();
+            if(postMemberPhoto != null) {
+                this.profileUrl = postMemberPhoto.getPhotoUrl();
             }
         } else if(post.getIsAnonymous()) { // 익명일 경우
             this.nickname = "익명";

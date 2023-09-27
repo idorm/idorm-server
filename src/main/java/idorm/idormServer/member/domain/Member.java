@@ -39,13 +39,13 @@ public class Member extends BaseEntity implements UserDetails {
     private Integer reportedCount;
     private Integer teamOrder;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Email> emails = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MatchingInfo> matchingInfos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MemberPhoto> memberPhotos = new ArrayList<>();
 
     @ElementCollection
@@ -60,18 +60,18 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "disliked_member")
     private List<Long> dislikedMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<PostLikedMember> postLikedMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
-    private RoomMateTeam team;
+    @JoinColumn(name = "room_mate_team_id")
+    private RoomMateTeam roomMateTeam;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
@@ -84,48 +84,16 @@ public class Member extends BaseEntity implements UserDetails {
         this.nicknameUpdatedAt = null;
         this.reportedCount = 0;
         this.dormCategory = null;
-        this.team = null;
+        this.roomMateTeam = null;
         this.teamOrder = -999;
         this.roles.add("ROLE_USER");
 
         this.setIsDeleted(false);
     }
 
-    public Email getEmail() {
-        int size = this.emails.size();
-        if (size < 1)
-            return null;
-        Email email = this.emails.get(size - 1);
-        if (email.getIsDeleted())
-            return null;
-        return email;
-    }
-
-    public MatchingInfo getMatchingInfo() {
-        int matchingInfoSize = this.matchingInfos.size();
-        if (matchingInfoSize == 0)
-            return null;
-
-        MatchingInfo matchingInfo = this.matchingInfos.get(matchingInfoSize - 1);
-        if (matchingInfo.getIsDeleted())
-            return null;
-        return matchingInfo;
-    }
-
     // 회원 탈퇴 시 사용
     public List<MatchingInfo> getAllMatchingInfo() {
         return this.matchingInfos;
-    }
-
-    public MemberPhoto getMemberPhoto() {
-        int profilePhotoSize = this.memberPhotos.size();
-        if (profilePhotoSize == 0)
-            return null;
-
-        MemberPhoto memberPhoto = this.memberPhotos.get(profilePhotoSize - 1);
-        if (memberPhoto.getIsDeleted())
-            return null;
-        return memberPhoto;
     }
 
     // 회원 탈퇴 시 사용
@@ -173,18 +141,18 @@ public class Member extends BaseEntity implements UserDetails {
     }
 
     public void updateTeam(RoomMateTeam team, Integer teamOrder) {
-        this.team = team;
+        this.roomMateTeam = team;
         this.teamOrder = teamOrder;
     }
 
     public void updateTeamOrder(RoomMateTeam team, Integer teamOrder) {
-        if (this.team.equals(team))
+        if (this.roomMateTeam.equals(team))
             this.teamOrder = teamOrder;
     }
 
     public void deleteTeam(RoomMateTeam team) {
-        if (this.team.getId().equals(team.getId())) {
-            this.team = null;
+        if (this.roomMateTeam.getId().equals(team.getId())) {
+            this.roomMateTeam = null;
             this.teamOrder = -999;
         }
     }

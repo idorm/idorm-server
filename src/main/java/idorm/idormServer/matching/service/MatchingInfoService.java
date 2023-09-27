@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static idorm.idormServer.exception.ExceptionCode.*;
 
 
@@ -98,11 +100,19 @@ public class MatchingInfoService {
      * 매칭인포 단건 조회 |
      * 404(MATCHINGINFO_NOT_FOUND)
      */
-    public MatchingInfo findById(Long matchingInfoId) {
+//    public MatchingInfo findById(Long matchingInfoId) {
+//
+//        return matchingInfoRepository.findByIdAndIsDeletedIsFalse(matchingInfoId)
+//                .orElseThrow(() -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
+//    }
 
-        return matchingInfoRepository.findByIdAndIsDeletedIsFalse(matchingInfoId)
-                .orElseThrow(() -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
+    /**
+     * 회원으로 매칭정보 조회 Optional |
+     */
+    public Optional<MatchingInfo> findByMemberOp(Member member) {
+        return matchingInfoRepository.findByMemberIdAndIsDeletedIsFalse(member.getId());
     }
+
 
     /**
      * 회원 식별자로 매칭정보 단건 조회 |
@@ -118,8 +128,9 @@ public class MatchingInfoService {
      * 매칭정보 공개 여부 확인 |
      * 400(ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC)
      */
-    public void validateMatchingInfoIsPublic(Member member) {
-        if (!member.getMatchingInfo().getIsMatchingInfoPublic())
+    public void validateMatchingInfoIsPublic(MatchingInfo matchingInfo) {
+
+        if (matchingInfo.getIsMatchingInfoPublic())
             throw new CustomException(null, ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC);
     }
 

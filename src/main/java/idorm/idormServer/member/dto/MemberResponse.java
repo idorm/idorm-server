@@ -1,6 +1,7 @@
 package idorm.idormServer.member.dto;
 
 import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.photo.domain.MemberPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,12 +26,12 @@ public class MemberResponse {
     @Schema(description = "프로필사진 주소", example = "사진 url")
     private String profilePhotoUrl;
 
-    public MemberResponse(Member member) {
+    public MemberResponse(Member member, MemberPhoto memberPhoto, String email) {
         this.memberId = member.getId();
-        this.email = member.getEmail().getEmail();
+        this.email = email;
         this.nickname = member.getNickname();
 
-        if (member.getMemberPhoto() != null)
-            this.profilePhotoUrl = member.getMemberPhoto().getPhotoUrl();
+        if (memberPhoto != null)
+            this.profilePhotoUrl = memberPhoto.getPhotoUrl();
     }
 }

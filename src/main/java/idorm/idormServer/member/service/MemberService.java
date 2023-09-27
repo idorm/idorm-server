@@ -85,6 +85,18 @@ public class MemberService {
     }
 
     /**
+     * 기숙사 분류 수정 |
+     */
+    @Transactional
+    public void updateDormCategory(Member member, DormCategory dormCategory) {
+        try {
+            member.updateDormCategory(dormCategory.getType());
+        } catch (RuntimeException e) {
+            throw new CustomException(e, SERVER_ERROR);
+        }
+    }
+
+    /**
      * 회원 FCM 토큰 설정 |
      * 500(SERVER_ERROR)
      */

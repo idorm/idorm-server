@@ -1,18 +1,22 @@
 package idorm.idormServer.member.service;
 
 import idorm.idormServer.calendar.service.OfficialCalendarServiceFacade;
+import idorm.idormServer.matching.domain.MatchingInfo;
 import idorm.idormServer.matching.service.MatchingInfoService;
 import idorm.idormServer.matching.service.MatchingMateService;
 import idorm.idormServer.member.domain.Email;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.dto.MemberSaveRequest;
 import idorm.idormServer.member.dto.PasswordRequest;
+import idorm.idormServer.photo.domain.MemberPhoto;
 import idorm.idormServer.photo.service.MemberPhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -35,8 +39,9 @@ public class MemberServiceFacade {
     }
 
     public void saveMemberPhoto(Member member, MultipartFile file) {
-        if (member.getMemberPhoto() != null)
-            memberPhotoService.delete(member.getMemberPhoto());
+        MemberPhoto memberPhoto = memberPhotoService.findByMember(member);
+        if (memberPhoto != null)
+            memberPhotoService.delete(memberPhoto);
 
         memberPhotoService.createMemberPhoto(member, file);
     }
@@ -48,25 +53,29 @@ public class MemberServiceFacade {
 
     public void deleteMember(Member member) {
 
-        if (member.getTeam() != null)
-            calendarServiceFacade.deleteTeamMember(member.getTeam(), member);
+        if (member.getRoomMateTeam() != null)
+            calendarServiceFacade.deleteTeamMember(member.getRoomMateTeam(), member);
 
         matchingService.removeAllLikedMembersByDeletedMember(member);
         matchingService.removeAllDislikedMembersByDeletedMember(member);
 
         if (!member.getAllMatchingInfo().isEmpty()) {
             matchingInfoService.deleteData(member);
-            if (member.getMatchingInfo() != null)
-                matchingInfoService.delete(member.getMatchingInfo());
+            Optional<MatchingInfo> matchingInfo = matchingInfoService.findByMemberOp(member);
+
+            matchingInfo.ifPresent(matchingInfoService::delete);
         }
 
-        emailService.deleteData(member.getEmail());
-        emailService.delete(member.getEmail());
+        Email email = emailService.findEmailByMember(member);
+        emailService.deleteData(email);
+        emailService.delete(email);
         memberService.delete(member);
 
         if (!member.getAllMemberPhoto().isEmpty()) {
             memberPhotoService.deleteFromS3(member);
-            memberPhotoService.delete(member.getMemberPhoto());
+            MemberPhoto memberPhoto = memberPhotoService.findByMember(member);
+            if (memberPhoto != null)
+                memberPhotoService.delete(memberPhoto);
         }
     }
 }

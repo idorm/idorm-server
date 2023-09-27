@@ -9,6 +9,7 @@ import idorm.idormServer.member.dto.*;
 import idorm.idormServer.member.service.EmailService;
 import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.member.service.MemberServiceFacade;
+import idorm.idormServer.photo.domain.MemberPhoto;
 import idorm.idormServer.photo.service.MemberPhotoService;
 import idorm.idormServer.photo.service.PhotoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,8 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static idorm.idormServer.config.SecurityConfiguration.*;
-import static idorm.idormServer.exception.ExceptionCode.MEMBER_NOT_FOUND;
-import static idorm.idormServer.exception.ExceptionCode.UNAUTHORIZED_EMAIL;
+import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Tag(name = "8. Member", description = "회원 api")
 @Validated
@@ -62,7 +62,9 @@ public class MemberController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
-        MemberResponse response = new MemberResponse(member);
+        MemberResponse response = new MemberResponse(member,
+                memberPhotoService.findByMember(member),
+                emailService.findEmailByMember(member).getEmail());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -103,7 +105,7 @@ public class MemberController {
 
         Member member = memberServiceFacade.saveMember(request, email);
 
-        MemberResponse response = new MemberResponse(member);
+        MemberResponse response = new MemberResponse(member, null, email.getEmail());
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -163,8 +165,11 @@ public class MemberController {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
-        memberPhotoService.validateMemberPhotoIsExistence(member);
-        memberPhotoService.delete(member.getMemberPhoto());
+        MemberPhoto memberPhoto = memberPhotoService.findByMember(member);
+        if (memberPhoto == null)
+            throw new CustomException(null, FILE_NOT_FOUND);
+
+        memberPhotoService.delete(memberPhoto);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -296,7 +301,9 @@ public class MemberController {
         String token = jwtTokenProvider.createToken(String.valueOf(member.getId()), member.getRoles());
         memberService.updateFcmToken(member, fcmToken);
 
-        MemberResponse response = new MemberResponse(member);
+        MemberResponse response = new MemberResponse(member,
+                memberPhotoService.findByMember(member),
+                request.getEmail());
 
         return ResponseEntity.status(200)
                 .header(AUTHENTICATION_HEADER_NAME, token)
