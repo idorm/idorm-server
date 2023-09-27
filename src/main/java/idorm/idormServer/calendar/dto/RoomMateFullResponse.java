@@ -1,6 +1,7 @@
 package idorm.idormServer.calendar.dto;
 
 import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.photo.domain.MemberPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -26,13 +27,13 @@ public class RoomMateFullResponse {
     private Boolean sleepoverYn;
 
     @Builder
-    public RoomMateFullResponse(Member member, Boolean sleepoverYn) {
+    public RoomMateFullResponse(Member member, Boolean sleepoverYn, MemberPhoto memberPhoto) {
         this.order = member.getTeamOrder();
         this.memberId = member.getId();
         this.nickname = member.getNickname();
         this.sleepoverYn = sleepoverYn;
 
-        if (member.getMemberPhoto() != null)
-            this.profilePhotoUrl = member.getMemberPhoto().getPhotoUrl();
+        if (memberPhoto != null)
+            this.profilePhotoUrl = memberPhoto.getPhotoUrl();
     }
 }

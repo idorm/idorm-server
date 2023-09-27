@@ -27,6 +27,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
 import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
@@ -68,7 +69,11 @@ public class MatchingMateController {
 
         if (likedMembers != null) {
             for(Member likedMember : likedMembers) {
-                response.add(new MatchingMateResponse(likedMember.getMatchingInfo()));
+                Optional<MatchingInfo> matchingInfo = matchingInfoService.findByMemberOp(likedMember);
+                if (matchingInfo.isEmpty())
+                    continue;
+
+                response.add(new MatchingMateResponse(matchingInfo.get()));
             }
         }
         return ResponseEntity.status(200)
@@ -102,7 +107,12 @@ public class MatchingMateController {
 
         if (dislikedMembers != null) {
             for(Member dislikedMember : dislikedMembers) {
-                responses.add(new MatchingMateResponse(dislikedMember.getMatchingInfo()));
+
+                Optional<MatchingInfo> matchingInfo = matchingInfoService.findByMemberOp(dislikedMember);
+                if (matchingInfo.isEmpty())
+                    continue;
+
+                responses.add(new MatchingMateResponse(matchingInfo.get()));
             }
         }
         return ResponseEntity.status(200)
@@ -146,11 +156,11 @@ public class MatchingMateController {
         Member loginMember = memberService.findById(loginMemberId);
         Member selectedMember = memberService.findById(selectedMemberId);
 
-        matchingInfoService.findByMemberId(loginMemberId);
-        matchingInfoService.findByMemberId(selectedMemberId);
+        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findByMemberId(loginMemberId);
+        MatchingInfo targetMemberMatchingInfo = matchingInfoService.findByMemberId(selectedMemberId);
 
-        matchingInfoService.validateMatchingInfoIsPublic(loginMember);
-        matchingInfoService.validateMatchingInfoIsPublic(selectedMember);
+        matchingInfoService.validateMatchingInfoIsPublic(loginMemberMatchingInfo);
+        matchingInfoService.validateMatchingInfoIsPublic(targetMemberMatchingInfo);
 
         if(loginMember.equals(selectedMember)) {
             throw new CustomException(null,ILLEGAL_ARGUMENT_SELF);
@@ -159,7 +169,7 @@ public class MatchingMateController {
             throw new CustomException(null,ILLEGAL_ARGUMENT_ADMIN);
         }
 
-        if (matchingType == true) {
+        if (matchingType) {
             matchingService.addLikedMember(loginMember, selectedMemberId);
 
             return ResponseEntity.status(200)
@@ -241,10 +251,10 @@ public class MatchingMateController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member loginMember = memberService.findById(loginMemberId);
 
-        matchingInfoService.findByMemberId(loginMemberId);
-        matchingInfoService.validateMatchingInfoIsPublic(loginMember);
+        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findByMemberId(loginMemberId);
+        matchingInfoService.validateMatchingInfoIsPublic(loginMemberMatchingInfo);
 
-        List<MatchingInfo> foundMatchingInfo = matchingService.findMatchingMembers(loginMember);
+        List<MatchingInfo> foundMatchingInfo = matchingService.findMatchingMembers(loginMemberMatchingInfo);
 
         List<MatchingMateResponse> responses = new ArrayList<>();
 
@@ -281,10 +291,10 @@ public class MatchingMateController {
 
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member loginMember = memberService.findById(loginMemberId);
-        matchingInfoService.findByMemberId(loginMemberId);
-        matchingInfoService.validateMatchingInfoIsPublic(loginMember);
+        MatchingInfo loginMemberMatchingInfo = matchingInfoService.findByMemberId(loginMemberId);
+        matchingInfoService.validateMatchingInfoIsPublic(loginMemberMatchingInfo);
 
-        List<MatchingInfo> foundMatchingInfos = matchingService.findFilteredMatchingMembers(loginMember, request);
+        List<MatchingInfo> foundMatchingInfos = matchingService.findFilteredMatchingMembers(loginMemberMatchingInfo, request);
 
         List<MatchingMateResponse> responses = new ArrayList<>();
 

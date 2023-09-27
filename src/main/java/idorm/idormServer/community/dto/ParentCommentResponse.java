@@ -1,6 +1,7 @@
 package idorm.idormServer.community.dto;
 
 import idorm.idormServer.community.domain.Comment;
+import idorm.idormServer.photo.domain.MemberPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -51,6 +52,7 @@ public class ParentCommentResponse {
 
     public ParentCommentResponse(String anonymousNickname,
                                  Comment parentComment,
+                                 MemberPhoto parentCommentMemberPhoto,
                                  List<CommentResponse> subComments) {
 
         this.memberId = parentComment.getMember().getId();
@@ -71,8 +73,8 @@ public class ParentCommentResponse {
             this.nickname = anonymousNickname;
         } else if(!parentComment.getIsAnonymous()) {
             this.nickname = parentComment.getMember().getNickname();
-            if(parentComment.getMember().getMemberPhoto() != null) {
-                this.profileUrl = parentComment.getMember().getMemberPhoto().getPhotoUrl();
+            if(parentCommentMemberPhoto != null) {
+                this.profileUrl = parentCommentMemberPhoto.getPhotoUrl();
             }
         }
 

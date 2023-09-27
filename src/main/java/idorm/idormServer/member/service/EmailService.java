@@ -155,6 +155,14 @@ public class EmailService {
     }
 
     /**
+     * 회원으로 이메일 조회 |
+     */
+    public Email findEmailByMember(Member member) {
+        return emailRepository.findByMemberIdAndIsDeletedIsFalse(member.getId());
+    }
+
+
+    /**
      * 가입한 이메일 존재 여부 검증 |
      * 409(DUPLICATE_EMAIL)
      * 500(SERVER_ERROR)

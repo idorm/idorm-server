@@ -11,6 +11,7 @@ import idorm.idormServer.common.DefaultResponseDto;
 import idorm.idormServer.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
+import idorm.idormServer.photo.service.MemberPhotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -46,6 +47,7 @@ public class RoomMateTeamCalendarController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
+    private final MemberPhotoService memberPhotoService;
     private final RoomMateTeamCalendarService teamCalendarService;
     private final RoomMateTeamService teamService;
     private final OfficialCalendarService calendarService;
@@ -83,7 +85,7 @@ public class RoomMateTeamCalendarController {
         RoomMateTeamCalendar teamCalendar = teamCalendarService.save(request.toEntity(team));
 
         List<RoomMateResponse> childResponses = targetMembers.stream()
-                .map(m -> new RoomMateResponse(m)).collect(Collectors.toList());
+                .map(m -> new RoomMateResponse(m, memberPhotoService.findByMember(m))).collect(Collectors.toList());
 
         RoomMateCalendarResponse response = RoomMateCalendarResponse.builder()
                 .teamCalendar(teamCalendar)
@@ -132,7 +134,7 @@ public class RoomMateTeamCalendarController {
 
         RoomMateTeamCalendar teamCalendar = teamCalendarService.save(request.toEntity(team, member.getId()));
 
-        RoomMateResponse childResponse = new RoomMateResponse(member);
+        RoomMateResponse childResponse = new RoomMateResponse(member, memberPhotoService.findByMember(member));
 
         RoomMateCalendarResponse response = RoomMateCalendarResponse.builder()
                 .teamCalendar(teamCalendar)
@@ -185,7 +187,7 @@ public class RoomMateTeamCalendarController {
 
         teamCalendarService.updateDates(teamCalendar, request);
 
-        RoomMateResponse childResponse = new RoomMateResponse(member);
+        RoomMateResponse childResponse = new RoomMateResponse(member, memberPhotoService.findByMember(member));
 
         RoomMateCalendarResponse response = RoomMateCalendarResponse.builder()
                 .teamCalendar(teamCalendar)
@@ -238,7 +240,7 @@ public class RoomMateTeamCalendarController {
         teamCalendarService.update(teamCalendar, request, targets);
 
         List<RoomMateResponse> childResponses = targetMembers.stream()
-                .map(m -> new RoomMateResponse(m)).collect(Collectors.toList());
+                .map(m -> new RoomMateResponse(m, memberPhotoService.findByMember(m))).collect(Collectors.toList());
 
         RoomMateCalendarResponse response = RoomMateCalendarResponse.builder()
                 .teamCalendar(teamCalendar)
@@ -331,7 +333,7 @@ public class RoomMateTeamCalendarController {
 
 
         List<RoomMateResponse> childResponses = targetMembers.stream()
-                .map(m -> new RoomMateResponse(m)).collect(Collectors.toList());
+                .map(m -> new RoomMateResponse(m, memberPhotoService.findByMember(m))).collect(Collectors.toList());
 
         RoomMateCalendarResponse response = RoomMateCalendarResponse.builder()
                 .teamCalendar(teamCalendar)
@@ -378,7 +380,7 @@ public class RoomMateTeamCalendarController {
                 continue;
 
             List<RoomMateResponse> childResponses = targetMembers.stream()
-                    .map(targetMember -> new RoomMateResponse(targetMember))
+                    .map(targetMember -> new RoomMateResponse(targetMember, memberPhotoService.findByMember(targetMember)))
                     .collect(Collectors.toList());
 
             responses.add(new RoomMateCalendarSummaryResponse(teamCalendar, childResponses));

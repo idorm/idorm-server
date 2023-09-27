@@ -13,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static idorm.idormServer.exception.ExceptionCode.*;
 
@@ -137,18 +134,17 @@ public class MatchingMateService {
      * 매칭 회원 전체 조회 |
      * 500(SERVER_ERROR)
      */
-    public List<MatchingInfo> findMatchingMembers(Member member) {
+    public List<MatchingInfo> findMatchingMembers(MatchingInfo matchingInfo) {
 
         List<MatchingInfo> foundMatchingInfos = null;
-        MatchingInfo loginMemberMatchingInfo = member.getMatchingInfo();
 
         try {
             foundMatchingInfos =
                     matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrueAndIsDeletedIsFalse(
-                            member.getId(),
-                            loginMemberMatchingInfo.getDormCategory(),
-                            loginMemberMatchingInfo.getJoinPeriod(),
-                            loginMemberMatchingInfo.getGender()
+                            matchingInfo.getMember().getId(),
+                            matchingInfo.getDormCategory(),
+                            matchingInfo.getJoinPeriod(),
+                            matchingInfo.getGender()
                     );
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
@@ -158,17 +154,17 @@ public class MatchingMateService {
             return null;
         }
 
-        List<Member> dislikedMembers = findDislikedMembers(member);
+        List<Member> dislikedMembers = findDislikedMembers(matchingInfo.getMember());
 
         Iterator<MatchingInfo> iterator = foundMatchingInfos.iterator();
 
         while (iterator.hasNext()) {
-            MatchingInfo matchingInfo = iterator.next();
+            MatchingInfo targetMatchingInfo = iterator.next();
 
             for (Member dislikedMember : dislikedMembers) {
-                if (matchingInfo.getMember().getIsDeleted())
+                if (targetMatchingInfo.getMember().getIsDeleted())
                     iterator.remove();
-                else if (matchingInfo.getMember().getId() == dislikedMember.getId())
+                else if (Objects.equals(targetMatchingInfo.getMember().getId(), dislikedMember.getId()))
                     iterator.remove();
             }
         }
@@ -180,17 +176,17 @@ public class MatchingMateService {
      * 매칭 회원 필터링 조회 |
      * 500(SERVER_ERROR)
      */
-    public List<MatchingInfo> findFilteredMatchingMembers(Member member,
+    public List<MatchingInfo> findFilteredMatchingMembers(MatchingInfo matchingInfo,
                                                           MatchingMateFilterRequest request) {
 
         List<MatchingInfo> foundMatchingInfos = null;
 
         try {
             foundMatchingInfos = matchingInfoRepository.findFilteredMatchingMembers(
-                    member.getId(),
+                    matchingInfo.getMember().getId(),
                     DormCategory.validateType(request.getDormCategory()).getType(),
                     JoinPeriod.validateType(request.getJoinPeriod()).getType(),
-                    member.getMatchingInfo().getGender(),
+                    matchingInfo.getGender(),
                     !request.getIsSnoring(),
                     !request.getIsSmoking(),
                     !request.getIsGrinding(),
@@ -207,18 +203,18 @@ public class MatchingMateService {
             return null;
         }
 
-        List<Member> dislikedMembers = findDislikedMembers(member);
+        List<Member> dislikedMembers = findDislikedMembers(matchingInfo.getMember());
 
         Iterator<MatchingInfo> iterator = foundMatchingInfos.iterator();
 
         while (iterator.hasNext()) {
-            MatchingInfo matchingInfo = iterator.next();
+            MatchingInfo targetMatchingInfo = iterator.next();
 
             for (Member dislikedMember : dislikedMembers) {
 
-                if (matchingInfo.getMember().getIsDeleted())
+                if (targetMatchingInfo.getMember().getIsDeleted())
                     iterator.remove();
-                else if (matchingInfo.getMember().getId() == dislikedMember.getId())
+                else if (Objects.equals(targetMatchingInfo.getMember().getId(), dislikedMember.getId()))
                     iterator.remove();
             }
         }
@@ -245,15 +241,15 @@ public class MatchingMateService {
         List<Member> likedMembers = new ArrayList<>();
 
         for (Long memberId : likedMembersId) {
-            Optional<Member> likedMember = null;
+            Optional<Member> likedMember = memberRepository.findByIdAndIsDeletedIsFalse(memberId);
+            Optional<MatchingInfo> matchingInfo = Optional.empty();
 
-            try {
-                likedMember = memberRepository.findByIdAndIsDeletedIsFalse(memberId);
-            } catch (RuntimeException e) {
-                throw new CustomException(e, SERVER_ERROR);
-            }
+            if (likedMember.isPresent())
+                matchingInfo = matchingInfoRepository.findByMemberIdAndIsDeletedIsFalse(likedMember.get().getId());
 
-            if (likedMember == null || likedMember.isEmpty() || !likedMember.get().getMatchingInfo().getIsMatchingInfoPublic())
+            if (matchingInfo.isEmpty())
+                removeLikedMember(member, memberId);
+            else if (!matchingInfo.get().getIsMatchingInfoPublic())
                 removeLikedMember(member, memberId);
             else
                 likedMembers.add(likedMember.get());
@@ -289,12 +285,17 @@ public class MatchingMateService {
                 throw new CustomException(e, SERVER_ERROR);
             }
 
-            if (dislikedMember == null || dislikedMember.isEmpty() ||
-                    !dislikedMember.get().getMatchingInfo().getIsMatchingInfoPublic())
+            Optional<MatchingInfo> matchingInfo = Optional.empty();
+
+            if (dislikedMember.isPresent())
+                matchingInfo = matchingInfoRepository.findByMemberIdAndIsDeletedIsFalse(dislikedMember.get().getId());
+
+            if (matchingInfo.isEmpty())
+                removeDislikedMember(member, memberId);
+            else if (!matchingInfo.get().getIsMatchingInfoPublic())
                 removeDislikedMember(member, memberId);
             else
                 dislikedMembers.add(dislikedMember.get());
-
         }
         return dislikedMembers;
     }

@@ -29,7 +29,6 @@ import javax.validation.Valid;
 import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
 import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.exception.ExceptionCode.DUPLICATE_MATCHINGINFO;
-import static idorm.idormServer.exception.ExceptionCode.MATCHINGINFO_NOT_FOUND;
 
 @Tag(name = "6. MatchingInfo", description = "온보딩 api")
 @Validated
@@ -64,13 +63,11 @@ public class MatchingInfoController {
 
         matchingInfoService.validateMBTI(request.getMbti().toUpperCase());
 
-        if(member.getMatchingInfo() != null) {
+        if(matchingInfoService.findByMemberOp(member).isPresent()) {
             throw new CustomException(null, DUPLICATE_MATCHINGINFO);
         }
 
-        MatchingInfo matchingInfo = matchingInfoService.save(request.toEntity(member));
-
-        MatchingInfoResponse response = new MatchingInfoResponse(matchingInfo);
+        MatchingInfoResponse response = new MatchingInfoResponse(matchingInfoService.save(request.toEntity(member)));
 
         return ResponseEntity.status(201)
                 .body(DefaultResponseDto.builder()
@@ -102,12 +99,10 @@ public class MatchingInfoController {
 
         matchingInfoService.validateMBTI(request.getMbti().toUpperCase());
 
-        if(member.getMatchingInfo() == null) {
-            throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
-        }
+        MatchingInfo matchingInfo = matchingInfoService.findByMemberId(member.getId());
 
-        matchingInfoService.updateMatchingInfo(member.getMatchingInfo(), request);
-        MatchingInfoResponse response = new MatchingInfoResponse(member.getMatchingInfo());
+        matchingInfoService.updateMatchingInfo(matchingInfo, request);
+        MatchingInfoResponse response = new MatchingInfoResponse(matchingInfo);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -134,11 +129,8 @@ public class MatchingInfoController {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
-        if(member.getMatchingInfo() == null) {
-            throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
-        }
-
-        matchingInfoService.updateMatchingInfoIsPublic(member.getMatchingInfo(), request.getIsMatchingInfoPublic());
+        matchingInfoService.updateMatchingInfoIsPublic(matchingInfoService.findByMemberId(member.getId()),
+                request.getIsMatchingInfoPublic());
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -164,13 +156,7 @@ public class MatchingInfoController {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
 
-        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없다면
-            throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
-        }
-
-        MatchingInfo foundMatchingInfo = matchingInfoService.findById(member.getMatchingInfo().getId());
-
-        MatchingInfoResponse response = new MatchingInfoResponse(foundMatchingInfo);
+        MatchingInfoResponse response = new MatchingInfoResponse(matchingInfoService.findByMemberId(member.getId()));
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -195,11 +181,7 @@ public class MatchingInfoController {
         long loginMemberId = Long.parseLong(jwtTokenProvider.getUsername(request2.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
-        if(member.getMatchingInfo() == null) { // 등록된 매칭정보가 없는 경우
-            throw new CustomException(null, MATCHINGINFO_NOT_FOUND);
-        }
-
-        matchingInfoService.delete(member.getMatchingInfo());
+        matchingInfoService.delete(matchingInfoService.findByMemberId(member.getId()));
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
