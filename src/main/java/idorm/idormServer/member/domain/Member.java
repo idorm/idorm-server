@@ -1,8 +1,6 @@
 package idorm.idormServer.member.domain;
 
-import idorm.idormServer.common.exception.CustomException;
-import idorm.idormServer.common.exception.ExceptionCode;
-import idorm.idormServer.matchingMate.domain.FavoriteMates;
+import idorm.idormServer.matchingMate.domain.Mates;
 import idorm.idormServer.matchingMate.domain.NonFavoriteMates;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -54,10 +52,10 @@ public class Member {
     private LocalDateTime updatedAt;
 
     @Embedded
-    private FavoriteMates favoriteMates = FavoriteMates.empty();
+    private Mates favoriteMates = Mates.empty();
 
     @Embedded
-    private NonFavoriteMates nonFavoriteMates = NonFavoriteMates.empty();
+    private Mates nonFavoriteMates = NonFavoriteMates.empty();
 
     @Builder
     public Member(String email, Password password, Nickname nickname) {
@@ -85,17 +83,5 @@ public class Member {
 
     void updateMemberPhoto(MemberPhoto memberPhoto) {
         this.memberPhoto = memberPhoto;
-    }
-
-    public void validateUniqueFavoriteMate(Member targetMember) {
-        if (this.favoriteMates.isDuplicated(targetMember)) {
-            throw new CustomException(null, ExceptionCode.DUPLICATE_LIKED_MEMBER);
-        }
-    }
-
-    public void validateUniqueNonFavoriteMate(Member targetMember) {
-        if (this.nonFavoriteMates.isDuplicated(targetMember)) {
-            throw new CustomException(null, ExceptionCode.DUPLICATE_DISLIKED_MEMBER);
-        }
     }
 }

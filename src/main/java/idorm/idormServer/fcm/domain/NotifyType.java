@@ -1,4 +1,4 @@
-package idorm.idormServer.fcm.dto;
+package idorm.idormServer.fcm.domain;
 
 public enum NotifyType {
     CALENDAR,
