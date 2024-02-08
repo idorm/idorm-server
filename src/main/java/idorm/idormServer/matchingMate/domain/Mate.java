@@ -1,6 +1,7 @@
 package idorm.idormServer.matchingMate.domain;
 
 import idorm.idormServer.member.domain.Member;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,15 +38,30 @@ public class Mate {
         this.targetMember = targetMember;
 
         if (isFavorite) {
-            loginMember.validateUniqueFavoriteMate(targetMember);
-            loginMember.getFavoriteMates().addFavoriteMate(this);
-            return;
+            loginMember.getFavoriteMates().addMate(this);
+        } else {
+            loginMember.getNonFavoriteMates().addMate(this);
         }
-        loginMember.validateUniqueNonFavoriteMate(targetMember);
-        loginMember.getNonFavoriteMates().addNonFavoriteMate(this);
     }
 
-    public boolean isSameTarget(Member targetMember) {
+    boolean isSameTarget(Member targetMember) {
         return this.targetMember.equals(targetMember);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        Mate mate = (Mate) object;
+        return Objects.equals(member, mate.member) && Objects.equals(targetMember, mate.targetMember);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(member, targetMember);
     }
 }
