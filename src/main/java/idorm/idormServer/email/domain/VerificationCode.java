@@ -1,7 +1,10 @@
 package idorm.idormServer.email.domain;
 
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.exception.ExceptionCode;
+import static idorm.idormServer.common.exception.ExceptionCode.INVALID_CODE;
+
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.common.exception.ExceptionCode;
+import idorm.idormServer.common.util.Validator;
 import java.util.regex.Pattern;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -14,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class VerificationCode {
 
     public static final int CODE_LENGTH = 6;
-    private static final Pattern CODE_REGEX = Pattern.compile("^\\d{3}-\\d{3}$");
+    private static final String CODE_REGEX = "^\\d{3}-\\d{3}$";
 
     @Column(name = "code", nullable = false, length = CODE_LENGTH)
     private String value;
@@ -28,7 +31,7 @@ public class VerificationCode {
         validate(value);
 
         if (!this.value.equals(value.replaceFirst("-", ""))) {
-            throw new CustomException(null, ExceptionCode.INVALID_CODE);
+            throw new CustomException(null, INVALID_CODE);
         }
     }
 
@@ -37,8 +40,7 @@ public class VerificationCode {
     }
 
     private void validate(final String value) {
-        if (!CODE_REGEX.matcher(value).matches()) {
-            throw new CustomException(null, ExceptionCode.INVALID_CODE);
-        }
+        Validator.validateNotBlank(value);
+        Validator.validateFormat(value, CODE_REGEX, INVALID_CODE);
     }
 }

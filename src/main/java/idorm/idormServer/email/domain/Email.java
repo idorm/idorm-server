@@ -1,13 +1,11 @@
 package idorm.idormServer.email.domain;
 
-import static idorm.idormServer.exception.ExceptionCode.EMAIL_CHARACTER_INVALID;
-import static idorm.idormServer.exception.ExceptionCode.FIELD_REQUIRED;
+import static idorm.idormServer.common.exception.ExceptionCode.EMAIL_CHARACTER_INVALID;
 
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.exception.ExceptionCode;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.common.exception.ExceptionCode;
+import idorm.idormServer.common.util.Validator;
 import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +21,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class Email {
 
-    private static final Pattern EMAIL_REGEX = Pattern.compile("^([\\w-]+(?:\\.[\\w-]+)*)+@(inu.ac.kr)$");
+    private static final String EMAIL_REGEX = "^([\\w-]+(?:\\.[\\w-]+)*)+@(inu.ac.kr)$";
     private static final long VALID_VERIFY_MINUTE = 5L;
     private static final long VALID_REGISTER_MINUTE = 10L;
 
@@ -101,16 +99,7 @@ public class Email {
     }
 
     private void validate(final String value) {
-        if (Objects.isNull(value)) {
-            throw new CustomException(null, FIELD_REQUIRED);
-        }
-
-        if (isNotMatchEmailFormat(value)) {
-            throw new CustomException(null, EMAIL_CHARACTER_INVALID);
-        }
-    }
-    
-    private boolean isNotMatchEmailFormat(final String value) {
-        return !EMAIL_REGEX.matcher(value).matches();
+        Validator.validateNotBlank(value);
+        Validator.validateFormat(value, EMAIL_REGEX, EMAIL_CHARACTER_INVALID);
     }
 }

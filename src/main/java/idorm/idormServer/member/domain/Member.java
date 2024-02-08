@@ -1,211 +1,101 @@
 package idorm.idormServer.member.domain;
 
-import idorm.idormServer.calendar.domain.RoomMateTeam;
-import idorm.idormServer.common.BaseEntity;
-import idorm.idormServer.community.domain.Comment;
-import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.domain.PostLikedMember;
-import idorm.idormServer.matching.domain.MatchingInfo;
-import idorm.idormServer.photo.domain.MemberPhoto;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.common.exception.ExceptionCode;
+import idorm.idormServer.matchingMate.domain.FavoriteMates;
+import idorm.idormServer.matchingMate.domain.NonFavoriteMates;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntity implements UserDetails {
+public class Member {
 
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String password;
-    private String nickname;
-    private LocalDateTime nicknameUpdatedAt;
-    private String fcmToken;
-    private LocalDate fcmTokenUpdatedAt;
-    private Character dormCategory;
-    private Integer reportedCount;
-    private Integer teamOrder;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<Email> emails = new ArrayList<>();
+    @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "ENUM('ACTIVE', 'DELETED')")
+    private MemberStatus memberStatus;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<MatchingInfo> matchingInfos = new ArrayList<>();
+    @Column(nullable = false)
+    private String email;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<MemberPhoto> memberPhotos = new ArrayList<>();
+    @Embedded
+    private Nickname nickname;
 
-    @ElementCollection
-    @CollectionTable(name = "liked_members",
-            joinColumns = @JoinColumn(name = "member_id"))
-    @Column(name = "liked_member")
-    private List<Long> likedMembers = new ArrayList<>();
+    @Embedded
+    private Password password;
 
-    @ElementCollection
-    @CollectionTable(name = "disliked_members",
-            joinColumns = @JoinColumn(name = "member_id"))
-    @Column(name = "disliked_member")
-    private List<Long> dislikedMembers = new ArrayList<>();
+    @Embedded
+    private MemberPhoto memberPhoto;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<Post> posts = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('USER', 'ADMIN')")
+    private RoleType roleType = RoleType.USER;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<PostLikedMember> postLikedMembers = new ArrayList<>();
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<Comment> comments = new ArrayList<>();
+    @Setter
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_mate_team_id")
-    private RoomMateTeam roomMateTeam;
+    @Embedded
+    private FavoriteMates favoriteMates = FavoriteMates.empty();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles = new HashSet<>();
+    @Embedded
+    private NonFavoriteMates nonFavoriteMates = NonFavoriteMates.empty();
 
     @Builder
-    public Member(Email email, String password, String nickname) {
-        this.emails.add(email);
+    public Member(String email, Password password, Nickname nickname) {
+        this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.nicknameUpdatedAt = null;
-        this.reportedCount = 0;
-        this.dormCategory = null;
-        this.roomMateTeam = null;
-        this.teamOrder = -999;
-        this.roles.add("ROLE_USER");
-
-        this.setIsDeleted(false);
+        this.memberStatus = MemberStatus.ACTIVE;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
-    // 회원 탈퇴 시 사용
-    public List<MatchingInfo> getAllMatchingInfo() {
-        return this.matchingInfos;
+    public static Member admin(String email, Password password, Nickname nickname) {
+        Member member = new Member(email, password, nickname);
+        member.roleType = RoleType.ADMIN;
+        return member;
     }
 
-    // 회원 탈퇴 시 사용
-    public List<MemberPhoto> getAllMemberPhoto() {
-        return this.memberPhotos;
+    void updateNickname(Nickname nickname) {
+        this.nickname = nickname;
     }
 
-    public void updatePassword(String password) {
+    void updatePassword(Password password) {
         this.password = password;
     }
 
-    public void updateDormCategory(Character dormCategory) {
-        this.dormCategory = dormCategory;
+    void updateMemberPhoto(MemberPhoto memberPhoto) {
+        this.memberPhoto = memberPhoto;
     }
 
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-        this.nicknameUpdatedAt = LocalDateTime.now();
-    }
-
-    public void addLikedMember(Long memberId) {
-        this.likedMembers.add(memberId);
-    }
-
-    public void removeLikedMember(Long memberId) {
-        this.likedMembers.remove(memberId);
-    }
-
-    public void addDislikedMember(Long memberId) {
-        this.dislikedMembers.add(memberId);
-    }
-
-    public void removeDislikedMember(Long memberId) {
-        this.dislikedMembers.remove(memberId);
-    }
-
-    public void updateFcmToken(String token) {
-        this.fcmToken = token;
-        this.fcmTokenUpdatedAt = LocalDate.now();
-    }
-
-    public void deleteFcmToken() {
-        this.fcmToken = null;
-        this.fcmTokenUpdatedAt = LocalDate.now();
-    }
-
-    public void updateTeam(RoomMateTeam team, Integer teamOrder) {
-        this.roomMateTeam = team;
-        this.teamOrder = teamOrder;
-    }
-
-    public void updateTeamOrder(RoomMateTeam team, Integer teamOrder) {
-        if (this.roomMateTeam.equals(team))
-            this.teamOrder = teamOrder;
-    }
-
-    public void deleteTeam(RoomMateTeam team) {
-        if (this.roomMateTeam.getId().equals(team.getId())) {
-            this.roomMateTeam = null;
-            this.teamOrder = -999;
+    public void validateUniqueFavoriteMate(Member targetMember) {
+        if (this.favoriteMates.isDuplicated(targetMember)) {
+            throw new CustomException(null, ExceptionCode.DUPLICATE_LIKED_MEMBER);
         }
     }
 
-    public void incrementreportedCount() {
-        this.reportedCount += 1;
-    }
-
-    public void delete() {
-        this.dormCategory = null;
-        this.fcmToken = null;
-        this.fcmTokenUpdatedAt = null;
-        this.nickname = null;
-        this.nicknameUpdatedAt = null;
-        this.password = null;
-        this.reportedCount =  null;
-        this.setIsDeleted(true);
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return getId().toString();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
+    public void validateUniqueNonFavoriteMate(Member targetMember) {
+        if (this.nonFavoriteMates.isDuplicated(targetMember)) {
+            throw new CustomException(null, ExceptionCode.DUPLICATE_DISLIKED_MEMBER);
+        }
     }
 }
