@@ -1,7 +1,11 @@
 package idorm.idormServer.calendar.domain;
 
-import idorm.idormServer.calendar.dto.OfficialCalendarUpdateRequest;
-import idorm.idormServer.common.BaseEntity;
+import idorm.idormServer.common.domain.BaseTimeEntity;
+import idorm.idormServer.common.util.Validator;
+import java.util.List;
+import java.util.Objects;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,59 +17,98 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OfficialCalendar extends BaseEntity {
+public class OfficialCalendar extends BaseTimeEntity {
+
+    private static final String CRAWLING_FAIL_VALUE = "fail";
+    private static final LocalDate CRAWLING_FAIL_DATE = LocalDate.of(2020, 1, 1);
+    private static final String BLANK_TITLE_MESSAGE = "크롤링 실패 : 게시글 제목";
+    private static final String BLANK_INU_POST_ID_MESSAGE = "크롤링 실패 : 게시글 ID";
+
+    private static final int MAX_INU_POST_ID_LENGTH = 10;
 
     @Id
     @Column(name = "official_calendar_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 관리자 등록
+    // 관리자 등록, 수정 가능
     private Boolean isDorm1Yn;
     private Boolean isDorm2Yn;
     private Boolean isDorm3Yn;
-    private LocalDate startDate;
-    private LocalDate endDate;
 
-    // 수정 가능
-    private String title;
+    private Period period;
 
-    // 수정 불가
+    // 크롤링 등록, 수정 가능
+    @NotBlank
+    @Column(nullable = false)
+    private Title title;
+
+    @NotNull
+    @Column(nullable = false)
+    private Boolean isPublic;
+
+    // 크롤링 등록, 수정 불가
+    @NotBlank
+    @Column(nullable = false, length = MAX_INU_POST_ID_LENGTH)
     private String inuPostId;
-    private String postUrl;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String inuPostUrl;
+
+    @NotNull
+    @Column(nullable = false)
     private LocalDate inuPostCreatedAt;
-    private Boolean isPublic; // default: false
+
+    @NotNull
+    @Column(nullable = false)
+    private Boolean isDeleted;
 
     @Builder
     public OfficialCalendar(String inuPostId,
                             String title,
-                            String postUrl,
+                            String inuPostUrl,
                             LocalDate inuPostCreatedAt
     ) {
-
-        this.inuPostId = inuPostId;
-        this.title = title;
-        this.postUrl = postUrl;
-        this.inuPostCreatedAt = inuPostCreatedAt;
-
+        this.inuPostId = isBlank(inuPostId) ? CRAWLING_FAIL_VALUE : inuPostId;
+        this.title = isBlank(title) ? Title.officialCalendar(CRAWLING_FAIL_VALUE) : Title.officialCalendar(title);
+        this.inuPostUrl = isBlank(inuPostUrl) ? CRAWLING_FAIL_VALUE : inuPostUrl;
+        this.inuPostCreatedAt = isNull(inuPostCreatedAt) ? CRAWLING_FAIL_DATE : inuPostCreatedAt;
         this.isPublic = false;
-        this.setIsDeleted(false);
+        this.isDeleted = false;
     }
 
-    public void update(OfficialCalendarUpdateRequest request) {
-        this.isDorm1Yn = request.getIsDorm1Yn();
-        this.isDorm2Yn = request.getIsDorm2Yn();
-        this.isDorm3Yn = request.getIsDorm3Yn();
+    private static boolean isBlank(String value) {
+        return Objects.isNull(value) || value.isBlank();
+    }
 
-        this.startDate = request.getStartDate();
-        this.endDate = request.getEndDate();
+    private static boolean isNull(Object value) {
+        return Objects.isNull(value);
+    }
 
-        this.title = request.getTitle();
+    public void update(Boolean isDorm1Yn,
+                       Boolean isDorm2Yn,
+                       Boolean isDorm3Yn,
+                       LocalDate startDate,
+                       LocalDate endDate,
+                       String title,
+                       Boolean isPublic) {
+        validate(List.of(isDorm1Yn, isDorm2Yn, isDorm3Yn, isPublic));
+        this.isDorm1Yn = isDorm1Yn;
+        this.isDorm2Yn = isDorm2Yn;
+        this.isDorm3Yn = isDorm3Yn;
+        this.period = new Period(startDate, endDate);
 
-        this.isPublic = true;
+        if (this.title.notEquals(title)) {
+            this.title = Title.officialCalendar(title);
+        }
+    }
+
+    private void validate(List<Object> values) {
+        Validator.validateNotNull(values);
     }
 
     public void delete() {
-        this.setIsDeleted(true);
+        this.isDeleted = true;
     }
 }

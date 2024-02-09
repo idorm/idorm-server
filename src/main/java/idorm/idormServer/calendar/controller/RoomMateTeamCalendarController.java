@@ -1,17 +1,17 @@
 package idorm.idormServer.calendar.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
-import idorm.idormServer.calendar.domain.RoomMateTeam;
-import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import idorm.idormServer.calendar.domain.Team;
+import idorm.idormServer.calendar.domain.TeamCalendar;
 import idorm.idormServer.calendar.dto.*;
 import idorm.idormServer.calendar.service.OfficialCalendarService;
 import idorm.idormServer.calendar.service.RoomMateTeamCalendarService;
 import idorm.idormServer.calendar.service.RoomMateTeamService;
-import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.dto.DefaultResponseDto;
+import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
-import idorm.idormServer.photo.service.MemberPhotoService;
+import idorm.idormServer.member.service.MemberPhotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,9 +34,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
-import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
-import static idorm.idormServer.exception.ExceptionCode.TEAMCALENDAR_NOT_FOUND;
+import static idorm.idormServer.config.SecurityConfig.API_ROOT_URL_V1;
+import static idorm.idormServer.config.SecurityConfig.AUTHENTICATION_HEADER_NAME;
+import static idorm.idormServer.common.exception.ExceptionCode.TEAMCALENDAR_NOT_FOUND;
 
 @Tag(name = "4. RoomMate Team Calendar", description = "룸메이트 팀 일정 api")
 @Validated
@@ -73,7 +73,7 @@ public class RoomMateTeamCalendarController {
 
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
-        RoomMateTeam team = teamService.findByMember(member);
+        Team team = teamService.findByMember(member);
 
         teamService.validateIsDeletedTeam(team);
         teamCalendarService.validateTargetExistence(request.getTargets());
@@ -82,7 +82,7 @@ public class RoomMateTeamCalendarController {
         List<Long> targets = request.getTargets().stream().distinct().collect(Collectors.toList());
         List<Member> targetMembers = teamCalendarService.validateTeamMemberExistence(team, targets);
 
-        RoomMateTeamCalendar teamCalendar = teamCalendarService.save(request.toEntity(team));
+        TeamCalendar teamCalendar = teamCalendarService.save(request.toEntity(team));
 
         List<RoomMateResponse> childResponses = targetMembers.stream()
                 .map(m -> new RoomMateResponse(m, memberPhotoService.findByMember(m))).collect(Collectors.toList());
@@ -122,7 +122,7 @@ public class RoomMateTeamCalendarController {
 
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
-        RoomMateTeam team = teamService.findByMember(member);
+        Team team = teamService.findByMember(member);
 
         teamService.validateIsDeletedTeam(team);
         calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
@@ -132,7 +132,7 @@ public class RoomMateTeamCalendarController {
                 request.getStartDate(),
                 request.getEndDate());
 
-        RoomMateTeamCalendar teamCalendar = teamCalendarService.save(request.toEntity(team, member.getId()));
+        TeamCalendar teamCalendar = teamCalendarService.save(request.toEntity(team, member.getId()));
 
         RoomMateResponse childResponse = new RoomMateResponse(member, memberPhotoService.findByMember(member));
 
@@ -172,11 +172,11 @@ public class RoomMateTeamCalendarController {
 
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
-        RoomMateTeam team = teamService.findByMember(member);
+        Team team = teamService.findByMember(member);
 
         teamService.validateIsDeletedTeam(team);
         calendarService.validateStartAndEndDate(request.getStartDate(), request.getEndDate());
-        RoomMateTeamCalendar teamCalendar = teamCalendarService.findById(request.getTeamCalendarId());
+        TeamCalendar teamCalendar = teamCalendarService.findById(request.getTeamCalendarId());
         teamCalendarService.validateSleepoverCalendarAuthorization(teamCalendar, member);
 
         teamCalendarService.validateDuplicateDate(teamCalendar,
@@ -224,9 +224,9 @@ public class RoomMateTeamCalendarController {
 
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
-        RoomMateTeam team = teamService.findByMember(member);
+        Team team = teamService.findByMember(member);
 
-        RoomMateTeamCalendar teamCalendar = teamCalendarService.findById(request.getTeamCalendarId());
+        TeamCalendar teamCalendar = teamCalendarService.findById(request.getTeamCalendarId());
         teamCalendarService.validateTeamCalendarAuthorization(team, teamCalendar);
         teamCalendarService.validateSleepoverCalendar(teamCalendar);
 
@@ -280,9 +280,9 @@ public class RoomMateTeamCalendarController {
 
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
-        RoomMateTeam team = teamService.findByMember(member);
+        Team team = teamService.findByMember(member);
 
-        RoomMateTeamCalendar teamCalendar = teamCalendarService.findById(teamCalendarId);
+        TeamCalendar teamCalendar = teamCalendarService.findById(teamCalendarId);
         teamCalendarService.validateTeamCalendarAuthorization(team, teamCalendar);
         teamService.validateIsDeletedTeam(team);
 
@@ -322,8 +322,8 @@ public class RoomMateTeamCalendarController {
         )));
         Member member = memberService.findById(memberId);
 
-        RoomMateTeam team = teamService.findByMember(member);
-        RoomMateTeamCalendar teamCalendar = teamCalendarService.findById(teamCalendarId);
+        Team team = teamService.findByMember(member);
+        TeamCalendar teamCalendar = teamCalendarService.findById(teamCalendarId);
         teamCalendarService.validateTeamCalendarAuthorization(team, teamCalendar);
 
         List<Member> targetMembers = teamCalendarService.validateTeamMemberExistenceForFind(teamCalendar);
@@ -367,13 +367,13 @@ public class RoomMateTeamCalendarController {
 
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
-        RoomMateTeam team = teamService.findByMember(member);
+        Team team = teamService.findByMember(member);
 
-        List<RoomMateTeamCalendar> teamCalendars = teamCalendarService.findManyByYearMonth(team, request.getYearMonth());
+        List<TeamCalendar> teamCalendars = teamCalendarService.findManyByYearMonth(team, request.getYearMonth());
 
         List<RoomMateCalendarSummaryResponse> responses = new ArrayList<>();
 
-        for (RoomMateTeamCalendar teamCalendar : teamCalendars) {
+        for (TeamCalendar teamCalendar : teamCalendars) {
             List<Member> targetMembers = teamCalendarService.validateTeamMemberExistenceForFind(teamCalendar);
 
             if (targetMembers == null)
@@ -418,17 +418,17 @@ public class RoomMateTeamCalendarController {
         Member member = memberService.findById(memberId);
         Member searchMember = memberService.findById(request.getMemberId());
 
-        RoomMateTeam loginMemberTeam = teamService.findByMember(member);
+        Team loginMemberTeam = teamService.findByMember(member);
 
         if (!member.equals(searchMember))
             teamService.validateTeamMember(loginMemberTeam, searchMember);
 
-        List<RoomMateTeamCalendar> teamCalendars = teamCalendarService.findSleepOverCalendarsByYearMonth(loginMemberTeam,
+        List<TeamCalendar> teamCalendars = teamCalendarService.findSleepOverCalendarsByYearMonth(loginMemberTeam,
                 request.getYearMonth());
 
-        List<RoomMateTeamCalendar> responseCalendars = new ArrayList<>();
+        List<TeamCalendar> responseCalendars = new ArrayList<>();
 
-        for (RoomMateTeamCalendar c : teamCalendars) {
+        for (TeamCalendar c : teamCalendars) {
             if (c.getEndDate().isBefore(LocalDateTime.now().plusHours(9).toLocalDate()))
                 continue;
             if (!c.getTargets().contains(searchMember.getId()))

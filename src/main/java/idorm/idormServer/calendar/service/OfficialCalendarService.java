@@ -3,7 +3,7 @@ package idorm.idormServer.calendar.service;
 import idorm.idormServer.calendar.domain.OfficialCalendar;
 import idorm.idormServer.calendar.dto.OfficialCalendarUpdateRequest;
 import idorm.idormServer.calendar.repository.OfficialCalendarRepository;
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
 
 @Service
 @Transactional(readOnly = true)

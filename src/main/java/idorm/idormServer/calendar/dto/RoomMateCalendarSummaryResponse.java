@@ -2,7 +2,7 @@ package idorm.idormServer.calendar.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import idorm.idormServer.calendar.domain.TeamCalendar;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,7 +41,7 @@ public class RoomMateCalendarSummaryResponse {
     private List<RoomMateResponse> targets = new ArrayList<>();
 
     @Builder
-    public RoomMateCalendarSummaryResponse(RoomMateTeamCalendar teamCalendar, List<RoomMateResponse> targets) {
+    public RoomMateCalendarSummaryResponse(TeamCalendar teamCalendar, List<RoomMateResponse> targets) {
         this.teamCalendarId = teamCalendar.getId();
         this.title = teamCalendar.getTitle();
 

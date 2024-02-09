@@ -2,8 +2,8 @@ package idorm.idormServer.calendar.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import idorm.idormServer.calendar.domain.RoomMateTeam;
-import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import idorm.idormServer.calendar.domain.Team;
+import idorm.idormServer.calendar.domain.TeamCalendar;
 import idorm.idormServer.common.ValidationSequence;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -62,8 +62,8 @@ public class RoomMateCalendarSaveRequest {
     @Schema(name = "targets", description = "일정 대상자의 식별자")
     private List<Long> targets = new ArrayList<>();
 
-    public RoomMateTeamCalendar toEntity(RoomMateTeam team) {
-        return RoomMateTeamCalendar.builder()
+    public TeamCalendar toEntity(Team team) {
+        return TeamCalendar.builder()
                 .team(team)
                 .targets(this.targets)
                 .isSleepover(false)

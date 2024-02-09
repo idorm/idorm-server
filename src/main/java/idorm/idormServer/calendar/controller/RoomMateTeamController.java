@@ -1,17 +1,17 @@
 package idorm.idormServer.calendar.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
-import idorm.idormServer.calendar.domain.RoomMateTeam;
+import idorm.idormServer.calendar.domain.Team;
 import idorm.idormServer.calendar.dto.RoomMateFullResponse;
 import idorm.idormServer.calendar.dto.RoomMatesFullResponse;
 import idorm.idormServer.calendar.service.OfficialCalendarServiceFacade;
 import idorm.idormServer.calendar.service.RoomMateTeamCalendarService;
 import idorm.idormServer.calendar.service.RoomMateTeamService;
-import idorm.idormServer.common.DefaultResponseDto;
+import idorm.idormServer.common.dto.DefaultResponseDto;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
-import idorm.idormServer.photo.domain.MemberPhoto;
-import idorm.idormServer.photo.service.MemberPhotoService;
+import idorm.idormServer.member.domain.MemberPhoto;
+import idorm.idormServer.member.service.MemberPhotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,8 +32,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
-import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
+import static idorm.idormServer.config.SecurityConfig.API_ROOT_URL_V1;
+import static idorm.idormServer.config.SecurityConfig.AUTHENTICATION_HEADER_NAME;
 
 @Tag(name = "3. RoomMateTeam", description = "룸메이트 팀원 관리 api")
 @Validated
@@ -80,7 +80,7 @@ public class RoomMateTeamController {
         memberService.validateTargetAdmin(registerMember);
         teamService.validateTeamExistence(registerMember);
 
-        RoomMateTeam team = teamService.findByMemberOptional(member);
+        Team team = teamService.findByMemberOptional(member);
 
         calendarServiceFacade.addTeamMember(team, member, registerMember);
 
@@ -116,7 +116,7 @@ public class RoomMateTeamController {
         Member loginMember = memberService.findById(loginMemberId);
         Member deleteMember = memberService.findById(memberId);
 
-        RoomMateTeam loginMemberTeam = teamService.findByMember(loginMember);
+        Team loginMemberTeam = teamService.findByMember(loginMember);
 
         if (!loginMember.equals(deleteMember)) {
             teamService.validateTeamMember(loginMemberTeam, deleteMember);
@@ -150,7 +150,7 @@ public class RoomMateTeamController {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
         MemberPhoto memberPhoto = memberPhotoService.findByMember(member);
-        RoomMateTeam team = teamService.findByMemberOptional(member);
+        Team team = teamService.findByMemberOptional(member);
 
         RoomMatesFullResponse responses = null;
 
@@ -206,7 +206,7 @@ public class RoomMateTeamController {
     ) {
         long memberId = Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(memberId);
-        RoomMateTeam team = teamService.findByMemberOptional(member);
+        Team team = teamService.findByMemberOptional(member);
 
         if (team == null) {
             teamService.removeMember(team, member);

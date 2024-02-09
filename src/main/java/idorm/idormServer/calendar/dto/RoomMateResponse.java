@@ -2,7 +2,7 @@ package idorm.idormServer.calendar.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.photo.domain.MemberPhoto;
+import idorm.idormServer.member.domain.MemberPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

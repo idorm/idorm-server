@@ -2,8 +2,8 @@ package idorm.idormServer.calendar.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import idorm.idormServer.calendar.domain.RoomMateTeam;
-import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import idorm.idormServer.calendar.domain.Team;
+import idorm.idormServer.calendar.domain.TeamCalendar;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,8 +33,8 @@ public class SleepoverCalendarRequest {
     @JsonProperty("endDate")
     private LocalDate endDate;
 
-    public RoomMateTeamCalendar toEntity(RoomMateTeam team, Long target) {
-        return RoomMateTeamCalendar.builder()
+    public TeamCalendar toEntity(Team team, Long target) {
+        return TeamCalendar.builder()
                 .team(team)
                 .targets(new ArrayList<>(Arrays.asList(target)))
                 .isSleepover(true)

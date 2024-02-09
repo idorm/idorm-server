@@ -1,6 +1,6 @@
 package idorm.idormServer.calendar.domain;
 
-import idorm.idormServer.common.BaseEntity;
+import idorm.idormServer.common.domain.BaseTimeEntity;
 import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,22 +15,29 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoomMateTeam extends BaseEntity {
+public class Team extends BaseTimeEntity {
 
     @Id
-    @Column(name = "room_mate_team_id")
+    @Column(name = "team_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Boolean isNeedToConfirmDeleted; // 최후의 1인이 팀 폭발여부 확인했는지 여부
 
-    @OneToMany(mappedBy = "roomMateTeam")
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('ACTIVE', 'DELETED', 'ALONE')")
+    private TeamStatus teamStatus;
+
+    @OneToMany(mappedBy = "team")
     private List<Member> members = new ArrayList<>();
 
-    @OneToMany(mappedBy = "roomMateTeam")
-    private List<RoomMateTeamCalendar> teamCalendars = new ArrayList<>();
+    @OneToMany(mappedBy = "team")
+    private List<TeamCalendar> teamSchedules = new ArrayList<>();
 
+    @OneToMany(mappedBy = "team")
+    private List<SleepoverCalendar> sleepoverSchedules = new ArrayList<>();
+
+    // TODO: 핵심 비지니스 로직 리팩 대상
     @Builder
-    public RoomMateTeam(Member member) {
+    public Team(Member member) {
         addMember(member);
         member.updateTeam(this, 0);
         this.isNeedToConfirmDeleted = false;
@@ -61,16 +68,16 @@ public class RoomMateTeam extends BaseEntity {
         return this.members.size();
     }
 
-    public void addTeamCalendar(RoomMateTeamCalendar teamCalendar) {
+    public void addTeamCalendar(TeamCalendar teamCalendar) {
         this.teamCalendars.add(teamCalendar);
     }
 
-    public void removeTeamCalendar(RoomMateTeamCalendar teamCalendar) {
+    public void removeTeamCalendar(TeamCalendar teamCalendar) {
         this.teamCalendars.remove(teamCalendar);
     }
 
-    public List<RoomMateTeamCalendar> getTeamCalendars() {
-        List<RoomMateTeamCalendar> teamCalendarList = this.teamCalendars;
+    public List<TeamCalendar> getTeamCalendars() {
+        List<TeamCalendar> teamCalendarList = this.teamCalendars;
         teamCalendarList.removeIf(teamCalendar -> teamCalendar.getIsDeleted().equals(true));
         return teamCalendarList;
     }
@@ -85,8 +92,8 @@ public class RoomMateTeam extends BaseEntity {
         for (Member member : this.members)
             member.deleteTeam(this);
 
-        List<RoomMateTeamCalendar> deleteList = this.getTeamCalendars().stream().collect(Collectors.toList());
-        for (RoomMateTeamCalendar teamCalendar : deleteList)
+        List<TeamCalendar> deleteList = this.getTeamCalendars().stream().collect(Collectors.toList());
+        for (TeamCalendar teamCalendar : deleteList)
             teamCalendar.delete();
 
     }

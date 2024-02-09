@@ -2,7 +2,7 @@ package idorm.idormServer.calendar.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import idorm.idormServer.calendar.domain.TeamCalendar;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,7 +30,7 @@ public class SleepoverCalendarResponse {
     private LocalDate endDate;
 
     @Builder
-    public SleepoverCalendarResponse(RoomMateTeamCalendar teamCalendar) {
+    public SleepoverCalendarResponse(TeamCalendar teamCalendar) {
         this.teamCalendarId = teamCalendar.getId();
 
         if (teamCalendar.getStartDate() != null)

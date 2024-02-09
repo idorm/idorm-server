@@ -6,7 +6,7 @@ import idorm.idormServer.calendar.dto.OfficialCalendarResponse;
 import idorm.idormServer.calendar.dto.OfficialCalendarUpdateRequest;
 import idorm.idormServer.calendar.dto.OfficialCalendarsFindRequest;
 import idorm.idormServer.calendar.service.OfficialCalendarService;
-import idorm.idormServer.common.DefaultResponseDto;
+import idorm.idormServer.common.dto.DefaultResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,7 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
+import static idorm.idormServer.config.SecurityConfig.API_ROOT_URL_V1;
 
 @Tag(name = "2. Official Calendar", description = "공식 일정 api")
 @Validated

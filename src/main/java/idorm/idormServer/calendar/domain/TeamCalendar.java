@@ -2,7 +2,7 @@ package idorm.idormServer.calendar.domain;
 
 import idorm.idormServer.calendar.dto.RoomMateCalendarUpdateRequest;
 import idorm.idormServer.calendar.dto.SleepoverCalendarUpdateRequest;
-import idorm.idormServer.common.BaseEntity;
+import idorm.idormServer.common.domain.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,41 +17,49 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoomMateTeamCalendar extends BaseEntity {
+public class TeamCalendar extends BaseTimeEntity {
 
     @Id
-    @Column(name = "room_mate_team_calendar_id")
+    @Column(name = "team_schedule_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private String title;
-    private String content;
-    private Boolean isSleepover;
+    @Embedded
+    private Period period;
+
+    @Embedded
+    private Duration duration;
+
+    @Embedded
+    private Title title;
+
+    @Embedded
+    private Content content;
+
+    private Boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_mate_team_id")
-    private RoomMateTeam roomMateTeam;
+    @JoinColumn(name = "team_id")
+    private Team team;
 
+    // 일정 참여자들 - 리팩 대상
     @ElementCollection
     @CollectionTable(name = "room_mate_team_calendar_target",
             joinColumns = @JoinColumn(name = "room_mate_team_calendar_id"))
-    @Column(name = "member_id")
-    private List<Long> targets = new ArrayList<>(); // 일정 대상자들
+    @Column(name = "target_member_id")
+    private List<Long> targets = new ArrayList<>();
 
+    // TODO: 핵심 비지니스 로직 리팩 대상
     @Builder
-    public RoomMateTeamCalendar(LocalDate startDate,
-                                LocalDate endDate,
-                                LocalTime startTime,
-                                LocalTime endTime,
-                                String title,
-                                String content,
-                                Boolean isSleepover,
-                                RoomMateTeam team,
-                                List<Long> targets) {
+    public TeamCalendar(LocalDate startDate,
+                        LocalDate endDate,
+                        LocalTime startTime,
+                        LocalTime endTime,
+                        String title,
+                        String content,
+                        Boolean isSleepover,
+                        Team team,
+                        List<Long> targets) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
