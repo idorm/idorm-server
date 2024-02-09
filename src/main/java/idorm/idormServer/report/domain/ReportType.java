@@ -1,10 +1,10 @@
 package idorm.idormServer.report.domain;
 
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import lombok.Getter;
 
-import static idorm.idormServer.exception.ExceptionCode.REPORT_TYPE_CHARACTER_INVALID;
-import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
+import static idorm.idormServer.common.exception.ExceptionCode.REPORT_TYPE_CHARACTER_INVALID;
+import static idorm.idormServer.common.exception.ExceptionCode.SERVER_ERROR;
 
 public enum ReportType {
 

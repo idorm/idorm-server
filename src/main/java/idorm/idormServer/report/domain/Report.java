@@ -1,6 +1,6 @@
 package idorm.idormServer.report.domain;
 
-import idorm.idormServer.common.BaseEntity;
+import idorm.idormServer.common.domain.BaseTimeEntity;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.member.domain.Member;
@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Report extends BaseEntity {
+public class Report extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +50,7 @@ public class Report extends BaseEntity {
         this.reason = reason;
         this.setIsDeleted(false);
 
-        this.reportedMember.incrementreportedCount();
+//        this.reportedMember.incrementreportedCount();
     }
 
     @Builder(builderClassName = "PostReportBuilder", builderMethodName = "PostReportBuilder")
@@ -67,7 +67,7 @@ public class Report extends BaseEntity {
         this.reason = reason;
         this.setIsDeleted(false);
 
-        this.reportedPost.incrementReportedCount();
+//        this.reportedPost.incrementReportedCount();
     }
 
     @Builder(builderClassName = "CommentReportBuilder", builderMethodName = "CommentReportBuilder")
@@ -83,7 +83,7 @@ public class Report extends BaseEntity {
         this.reason = reason;
         this.setIsDeleted(false);
 
-        this.reportedComment.incrementReportedCount();
+//        this.reportedComment.incrementReportedCount();
     }
 
     public void delete() {

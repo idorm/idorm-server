@@ -2,7 +2,7 @@ package idorm.idormServer.report.service;
 
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.report.domain.Report;
 import idorm.idormServer.report.repository.ReportRepository;
@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static idorm.idormServer.exception.ExceptionCode.ILLEGAL_ARGUMENT_SELF;
-import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
+import static idorm.idormServer.common.exception.ExceptionCode.ILLEGAL_ARGUMENT_SELF;
+import static idorm.idormServer.common.exception.ExceptionCode.SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor

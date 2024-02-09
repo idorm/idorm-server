@@ -1,7 +1,7 @@
 package idorm.idormServer.report.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
-import idorm.idormServer.common.DefaultResponseDto;
+import idorm.idormServer.common.dto.DefaultResponseDto;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.service.CommentService;
@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
-import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
+import static idorm.idormServer.config.SecurityConfig.API_ROOT_URL_V1;
+import static idorm.idormServer.config.SecurityConfig.AUTHENTICATION_HEADER_NAME;
 
 @Tag(name = "X. Report", description = "신고 api")
 @Validated

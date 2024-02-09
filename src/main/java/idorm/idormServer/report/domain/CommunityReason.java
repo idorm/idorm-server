@@ -1,9 +1,9 @@
 package idorm.idormServer.report.domain;
 
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import lombok.Getter;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
 
 public enum CommunityReason {
 
