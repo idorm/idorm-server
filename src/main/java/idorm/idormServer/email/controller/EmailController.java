@@ -1,11 +1,9 @@
-package idorm.idormServer.member.controller;
+package idorm.idormServer.email.controller;
 
-import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.member.domain.Email;
-import idorm.idormServer.member.dto.EmailAuthRequest;
-import idorm.idormServer.member.dto.EmailVerifyRequest;
-import idorm.idormServer.member.service.EmailService;
+import idorm.idormServer.common.dto.DefaultResponseDto;
+import idorm.idormServer.email.dto.EmailSendRequest;
+import idorm.idormServer.email.dto.EmailVerifyRequest;
+import idorm.idormServer.email.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,18 +16,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
-
-import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
-import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_URL;
-import static idorm.idormServer.exception.ExceptionCode.*;
 
 @Tag(name = "9. Email", description = "이메일 인증 api")
 @Validated
 @RestController
-@RequestMapping(API_ROOT_URL_V1 + AUTHENTICATION_URL)
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class EmailController {
+    // TODO : URI 수정
 
     private final EmailService emailService;
 
@@ -46,20 +40,9 @@ public class EmailController {
     )
     @PostMapping("/email")
     public ResponseEntity<DefaultResponseDto<Object>> sendAuthEmail(
-            @RequestBody @Valid EmailAuthRequest request) {
+            @RequestBody @Valid EmailSendRequest request) {
 
-
-        emailService.validateEmailDomain(request.getEmail());
-
-        Optional<Email> existingEmail = emailService.isExistingEmail(request.getEmail());
-
-        boolean emailExistence = emailService.validateEmailExistence(existingEmail);
-        if (emailExistence)
-            emailService.delete(existingEmail.get());
-
-        String verificationCode = emailService.createVerificationCode();
-        Email email = emailService.save(request.toEntity(verificationCode));
-        emailService.sendVerificationEmail(email);
+        emailService.sendVerificationMail(request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -88,27 +71,7 @@ public class EmailController {
             @PathVariable("email") String requestEmail,
             @RequestBody @Valid EmailVerifyRequest request) {
 
-        Optional<Email> existingEmail = emailService.isExistingEmail(requestEmail);
-
-        if (existingEmail.isEmpty())
-            throw new CustomException(null, EMAIL_NOT_FOUND);
-        else {
-
-            if (existingEmail.get().getIsCheck()) {
-                if (existingEmail.get().getMember() != null) {
-                    if (!existingEmail.get().getMember().getIsDeleted()) {
-                        throw new CustomException(null, DUPLICATE_MEMBER);
-                    } else {
-                        emailService.delete(existingEmail.get());
-                    }
-                } else {
-                    emailService.delete(existingEmail.get());
-                }
-            }
-        }
-
-        emailService.validateEmailIsExpired(existingEmail.get().getCreatedAt());
-        emailService.validateEmailCodeIsValid(existingEmail.get(), request.getCode());
+        emailService.verifyCode(requestEmail, request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -128,18 +91,9 @@ public class EmailController {
     )
     @PostMapping("/email/password")
     public ResponseEntity<DefaultResponseDto<Object>> findPassword(
-            @RequestBody @Valid EmailAuthRequest request) {
+            @RequestBody @Valid EmailSendRequest request) {
 
-        emailService.validateEmailDomain(request.getEmail());
-
-        Email foundEmail = emailService.findMemberByEmail(request.getEmail())
-                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
-
-        String verificationCode = emailService.createVerificationCode();
-        emailService.updateVerificationCode(foundEmail, verificationCode);
-
-        emailService.sendVerificationEmail(foundEmail);
-        emailService.updateIsPossibleUpdatePassword(foundEmail, false);
+        emailService.sendRegisteredMail(request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -165,14 +119,7 @@ public class EmailController {
             @PathVariable("email") String requestEmail,
             @RequestBody EmailVerifyRequest request) {
 
-        emailService.validateEmailDomain(requestEmail);
-
-        Email foundEmail = emailService.findMemberByEmail(requestEmail)
-                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
-
-        emailService.validateEmailIsExpired(foundEmail.getUpdatedAt());
-        emailService.validateEmailCodeIsValid(foundEmail, request.getCode());
-        emailService.updateIsPossibleUpdatePassword(foundEmail, true);
+        emailService.reVerifyCode(requestEmail, request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
