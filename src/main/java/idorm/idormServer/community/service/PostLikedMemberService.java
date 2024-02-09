@@ -1,9 +1,9 @@
 package idorm.idormServer.community.service;
 
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.domain.PostLikedMember;
+import idorm.idormServer.community.domain.PostLike;
 import idorm.idormServer.community.repository.PostLikedMemberRepository;
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static idorm.idormServer.exception.ExceptionCode.POSTLIKEDMEMBER_NOT_FOUND;
-import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
+import static idorm.idormServer.common.exception.ExceptionCode.POSTLIKEDMEMBER_NOT_FOUND;
+import static idorm.idormServer.common.exception.ExceptionCode.SERVER_ERROR;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,10 +29,10 @@ public class PostLikedMemberService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public PostLikedMember create(Member member, Post post) {
+    public PostLike create(Member member, Post post) {
 
         try {
-            PostLikedMember postLikedMember = PostLikedMember.builder()
+            PostLike postLikedMember = PostLike.builder()
                     .member(member)
                     .post(post)
                     .build();
@@ -49,7 +49,7 @@ public class PostLikedMemberService {
      * 500(SERVER_ERROR)
      */
     @Transactional
-    public void delete(PostLikedMember postLikedMember) {
+    public void delete(PostLike postLikedMember) {
 
         try {
             postLikedMember.delete();
@@ -75,7 +75,7 @@ public class PostLikedMemberService {
      * 게시글과 회원으로 공감 단건 조회 |
      * 404(POSTLIKEDMEMBER_NOT_FOUND)
      */
-    public PostLikedMember findOneByPostAndMember(Post post, Member member) {
+    public PostLike findOneByPostAndMember(Post post, Member member) {
 
         return postLikedMemberRepository.findByMemberIdAndPostIdAndIsDeletedIsFalse(member.getId(), post.getId())
                 .orElseThrow(() -> new CustomException(null, POSTLIKEDMEMBER_NOT_FOUND));
@@ -97,7 +97,7 @@ public class PostLikedMemberService {
      * 게시글로 전체 공감 조회 |
      * 500(SERVER_ERROR)
      */
-    public List<PostLikedMember> findAllByPost(Post post) {
+    public List<PostLike> findAllByPost(Post post) {
         try {
             return postLikedMemberRepository.findAllByPostAndIsDeletedIsFalse(post);
         } catch (RuntimeException e) {

@@ -1,7 +1,7 @@
-package idorm.idormServer.photo.repository;
+package idorm.idormServer.community.repository;
 
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.photo.domain.PostPhoto;
+import idorm.idormServer.community.domain.PostPhoto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -2,10 +2,10 @@ package idorm.idormServer.community.service;
 
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.PostRepository;
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.matching.domain.DormCategory;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.photo.domain.PostPhoto;
+import idorm.idormServer.community.domain.PostPhoto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
 
 @Service
 @Transactional(readOnly = true)

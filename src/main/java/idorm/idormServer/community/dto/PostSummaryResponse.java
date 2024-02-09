@@ -1,7 +1,7 @@
 package idorm.idormServer.community.dto;
 
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.matching.domain.DormCategory;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

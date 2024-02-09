@@ -1,25 +1,25 @@
 package idorm.idormServer.community.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
-import idorm.idormServer.common.DefaultResponseDto;
+import idorm.idormServer.common.dto.DefaultResponseDto;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.domain.PostLikedMember;
+import idorm.idormServer.community.domain.PostLike;
 import idorm.idormServer.community.dto.*;
 import idorm.idormServer.community.service.CommentService;
 import idorm.idormServer.community.service.CommunityServiceFacade;
 import idorm.idormServer.community.service.PostLikedMemberService;
 import idorm.idormServer.community.service.PostService;
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.fcm.dto.FcmRequest;
-import idorm.idormServer.fcm.dto.NotifyType;
-import idorm.idormServer.fcm.service.FCMService;
-import idorm.idormServer.matching.domain.DormCategory;
+import idorm.idormServer.fcm.domain.NotifyType;
+import idorm.idormServer.fcm.service.MemberFCMService;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
-import idorm.idormServer.photo.domain.PostPhoto;
-import idorm.idormServer.photo.service.MemberPhotoService;
-import idorm.idormServer.photo.service.PostPhotoService;
+import idorm.idormServer.community.domain.PostPhoto;
+import idorm.idormServer.member.service.MemberPhotoService;
+import idorm.idormServer.community.service.PostPhotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,9 +42,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
-import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.config.SecurityConfig.API_ROOT_URL_V1;
+import static idorm.idormServer.config.SecurityConfig.AUTHENTICATION_HEADER_NAME;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
 
 @Tag(name = "5. Community", description = "커뮤니티 api")
 @Validated
@@ -59,7 +59,7 @@ public class CommunityController {
     private final PostLikedMemberService postLikedMemberService;
     private final CommentService commentService;
     private final PostPhotoService postPhotoService;
-    private final FCMService fcmService;
+    private final MemberFCMService fcmService;
     private final CommunityServiceFacade communityServiceFacade;
     private final MemberPhotoService memberPhotoService;
 
@@ -451,7 +451,7 @@ public class CommunityController {
         Member member = memberService.findById(loginMemberId);
         Post post = postService.findById(postId);
 
-        PostLikedMember postLikedMember = postLikedMemberService.findOneByPostAndMember(post, member);
+        PostLike postLikedMember = postLikedMemberService.findOneByPostAndMember(post, member);
 
         communityServiceFacade.deletePostLikes(post, postLikedMember);
 
@@ -487,7 +487,7 @@ public class CommunityController {
         Post post = postService.findById(postId);
         postService.validatePostAuthorization(post, member);
 
-        List<PostLikedMember> postLikedMembersFromPost = postLikedMemberService.findAllByPost(post);
+        List<PostLike> postLikedMembersFromPost = postLikedMemberService.findAllByPost(post);
         List<PostPhoto> postPhotosFromPost = postPhotoService.findAllByPost(post);
 
         communityServiceFacade.deletePost(post, postLikedMembersFromPost, postPhotosFromPost);

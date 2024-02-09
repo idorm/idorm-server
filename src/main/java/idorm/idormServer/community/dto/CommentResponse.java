@@ -1,7 +1,7 @@
 package idorm.idormServer.community.dto;
 
 import idorm.idormServer.community.domain.Comment;
-import idorm.idormServer.photo.domain.MemberPhoto;
+import idorm.idormServer.member.domain.MemberPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

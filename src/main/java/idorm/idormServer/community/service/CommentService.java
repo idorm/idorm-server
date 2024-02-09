@@ -3,7 +3,7 @@ package idorm.idormServer.community.service;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.repository.CommentRepository;
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
 
 @Service
 @Transactional(readOnly = true)

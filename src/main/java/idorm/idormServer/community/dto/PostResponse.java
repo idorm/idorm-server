@@ -1,9 +1,9 @@
 package idorm.idormServer.community.dto;
 
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.matching.domain.DormCategory;
-import idorm.idormServer.photo.domain.MemberPhoto;
-import idorm.idormServer.photo.domain.PostPhoto;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.member.domain.MemberPhoto;
+import idorm.idormServer.community.domain.PostPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

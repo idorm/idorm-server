@@ -2,13 +2,12 @@ package idorm.idormServer.community.service;
 
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.domain.PostLikedMember;
+import idorm.idormServer.community.domain.PostLike;
 import idorm.idormServer.community.dto.CommentRequest;
 import idorm.idormServer.community.dto.PostSaveRequest;
 import idorm.idormServer.community.dto.PostUpdateRequest;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.photo.domain.PostPhoto;
-import idorm.idormServer.photo.service.PostPhotoService;
+import idorm.idormServer.community.domain.PostPhoto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,17 +46,17 @@ public class CommunityServiceFacade {
             postPhotoService.savePostPhotos(post, request.getFiles());
     }
 
-    public void deletePostLikes(Post post, PostLikedMember postLikedMember) {
+    public void deletePostLikes(Post post, PostLike postLikedMember) {
         postLikedMemberService.decrementLikedCountsOfPost(post);
         postLikedMemberService.delete(postLikedMember);
     }
 
     public void deletePost(Post post,
-                           List<PostLikedMember> postLikedMembersFromPost,
+                           List<PostLike> postLikedMembersFromPost,
                            List<PostPhoto> postPhotosFromPost) {
 
         if (postLikedMembersFromPost != null) {
-            for (PostLikedMember postLikedMember : postLikedMembersFromPost) {
+            for (PostLike postLikedMember : postLikedMembersFromPost) {
                 postLikedMemberService.delete(postLikedMember);
             }
         }

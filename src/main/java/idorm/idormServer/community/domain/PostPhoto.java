@@ -29,7 +29,7 @@ public class PostPhoto {
         this.photoUrl = photoUrl;
     }
 
-    public static List<PostPhoto> of(Post post, ArrayList<String> photoUrls) {
+    public static List<PostPhoto> of(Post post, List<String> photoUrls) {
         List<PostPhoto> postPhotos = new ArrayList<>();
 
         photoUrls.forEach(photoUrl -> postPhotos.add(new PostPhoto(post, photoUrl)));
