@@ -1,6 +1,6 @@
 package idorm.idormServer.auth;
 
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Date;
 
-import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
-import static idorm.idormServer.exception.ExceptionCode.UNAUTHORIZED_MEMBER;
+import static idorm.idormServer.config.SecurityConfig.AUTHENTICATION_HEADER_NAME;
+import static idorm.idormServer.common.exception.ExceptionCode.UNAUTHORIZED_MEMBER;
 
 @Slf4j
 @Component

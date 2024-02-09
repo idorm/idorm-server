@@ -1,6 +1,6 @@
 package idorm.idormServer.master.develop;
 
-import idorm.idormServer.fcm.dto.NotifyType;
+import idorm.idormServer.fcm.domain.NotifyType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

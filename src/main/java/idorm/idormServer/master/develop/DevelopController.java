@@ -1,9 +1,9 @@
 package idorm.idormServer.master.develop;
 
-import idorm.idormServer.application.OfficialCalendarCrawler;
+import idorm.idormServer.common.application.OfficialCalendarCrawler;
 import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.calendar.dto.CrawledOfficialCalendarResponse;
-import idorm.idormServer.common.DefaultResponseDto;
+import idorm.idormServer.common.dto.DefaultResponseDto;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;

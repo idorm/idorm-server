@@ -10,22 +10,22 @@ import idorm.idormServer.community.repository.PostLikedMemberRepository;
 import idorm.idormServer.community.repository.PostRepository;
 import idorm.idormServer.community.service.CommentService;
 import idorm.idormServer.community.service.PostService;
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.exception.ExceptionCode;
-import idorm.idormServer.matching.domain.DormCategory;
-import idorm.idormServer.matching.domain.Gender;
-import idorm.idormServer.matching.domain.JoinPeriod;
-import idorm.idormServer.matching.domain.MatchingInfo;
-import idorm.idormServer.matching.repository.MatchingInfoRepository;
-import idorm.idormServer.matching.service.MatchingInfoService;
-import idorm.idormServer.member.domain.Email;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.common.exception.ExceptionCode;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matchingInfo.domain.Gender;
+import idorm.idormServer.matchingInfo.domain.JoinPeriod;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
+import idorm.idormServer.matchingInfo.service.MatchingInfoService;
+import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.repository.EmailRepository;
+import idorm.idormServer.email.repository.EmailRepository;
 import idorm.idormServer.member.repository.MemberRepository;
-import idorm.idormServer.member.service.EmailService;
+import idorm.idormServer.email.service.EmailService;
 import idorm.idormServer.member.service.MemberService;
-import idorm.idormServer.photo.repository.MemberPhotoRepository;
-import idorm.idormServer.photo.repository.PostPhotoRepository;
+import idorm.idormServer.member.repository.MemberPhotoRepository;
+import idorm.idormServer.community.repository.PostPhotoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -509,7 +509,7 @@ public class DevelopService {
 
         memberService.save(member);
 
-        email.isChecked();
+        email.updateIsCheck();
         emailService.updateIsJoined(email, member);
         return member;
     }
