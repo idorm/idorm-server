@@ -45,3 +45,6 @@ src/main/resources/application-develop.yml
 
 ### Local Loggin Files ###
 logs
+
+### Database Migration ###
+src/main/resources/db/*
