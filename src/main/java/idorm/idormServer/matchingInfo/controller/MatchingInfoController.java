@@ -1,13 +1,13 @@
-package idorm.idormServer.matching.controller;
+package idorm.idormServer.matchingInfo.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
-import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.matching.domain.MatchingInfo;
-import idorm.idormServer.matching.dto.MatchingInfoIsPublicRequest;
-import idorm.idormServer.matching.dto.MatchingInfoRequest;
-import idorm.idormServer.matching.dto.MatchingInfoResponse;
-import idorm.idormServer.matching.service.MatchingInfoService;
+import idorm.idormServer.common.dto.DefaultResponseDto;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.dto.MatchingInfoIsPublicRequest;
+import idorm.idormServer.matchingInfo.dto.MatchingInfoRequest;
+import idorm.idormServer.matchingInfo.dto.MatchingInfoResponse;
+import idorm.idormServer.matchingInfo.service.MatchingInfoService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
-import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
-import static idorm.idormServer.exception.ExceptionCode.DUPLICATE_MATCHINGINFO;
+import static idorm.idormServer.config.SecurityConfig.API_ROOT_URL_V1;
+import static idorm.idormServer.config.SecurityConfig.AUTHENTICATION_HEADER_NAME;
+import static idorm.idormServer.common.exception.ExceptionCode.DUPLICATE_MATCHINGINFO;
 
 @Tag(name = "6. MatchingInfo", description = "온보딩 api")
 @Validated

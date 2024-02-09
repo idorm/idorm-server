@@ -1,9 +1,9 @@
-package idorm.idormServer.matching.dto;
+package idorm.idormServer.matchingInfo.dto;
 
-import idorm.idormServer.matching.domain.DormCategory;
-import idorm.idormServer.matching.domain.Gender;
-import idorm.idormServer.matching.domain.JoinPeriod;
-import idorm.idormServer.matching.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matchingInfo.domain.Gender;
+import idorm.idormServer.matchingInfo.domain.JoinPeriod;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

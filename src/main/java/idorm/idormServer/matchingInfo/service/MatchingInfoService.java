@@ -1,9 +1,9 @@
-package idorm.idormServer.matching.service;
+package idorm.idormServer.matchingInfo.service;
 
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.matching.domain.MatchingInfo;
-import idorm.idormServer.matching.dto.MatchingInfoRequest;
-import idorm.idormServer.matching.repository.MatchingInfoRepository;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.dto.MatchingInfoRequest;
+import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
 import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
 
 
 @Service

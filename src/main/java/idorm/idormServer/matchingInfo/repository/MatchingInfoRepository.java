@@ -1,6 +1,6 @@
-package idorm.idormServer.matching.repository;
+package idorm.idormServer.matchingInfo.repository;
 
-import idorm.idormServer.matching.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
