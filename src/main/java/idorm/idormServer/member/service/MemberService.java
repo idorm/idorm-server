@@ -1,13 +1,22 @@
 package idorm.idormServer.member.service;
 
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.matching.domain.DormCategory;
-import idorm.idormServer.member.domain.Email;
+import idorm.idormServer.auth.dto.AuthInfo;
+import idorm.idormServer.auth.encryptor.EncryptorI;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.domain.MemberStatus;
+import idorm.idormServer.member.domain.Nickname;
+import idorm.idormServer.member.domain.Password;
+import idorm.idormServer.member.dto.MemberProfileResponse;
+import idorm.idormServer.member.dto.NicknameUpdateRequest;
+import idorm.idormServer.member.dto.PasswordUpdateRequest;
+import idorm.idormServer.member.dto.SignupRequest;
 import idorm.idormServer.member.repository.MemberRepository;
+import idorm.idormServer.email.service.EmailService;
+import java.time.Clock;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,143 +25,81 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
 
-    @Autowired
-    public MemberRepository memberRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private EmailService emailService;
+    private final MemberRepository memberRepository;
+    private final EmailService emailService;
+    private final EncryptorI encryptor;
+    private final Clock clock;
 
-    /**
-     * DB에 회원 저장 |
-     * 500(SERVER_ERROR)
-     */
     @Transactional
-    public Member save(Member member) {
-        try {
-            return memberRepository.save(member);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
+    public void signUp(final SignupRequest signupRequest) {
+        validate(signupRequest);
+
+        Member member = Member.builder()
+                .email(signupRequest.email())
+                .password(Password.of(encryptor, signupRequest.password()))
+                .nickname(new Nickname(signupRequest.nickname()))
+                .build();
+
+        emailService.useEmail(signupRequest.email());
+        memberRepository.save(member);
     }
 
-    /**
-     * 회원 삭제 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void delete(Member member) {
-        try {
-            member.delete();
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 비밀번호 수정 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void updatePassword(Member member, String encodedPassword) {
-
-        try {
-            member.updatePassword(encodedPassword);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 닉네임 수정 |
-     * 409(DUPLICATE_SAME_NICKNAME)
-     */
-    @Transactional
-    public void updateNickname(Member member, String nickname) {
-
-        try {
-            member.updateNickname(nickname);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 기숙사 분류 수정 |
-     */
-    @Transactional
-    public void updateDormCategory(Member member, DormCategory dormCategory) {
-        try {
-            member.updateDormCategory(dormCategory.getType());
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 회원 FCM 토큰 설정 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void updateFcmToken(Member member, String fcmToken) {
-        try {
-            member.updateFcmToken(fcmToken);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 회원 FCM 토큰 삭제 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void deleteFcmToken(Member member) {
-        try {
-            member.deleteFcmToken();
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 회원 단건 조회 |
-     * 404(MEMBER_NOT_FOUND)
-     */
-    public Member findById(Long memberId) {
-        return memberRepository.findByIdAndIsDeletedIsFalse(memberId)
-                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
-    }
-
-    /**
-     * 회원 단건 조회 Optional |
-     * 500(SERVER_ERROR)
-     */
-    public Optional<Member> findByIdOptional(Long memberId) {
-        try {
-            return memberRepository.findByIdAndIsDeletedIsFalse(memberId);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 이메일로 회원 단건 조회 |
-     * 404(MEMBER_NOT_FOUND)
-     */
-    public Member findByEmail(String email) {
-
-        Email foundEmail = emailService.findMemberByEmail(email)
+    public MemberProfileResponse getMemberInfo(final AuthInfo authInfo) {
+        final Member member = memberRepository.findByIdAndMemberStatusIsActive(authInfo.getId())
                 .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
 
-        return findById(foundEmail.getMember().getId());
+        return MemberProfileResponse.of(member);
+    }
+
+    @Transactional
+    public void editNickname(final AuthInfo authInfo, final NicknameUpdateRequest nicknameUpdateRequest) {
+        Member member = memberRepository.findByIdAndMemberStatusIsActive(authInfo.getId())
+                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
+
+        Nickname newNickname = new Nickname(nicknameUpdateRequest.nickname());
+
+        validate(member.getNickname(), newNickname);
+        member.updateNickname(newNickname);
+    }
+
+    @Transactional
+    public void editPassword(final PasswordUpdateRequest passwordUpdateRequest) {
+        emailService.validateUpdatePassword(passwordUpdateRequest.email());
+        Password password = new Password(passwordUpdateRequest.password());
+
+        Member member = memberRepository.findByEmailAndMemberStatusIsActive(passwordUpdateRequest.email())
+                .orElseThrow(() -> new CustomException(null, MEMBER_NOT_FOUND));
+        member.updatePassword(password);
+    }
+
+    private void validate(final SignupRequest signupRequest) {
+        emailService.validateNewMember(signupRequest.email());
+        validateUniqueEmail(signupRequest.email());
+        validateUniqueNickname(new Nickname(signupRequest.nickname()));
+    }
+
+    private void validate(final Nickname previousNickname, final Nickname newNickname) {
+        previousNickname.validateValidUpdate(LocalDateTime.now(clock));
+        validateUniqueNickname(newNickname);
+    }
+
+    private void validateUniqueEmail(String email) {
+        if (memberRepository.existsByEmailAndMemberStatus(email, MemberStatus.ACTIVE)) {
+            throw new CustomException(null, DUPLICATE_EMAIL);
+        }
+    }
+
+    private void validateUniqueNickname(Nickname nickname) {
+        if (memberRepository.existsMemberByNicknameAndMemberStatusIsActive(nickname)) {
+            throw new CustomException(null, DUPLICATE_NICKNAME);
+        }
     }
 
     /**
@@ -208,79 +155,6 @@ public class MemberService {
             return members;
         } catch (RuntimeException e) {
             throw new CustomException(e, SERVER_ERROR);
-        }
-    }
-
-    /**
-     * 닉네임 중복 검사 |
-     * 409(DUPLICATE_NICKNAME)
-     * 500(SERVER_ERROR)
-     */
-    public void isExistingNickname(String nickname) {
-
-        Boolean isExistNicknameResult = false;
-        try {
-            isExistNicknameResult = memberRepository.existsByNicknameAndIsDeletedIsFalse(nickname);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-
-        if(isExistNicknameResult) {
-            throw new CustomException(null, DUPLICATE_NICKNAME);
-        }
-    }
-
-    /**
-     * 닉네임 수정 시간 확인 |
-     * 닉네임 변경은 30일 이후로만 가능합니다. |
-     * 409(CANNOT_UPDATE_NICKNAME)
-     */
-    public void validateNicknameUpdatedAt(Member member) {
-
-        if (member.getNicknameUpdatedAt() == null)
-            return;
-
-        LocalDateTime updatedDate = member.getNicknameUpdatedAt();
-        LocalDateTime possibleUpdateTime = updatedDate.plusMonths(1);
-
-        if(possibleUpdateTime.isAfter(LocalDateTime.now()))
-            throw new CustomException(null, CANNOT_UPDATE_NICKNAME);
-    }
-
-    /**
-     * 기존 닉네임 변경 닉네임 동일 여부 검증 |
-     * 409(DUPLICATE_SAME_NICKNAME)
-     */
-    public void validateUpdateNicknameIsChanged(Member member, String newNickname) {
-        if (member.getNickname().equals(newNickname))
-            throw new CustomException(null, DUPLICATE_SAME_NICKNAME);
-    }
-
-    /**
-     * 관리자 대상 여부 검증 |
-     * 400(ILLEGAL_ARGUMENT_ADMIN)
-     */
-    public void validateTargetAdmin(Member member) {
-        if(member.getRoles().contains("ROLE_ADMIN"))
-            throw new CustomException(null, ILLEGAL_ARGUMENT_ADMIN);
-    }
-
-    /**
-     * 본인 대상 여부 검증 |
-     * 400(ILLEGAL_ARGUMENT_SELF)
-     */
-    public void validateTargetSelf(Member loginMember, Member targetMember) {
-        if (loginMember.equals(targetMember))
-            throw new CustomException(null,ILLEGAL_ARGUMENT_SELF);
-    }
-
-    /**
-     * 비밀번호 일치 여부 검증 |
-     * 401(UNAUTHORIZED_PASSWORD)
-     */
-    public void validatePassword(Member member, String password) {
-        if (!passwordEncoder.matches(password, member.getPassword())) {
-            throw new CustomException(null, UNAUTHORIZED_PASSWORD);
         }
     }
 }

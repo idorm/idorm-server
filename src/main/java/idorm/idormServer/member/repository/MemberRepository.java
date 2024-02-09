@@ -1,6 +1,8 @@
 package idorm.idormServer.member.repository;
 
 import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.domain.MemberStatus;
+import idorm.idormServer.member.domain.Nickname;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +13,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
+
+    boolean existsByEmailAndMemberStatus(String email, MemberStatus memberStatus);
+
+    boolean existsMemberByNicknameAndMemberStatusIsActive(Nickname nickname);
+
+    Optional<Member> findByEmailAndPasswordValueAndMemberStatusIsActive(String email, String password);
+
+    Optional<Member> findByIdAndMemberStatusIsActive(Long id);
+
+    Optional<Member> findByEmailAndMemberStatusIsActive(String email);
+
+    //----------
 
     Optional<Member> findByIdAndIsDeletedIsFalse(Long id);
 

@@ -1,9 +1,10 @@
-package idorm.idormServer.photo.service;
+package idorm.idormServer.member.service;
 
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.photo.domain.MemberPhoto;
-import idorm.idormServer.photo.repository.MemberPhotoRepository;
+import idorm.idormServer.member.domain.MemberPhoto;
+import idorm.idormServer.member.repository.MemberPhotoRepository;
+import idorm.idormServer.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 
-import static idorm.idormServer.exception.ExceptionCode.SERVER_ERROR;
+import static idorm.idormServer.common.exception.ExceptionCode.SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor

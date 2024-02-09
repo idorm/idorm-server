@@ -1,15 +1,15 @@
 package idorm.idormServer.member.service;
 
 import idorm.idormServer.calendar.service.OfficialCalendarServiceFacade;
-import idorm.idormServer.matching.domain.MatchingInfo;
-import idorm.idormServer.matching.service.MatchingInfoService;
-import idorm.idormServer.matching.service.MatchingMateService;
-import idorm.idormServer.member.domain.Email;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.service.MatchingInfoService;
+import idorm.idormServer.matchingMate.service.MatchingMateService;
+import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.dto.MemberSaveRequest;
+import idorm.idormServer.member.dto.SignupRequest;
 import idorm.idormServer.member.dto.PasswordRequest;
-import idorm.idormServer.photo.domain.MemberPhoto;
-import idorm.idormServer.photo.service.MemberPhotoService;
+import idorm.idormServer.member.domain.MemberPhoto;
+import idorm.idormServer.email.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class MemberServiceFacade {
     private final MatchingInfoService matchingInfoService;
     private final OfficialCalendarServiceFacade calendarServiceFacade;
 
-    public Member saveMember(MemberSaveRequest request, Email email) {
+    public Member saveMember(SignupRequest request, Email email) {
         Member member = memberService.save(request.toMemberEntity(email, passwordEncoder.encode(request.getPassword())));
 
         emailService.updateIsJoined(email, member);
