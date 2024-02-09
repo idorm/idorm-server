@@ -1,5 +1,6 @@
 package idorm.idormServer.fcm.dto;
 
+import idorm.idormServer.fcm.domain.NotifyType;
 import lombok.*;
 
 @Getter

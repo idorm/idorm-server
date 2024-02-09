@@ -2,29 +2,40 @@ package idorm.idormServer.fcm.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.firebase.messaging.*;
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.auth.dto.AuthInfo;
+import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.fcm.dto.FcmRequest;
+import idorm.idormServer.fcm.repository.MemberFCMRepository;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
+import idorm.idormServer.support.token.AuthorizationExtractor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static idorm.idormServer.exception.ExceptionCode.FIREBASE_SERER_ERROR;
-import static idorm.idormServer.exception.ExceptionCode.ILLEGAL_ARGUMENT_FCM_TOKEN;
+import static idorm.idormServer.common.exception.ExceptionCode.FIREBASE_SERER_ERROR;
+import static idorm.idormServer.common.exception.ExceptionCode.ILLEGAL_ARGUMENT_FCM_TOKEN;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class FCMService {
+public class MemberFCMService {
 
+    private final MemberFCMRepository memberFCMRepository;
     private final MemberService memberService;
+    private final AuthorizationExtractor authorizationExtractor;
+
+    @Async
+    public void saveMemberFCM(AuthInfo authInfo, FcmRequest request) {
+
+    }
 
     public List<Message> createMessage(Member member, List<FcmRequest> fcmRequestDtos) {
         if (member.getFcmToken() == null)
