@@ -1,9 +1,9 @@
 package idorm.idormServer.config;
 
-import idorm.idormServer.auth.CustomJwtAuthenticationFilter;
+import idorm.idormServer.common.filter.CustomJwtAuthenticationFilter;
 import idorm.idormServer.auth.JwtTokenProvider;
-import idorm.idormServer.exception.CustomAccessDeniedHandler;
-import idorm.idormServer.exception.CustomAuthenticationEntryPointHandler;
+import idorm.idormServer.common.handler.CustomAccessDeniedHandler;
+import idorm.idormServer.common.handler.CustomAuthenticationEntryPointHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter  {
+public class SecurityConfig extends WebSecurityConfigurerAdapter  {
 
     public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
     public static final String AUTHENTICATION_URL = "/auth";
