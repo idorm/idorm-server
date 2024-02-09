@@ -1,6 +1,5 @@
 package idorm.idormServer.community.domain;
 
-import idorm.idormServer.common.BaseEntity;
 import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,33 +11,31 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostLikedMember extends BaseEntity {
+public class PostLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="post_liked_member_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
-    public PostLikedMember(Post post, Member member) {
+    public PostLike(Post post, Member member) {
         this.post = post;
         this.member = member;
-        this.setIsDeleted(false);
 
-        post.incrementPostLikedCnt();
-        member.getPostLikedMembers().add(this);
-        post.getPostLikedMembers().add(this);
+        post.addPostLike(this);
     }
 
     public void delete() {
-        this.setIsDeleted(true);
+        post.deletePostLike(this);
+        this.delete();
     }
 }

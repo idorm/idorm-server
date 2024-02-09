@@ -1,9 +1,8 @@
-package idorm.idormServer.photo.domain;
+package idorm.idormServer.community.domain;
 
-import idorm.idormServer.common.BaseEntity;
-import idorm.idormServer.community.domain.Post;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostPhoto extends BaseEntity {
+public class PostPhoto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,16 +24,15 @@ public class PostPhoto extends BaseEntity {
 
     private String photoUrl;
 
-    @Builder
-    public PostPhoto(Post post, String photoUrl) {
+    private PostPhoto(Post post, String photoUrl) {
         this.post = post;
         this.photoUrl = photoUrl;
-        this.setIsDeleted(false);
-
-        post.getPostPhotos().add(this);
     }
 
-    public void delete() {
-        this.setIsDeleted(true);
+    public static List<PostPhoto> of(Post post, ArrayList<String> photoUrls) {
+        List<PostPhoto> postPhotos = new ArrayList<>();
+
+        photoUrls.forEach(photoUrl -> postPhotos.add(new PostPhoto(post, photoUrl)));
+        return postPhotos;
     }
 }

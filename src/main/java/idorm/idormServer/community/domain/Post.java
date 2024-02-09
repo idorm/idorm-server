@@ -1,9 +1,15 @@
 package idorm.idormServer.community.domain;
 
-import idorm.idormServer.common.BaseEntity;
-import idorm.idormServer.matching.domain.DormCategory;
+import static idorm.idormServer.common.exception.ExceptionCode.FILE_COUNT_EXCEED;
+
+import idorm.idormServer.common.domain.BaseTimeEntity;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.common.util.Validator;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.photo.domain.PostPhoto;
+import idorm.idormServer.report.domain.Report;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,120 +22,160 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseEntity {
+public class Post extends BaseTimeEntity {
+
+    private static final String BLIND_POST_MESSAGE = "블라인드 처리된 게시글입니다.";
+    private static final int BLOCKED_CONDITION = 5;
+    private static final int MAX_POST_PHOTO_SIZE = 10;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="post_id")
     private Long id;
 
-    private Character dormCategory;
-    private String title;
-    private String content;
-    private Boolean isAnonymous;
-    private int postLikedCnt; // Repository 정렬 조건용, 삭제 금지
-    private int reportedCount;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('DORM1', 'DORM2', 'DORM3')")
+    private DormCategory dormCategory;
 
-    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
+    @Embedded
+    private Title title;
+
+    @Embedded
+    private Content content;
+
+    @NotNull
+    @Column(nullable = false)
+    private String writerNickname;
+
+    @NotNull
+    @Column(nullable = false)
+    private Boolean isDeleted;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "post")
     private List<PostPhoto> postPhotos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
-    private List<PostLikedMember> postLikedMembers = new ArrayList<>(); // 게시글에 공감한 멤버들
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<PostLike> postLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post")
+    private List<Report> reports = new ArrayList<>();
+
     @Builder
-    public Post(Member member, DormCategory dormCategory, String title, String content, Boolean isAnonymous) {
+    public Post(Member member, DormCategory dormCategory, Title title, Content content, String writerNickname,
+                List<PostPhoto> postPhotos) {
+        validate(writerNickname, postPhotos);
+        this.dormCategory = dormCategory;
+        this.title = title;
+        this.content = content;
+        this.writerNickname = writerNickname;
+        this.isDeleted = false;
         this.member = member;
-        this.dormCategory = dormCategory.getType();
+        this.postPhotos = postPhotos;
+    }
+
+    private void validate(String writerNickname, List<PostPhoto> postPhotos) {
+        Validator.validateNotBlank(writerNickname);
+        validatePostPhotoSize(postPhotos.size());
+    }
+
+    private void validatePostPhotoSize(int count) {
+        if (count > MAX_POST_PHOTO_SIZE) {
+            throw new CustomException(null, FILE_COUNT_EXCEED);
+        }
+    }
+
+    public void updateTitle(Title title) {
         this.title = title;
+    }
+
+    public void updateContent(Content content) {
         this.content = content;
-        this.isAnonymous = isAnonymous;
-        this.postLikedCnt = 0;
-        this.reportedCount = 0;
-        this.setIsDeleted(false);
-
-        member.getPosts().add(this);
     }
 
-    public void updatePost(String title, String content, Boolean isAnonymous) {
-        this.title = title;
-        this.content = content;
-        this.isAnonymous = isAnonymous;
+    public void updateWriterNickname(String nickname) {
+        Validator.validateNotBlank(nickname);
+        this.writerNickname = nickname;
     }
 
-    public List<PostLikedMember> getPostLikedMembersIsDeletedIsFalse() {
-        List<PostLikedMember> postLikedMembers = new ArrayList<>();
-        for (PostLikedMember postLikedMember : this.postLikedMembers) {
-            if (!postLikedMember.getIsDeleted())
-                postLikedMembers.add(postLikedMember);
+    public void updatePostPhotos(List<PostPhoto> postPhotos) {
+        validatePostPhotoSize(postPhotos.size());
+        this.postPhotos.clear();
+        this.postPhotos = postPhotos;
+    }
+
+    public boolean isOwner(Member member) {
+        return this.member.equals(member);
+    }
+
+    public boolean isAnonymous() {
+        return !getNickname().equals(member.getNickname().getValue());
+    }
+
+    public String getNickname() {
+        if (isBlocked()) {
+            return BLIND_POST_MESSAGE;
         }
-        return postLikedMembers;
+        return writerNickname;
     }
 
-    public int getPostLikedMembersCnt() {
-        int size = 0;
-        for (PostLikedMember postLikedMember : this.postLikedMembers) {
-            if (!postLikedMember.getIsDeleted())
-                size++;
+    public String getTitle() {
+        if (isBlocked()) {
+            return BLIND_POST_MESSAGE;
         }
-        return size;
+        return title.getValue();
     }
 
-    public List<PostPhoto> getPostPhotosIsDeletedIsFalse() {
-        List<PostPhoto> postPhotos = new ArrayList<>();
-        for (PostPhoto postPhoto : this.postPhotos) {
-            if (!postPhoto.getIsDeleted())
-                postPhotos.add(postPhoto);
+    public String getContent() {
+        if (isBlocked()) {
+            return BLIND_POST_MESSAGE;
         }
-        return postPhotos;
+        return content.getValue();
     }
 
-    public int getPostPhotosCount() {
-        int count = 0;
-        for (PostPhoto postPhoto : this.postPhotos) {
-            if (!postPhoto.getIsDeleted())
-                count++;
+    public int getCommentCount() {
+        if (Objects.isNull(comments)) {
+            return 0;
         }
-        return count;
+        return comments.size();
     }
 
-    public List<Comment> getCommentsIsDeletedIsFalse() {
-        List<Comment> comments = new ArrayList<>();
-        for (Comment comment : this.comments) {
-            if (!comment.getIsDeleted())
-                comments.add(comment);
+    public int getPostLikeCount() {
+        if (Objects.isNull(postLikes)) {
+            return 0;
         }
-        return comments;
+        return postLikes.size();
     }
 
-    public int getCommentsCount() {
-        int size = 0;
-        for (Comment comment : this.comments) {
-            if (!comment.getIsDeleted())
-                size++;
-        }
-        return size;
+    private boolean isBlocked() {
+        return reports.size() >= BLOCKED_CONDITION;
+    }
+
+    void addPostLike(PostLike postLike) {
+        this.postLikes.add(postLike);
+    }
+
+    void deletePostLike(PostLike postLike) {
+        this.postLikes.remove(postLike);
+    }
+
+    void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
+
+    void deleteComment(Comment comment) {
+        this.comments.remove(comment);
     }
 
     public void delete() {
-        this.setIsDeleted(true);
-    }
-
-    public void incrementPostLikedCnt() {
-        this.postLikedCnt += 1;
-    }
-
-    public void decrementPostLikedCnt() {
-        this.postLikedCnt -= 1;
-    }
-
-    public void incrementReportedCount() {
-        this.reportedCount += 1;
+        this.isDeleted = true;
+        // TODO : postPhotos 및 S3 사진 삭제
     }
 }
