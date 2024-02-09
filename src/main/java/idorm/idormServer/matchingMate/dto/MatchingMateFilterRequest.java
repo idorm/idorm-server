@@ -1,4 +1,4 @@
-package idorm.idormServer.matching.dto;
+package idorm.idormServer.matchingMate.dto;
 
 import idorm.idormServer.common.ValidationSequence;
 import io.swagger.v3.oas.annotations.media.Schema;

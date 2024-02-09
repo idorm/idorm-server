@@ -1,11 +1,11 @@
-package idorm.idormServer.matching.service;
+package idorm.idormServer.matchingMate.service;
 
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.matching.domain.DormCategory;
-import idorm.idormServer.matching.domain.JoinPeriod;
-import idorm.idormServer.matching.domain.MatchingInfo;
-import idorm.idormServer.matching.dto.MatchingMateFilterRequest;
-import idorm.idormServer.matching.repository.MatchingInfoRepository;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.matchingInfo.domain.JoinPeriod;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingMate.dto.MatchingMateFilterRequest;
+import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
 
 @Slf4j
 @Service

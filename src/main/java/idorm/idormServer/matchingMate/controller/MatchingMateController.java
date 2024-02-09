@@ -1,13 +1,13 @@
-package idorm.idormServer.matching.controller;
+package idorm.idormServer.matchingMate.controller;
 
 import idorm.idormServer.auth.JwtTokenProvider;
-import idorm.idormServer.common.DefaultResponseDto;
-import idorm.idormServer.exception.CustomException;
-import idorm.idormServer.matching.domain.MatchingInfo;
-import idorm.idormServer.matching.dto.MatchingMateFilterRequest;
-import idorm.idormServer.matching.dto.MatchingMateResponse;
-import idorm.idormServer.matching.service.MatchingInfoService;
-import idorm.idormServer.matching.service.MatchingMateService;
+import idorm.idormServer.common.dto.DefaultResponseDto;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingMate.dto.MatchingMateFilterRequest;
+import idorm.idormServer.matchingMate.dto.MatchingMateResponse;
+import idorm.idormServer.matchingInfo.service.MatchingInfoService;
+import idorm.idormServer.matchingMate.service.MatchingMateService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,10 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static idorm.idormServer.config.SecurityConfiguration.API_ROOT_URL_V1;
-import static idorm.idormServer.config.SecurityConfiguration.AUTHENTICATION_HEADER_NAME;
-import static idorm.idormServer.exception.ExceptionCode.ILLEGAL_ARGUMENT_ADMIN;
-import static idorm.idormServer.exception.ExceptionCode.ILLEGAL_ARGUMENT_SELF;
+import static idorm.idormServer.config.SecurityConfig.API_ROOT_URL_V1;
+import static idorm.idormServer.config.SecurityConfig.AUTHENTICATION_HEADER_NAME;
+import static idorm.idormServer.common.exception.ExceptionCode.ILLEGAL_ARGUMENT_ADMIN;
+import static idorm.idormServer.common.exception.ExceptionCode.ILLEGAL_ARGUMENT_SELF;
 
 @Tag(name = "7. Matching Mate", description = "룸메이트 매칭 api")
 @Validated
