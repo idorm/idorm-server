@@ -1,5 +1,7 @@
-package idorm.idormServer.exception;
+package idorm.idormServer.common.handler;
 
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.common.dto.DefaultExceptionResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,8 +19,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.Objects;
 
-import static idorm.idormServer.exception.ExceptionCode.*;
-import static idorm.idormServer.exception.ExceptionCode.METHOD_NOT_ALLOWED;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
+import static idorm.idormServer.common.exception.ExceptionCode.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j

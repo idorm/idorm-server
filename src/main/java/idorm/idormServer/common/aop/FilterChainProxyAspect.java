@@ -1,4 +1,4 @@
-package idorm.idormServer.exception;
+package idorm.idormServer.common.aop;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.sentry.Sentry;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static idorm.idormServer.exception.ExceptionCode.METHOD_NOT_ALLOWED;
+import static idorm.idormServer.common.exception.ExceptionCode.METHOD_NOT_ALLOWED;
 
 @Slf4j
 @Aspect

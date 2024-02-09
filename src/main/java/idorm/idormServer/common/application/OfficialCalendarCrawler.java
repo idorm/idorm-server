@@ -1,9 +1,9 @@
-package idorm.idormServer.application;
+package idorm.idormServer.common.application;
 
 import idorm.idormServer.calendar.domain.OfficialCalendar;
 import idorm.idormServer.calendar.dto.CrawledOfficialCalendarResponse;
 import idorm.idormServer.calendar.service.OfficialCalendarService;
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static idorm.idormServer.exception.ExceptionCode.CRAWLING_SERVER_ERROR;
+import static idorm.idormServer.common.exception.ExceptionCode.CRAWLING_SERVER_ERROR;
 
 @Component
 @RequiredArgsConstructor

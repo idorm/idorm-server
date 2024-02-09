@@ -1,6 +1,7 @@
-package idorm.idormServer.exception;
+package idorm.idormServer.common.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import idorm.idormServer.common.dto.DefaultExceptionResponseDto;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static idorm.idormServer.exception.ExceptionCode.UNAUTHORIZED_MEMBER;
+import static idorm.idormServer.common.exception.ExceptionCode.UNAUTHORIZED_MEMBER;
 
 @Component("AuthenticationEntryPoint")
 public class CustomAuthenticationEntryPointHandler implements AuthenticationEntryPoint {

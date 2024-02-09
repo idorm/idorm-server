@@ -1,4 +1,4 @@
-package idorm.idormServer.common;
+package idorm.idormServer.common.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseEntity {
+public abstract class BaseTimeEntity {
 
     @CreatedDate
     @Column(updatable = false)
@@ -21,7 +21,4 @@ public abstract class BaseEntity {
     @Setter
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
-    @Setter
-    private Boolean isDeleted;
 }

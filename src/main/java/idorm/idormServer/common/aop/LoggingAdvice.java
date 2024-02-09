@@ -1,6 +1,6 @@
-package idorm.idormServer.application;
+package idorm.idormServer.common.aop;
 
-import idorm.idormServer.exception.CustomException;
+import idorm.idormServer.common.exception.CustomException;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -27,12 +27,12 @@ public class LoggingAdvice {
             "execution(* idorm.idormServer.fcm..*Controller.*(..)) || " +
             "execution(* idorm.idormServer.fcm..*Service.*(..)) || " +
             "execution(* idorm.idormServer.fcm..*Repository.*(..)) || " +
-            "execution(* idorm.idormServer.matching..*Controller.*(..)) || " +
-            "execution(* idorm.idormServer.matching..*Service.*(..)) || " +
-            "execution(* idorm.idormServer.matching..*Repository.*(..)) || " +
-            "execution(* idorm.idormServer.matching..*Controller.*(..)) || " +
-            "execution(* idorm.idormServer.matching..*Service.*(..)) || " +
-            "execution(* idorm.idormServer.matching..*Repository.*(..)) || " +
+            "execution(* idorm.idormServer.matchingInfo..*Controller.*(..)) || " +
+            "execution(* idorm.idormServer.matchingInfo..*Service.*(..)) || " +
+            "execution(* idorm.idormServer.matchingInfo..*Repository.*(..)) || " +
+            "execution(* idorm.idormServer.matchingInfo..*Controller.*(..)) || " +
+            "execution(* idorm.idormServer.matchingInfo..*Service.*(..)) || " +
+            "execution(* idorm.idormServer.matchingInfo..*Repository.*(..)) || " +
             "execution(* idorm.idormServer.member..*Controller.*(..)) || " +
             "execution(* idorm.idormServer.member..*Service.*(..)) || " +
             "execution(* idorm.idormServer.member..*Repository.*(..)) || " +

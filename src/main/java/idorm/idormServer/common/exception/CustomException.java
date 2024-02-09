@@ -1,4 +1,4 @@
-package idorm.idormServer.exception;
+package idorm.idormServer.common.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

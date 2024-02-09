@@ -1,4 +1,4 @@
-package idorm.idormServer.common;
+package idorm.idormServer.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

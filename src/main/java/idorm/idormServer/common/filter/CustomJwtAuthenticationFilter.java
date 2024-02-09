@@ -1,7 +1,8 @@
-package idorm.idormServer.auth;
+package idorm.idormServer.common.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import idorm.idormServer.exception.ExceptionCode;
+import idorm.idormServer.auth.JwtTokenProvider;
+import idorm.idormServer.common.exception.ExceptionCode;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static idorm.idormServer.exception.ExceptionCode.MEMBER_NOT_FOUND;
-import static idorm.idormServer.exception.ExceptionCode.UNAUTHORIZED_MEMBER;
+import static idorm.idormServer.common.exception.ExceptionCode.MEMBER_NOT_FOUND;
+import static idorm.idormServer.common.exception.ExceptionCode.UNAUTHORIZED_MEMBER;
 
 @Slf4j
 @Component("JwtAuthenticationFilter")

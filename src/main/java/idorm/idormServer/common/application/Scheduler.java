@@ -1,17 +1,17 @@
-package idorm.idormServer.application;
+package idorm.idormServer.common.application;
 
 import com.google.firebase.messaging.Message;
 import idorm.idormServer.calendar.domain.OfficialCalendar;
-import idorm.idormServer.calendar.domain.RoomMateTeamCalendar;
+import idorm.idormServer.calendar.domain.TeamCalendar;
 import idorm.idormServer.calendar.dto.CrawledOfficialCalendarResponse;
 import idorm.idormServer.calendar.service.OfficialCalendarService;
 import idorm.idormServer.calendar.service.RoomMateTeamCalendarService;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.community.service.PostService;
 import idorm.idormServer.fcm.dto.FcmRequest;
-import idorm.idormServer.fcm.dto.NotifyType;
-import idorm.idormServer.fcm.service.FCMService;
-import idorm.idormServer.matching.domain.DormCategory;
+import idorm.idormServer.fcm.domain.NotifyType;
+import idorm.idormServer.fcm.service.MemberFCMService;
+import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Scheduler {
 
-    private final FCMService fcmService;
+    private final MemberFCMService fcmService;
     private final MemberService memberService;
     private final PostService postService;
     private final OfficialCalendarService calendarService;
@@ -84,12 +84,12 @@ public class Scheduler {
     @Scheduled(cron = "0 0 0 ? * MON,TUE,WED,THU,SUN") // UTC 00:00 ASIA/SEOUL 9:00
     public void alertTeamCalendars() {
 
-        List<RoomMateTeamCalendar> teamCalendars = teamCalendarService.findTeamCalendarsByStartDateIsToday();
+        List<TeamCalendar> teamCalendars = teamCalendarService.findTeamCalendarsByStartDateIsToday();
 
         // createFcmMessages
         List<FcmRequest> fcmRequestDtos = new ArrayList<>();
 
-        for (RoomMateTeamCalendar teamCalendar : teamCalendars) {
+        for (TeamCalendar teamCalendar : teamCalendars) {
 
             List<Long> targets = teamCalendar.getTargets(); // 일정 대상자들
 

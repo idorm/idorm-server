@@ -1,4 +1,4 @@
-package idorm.idormServer.exception;
+package idorm.idormServer.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,7 +31,7 @@ public enum ExceptionCode {
     // 사이즈
     NICKNAME_LENGTH_INVALID(BAD_REQUEST, "닉네임은 2~8자만 이내여야 합니다."),
     PASSWORD_LENGTH_INVALID(BAD_REQUEST, "비밀번호는 8~15자 이내여야 합니다."),
-    AGE_LENGTH_INVALID(BAD_REQUEST, "나이는 20~100살 사이여야 합니다."),
+    AGE_LENGTH_INVALID(BAD_REQUEST, "나이는 20~50살 사이여야 합니다."),
     WAKEUPTIME_LENGTH_INVALID(BAD_REQUEST, "기상 시간은 ~30자 이내여야 합니다."),
     CLEANUPSTATUS_LENGTH_INVALID(BAD_REQUEST, "정리정돈 상태는 ~30자 이내여야 합니다."),
     SHOWERTIME_LENGTH_INVALID(BAD_REQUEST, "샤워시간은 ~30자 이내여야 합니다."),
@@ -57,7 +57,8 @@ public enum ExceptionCode {
     INVALID_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
     EXPIRED_CODE(UNAUTHORIZED, "이메일 인증 유효시간이 초과되었습니다."),
 
-    UNAUTHORIZED_MEMBER(UNAUTHORIZED, "유효하지 않은 토큰 입니다."),
+    UNAUTHORIZED_MEMBER(UNAUTHORIZED, "유효하지 않은 액세스 토큰 입니다."),
+    UNAUTHORIZED_REFRESH_MEMBER(UNAUTHORIZED, "유효하지 않은 리프레시 토큰 입니다."),
     UNAUTHORIZED_PASSWORD(UNAUTHORIZED, "올바르지 않은 비밀번호 입니다."),
     UNAUTHORIZED_EMAIL(UNAUTHORIZED, "인증이 되지 않은 이메일 입니다."),
     UNAUTHORIZED_DELETED_MEMBER(UNAUTHORIZED, "탈퇴한 회원입니다. 로그아웃이 필요합니다."),
