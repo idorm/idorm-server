@@ -6,7 +6,7 @@ import idorm.idormServer.email.dto.EmailVerifyRequest;
 import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.email.domain.Email;
 import idorm.idormServer.email.dto.EmailSendRequest;
-import idorm.idormServer.member.repository.EmailRepository;
+import idorm.idormServer.email.repository.EmailRepository;
 import java.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
