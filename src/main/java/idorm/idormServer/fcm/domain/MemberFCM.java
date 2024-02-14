@@ -1,27 +1,23 @@
 package idorm.idormServer.fcm.domain;
 
-import idorm.idormServer.common.domain.BaseTimeEntity;
 import idorm.idormServer.common.exception.ExceptionCode;
 import idorm.idormServer.common.util.Validator;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@Entity
-@Table(name = "member_fcm")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberFCM extends BaseTimeEntity {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class MemberFCM {
 
-    private static final int MAX_FCM_TOKEN_LENGTH = 255;
+    public static final int MAX_FCM_TOKEN_LENGTH = 255;
 
     @Id
     @Column(name = "member_fcm_id")
@@ -36,10 +32,26 @@ public class MemberFCM extends BaseTimeEntity {
     @Size(max = MAX_FCM_TOKEN_LENGTH)
     private String value;
 
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
     public MemberFCM(final Long memberId, final String fcmToken) {
         validate(memberId, fcmToken);
         this.memberId = memberId;
         this.value = fcmToken;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public static MemberFCM forMapper(final Long id,
+                                      final Long memberId,
+                                      final String value,
+                                      final LocalDateTime createdAt,
+                                      final LocalDateTime updatedAt) {
+        return new MemberFCM(id, memberId, value, createdAt, updatedAt);
     }
 
     private void validate(final Long memberId, final String fcmToken) {
