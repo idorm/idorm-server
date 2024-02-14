@@ -1,92 +1,94 @@
 package idorm.idormServer.report.domain;
 
-import idorm.idormServer.common.domain.BaseTimeEntity;
-import idorm.idormServer.community.domain.Comment;
-import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.member.domain.Member;
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.xml.stream.events.Comment;
 import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Report extends BaseTimeEntity {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Report {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "report_id")
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reported_member_id")
     private Member reportedMember;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reporter_member_id")
     private Member reporterMember;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reported_post_id")
     private Post reportedPost;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reported_comment_id")
     private Comment reportedComment;
-
     private Character reasonType;
     private String reason;
+    private LocalDateTime createdAt;
 
-    @Builder(builderClassName = "MemberReportBuilder", builderMethodName = "MemberReportBuilder")
-    public Report(Member reporterMember, Member reportedMember, MemberReason reasonType, String reason) {
-        this.reportedMember = reportedMember;
-        this.reporterMember = reporterMember;
-        this.reportedPost = null;
-        this.reportedComment = null;
-        this.reasonType = reasonType.getType();
-        this.reason = reason;
-        this.setIsDeleted(false);
-
-//        this.reportedMember.incrementreportedCount();
-    }
-
-    @Builder(builderClassName = "PostReportBuilder", builderMethodName = "PostReportBuilder")
-    public Report(Member reporterMember,
-                  Member reportedMember,
-                  Post reportedPost,
-                  CommunityReason reasonType,
-                  String reason) {
+    private Report(Member reporterMember,
+                   Member reportedMember,
+                   Post reportedPost,
+                   Comment reportedComment,
+                   Character reasonType,
+                   String reason) {
         this.reporterMember = reporterMember;
         this.reportedMember = reportedMember;
         this.reportedPost = reportedPost;
-        this.reportedComment = null;
-        this.reasonType = reasonType.getType();
-        this.reason = reason;
-        this.setIsDeleted(false);
-
-//        this.reportedPost.incrementReportedCount();
-    }
-
-    @Builder(builderClassName = "CommentReportBuilder", builderMethodName = "CommentReportBuilder")
-    public Report(Member reporterMember,
-                  Member reportedMember,
-                  Comment reportedComment,
-                  CommunityReason reasonType,
-                  String reason) {
-        this.reportedMember = reportedMember;
-        this.reporterMember = reporterMember;
         this.reportedComment = reportedComment;
-        this.reasonType = reasonType.getType();
+        this.reasonType = reasonType;
         this.reason = reason;
-        this.setIsDeleted(false);
-
-//        this.reportedComment.incrementReportedCount();
+        this.createdAt = LocalDateTime.now();
     }
 
-    public void delete() {
-        this.setIsDeleted(true);
+    public static Report memberReport(final Member reporterMember,
+                                      final Member reportedMember,
+                                      final MemberReason reasonType,
+                                      final String reason) {
+        Validator.validateNotNull(List.of(reportedMember, reporterMember, reasonType));
+        return new Report(reporterMember,
+                reportedMember,
+                null,
+                null,
+                reasonType.getType(),
+                reason);
+    }
+
+    public static Report postReport(final Member reporterMember,
+                                    final Member reportedMember,
+                                    final Post reportedPost,
+                                    final CommunityReason reasonType,
+                                    final String reason) {
+
+        Validator.validateNotNull(List.of(reportedMember, reporterMember, reportedPost, reasonType));
+        return new Report(reporterMember,
+                reportedMember,
+                reportedPost,
+                null,
+                reasonType.getType(),
+                reason);
+    }
+
+    public static Report commentReport(final Member reporterMember,
+                                    final Member reportedMember,
+                                    final Comment reportedComment,
+                                    final CommunityReason reasonType,
+                                    final String reason) {
+
+        Validator.validateNotNull(List.of(reportedMember, reporterMember, reportedComment, reasonType));
+        return new Report(reporterMember,
+                reportedMember,
+                null,
+                reportedComment,
+                reasonType.getType(),
+                reason);
+    }
+
+    public static Report forMapper(final Long id,
+                                   final Member reportedMember,
+                                   final Member reporterMember,
+                                   final Post reportedPost,
+                                   final Comment reportedComment,
+                                   final Character reasonType,
+                                   final String reason,
+                                   final LocalDateTime createdAt) {
+        return new Report(id, reportedMember, reporterMember, reportedPost, reportedComment, reasonType, reason,
+                createdAt);
     }
 }
