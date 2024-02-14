@@ -1,105 +1,127 @@
 package idorm.idormServer.email.domain;
 
+import static idorm.idormServer.common.exception.ExceptionCode.DUPLICATE_EMAIL;
 import static idorm.idormServer.common.exception.ExceptionCode.EMAIL_CHARACTER_INVALID;
+import static idorm.idormServer.common.exception.ExceptionCode.MEMBER_NOT_FOUND;
 
 import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.common.exception.ExceptionCode;
 import idorm.idormServer.common.util.Validator;
 import java.time.LocalDateTime;
-import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
+@EqualsAndHashCode(of = "id")
 public class Email {
 
+    public static final int MAX_EMAIL_LENGTH = 20;
     private static final String EMAIL_REGEX = "^([\\w-]+(?:\\.[\\w-]+)*)+@(inu.ac.kr)$";
     private static final long VALID_VERIFY_MINUTE = 5L;
     private static final long VALID_REGISTER_MINUTE = 10L;
 
-    @Id
-    @Column(name = "email_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Embedded
-    @Column(nullable = false)
+    private EmailStatus emailStatus;
     private VerificationCode code;
-
-    @CreatedDate
-    @Column(nullable = false)
     private LocalDateTime issuedAt;
-
-    @Column(nullable = false)
     private boolean registered;
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(columnDefinition = "ENUM('SEND', 'VERIFIED', 'RE_SEND', 'RE_VERIFIED')")
-    private EmailStatus emailStatus;
-
-    @Builder
-    public Email(String email, VerificationCode code, LocalDateTime issuedAt) {
-        validate(email);
+    public Email(final String email, final VerificationCode code) {
+        validateConstructor(email);
         this.email = email;
         this.code = code;
-        this.emailStatus = EmailStatus.SEND;
-        this.registered = false;
-        this.issuedAt = issuedAt;
+        emailStatus = EmailStatus.SEND;
+        registered = false;
+        this.issuedAt = LocalDateTime.now();
     }
 
-    public void updateCode(VerificationCode code, LocalDateTime issuedAt) {
+    private Email(final Long id,
+                  final String email,
+                  final EmailStatus emailStatus,
+                  final VerificationCode code,
+                  final LocalDateTime issuedAt,
+                  final boolean registered) {
+        this.id = id;
+        this.email = email;
+        this.emailStatus = emailStatus;
         this.code = code;
         this.issuedAt = issuedAt;
+        this.registered = registered;
+    }
 
-        if (this.registered) {
-            this.emailStatus = EmailStatus.RE_SEND;
-            return;
-        }
+    private static void validateConstructor(final String value) {
+        Validator.validateNotBlank(value);
+        Validator.validateFormat(value, EMAIL_REGEX, EMAIL_CHARACTER_INVALID);
+    }
+
+    public static Email forMapper(final Long id,
+                                  final String email,
+                                  final EmailStatus emailStatus,
+                                  final VerificationCode code,
+                                  final LocalDateTime issuedAt,
+                                  final boolean registered) {
+        return new Email(id, email, emailStatus, code, issuedAt, registered);
+    }
+
+    public void assignId(final Long id) {
+        this.id = id;
+    }
+
+    public void updateVerificationCode(VerificationCode code) {
+        validateNotSignUp();
+
+        this.code = code;
+        this.issuedAt = LocalDateTime.now();
         this.emailStatus = EmailStatus.SEND;
     }
 
-    public void verify(String code, LocalDateTime now) {
-        verifyTime(now);
-        this.code.verify(code);
+    public void updateReVerificationCode(VerificationCode code) {
+        validateSignUpEmail();
 
-        if (this.registered) {
-            this.emailStatus = EmailStatus.RE_VERIFIED;
-            return;
-        }
+        this.code = code;
+        this.issuedAt = LocalDateTime.now();
+        this.emailStatus = EmailStatus.RE_SEND;
+    }
+
+    public void verify(final String code) {
+        validateNotSignUp();
+        validateValidTime();
+
+        this.code.match(code);
         this.emailStatus = EmailStatus.VERIFIED;
+    }
+
+    public void reVerify(final String code) {
+        validateSignUpEmail();
+        validateValidTime();
+
+        this.code.match(code);
+        this.emailStatus = EmailStatus.RE_VERIFIED;
     }
 
     public void register() {
         this.registered = true;
     }
 
-    private void verifyTime(LocalDateTime now) {
-        LocalDateTime expiredTime = this.issuedAt.plusMinutes(VALID_VERIFY_MINUTE);
-        if (now.isAfter(expiredTime)) {
-            throw new CustomException(null, ExceptionCode.EXPIRED_CODE);
-        }
-    }
-
-    public void verifyRegisterTime(LocalDateTime now) {
+    public void validateValidTime() {
         LocalDateTime expiredTime = this.issuedAt.plusMinutes(VALID_REGISTER_MINUTE);
+        LocalDateTime now = LocalDateTime.now();
+
         if (now.isAfter(expiredTime)) {
             throw new CustomException(null, ExceptionCode.EXPIRED_CODE);
         }
     }
 
-    private void validate(final String value) {
-        Validator.validateNotBlank(value);
-        Validator.validateFormat(value, EMAIL_REGEX, EMAIL_CHARACTER_INVALID);
+    private void validateNotSignUp() {
+        if (isRegistered()) {
+            throw new CustomException(null, DUPLICATE_EMAIL);
+        }
+    }
+
+    private void validateSignUpEmail() {
+        if (!isRegistered()) {
+            throw new CustomException(null, MEMBER_NOT_FOUND);
+        }
     }
 }
