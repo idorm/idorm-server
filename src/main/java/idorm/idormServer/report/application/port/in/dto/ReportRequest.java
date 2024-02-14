@@ -1,6 +1,5 @@
 package idorm.idormServer.report.dto;
 
-import idorm.idormServer.common.ValidationSequence;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.member.domain.Member;
@@ -17,11 +16,6 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Getter
-@GroupSequence({ ReportRequest.class,
-        ValidationSequence.NotBlank.class,
-        ValidationSequence.NotNull.class,
-        ValidationSequence.Positive.class,
-        ValidationSequence.Size.class})
 @Schema(title = "Report 기본 요청")
 public class ReportRequest {
 

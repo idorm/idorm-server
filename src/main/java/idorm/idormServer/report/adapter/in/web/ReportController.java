@@ -1,6 +1,5 @@
 package idorm.idormServer.report.controller;
 
-import idorm.idormServer.auth.JwtTokenProvider;
 import idorm.idormServer.common.dto.DefaultResponseDto;
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
@@ -10,7 +9,8 @@ import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
 import idorm.idormServer.report.domain.ReportType;
 import idorm.idormServer.report.dto.ReportRequest;
-import idorm.idormServer.report.service.ReportService;
+import idorm.idormServer.report.application.ReportService;
+import idorm.idormServer.support.token.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,14 +27,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import static idorm.idormServer.config.SecurityConfig.API_ROOT_URL_V1;
-import static idorm.idormServer.config.SecurityConfig.AUTHENTICATION_HEADER_NAME;
-
 @Tag(name = "X. Report", description = "신고 api")
 @Validated
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@RequestMapping(API_ROOT_URL_V1 + "/member/report")
+@RequestMapping("/api/v1/member/report")
 public class ReportController {
 
     private final ReportService reportService;
