@@ -1,4 +1,4 @@
-package idorm.idormServer.member.dto;
+package idorm.idormServer.member.application.port.in.dto;
 
 import idorm.idormServer.member.domain.Member;
 
