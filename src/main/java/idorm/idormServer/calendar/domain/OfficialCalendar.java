@@ -2,8 +2,14 @@ package idorm.idormServer.calendar.domain;
 
 import idorm.idormServer.common.domain.BaseTimeEntity;
 import idorm.idormServer.common.util.Validator;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -11,9 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.time.LocalDate;
-
+// TODO: 공식 일정 도메인 관련 전체 클래스 리팩 대상
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -65,7 +69,7 @@ public class OfficialCalendar extends BaseTimeEntity {
     private Boolean isDeleted;
 
     @Builder
-    public OfficialCalendar(String inuPostId,
+    public OfficialSchedule(String inuPostId,
                             String title,
                             String inuPostUrl,
                             LocalDate inuPostCreatedAt
@@ -76,6 +80,11 @@ public class OfficialCalendar extends BaseTimeEntity {
         this.inuPostCreatedAt = isNull(inuPostCreatedAt) ? CRAWLING_FAIL_DATE : inuPostCreatedAt;
         this.isPublic = false;
         this.isDeleted = false;
+    }
+
+    public static OfficialCalendar forMapper() {
+       // TODO: 구현
+       return null;
     }
 
     private static boolean isBlank(String value) {
@@ -99,7 +108,7 @@ public class OfficialCalendar extends BaseTimeEntity {
         this.isDorm3Yn = isDorm3Yn;
         this.period = new Period(startDate, endDate);
 
-        if (this.title.notEquals(title)) {
+        if (!this.title.equals(title)) {
             this.title = Title.officialCalendar(title);
         }
     }

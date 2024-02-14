@@ -3,27 +3,20 @@ package idorm.idormServer.calendar.domain;
 import static idorm.idormServer.common.exception.ExceptionCode.TITLE_LENGTH_INVALID;
 
 import idorm.idormServer.common.util.Validator;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.NotBlank;
-import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@Embeddable
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(of = "value")
 public class Title {
 
     private static final int MIN_LENGTH = 1;
-    private static final int MAX_OFFICIAL_CALENDAR_LENGTH = 20;
+    public static final int MAX_OFFICIAL_CALENDAR_LENGTH = 20;
     private static final int MAX_TEAM_CALENDAR_LENGTH = 15;
 
-    @NotBlank
-    @Column(name = "title", nullable = false, length = MAX_OFFICIAL_CALENDAR_LENGTH)
     private String value;
 
-    private Title(final String value) {
+    public Title(final String value) {
         this.value = value;
     }
 
@@ -37,8 +30,18 @@ public class Title {
         return new Title(value);
     }
 
-    boolean notEquals(final String value) {
-        return this.value.equals(value);
+    public static Title forMapper(final String title) {
+        return new Title(title);
+    }
+
+    public void updateOfficialCalendar(String value){
+        validateOfficialCalendar(value);
+        this.value = value;
+    }
+
+    public void updateTeamCalendar(String value){
+        validateTeamCalendar(value);
+        this.value = value;
     }
 
     private static void validateOfficialCalendar(String value) {

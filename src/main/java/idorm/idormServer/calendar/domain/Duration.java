@@ -1,25 +1,18 @@
 package idorm.idormServer.calendar.domain;
 
-import static idorm.idormServer.common.exception.ExceptionCode.ILLEGAL_ARGUMENT_DATE_SET;
-
 import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.common.exception.ExceptionCode;
 import java.time.LocalTime;
 import java.util.Objects;
-import javax.persistence.Embeddable;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@Embeddable
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Duration {
 
     private LocalTime startTime;
-
     private LocalTime endTime;
 
-    public Duration(LocalTime startTime, LocalTime endTime) {
+    public Duration(final LocalTime startTime, final LocalTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -27,6 +20,10 @@ public class Duration {
     public static Duration of(Period period, LocalTime start, LocalTime end) {
         validate(period, start, end);
         return new Duration(start, end);
+    }
+
+    public static Duration forMapper(final LocalTime startTime, final LocalTime endTime) {
+        return new Duration(startTime, endTime);
     }
 
     private static void validate(Period period, LocalTime startTime, LocalTime endTime) {
@@ -39,9 +36,15 @@ public class Duration {
         }
     }
 
-    private static void validateValidDateTime(LocalTime startTime, LocalTime endTime) {
+    public static void validateValidDateTime(LocalTime startTime, LocalTime endTime) {
         if (endTime.isBefore(startTime)) {
-            throw new CustomException(null, ILLEGAL_ARGUMENT_DATE_SET);
+            throw new CustomException(null, ExceptionCode.ILLEGAL_ARGUMENT_DATE_SET);
         }
+    }
+
+    void update(Period period, LocalTime startTime, LocalTime endTime){
+        validate(period, startTime, endTime);
+        this. startTime = startTime;
+        this.endTime = endTime;
     }
 }

@@ -1,40 +1,47 @@
 package idorm.idormServer.calendar.domain;
 
-import idorm.idormServer.member.domain.Member;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import idorm.idormServer.common.util.Validator;
+import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SleepoverCalendar {
 
-    @Id
-    @Column(name = "sleepover_schedule_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // LocalDate으로 저장? 저장 방식에 따라 쿼리 작성, 조회 속도가 달라질듯
-    @Embedded
     private Period period;
-
-    // participant는 어떻게 저장? TeamSchedule targets랑 같이 활용?
-    @OneToOne
-    @Column(nullable = false, name = "target_member_id")
-    private Member targetMember;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
+    private Participant participant;
     private Team team;
+
+    public SleepoverCalendar(final Period period, final Participant participant, final Team team) {
+        validateConstructor(period, participant, team);
+        this.period = period;
+        this.participant = participant;
+        this.team = team;
+    }
+
+    public void assignId(Long generatedId) {
+        this.id = generatedId;
+    }
+
+    public static SleepoverCalendar forMapper(final Long id,
+                                              final Period period,
+                                              final Participant participant,
+                                              final Team team) {
+        return new SleepoverCalendar(id, period, participant, team);
+    }
+
+    private void validateConstructor(Period period, Participant participant, Team team) {
+        Validator.validateNotNull(List.of(period, participant, team));
+    }
+
+    public void validateUniqueDate(Period newPeriod) {
+        this.period.validateUniqueDate(newPeriod);
+    }
+
+    public void delete() {
+        this.delete();
+    }
 }

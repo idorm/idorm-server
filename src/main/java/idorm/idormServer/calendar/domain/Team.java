@@ -1,100 +1,106 @@
 package idorm.idormServer.calendar.domain;
 
-import idorm.idormServer.common.domain.BaseTimeEntity;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.common.exception.ExceptionCode;
 import idorm.idormServer.member.domain.Member;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Team extends BaseTimeEntity {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Team {
 
-    @Id
-    @Column(name = "team_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private static final int MAX_TEAM_SIZE = 4;
+
     private Long id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('ACTIVE', 'DELETED', 'ALONE')")
     private TeamStatus teamStatus;
-
-    @OneToMany(mappedBy = "team")
     private List<Member> members = new ArrayList<>();
+    private List<TeamCalendar> teamCalendars = new ArrayList<>();
+    private List<SleepoverCalendar> sleepoverCalendars = new ArrayList<>();
+    private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "team")
-    private List<TeamCalendar> teamSchedules = new ArrayList<>();
-
-    @OneToMany(mappedBy = "team")
-    private List<SleepoverCalendar> sleepoverSchedules = new ArrayList<>();
-
-    // TODO: 핵심 비지니스 로직 리팩 대상
-    @Builder
-    public Team(Member member) {
-        addMember(member);
-        member.updateTeam(this, 0);
-        this.isNeedToConfirmDeleted = false;
-        this.setIsDeleted(false);
+    public Team(final List<Member> members) {
+        teamStatus = TeamStatus.ACTIVE;
+        this.members = members;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public void addMember(Member member) {
-        if (!this.members.contains(member)) {
-            this.members.add(member);
-            member.updateTeam(this, this.members.size() - 1);
+    public static Team forMapper(final Long id,
+                                 final TeamStatus teamStatus,
+                                 final List<Member> members,
+                                 final List<TeamCalendar> teamCalendars,
+                                 final List<SleepoverCalendar> sleepoverCalendars,
+                                 final LocalDateTime createdAt) {
+        return new Team(id, teamStatus, members, teamCalendars, sleepoverCalendars, createdAt);
+    }
+
+    public void canRemoveMember(Member member){
+        if(!this.members.contains(member)) {
+            throw new CustomException(null, ExceptionCode.MEMBER_NOT_FOUND);
         }
     }
 
-    public boolean removeMember(Member member) {
-        if (this.members.contains(member)) {
-            this.members.remove(member);
-            member.deleteTeam(this);
-            return true;
+    public void participate(Member member) {
+        if(this.members.contains(member)){
+            throw new CustomException(null, ExceptionCode.DUPLICATE_MEMBER);
         }
-        return false;
+        validateValidSize();
     }
 
-    public List<Member> getMembers() {
-        return this.members;
+    public int getTeamSize(){
+        return this.getMembers().size();
     }
 
-    public int getMemberCount() {
-        return this.members.size();
+    public boolean isTeamMember(Member member) {
+        if(!this.members.contains(member)){
+            throw new CustomException(null, ExceptionCode.TEAMMEMBER_NOT_FOUND);
+        }
+        return this.members.contains(member);
     }
 
-    public void addTeamCalendar(TeamCalendar teamCalendar) {
-        this.teamCalendars.add(teamCalendar);
+    public void changeTeamStatusToAlone() {
+        this.teamStatus = TeamStatus.ALONE;
     }
 
-    public void removeTeamCalendar(TeamCalendar teamCalendar) {
+    public Team isTeamExists(){
+        if(this.id == null){
+            throw new CustomException(null, ExceptionCode.TEAM_NOT_FOUND);
+        }
+        return this;
+    }
+
+
+    public void delete() {
+        this.teamCalendars.stream().forEach(teamCalendar -> deleteTeamSchedule(teamCalendar));
+        this.sleepoverCalendars.stream().forEach(sleepoverCalendar -> deleteSleepOverSchedule(sleepoverCalendar));
+        this.members.stream().forEach(member -> this.members.remove(member));
+        this.delete();
+    }
+
+    public void deleteTeamSchedule(TeamCalendar teamCalendar){
         this.teamCalendars.remove(teamCalendar);
     }
 
-    public List<TeamCalendar> getTeamCalendars() {
-        List<TeamCalendar> teamCalendarList = this.teamCalendars;
-        teamCalendarList.removeIf(teamCalendar -> teamCalendar.getIsDeleted().equals(true));
-        return teamCalendarList;
+    public void deleteSleepOverSchedule(SleepoverCalendar sleepoverCalendare){
+        this.sleepoverCalendars.remove(sleepoverCalendare);
     }
 
-    public void updateIsNeedToConfirmDeleted() {
-        this.isNeedToConfirmDeleted = true;
+
+    private void validateValidSize() {
+        if(this.members.size() >= MAX_TEAM_SIZE) {
+            throw new CustomException(null, ExceptionCode.CANNOT_REGISTER_TEAM_STATUS_FULL);
+        }
     }
 
-    public void delete() {
-        this.setIsDeleted(true);
+    public List<TeamCalendar> getTeamSchedules(){
+        return this.teamCalendars;
+    }
 
-        for (Member member : this.members)
-            member.deleteTeam(this);
-
-        List<TeamCalendar> deleteList = this.getTeamCalendars().stream().collect(Collectors.toList());
-        for (TeamCalendar teamCalendar : deleteList)
-            teamCalendar.delete();
-
+    public List<SleepoverCalendar> getSleepoverSchedules(){
+        return this.sleepoverCalendars;
     }
 }
