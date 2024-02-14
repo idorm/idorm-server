@@ -2,54 +2,44 @@ package idorm.idormServer.matchingInfo.domain;
 
 import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MatchingInfo {
 
-    @Id
-    @Column(name="matching_info_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // TODO: OneToOne 수정?
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
     private Member member;
-
-    @Embedded
     private DormInfo dormInfo;
-
-    @Embedded
     private PreferenceInfo preferenceInfo;
-
-    @Embedded
     private TextInfo textInfo;
-
-    @Embedded
-    private SharedURL openKakaoLink;
-
-    @Column(nullable = false)
+    private SharedURL sharedURL;
     private Boolean isPublic;
 
     @Builder
     public MatchingInfo(DormInfo dormInfo,
                         PreferenceInfo preferenceInfo,
                         TextInfo textInfo,
-                        SharedURL openKakaoLink,
+                        SharedURL sharedURL,
                         Member member) {
         this.dormInfo = dormInfo;
         this.preferenceInfo = preferenceInfo;
         this.textInfo = textInfo;
-        this.openKakaoLink = openKakaoLink;
+        this.sharedURL = sharedURL;
         this.isPublic = false;
         this.member = member;
+    }
+
+    public static MatchingInfo forMapper(final Long id,
+                                         final Member member,
+                                         final DormInfo dormInfo,
+                                         final PreferenceInfo preferenceInfo,
+                                         final TextInfo textInfo,
+                                         final SharedURL sharedURL,
+                                         final Boolean isPublic) {
+        return new MatchingInfo(id, member, dormInfo, preferenceInfo, textInfo, sharedURL, isPublic);
     }
 
     public void updateIsPublic(Boolean isPublic) {

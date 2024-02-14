@@ -1,5 +1,6 @@
 package idorm.idormServer.matchingInfo.repository;
 
+import idorm.idormServer.matchingInfo.adapter.out.persistence.MatchingInfoJpaEntity;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long> {
+public interface MatchingInfoRepository extends JpaRepository<MatchingInfoJpaEntity, Long> {
 
     Optional<MatchingInfo> findByMemberIdAndIsDeletedIsFalse(Long memberId);
 
