@@ -1,4 +1,4 @@
-package idorm.idormServer.member.repository;
+package idorm.idormServer.member.adapter.out.persistence;
 
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.domain.MemberStatus;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<MemberJpaEntity, Long> {
 
     boolean existsByEmailAndMemberStatus(String email, MemberStatus memberStatus);
 

@@ -1,70 +1,39 @@
 package idorm.idormServer.member.domain;
 
-import idorm.idormServer.matchingMate.domain.Mates;
-import idorm.idormServer.matchingMate.domain.NonFavoriteMates;
+import idorm.idormServer.common.util.Validator;
+import idorm.idormServer.matchingMate.domain.MatchingMates;
 import java.time.LocalDateTime;
-import lombok.AccessLevel;
+import java.util.List;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(of = "id")
 public class Member {
 
-    @Id
-    @Column(name = "member_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(columnDefinition = "ENUM('ACTIVE', 'DELETED')")
     private MemberStatus memberStatus;
-
-    @Column(nullable = false)
     private String email;
-
-    @Embedded
     private Nickname nickname;
-
-    @Embedded
     private Password password;
-
-    @Embedded
     private MemberPhoto memberPhoto;
-
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('USER', 'ADMIN')")
-    private RoleType roleType = RoleType.USER;
-
-    @CreatedDate
-    @Column(updatable = false)
+    private RoleType roleType;
     private LocalDateTime createdAt;
-
-    @Setter
-    @LastModifiedDate
     private LocalDateTime updatedAt;
-
-    @Embedded
-    private Mates favoriteMates = Mates.empty();
-
-    @Embedded
-    private Mates nonFavoriteMates = NonFavoriteMates.empty();
+    private MatchingMates matchingMates;
 
     @Builder
     public Member(String email, Password password, Nickname nickname) {
+        validateConstructor(email, password, nickname);
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.memberStatus = MemberStatus.ACTIVE;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        memberStatus = MemberStatus.ACTIVE;
+        roleType = RoleType.USER;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        matchingMates = MatchingMates.empty();
     }
 
     public static Member admin(String email, Password password, Nickname nickname) {
@@ -73,15 +42,69 @@ public class Member {
         return member;
     }
 
-    void updateNickname(Nickname nickname) {
+    private Member(final Long id,
+                   final MemberStatus memberStatus,
+                   final String email,
+                   final Nickname nickname,
+                   final Password password,
+                   final MemberPhoto memberPhoto,
+                   final RoleType roleType,
+                   final LocalDateTime createdAt,
+                   final LocalDateTime updatedAt,
+                   final MatchingMates matchingMates) {
+        this.id = id;
+        this.memberStatus = memberStatus;
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.memberPhoto = memberPhoto;
+        this.roleType = roleType;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.matchingMates = matchingMates;
+    }
+
+    private static void validateConstructor(final String email, final Password password, final Nickname nickname) {
+        Validator.validateNotBlank(email);
+        Validator.validateNotNull(List.of(password, nickname));
+    }
+
+    public static Member forMapper(final Long id,
+                                   final MemberStatus memberStatus,
+                                   final String email,
+                                   final Nickname nickname,
+                                   final Password password,
+                                   final MemberPhoto memberPhoto,
+                                   final RoleType roleType,
+                                   final LocalDateTime createdAt,
+                                   final LocalDateTime updatedAt,
+                                   final MatchingMates matchingMates) {
+        return new Member(id, memberStatus, email, nickname, password, memberPhoto, roleType, createdAt, updatedAt,
+                matchingMates);
+    }
+
+    public void assignId(Long generatedId) {
+        this.id = generatedId;
+    }
+
+    public void leave() {
+        this.memberStatus = MemberStatus.DELETED;
+        this.email = null;
+        this.nickname = null;
+        this.password = null;
+        this.memberPhoto = null;
+        this.matchingMates = null;
+    }
+
+    void updateNickname(final Nickname nickname) {
         this.nickname = nickname;
     }
 
-    void updatePassword(Password password) {
+    void updatePassword(final Password password) {
         this.password = password;
     }
 
-    void updateMemberPhoto(MemberPhoto memberPhoto) {
+    void updateMemberPhoto(final MemberPhoto memberPhoto) {
         this.memberPhoto = memberPhoto;
     }
 }
