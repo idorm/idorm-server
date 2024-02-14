@@ -6,7 +6,7 @@ import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.matchingInfo.domain.MatchingInfo;
 import idorm.idormServer.matchingMate.dto.MatchingMateFilterRequest;
 import idorm.idormServer.matchingMate.dto.MatchingMateResponse;
-import idorm.idormServer.matchingInfo.service.MatchingInfoService;
+import idorm.idormServer.matchingInfo.application.MatchingInfoService;
 import idorm.idormServer.matchingMate.service.MatchingMateService;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.member.service.MemberService;
@@ -29,19 +29,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static idorm.idormServer.config.SecurityConfig.API_ROOT_URL_V1;
-import static idorm.idormServer.config.SecurityConfig.AUTHENTICATION_HEADER_NAME;
 import static idorm.idormServer.common.exception.ExceptionCode.ILLEGAL_ARGUMENT_ADMIN;
 import static idorm.idormServer.common.exception.ExceptionCode.ILLEGAL_ARGUMENT_SELF;
 
 @Tag(name = "7. Matching Mate", description = "룸메이트 매칭 api")
 @Validated
 @RestController
-@RequestMapping(API_ROOT_URL_V1)
+@RequestMapping("api/v1")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatchingMateController {
 
-    private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final MatchingInfoService matchingInfoService;
     private final MatchingMateService matchingService;

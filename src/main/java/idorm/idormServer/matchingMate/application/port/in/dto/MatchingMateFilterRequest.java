@@ -1,6 +1,6 @@
 package idorm.idormServer.matchingMate.dto;
 
-import idorm.idormServer.common.ValidationSequence;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,11 +15,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@GroupSequence({MatchingMateFilterRequest.class,
-        ValidationSequence.NotBlank.class,
-        ValidationSequence.NotNull.class,
-        ValidationSequence.Range.class,
-})
 @Schema(title = "Matching 매칭정보 필터링 요청")
 public class MatchingMateFilterRequest {
 
