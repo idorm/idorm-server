@@ -1,9 +1,9 @@
-package idorm.idormServer.email.controller;
+package idorm.idormServer.email.adapter.in.web;
 
 import idorm.idormServer.common.dto.DefaultResponseDto;
-import idorm.idormServer.email.dto.EmailSendRequest;
-import idorm.idormServer.email.dto.EmailVerifyRequest;
-import idorm.idormServer.email.service.EmailService;
+import idorm.idormServer.email.application.port.in.EmailUseCase;
+import idorm.idormServer.email.application.port.in.dto.EmailSendRequest;
+import idorm.idormServer.email.application.port.in.dto.EmailVerifyRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,20 +12,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @Tag(name = "9. Email", description = "이메일 인증 api")
-@Validated
 @RestController
-@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1")
 public class EmailController {
-    // TODO : URI 수정
 
-    private final EmailService emailService;
+    private final EmailUseCase emailUseCase;
 
     @Operation(summary = "[회원가입용] 이메일 인증코드 발송")
     @ApiResponses(value = {
@@ -38,11 +35,11 @@ public class EmailController {
             @ApiResponse(responseCode = "500", description = "SERVER_ERROR / EMAIL_SERVER_ERROR"),
     }
     )
-    @PostMapping("/email")
-    public ResponseEntity<DefaultResponseDto<Object>> sendAuthEmail(
+    @PostMapping("/signup/email/send")
+    public ResponseEntity<DefaultResponseDto<Object>> sendAuthenticationEmail(
             @RequestBody @Valid EmailSendRequest request) {
 
-        emailService.sendVerificationMail(request);
+        emailUseCase.sendVerificationEmail(request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -66,12 +63,11 @@ public class EmailController {
             @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
     }
     )
-    @PostMapping("/verifyCode/{email}")
-    public ResponseEntity<DefaultResponseDto<Object>> verifyCode(
-            @PathVariable("email") String requestEmail,
+    @PostMapping("/signup/email/verification")
+    public ResponseEntity<DefaultResponseDto<Object>> verifyAuthenticationCode(
             @RequestBody @Valid EmailVerifyRequest request) {
 
-        emailService.verifyCode(requestEmail, request);
+        emailUseCase.verifyCode(request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -89,11 +85,11 @@ public class EmailController {
             @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
     }
     )
-    @PostMapping("/email/password")
-    public ResponseEntity<DefaultResponseDto<Object>> findPassword(
+    @PostMapping("/members/me/password/email/send")
+    public ResponseEntity<DefaultResponseDto<Object>> sendReAuthenticationEmail(
             @RequestBody @Valid EmailSendRequest request) {
 
-        emailService.sendRegisteredMail(request);
+        emailUseCase.sendReverificationEmail(request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()
@@ -114,12 +110,11 @@ public class EmailController {
             @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
     }
     )
-    @PostMapping("/verifyCode/password/{email}")
-    public ResponseEntity<DefaultResponseDto<Object>> verifyCodePassword(
-            @PathVariable("email") String requestEmail,
+    @PostMapping("/members/me/password/email/verification")
+    public ResponseEntity<DefaultResponseDto<Object>> verifyReAuthenticationCode(
             @RequestBody EmailVerifyRequest request) {
 
-        emailService.reVerifyCode(requestEmail, request);
+        emailUseCase.reVerifyCode(request);
 
         return ResponseEntity.status(200)
                 .body(DefaultResponseDto.builder()

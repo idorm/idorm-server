@@ -1,4 +1,4 @@
-package idorm.idormServer.email.dto;
+package idorm.idormServer.email.application.port.in.dto;
 
 import javax.validation.constraints.NotBlank;
 
