@@ -2,8 +2,7 @@ package idorm.idormServer.fcm.controller;
 
 import idorm.idormServer.auth.dto.AuthInfo;
 import idorm.idormServer.common.dto.DefaultResponseDto;
-import idorm.idormServer.fcm.service.MemberFCMService;
-import idorm.idormServer.member.dto.FcmRequest;
+
 import idorm.idormServer.support.token.Login;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberFCMController {
 
-    private final MemberFCMService memberFCMService;
+    private final idorm.idormServer.fcm.service.MemberFCMService memberFCMService;
 
     @Operation(summary = "회원 FCM 토큰 등록")
     @ApiResponses(value = {

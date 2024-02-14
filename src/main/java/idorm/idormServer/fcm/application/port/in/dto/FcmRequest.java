@@ -1,4 +1,4 @@
-package idorm.idormServer.fcm.dto;
+package idorm.idormServer.fcm.application.port.in.dto;
 
 import idorm.idormServer.fcm.domain.NotifyType;
 import lombok.*;
