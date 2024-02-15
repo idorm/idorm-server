@@ -4,12 +4,16 @@ import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.matchingMate.domain.MatchingMates;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(of = "id")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member {
 
     private Long id;
@@ -40,28 +44,6 @@ public class Member {
         Member member = new Member(email, password, nickname);
         member.roleType = RoleType.ADMIN;
         return member;
-    }
-
-    private Member(final Long id,
-                   final MemberStatus memberStatus,
-                   final String email,
-                   final Nickname nickname,
-                   final Password password,
-                   final MemberPhoto memberPhoto,
-                   final RoleType roleType,
-                   final LocalDateTime createdAt,
-                   final LocalDateTime updatedAt,
-                   final MatchingMates matchingMates) {
-        this.id = id;
-        this.memberStatus = memberStatus;
-        this.email = email;
-        this.nickname = nickname;
-        this.password = password;
-        this.memberPhoto = memberPhoto;
-        this.roleType = roleType;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.matchingMates = matchingMates;
     }
 
     private static void validateConstructor(final String email, final Password password, final Nickname nickname) {
