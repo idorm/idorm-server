@@ -22,7 +22,7 @@ public class Content {
         return new Content(content);
     }
 
-    public void update(String value){
+    public void update(String value) {
         validate(value);
         this.value = value;
     }

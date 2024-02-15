@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TitleMapper {
+class TitleMapper {
 
     public TitleEmbeddedEntity toEntity(Title title) {
         return new TitleEmbeddedEntity(title.getValue());
