@@ -1,181 +1,175 @@
 package idorm.idormServer.community.domain;
 
-import static idorm.idormServer.common.exception.ExceptionCode.FILE_COUNT_EXCEED;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
 
-import idorm.idormServer.common.domain.BaseTimeEntity;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.report.domain.Report;
-import java.util.Objects;
-import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseTimeEntity {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Post {
 
-    private static final String BLIND_POST_MESSAGE = "블라인드 처리된 게시글입니다.";
-    private static final int BLOCKED_CONDITION = 5;
-    private static final int MAX_POST_PHOTO_SIZE = 10;
+	private static final String BLIND_POST_MESSAGE = "블라인드 처리된 게시글입니다.";
+	private static final int BLOCKED_CONDITION = 5;
+	private static final int MAX_POST_PHOTO_SIZE = 10;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="post_id")
-    private Long id;
+	private Long id;
+	private DormCategory dormCategory;
+	private Title title;
+	private Content content;
+	private String writerNickname;
+	private Boolean isDeleted;
+	private Member member;
+	private List<PostPhoto> postPhotos = new ArrayList<>();
+	private List<PostLike> postLikes = new ArrayList<>();
+	private List<Comment> comments = new ArrayList<>();
+	private List<Report> reports = new ArrayList<>();
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('DORM1', 'DORM2', 'DORM3')")
-    private DormCategory dormCategory;
+	public Post(Member member,
+		DormCategory dormCategory,
+		Title title,
+		Content content,
+		String writerNickname,
+		List<PostPhoto> postPhotos) {
+		validate(writerNickname, postPhotos);
 
-    @Embedded
-    private Title title;
+		this.dormCategory = dormCategory;
+		this.title = title;
+		this.content = content;
+		this.writerNickname = writerNickname;
+		this.isDeleted = false;
+		this.member = member;
+		this.postPhotos = postPhotos;
+		createdAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
+	}
 
-    @Embedded
-    private Content content;
+	public static Post forMapper(final Long id,
+		final DormCategory dormCategory,
+		final Title title,
+		final Content content,
+		final String writerNickname,
+		final Boolean isDeleted,
+		final Member member,
+		final List<PostPhoto> postPhotos,
+		final List<PostLike> postLikes,
+		final List<Comment> comments,
+		final List<Report> reports,
+		final LocalDateTime createdAt,
+		final LocalDateTime updatedAt) {
 
-    @NotNull
-    @Column(nullable = false)
-    private String writerNickname;
+		return new Post(id, dormCategory, title, content, writerNickname, isDeleted, member, postPhotos, postLikes,
+			comments, reports, createdAt, updatedAt);
+	}
 
-    @NotNull
-    @Column(nullable = false)
-    private Boolean isDeleted;
+	private void validate(String writerNickname, List<PostPhoto> postPhotos) {
+		Validator.validateNotBlank(writerNickname);
+		validatePostPhotoSize(postPhotos.size());
+	}
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+	private void validatePostPhotoSize(int count) {
+		if (count > MAX_POST_PHOTO_SIZE) {
+			throw new CustomException(null, FILE_COUNT_EXCEED);
+		}
+	}
 
-    @OneToMany(mappedBy = "post")
-    private List<PostPhoto> postPhotos = new ArrayList<>();
+	public void updateTitle(Title title) {
+		this.title = title;
+	}
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<PostLike> postLikes = new ArrayList<>();
+	public void updateContent(Content content) {
+		this.content = content;
+	}
 
-    @OneToMany(mappedBy = "post")
-    private List<Comment> comments = new ArrayList<>();
+	public void updateWriterNickname(String nickname) {
+		Validator.validateNotBlank(nickname);
+		this.writerNickname = nickname;
+	}
 
-    @OneToMany(mappedBy = "post")
-    private List<Report> reports = new ArrayList<>();
+	public void updatePostPhotos(List<PostPhoto> postPhotos) {
+		validatePostPhotoSize(postPhotos.size());
+		this.postPhotos.clear();
+		this.postPhotos = postPhotos;
+	}
 
-    @Builder
-    public Post(Member member, DormCategory dormCategory, Title title, Content content, String writerNickname,
-                List<PostPhoto> postPhotos) {
-        validate(writerNickname, postPhotos);
-        this.dormCategory = dormCategory;
-        this.title = title;
-        this.content = content;
-        this.writerNickname = writerNickname;
-        this.isDeleted = false;
-        this.member = member;
-        this.postPhotos = postPhotos;
-    }
+	public boolean isOwner(Member member) {
+		return this.member.equals(member);
+	}
 
-    private void validate(String writerNickname, List<PostPhoto> postPhotos) {
-        Validator.validateNotBlank(writerNickname);
-        validatePostPhotoSize(postPhotos.size());
-    }
+	public boolean isAnonymous() {
+		return !getNickname().equals(member.getNickname().getValue());
+	}
 
-    private void validatePostPhotoSize(int count) {
-        if (count > MAX_POST_PHOTO_SIZE) {
-            throw new CustomException(null, FILE_COUNT_EXCEED);
-        }
-    }
+	public String getNickname() {
+		if (isBlocked()) {
+			return BLIND_POST_MESSAGE;
+		}
+		return writerNickname;
+	}
 
-    public void updateTitle(Title title) {
-        this.title = title;
-    }
+	public String getTitleValue() {
+		if (isBlocked()) {
+			return BLIND_POST_MESSAGE;
+		}
+		return title.getValue();
+	}
 
-    public void updateContent(Content content) {
-        this.content = content;
-    }
+	public String getContentValue() {
+		if (isBlocked()) {
+			return BLIND_POST_MESSAGE;
+		}
+		return content.getValue();
+	}
 
-    public void updateWriterNickname(String nickname) {
-        Validator.validateNotBlank(nickname);
-        this.writerNickname = nickname;
-    }
+	public int getCommentCount() {
+		if (Objects.isNull(comments)) {
+			return 0;
+		}
+		return comments.size();
+	}
 
-    public void updatePostPhotos(List<PostPhoto> postPhotos) {
-        validatePostPhotoSize(postPhotos.size());
-        this.postPhotos.clear();
-        this.postPhotos = postPhotos;
-    }
+	public int getPostLikeCount() {
+		if (Objects.isNull(postLikes)) {
+			return 0;
+		}
+		return postLikes.size();
+	}
 
-    public boolean isOwner(Member member) {
-        return this.member.equals(member);
-    }
+	private boolean isBlocked() {
+		return reports.size() >= BLOCKED_CONDITION;
+	}
 
-    public boolean isAnonymous() {
-        return !getNickname().equals(member.getNickname().getValue());
-    }
+	void addPostLike(PostLike postLike) {
+		this.postLikes.add(postLike);
+	}
 
-    public String getNickname() {
-        if (isBlocked()) {
-            return BLIND_POST_MESSAGE;
-        }
-        return writerNickname;
-    }
+	void deletePostLike(PostLike postLike) {
+		this.postLikes.remove(postLike);
+	}
 
-    public String getTitle() {
-        if (isBlocked()) {
-            return BLIND_POST_MESSAGE;
-        }
-        return title.getValue();
-    }
+	void addComment(Comment comment) {
+		this.comments.add(comment);
+	}
 
-    public String getContent() {
-        if (isBlocked()) {
-            return BLIND_POST_MESSAGE;
-        }
-        return content.getValue();
-    }
+	void deleteComment(Comment comment) {
+		this.comments.remove(comment);
+	}
 
-    public int getCommentCount() {
-        if (Objects.isNull(comments)) {
-            return 0;
-        }
-        return comments.size();
-    }
-
-    public int getPostLikeCount() {
-        if (Objects.isNull(postLikes)) {
-            return 0;
-        }
-        return postLikes.size();
-    }
-
-    private boolean isBlocked() {
-        return reports.size() >= BLOCKED_CONDITION;
-    }
-
-    void addPostLike(PostLike postLike) {
-        this.postLikes.add(postLike);
-    }
-
-    void deletePostLike(PostLike postLike) {
-        this.postLikes.remove(postLike);
-    }
-
-    void addComment(Comment comment) {
-        this.comments.add(comment);
-    }
-
-    void deleteComment(Comment comment) {
-        this.comments.remove(comment);
-    }
-
-    public void delete() {
-        this.isDeleted = true;
-        // TODO : postPhotos 및 S3 사진 삭제
-    }
+	public void delete() {
+		this.isDeleted = true;
+		// TODO : postPhotos 및 S3 사진 삭제
+	}
 }

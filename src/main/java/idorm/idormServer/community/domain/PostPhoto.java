@@ -2,37 +2,39 @@ package idorm.idormServer.community.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import idorm.idormServer.common.util.Validator;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PostPhoto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_photo_id")
-    private Long id;
+	private Long id;
+	private Post post;
+	private String photoUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+	private PostPhoto(final Post post, final String photoUrl) {
+		validateConstructor(post, photoUrl);
+		this.post = post;
+		this.photoUrl = photoUrl;
+	}
 
-    private String photoUrl;
+	public static List<PostPhoto> of(Post post, List<String> photoUrls) {
+		List<PostPhoto> postPhotos = new ArrayList<>();
 
-    private PostPhoto(Post post, String photoUrl) {
-        this.post = post;
-        this.photoUrl = photoUrl;
-    }
+		photoUrls.forEach(photoUrl -> postPhotos.add(new PostPhoto(post, photoUrl)));
+		return postPhotos;
+	}
 
-    public static List<PostPhoto> of(Post post, List<String> photoUrls) {
-        List<PostPhoto> postPhotos = new ArrayList<>();
+	public static PostPhoto forMapper(final Long id, final Post post, final String photoUrl) {
+		return new PostPhoto(id, post, photoUrl);
+	}
 
-        photoUrls.forEach(photoUrl -> postPhotos.add(new PostPhoto(post, photoUrl)));
-        return postPhotos;
-    }
+	private void validateConstructor(Post post, String postUrl) {
+		Validator.validateNotNull(post);
+		Validator.validateNotBlank(postUrl);
+	}
 }
