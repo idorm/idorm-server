@@ -6,11 +6,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MatchingMates {
 
     private Set<MatchingMate> favoriteMates = new HashSet<>();
@@ -18,11 +20,6 @@ public class MatchingMates {
 
     public static MatchingMates empty() {
         return new MatchingMates();
-    }
-
-    private MatchingMates(Set<MatchingMate> favoriteMates, Set<MatchingMate> nonFavoriteMates) {
-        this.favoriteMates = favoriteMates;
-        this.nonFavoriteMates = nonFavoriteMates;
     }
 
     public static MatchingMates forMapper(Set<MatchingMate> favoriteMates, Set<MatchingMate> nonFavoriteMates) {
