@@ -1,23 +1,23 @@
-package idorm.idormServer.community.dto;
+package idorm.idormServer.community.application.port.in.dto;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.domain.PostPhoto;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.MemberPhoto;
-import idorm.idormServer.community.domain.PostPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Schema(title = "Post 단건 응답")
+@Schema(title = "PostJpaEntity 단건 응답")
 public class PostResponse {
 
     @Schema(description= "게시글 식별자", example = "1")
@@ -72,9 +72,9 @@ public class PostResponse {
     // 게시글 저장 시에만 사용
     public PostResponse(Post post, MemberPhoto memberPhoto) {
         this.postId = post.getId();
-        this.memberId = post.getMember().getId();
+        this.memberId = post.getMemberEntity().getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
-        this.title = post.getTitle();
+        this.title = post.getTitleEmbeddedEntity();
         this.content = post.getContent();
         this.isLiked = false;
         this.createdAt = post.getCreatedAt();
@@ -84,11 +84,11 @@ public class PostResponse {
         this.imagesCount = 0;
         this.isAnonymous = post.getIsAnonymous();
 
-        if(post.getMember().getIsDeleted()) { // 회원 탈퇴의 경우
+        if(post.getMemberEntity().getIsDeleted()) { // 회원 탈퇴의 경우
             this.nickname = null;
             this.memberId = null;
         } else if(!post.getIsAnonymous()) { // 익명이 아닌 경우
-            this.nickname = post.getMember().getNickname();
+            this.nickname = post.getMemberEntity().getNickname();
 
             if(memberPhoto != null)
                 this.profileUrl = memberPhoto.getPhotoUrl();
@@ -107,9 +107,9 @@ public class PostResponse {
 
     public PostResponse(Post post, List<ParentCommentResponse> comments, MemberPhoto postMemberPhoto, boolean isLiked) {
         this.postId = post.getId();
-        this.memberId = post.getMember().getId();
+        this.memberId = post.getMemberEntity().getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
-        this.title = post.getTitle();
+        this.title = post.getTitleEmbeddedEntity();
         this.content = post.getContent();
         this.isLiked = isLiked;
         this.likesCount = 0;
@@ -125,11 +125,11 @@ public class PostResponse {
         if (post.getCommentsIsDeletedIsFalse() != null)
             this.commentsCount = post.getCommentsCount();
 
-        if(post.getMember().getIsDeleted()) { // 회원 탈퇴의 경우
+        if(post.getMemberEntity().getIsDeleted()) { // 회원 탈퇴의 경우
             this.memberId = null;
             this.nickname = null;
         } else if(!post.getIsAnonymous()) { // 익명이 아닌 경우
-            this.nickname = post.getMember().getNickname();
+            this.nickname = post.getMemberEntity().getNickname();
             if(postMemberPhoto != null) {
                 this.profileUrl = postMemberPhoto.getPhotoUrl();
             }

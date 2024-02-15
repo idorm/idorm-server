@@ -1,6 +1,11 @@
-package idorm.idormServer.community.dto;
+package idorm.idormServer.community.application.port.in.dto;
 
-import idorm.idormServer.common.ValidationSequence;
+import javax.validation.GroupSequence;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+
 import idorm.idormServer.community.domain.Comment;
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.member.domain.Member;
@@ -9,12 +14,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.validation.GroupSequence;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 
 @Getter
 @AllArgsConstructor
@@ -25,7 +24,7 @@ import javax.validation.constraints.Size;
         ValidationSequence.Size.class,
         ValidationSequence.Positive.class
 })
-@Schema(title = "Comment 기본 요청")
+@Schema(title = "CommentJpaEntity 기본 요청")
 public class CommentRequest {
 
     @Schema(required = true, description = "내용", example = "댓글내용")

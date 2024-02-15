@@ -1,17 +1,18 @@
-package idorm.idormServer.community.dto;
+package idorm.idormServer.community.application.port.in.dto;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
-@Schema(title = "Post 저장 요청")
+@Schema(title = "PostJpaEntity 저장 요청")
 public class PostSaveRequest {
 
     @Schema(required = true, description = "커뮤니티 기숙사 분류", allowableValues = "DORM1, DORM2, DORM3",

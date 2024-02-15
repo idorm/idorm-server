@@ -1,14 +1,15 @@
-package idorm.idormServer.community.dto;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+package idorm.idormServer.community.application.port.in.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
 @Data
-@Schema(title = "Post 수정 요청")
+@Schema(title = "PostJpaEntity 수정 요청")
 public class PostUpdateRequest {
 
     @Schema(required = true, description = "제목", example = "제에목")

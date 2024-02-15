@@ -1,4 +1,4 @@
-package idorm.idormServer.community.dto;
+package idorm.idormServer.community.application.port.in.dto;
 
 import idorm.idormServer.community.domain.PostPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Schema(title = "PostPhoto 기본 응답")
+@Schema(title = "PostPhotoJpaEntity 기본 응답")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostPhotoResponse {
 

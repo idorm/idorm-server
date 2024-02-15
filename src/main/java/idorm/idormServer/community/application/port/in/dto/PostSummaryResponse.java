@@ -1,4 +1,6 @@
-package idorm.idormServer.community.dto;
+package idorm.idormServer.community.application.port.in.dto;
+
+import java.time.LocalDateTime;
 
 import idorm.idormServer.community.domain.Post;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
@@ -8,12 +10,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Schema(title = "Post 요약 응답")
+@Schema(title = "PostJpaEntity 요약 응답")
 public class PostSummaryResponse {
 
     @Schema(description="게시글 식별자")
@@ -56,19 +56,19 @@ public class PostSummaryResponse {
     public PostSummaryResponse(Post post) {
         this.postId = post.getId();
         this.dormCategory = DormCategory.valueOf(post.getDormCategory());
-        this.title = post.getTitle();
+        this.title = post.getTitleEmbeddedEntity();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
         this.isAnonymous = post.getIsAnonymous();
 
-        if (!post.getMember().getIsDeleted()) {
-            this.memberId = post.getMember().getId();
+        if (!post.getMemberEntity().getIsDeleted()) {
+            this.memberId = post.getMemberEntity().getId();
 
             if (post.getIsAnonymous())
                 this.nickname = "익명";
             else
-                this.nickname = post.getMember().getNickname();
+                this.nickname = post.getMemberEntity().getNickname();
         } else {
             this.nickname = null;
             this.isAnonymous = null;

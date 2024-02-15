@@ -1,6 +1,9 @@
-package idorm.idormServer.community.dto;
+package idorm.idormServer.community.application.port.in.dto;
 
-import idorm.idormServer.community.domain.Comment;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import idorm.idormServer.member.domain.MemberPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -8,14 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Schema(title = "Comment 커스텀 부모 댓글 및 대댓글들 응답")
+@Schema(title = "CommentJpaEntity 커스텀 부모 댓글 및 대댓글들 응답")
 public class ParentCommentResponse {
 
     @Schema(description= "댓글 식별자", required = true)
@@ -55,7 +54,7 @@ public class ParentCommentResponse {
                                  MemberPhoto parentCommentMemberPhoto,
                                  List<CommentResponse> subComments) {
 
-        this.memberId = parentComment.getMember().getId();
+        this.memberId = parentComment.getMemberEntity().getId();
         this.commentId = parentComment.getId();
         this.postId = parentComment.getPost().getId();
         this.isDeleted = parentComment.getIsDeleted();
@@ -66,13 +65,13 @@ public class ParentCommentResponse {
         if (parentComment.getPost().getIsDeleted())
             this.postId = null;
 
-        if (parentComment.getMember().getIsDeleted()) {
+        if (parentComment.getMemberEntity().getIsDeleted()) {
             this.memberId = null;
             this.nickname = null;
         } else if(parentComment.getIsAnonymous()) {
             this.nickname = anonymousNickname;
         } else if(!parentComment.getIsAnonymous()) {
-            this.nickname = parentComment.getMember().getNickname();
+            this.nickname = parentComment.getMemberEntity().getNickname();
             if(parentCommentMemberPhoto != null) {
                 this.profileUrl = parentCommentMemberPhoto.getPhotoUrl();
             }

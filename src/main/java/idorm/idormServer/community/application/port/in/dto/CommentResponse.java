@@ -1,6 +1,7 @@
-package idorm.idormServer.community.dto;
+package idorm.idormServer.community.application.port.in.dto;
 
-import idorm.idormServer.community.domain.Comment;
+import java.time.LocalDateTime;
+
 import idorm.idormServer.member.domain.MemberPhoto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -8,12 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Schema(title = "Comment 댓글 및 대댓글 기본 응답")
+@Schema(title = "CommentJpaEntity 댓글 및 대댓글 기본 응답")
 public class CommentResponse {
 
     @Schema(description= "댓글 식별자", required = true)
@@ -50,7 +49,7 @@ public class CommentResponse {
 
     public CommentResponse(Comment comment, MemberPhoto commentMemberPhoto) {
 
-        this.memberId = comment.getMember().getId();
+        this.memberId = comment.getMemberEntity().getId();
         this.commentId = comment.getId();
         this.parentCommentId = comment.getParentCommentId();
         this.postId = comment.getPost().getId();
@@ -62,13 +61,13 @@ public class CommentResponse {
         if (comment.getPost().getIsDeleted())
             this.postId = null;
 
-        if (comment.getMember().getIsDeleted()) {
+        if (comment.getMemberEntity().getIsDeleted()) {
             this.nickname = null;
             this.memberId = null;
         } else if(comment.getIsAnonymous()) {
             this.nickname = "익명";
         } else if(!comment.getIsAnonymous()) {
-            this.nickname = comment.getMember().getNickname();
+            this.nickname = comment.getMemberEntity().getNickname();
             if(commentMemberPhoto != null) {
                 this.profileUrl = commentMemberPhoto.getPhotoUrl();
             }
@@ -76,7 +75,7 @@ public class CommentResponse {
     }
     public CommentResponse(String anonymousNickname, Comment comment, MemberPhoto commentMemberPhoto) {
 
-        this.memberId = comment.getMember().getId();
+        this.memberId = comment.getMemberEntity().getId();
         this.commentId = comment.getId();
         this.parentCommentId = comment.getParentCommentId();
         this.postId = comment.getPost().getId();
@@ -88,13 +87,13 @@ public class CommentResponse {
         if (comment.getPost().getIsDeleted())
             this.postId = null;
 
-        if (comment.getMember().getIsDeleted()) {
+        if (comment.getMemberEntity().getIsDeleted()) {
             this.memberId = null;
             this.nickname = null;
         } else if(comment.getIsAnonymous()) {
             this.nickname = anonymousNickname;
         } else if(!comment.getIsAnonymous()) {
-            this.nickname = comment.getMember().getNickname();
+            this.nickname = comment.getMemberEntity().getNickname();
             if(commentMemberPhoto != null) {
                 this.profileUrl = commentMemberPhoto.getPhotoUrl();
             }
