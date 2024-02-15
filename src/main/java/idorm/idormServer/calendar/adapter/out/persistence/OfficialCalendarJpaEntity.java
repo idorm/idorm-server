@@ -1,14 +1,16 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
-import idorm.idormServer.common.domain.BaseTimeEntity;
+import static idorm.idormServer.calendar.domain.OfficialCalendar.*;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,50 +22,43 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class OfficialCalendarJpaEntity extends BaseTimeEntity {
+public class OfficialCalendarJpaEntity {
 
-    private static final String CRAWLING_FAIL_VALUE = "fail";
-    private static final LocalDate CRAWLING_FAIL_DATE = LocalDate.of(2020, 1, 1);
-    private static final String BLANK_TITLE_MESSAGE = "크롤링 실패 : 게시글 제목";
-    private static final String BLANK_INU_POST_ID_MESSAGE = "크롤링 실패 : 게시글 ID";
+	@Id
+	@Column(name = "official_calendar_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private static final int MAX_INU_POST_ID_LENGTH = 10;
+	// 관리자 등록, 수정 가능
+	private Boolean isDorm1Yn;
+	private Boolean isDorm2Yn;
+	private Boolean isDorm3Yn;
 
-    @Id
-    @Column(name = "official_calendar_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	private PeriodEmbeddedEntity period;
 
-    // 관리자 등록, 수정 가능
-    private Boolean isDorm1Yn;
-    private Boolean isDorm2Yn;
-    private Boolean isDorm3Yn;
+	// 크롤링 등록, 수정 가능
+	@Column(nullable = false)
+	private TitleEmbeddedEntity title;
 
-    private PeriodEmbeddedEntity periodEmbeddedEntity;
+	@Column(nullable = false)
+	private Boolean isPublic;
 
-    // 크롤링 등록, 수정 가능
-    @NotBlank
-    @Column(nullable = false)
-    private TitleEmbeddedEntity titleEmbeddedEntity;
+	// 크롤링 등록, 수정 불가
+	@Column(nullable = false, length = MAX_INU_POST_ID_LENGTH)
+	private String inuPostId;
 
-    @NotNull
-    @Column(nullable = false)
-    private Boolean isPublic;
+	@Column(nullable = false)
+	private String inuPostUrl;
 
-    // 크롤링 등록, 수정 불가
-    @NotBlank
-    @Column(nullable = false, length = MAX_INU_POST_ID_LENGTH)
-    private String inuPostId;
+	@Column(nullable = false)
+	private LocalDate inuPostCreatedAt;
 
-    @NotBlank
-    @Column(nullable = false)
-    private String inuPostUrl;
+	@Column(nullable = false)
+	private Boolean isDeleted;
 
-    @NotNull
-    @Column(nullable = false)
-    private LocalDate inuPostCreatedAt;
+	@Column(nullable = false)
+	private LocalDateTime createdAt;
 
-    @NotNull
-    @Column(nullable = false)
-    private Boolean isDeleted;
+	@Column(nullable = false)
+	private LocalDateTime updatedAt;
 }
