@@ -23,6 +23,8 @@ public enum GlobalResponseCode implements BaseResponseCode {
 
   INVALID_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
 
+  ACCESS_DENIED(FORBIDDEN, "접근 권한이 없습니다."),
+
   UNSUPPORTED_HTTP_METHOD(METHOD_NOT_ALLOWED, "지원하지 않는 메서드입니다."),
 
   SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.");
