@@ -1,13 +1,12 @@
 package idorm.idormServer.email.domain;
 
-import static idorm.idormServer.common.exception.ExceptionCode.DUPLICATE_EMAIL;
-import static idorm.idormServer.common.exception.ExceptionCode.EMAIL_CHARACTER_INVALID;
-import static idorm.idormServer.common.exception.ExceptionCode.MEMBER_NOT_FOUND;
+import static idorm.idormServer.common.exception.ExceptionCode.*;
+
+import java.time.LocalDateTime;
 
 import idorm.idormServer.common.exception.CustomException;
 import idorm.idormServer.common.exception.ExceptionCode;
 import idorm.idormServer.common.util.Validator;
-import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -15,113 +14,113 @@ import lombok.Getter;
 @EqualsAndHashCode(of = "id")
 public class Email {
 
-    public static final int MAX_EMAIL_LENGTH = 20;
-    private static final String EMAIL_REGEX = "^([\\w-]+(?:\\.[\\w-]+)*)+@(inu.ac.kr)$";
-    private static final long VALID_VERIFY_MINUTE = 5L;
-    private static final long VALID_REGISTER_MINUTE = 10L;
+	public static final int MAX_EMAIL_LENGTH = 20;
+	private static final String EMAIL_REGEX = "^([\\w-]+(?:\\.[\\w-]+)*)+@(inu.ac.kr)$";
+	private static final long VALID_VERIFY_MINUTE = 5L;
+	private static final long VALID_REGISTER_MINUTE = 10L;
 
-    private Long id;
-    private String email;
-    private EmailStatus emailStatus;
-    private VerificationCode code;
-    private LocalDateTime issuedAt;
-    private boolean registered;
+	private Long id;
+	private String email;
+	private EmailStatus emailStatus;
+	private VerificationCode code;
+	private LocalDateTime issuedAt;
+	private boolean registered;
 
-    public Email(final String email, final VerificationCode code) {
-        validateConstructor(email);
-        this.email = email;
-        this.code = code;
-        emailStatus = EmailStatus.SEND;
-        registered = false;
-        this.issuedAt = LocalDateTime.now();
-    }
+	public Email(final String email, final VerificationCode code) {
+		validateConstructor(email);
+		this.email = email;
+		this.code = code;
+		emailStatus = EmailStatus.SEND;
+		registered = false;
+		this.issuedAt = LocalDateTime.now();
+	}
 
-    private Email(final Long id,
-                  final String email,
-                  final EmailStatus emailStatus,
-                  final VerificationCode code,
-                  final LocalDateTime issuedAt,
-                  final boolean registered) {
-        this.id = id;
-        this.email = email;
-        this.emailStatus = emailStatus;
-        this.code = code;
-        this.issuedAt = issuedAt;
-        this.registered = registered;
-    }
+	private Email(final Long id,
+		final String email,
+		final EmailStatus emailStatus,
+		final VerificationCode code,
+		final LocalDateTime issuedAt,
+		final boolean registered) {
+		this.id = id;
+		this.email = email;
+		this.emailStatus = emailStatus;
+		this.code = code;
+		this.issuedAt = issuedAt;
+		this.registered = registered;
+	}
 
-    private static void validateConstructor(final String value) {
-        Validator.validateNotBlank(value);
-        Validator.validateFormat(value, EMAIL_REGEX, EMAIL_CHARACTER_INVALID);
-    }
+	private static void validateConstructor(final String value) {
+		Validator.validateNotBlank(value);
+		Validator.validateFormat(value, EMAIL_REGEX, EMAIL_CHARACTER_INVALID);
+	}
 
-    public static Email forMapper(final Long id,
-                                  final String email,
-                                  final EmailStatus emailStatus,
-                                  final VerificationCode code,
-                                  final LocalDateTime issuedAt,
-                                  final boolean registered) {
-        return new Email(id, email, emailStatus, code, issuedAt, registered);
-    }
+	public static Email forMapper(final Long id,
+		final String email,
+		final EmailStatus emailStatus,
+		final VerificationCode code,
+		final LocalDateTime issuedAt,
+		final boolean registered) {
+		return new Email(id, email, emailStatus, code, issuedAt, registered);
+	}
 
-    public void assignId(final Long id) {
-        this.id = id;
-    }
+	public void assignId(final Long id) {
+		this.id = id;
+	}
 
-    public void updateVerificationCode(VerificationCode code) {
-        validateNotSignUp();
+	public void updateVerificationCode(VerificationCode code) {
+		validateNotSignUp();
 
-        this.code = code;
-        this.issuedAt = LocalDateTime.now();
-        this.emailStatus = EmailStatus.SEND;
-    }
+		this.code = code;
+		this.issuedAt = LocalDateTime.now();
+		this.emailStatus = EmailStatus.SEND;
+	}
 
-    public void updateReVerificationCode(VerificationCode code) {
-        validateSignUpEmail();
+	public void updateReVerificationCode(VerificationCode code) {
+		validateSignUpEmail();
 
-        this.code = code;
-        this.issuedAt = LocalDateTime.now();
-        this.emailStatus = EmailStatus.RE_SEND;
-    }
+		this.code = code;
+		this.issuedAt = LocalDateTime.now();
+		this.emailStatus = EmailStatus.RE_SEND;
+	}
 
-    public void verify(final String code) {
-        validateNotSignUp();
-        validateValidTime();
+	public void verify(final String code) {
+		validateNotSignUp();
+		validateValidTime();
 
-        this.code.match(code);
-        this.emailStatus = EmailStatus.VERIFIED;
-    }
+		this.code.match(code);
+		this.emailStatus = EmailStatus.VERIFIED;
+	}
 
-    public void reVerify(final String code) {
-        validateSignUpEmail();
-        validateValidTime();
+	public void reVerify(final String code) {
+		validateSignUpEmail();
+		validateValidTime();
 
-        this.code.match(code);
-        this.emailStatus = EmailStatus.RE_VERIFIED;
-    }
+		this.code.match(code);
+		this.emailStatus = EmailStatus.RE_VERIFIED;
+	}
 
-    public void register() {
-        this.registered = true;
-    }
+	public void register() {
+		this.registered = true;
+	}
 
-    public void validateValidTime() {
-        LocalDateTime expiredTime = this.issuedAt.plusMinutes(VALID_REGISTER_MINUTE);
-        LocalDateTime now = LocalDateTime.now();
+	public void validateValidTime() {
+		LocalDateTime expiredTime = this.issuedAt.plusMinutes(VALID_REGISTER_MINUTE);
+		LocalDateTime now = LocalDateTime.now();
 
-        if (now.isAfter(expiredTime)) {
-            throw new CustomException(null, ExceptionCode.EXPIRED_CODE);
-        }
-    }
+		if (now.isAfter(expiredTime)) {
+			throw new CustomException(null, ExceptionCode.EXPIRED_CODE);
+		}
+	}
 
-    private void validateNotSignUp() {
-        if (isRegistered()) {
-            throw new CustomException(null, DUPLICATE_EMAIL);
-        }
-    }
+	private void validateNotSignUp() {
+		if (isRegistered()) {
+			throw new CustomException(null, DUPLICATE_EMAIL);
+		}
+	}
 
-    private void validateSignUpEmail() {
-        if (!isRegistered()) {
-            throw new CustomException(null, MEMBER_NOT_FOUND);
-        }
-    }
+	private void validateSignUpEmail() {
+		if (!isRegistered()) {
+			throw new CustomException(null, MEMBER_NOT_FOUND);
+		}
+	}
 }
