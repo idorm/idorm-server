@@ -1,4 +1,4 @@
-package idorm.idormServer.matchingMate.exception;
+package idorm.idormServer.matchingMate.adapter.out;
 
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
