@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-#    name: classpath:application.yml, /home/ec2-user/idorm-test/application-develop.yml
+    #    name: classpath:application.yml, /home/ec2-user/idorm-test/application-develop.yml
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
@@ -45,6 +45,14 @@ spring:
           starttls:
             enable: false
 
+  security:
+    jwt:
+      token:
+        secret-key: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcwNTg5NDMxMiwiaWF0IjoxNzA1ODk0MzEyfQ.FhuQUTWCvIuIHJnpgTRk0_bn1Ku0R8rA6KEALrhuhRo
+        expire-length:
+          access: 3600000
+          refresh: 1210000000
+
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -63,9 +71,6 @@ logging:
       clean-history-on-start: false
       file-name-pattern: ${LOGGING_FILE_PATH}/idorm--%d{yyyy-MM-dd}-%i.gz
       total-size-cap: 10MB
-
-jwt:
-  secret: ${JWT_SECRET_KEY}
 
 s3:
   key:
