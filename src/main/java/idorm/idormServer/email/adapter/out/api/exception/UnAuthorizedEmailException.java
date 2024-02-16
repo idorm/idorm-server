@@ -1,6 +1,7 @@
-package idorm.idormServer.email.exception;
+package idorm.idormServer.email.adapter.out.api.exception;
 
 import idorm.idormServer.common.exception.BaseException;
+import idorm.idormServer.email.adapter.out.api.EmailResponseCode;
 
 public class UnAuthorizedEmailException extends BaseException {
 

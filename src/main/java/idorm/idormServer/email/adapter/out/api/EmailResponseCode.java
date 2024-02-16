@@ -1,4 +1,4 @@
-package idorm.idormServer.email.exception;
+package idorm.idormServer.email.adapter.out.api;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
