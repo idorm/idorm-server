@@ -1,4 +1,4 @@
-package idorm.idormServer.calendar.exception;
+package idorm.idormServer.calendar.adapter.out;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
