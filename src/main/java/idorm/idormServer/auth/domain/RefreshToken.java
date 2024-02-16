@@ -1,30 +1,40 @@
 package idorm.idormServer.auth.domain;
 
-import idorm.idormServer.auth.adapter.out.api.exception.UnAuthorizedRefreshTokenException;
+import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.common.exception.ExceptionCode;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Entity
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
 
-	private Long id;
-	private Long memberId;
-	private String token;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "refresh_token_id")
+    private Long id;
 
-	public RefreshToken(final Long memberId, final String token) {
-		this.memberId = memberId;
-		this.token = token;
-	}
+    @Column(name = "member_id", nullable = false)
+    private Long memberId;
 
-	public static RefreshToken forMapper(final Long id, final Long memberId, final String token) {
-		return new RefreshToken(id, memberId, token);
-	}
+    @Column(name = "refresh_token", nullable = false)
+    private String token;
 
-	public void validateSameToken(final String token) {
-		if (!this.token.equals(token)) {
-			throw new UnAuthorizedRefreshTokenException();
-		}
-	}
+    public RefreshToken(Long memberId, String token) {
+        this.memberId = memberId;
+        this.token = token;
+    }
+
+    public void validateSameToken(final String token) {
+        if (!this.token.equals(token)) {
+            throw new CustomException(null, ExceptionCode.UNAUTHORIZED_REFRESH_MEMBER);
+        }
+    }
 }

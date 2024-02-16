@@ -1,20 +1,22 @@
 package idorm.idormServer.member.application.port.in;
 
-import idorm.idormServer.auth.domain.AuthInfo;
-import idorm.idormServer.member.application.port.in.dto.MemberInfoResponse;
+import idorm.idormServer.auth.dto.AuthInfo;
+import idorm.idormServer.member.application.port.in.dto.LoginRequest;
+import idorm.idormServer.member.application.port.in.dto.MemberProfileResponse;
 import idorm.idormServer.member.application.port.in.dto.NicknameUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.PasswordUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.SignupRequest;
+import idorm.idormServer.member.domain.Member;
 
 public interface MemberUseCase {
 
-	void signUp(SignupRequest request);
+    void signUp(SignupRequest request);
 
-	MemberInfoResponse getInfo(AuthInfo authInfo);
+    Long login(LoginRequest request);
 
-	void editNickname(AuthInfo authInfo, NicknameUpdateRequest request);
+    void editNickname(Member member, NicknameUpdateRequest request);
 
-	void editPassword(PasswordUpdateRequest request);
+    void editPassword(PasswordUpdateRequest request);
 
-	void leave(AuthInfo authInfo);
+    void leave(Member member);
 }
