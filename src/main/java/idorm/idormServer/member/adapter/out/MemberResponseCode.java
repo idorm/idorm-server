@@ -1,4 +1,4 @@
-package idorm.idormServer.member.exception;
+package idorm.idormServer.member.adapter.out;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -30,9 +30,6 @@ public enum MemberResponseCode implements BaseResponseCode {
 	INVALID_NICKNAME_CHARACTER(HttpStatus.BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
 	INVALID_NICKNAME_LENGTH(HttpStatus.BAD_REQUEST, "닉네임은 2~8자만 이내여야 합니다."),
 
-	INVALID_ACCESS_TOKEN(UNAUTHORIZED, "유효하지 않은 액세스 토큰 입니다."),
-	INVALID_REFRESH_TOKEN(UNAUTHORIZED, "유효하지 않은 리프레시 토큰 입니다."),
-	UNAUTHORIZED_PASSWORD(UNAUTHORIZED, "올바르지 않은 비밀번호 입니다."),
 	UNAUTHORIZED_DELETED_MEMBER(UNAUTHORIZED, "탈퇴한 회원입니다. 로그아웃이 필요합니다."),
 
 	NOT_FOUND_MEMBER(NOT_FOUND, "등록된 멤버가 없습니다."),
@@ -45,4 +42,9 @@ public enum MemberResponseCode implements BaseResponseCode {
 
 	private final HttpStatus status;
 	private final String message;
+
+	@Override
+	public String getName() {
+		return this.name();
+	}
 }
