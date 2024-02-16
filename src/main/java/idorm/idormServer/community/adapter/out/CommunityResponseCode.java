@@ -1,4 +1,4 @@
-package idorm.idormServer.community.exception;
+package idorm.idormServer.community.adapter.out;
 
 import static org.springframework.http.HttpStatus.*;
 
