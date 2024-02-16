@@ -1,10 +1,10 @@
 package idorm.idormServer.member.application.port.in;
 
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.auth.domain.AuthInfo;
 
 public interface MemberPhotoUseCase {
 
-    void savePhoto(Member member);
+	void savePhoto(AuthInfo authInfo);
 
-    void deletePhoto(Member member);
+	void deletePhoto(AuthInfo authInfo);
 }

@@ -1,80 +1,19 @@
 package idorm.idormServer.member.adapter.out.persistence;
 
-import idorm.idormServer.member.domain.Member;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import idorm.idormServer.member.domain.MemberStatus;
 import idorm.idormServer.member.domain.Nickname;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<MemberJpaEntity, Long> {
 
-    boolean existsByEmailAndMemberStatus(String email, MemberStatus memberStatus);
+	boolean existsByEmailAndMemberStatus(String email, MemberStatus memberStatus);
 
-    boolean existsMemberByNicknameAndMemberStatusIsActive(Nickname nickname);
+	boolean existsMemberByNicknameAndMemberStatusIsActive(Nickname nickname);
 
-    Optional<Member> findByEmailAndPasswordValueAndMemberStatusIsActive(String email, String password);
+	Optional<MemberJpaEntity> findByEmailAndPasswordValueAndMemberStatusIsActive(String email, String password);
 
-    Optional<Member> findByIdAndMemberStatusIsActive(Long id);
-
-    Optional<Member> findByEmailAndMemberStatusIsActive(String email);
-
-    //----------
-
-    Optional<Member> findByIdAndIsDeletedIsFalse(Long id);
-
-    Optional<Member> findById(Long id); // UserDetail 처리용
-
-    boolean existsByNicknameAndIsDeletedIsFalse(String nickname);
-
-    List<Member> findByDormCategoryAndIdIsNotAndIsDeletedIsFalseAndFcmTokenIsNotNull(Character dormCategory, Long id);
-
-    Optional<Member> findByIdAndIsDeletedIsFalseAndFcmTokenIsNotNull(Long id);
-
-    @Query(value = "SELECT liked_member " +
-            "FROM liked_members d " +
-            "WHERE d.member_id = :memberId", nativeQuery = true)
-    List<Long> findlikedMembersByLoginMemberId(@Param("memberId") Long memberId);
-
-    @Query(value = "SELECT disliked_member " +
-            "FROM disliked_members d " +
-            "WHERE d.member_id = :memberId", nativeQuery = true)
-    List<Long> findDislikedMembersByLoginMemberId(@Param("memberId") Long memberId);
-
-    @Query(value = "SELECT EXISTS " +
-            "(select * " +
-            "FROM disliked_members d " +
-            "WHERE d.member_id = :loginMemberId " +
-            "AND d.disliked_member = :dislikedMemberId limit 1) as success", nativeQuery = true)
-    int isExistDislikedMember(@Param("loginMemberId") Long loginMemberId,
-                              @Param("dislikedMemberId") Long dislikedMemberId);
-
-    @Query(value = "SELECT EXISTS " +
-            "(select * " +
-            "FROM liked_members l " +
-            "WHERE l.member_id = :loginMemberId " +
-            "AND l.liked_member = :likedMemberId limit 1)", nativeQuery = true)
-    int isExistLikedMember(@Param("loginMemberId") Long loginMemberId,
-                           @Param("likedMemberId") Long likedMemberId);
-
-    @Modifying
-    @Transactional
-    @Query(value = "DELETE " +
-            "FROM liked_members " +
-            "WHERE liked_members.member_id = :memberId || " +
-            "liked_members.liked_member = :memberId", nativeQuery = true)
-    void deleteAllLikedMembersByDeletedMember(@Param("memberId") Long deletedMemberId);
-
-    @Modifying
-    @Transactional
-    @Query(value = "DELETE " +
-            "FROM disliked_members " +
-            "WHERE disliked_members.member_id = :memberId || " +
-            "disliked_members.disliked_member = :memberId", nativeQuery = true)
-    void deleteAllDislikedMembersByDeletedMember(@Param("memberId") Long deletedMemberId);
+	Optional<MemberJpaEntity> findByIdAndMemberStatusIsActive(Long id);
 }

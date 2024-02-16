@@ -22,6 +22,8 @@ public enum AuthResponseCode implements BaseResponseCode {
 	UNAUTHORIZED_ACCESS_TOKEN(UNAUTHORIZED, "유효하지 않은 액세스 토큰 입니다."),
 	UNAUTHORIZED_REFRESH_TOKEN(UNAUTHORIZED, "유효하지 않은 리프레시 토큰 입니다."),
 
+	ACCESS_DENIED_ADMIN(FORBIDDEN, "관리자 접근 권한이 없습니다."),
+
 	NOT_FOUND_TOKEN(NOT_FOUND, "토큰이 존재하지 않습니다.");
 
 	private final HttpStatus status;
