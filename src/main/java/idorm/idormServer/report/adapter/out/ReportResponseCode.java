@@ -1,4 +1,4 @@
-package idorm.idormServer.report.exception;
+package idorm.idormServer.report.adapter.out;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;

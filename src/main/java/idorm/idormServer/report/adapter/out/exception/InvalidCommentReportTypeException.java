@@ -1,6 +1,7 @@
-package idorm.idormServer.report.exception;
+package idorm.idormServer.report.adapter.out.exception;
 
 import idorm.idormServer.common.exception.BaseException;
+import idorm.idormServer.report.adapter.out.ReportResponseCode;
 
 public class InvalidCommentReportTypeException extends BaseException {
 
