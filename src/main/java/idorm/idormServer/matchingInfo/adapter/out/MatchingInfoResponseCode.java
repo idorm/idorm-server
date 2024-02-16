@@ -1,4 +1,4 @@
-package idorm.idormServer.matchingInfo.exception;
+package idorm.idormServer.matchingInfo.adapter.out;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
