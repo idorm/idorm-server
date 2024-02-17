@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum EmailResponseCode implements BaseResponseCode {
+
   //성공
   SEND_EMAIL(OK, "이메일 인증코드 전송 완료"),
   EMAIL_VERIFIED(OK, "이메일 인증코드 검증 완료"),
@@ -24,6 +25,7 @@ public enum EmailResponseCode implements BaseResponseCode {
   //실패
   INVALID_EMAIL_CHARACTER(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
 
+  INVALID_VERIFICATION_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
   UNAUTHORIZED_EMAIL(UNAUTHORIZED, "인증이 되지 않은 이메일 입니다."),
   EXPIRED_EMAIL_VERIFICATION_CODE(UNAUTHORIZED, "이메일 인증 유효시간이 초과되었습니다."),
 

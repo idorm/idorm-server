@@ -12,8 +12,8 @@ import idorm.idormServer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService implements AuthUseCase {
 
     private final LoadMemberPort loadMemberPort;

@@ -13,7 +13,6 @@ import idorm.idormServer.auth.domain.RefreshToken;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RefreshTokenService implements RefreshTokenUseCase {
 
@@ -23,6 +22,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 	private final DeleteRefreshTokenPort deleteRefreshTokenPort;
 
 	@Override
+	@Transactional
 	public void saveToken(String token, Long memberId) {
 		deleteToken(memberId);
 		RefreshToken refreshToken = new RefreshToken(memberId, token);
@@ -30,6 +30,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 	}
 
 	@Override
+	@Transactional
 	public void matches(String refreshToken, Long memberId) {
 
 		RefreshToken savedToken = loadRefreshTokenPort.load(memberId);
@@ -43,6 +44,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 	}
 
 	@Override
+	@Transactional
 	public void deleteToken(Long memberId) {
 		deleteRefreshTokenPort.deleteAll(memberId);
 	}

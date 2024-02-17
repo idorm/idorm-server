@@ -21,8 +21,6 @@ public enum GlobalResponseCode implements BaseResponseCode {
   ILLEGAL_ARGUMENT_DATE_SET(BAD_REQUEST, "시작일자가 종료일자보다 빠르거나 같아야 합니다."),
   FILED_DATE_REQUIRED(BAD_REQUEST, "일자 입력은 필수 입니다."),
 
-  INVALID_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
-
   UNSUPPORTED_HTTP_METHOD(METHOD_NOT_ALLOWED, "지원하지 않는 메서드입니다."),
 
   SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다.");
