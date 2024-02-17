@@ -1,14 +1,10 @@
 package idorm.idormServer.email.adapter.out.persistence;
 
-import idorm.idormServer.email.domain.EmailStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 
-public interface EmailRepository extends JpaRepository<EmailJpaEntity,Long> {
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    // TODO: 조회 시 status 고려
-    Optional<EmailJpaEntity> findByEmail(String email);
+public interface EmailRepository extends JpaRepository<EmailJpaEntity, Long> {
 
-    Optional<EmailJpaEntity> findByEmailAndEmailStatus(String email, EmailStatus emailStatus);
+	Optional<EmailJpaEntity> findByEmail(String email);
 }

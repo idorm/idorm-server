@@ -1,12 +1,12 @@
 package idorm.idormServer.email.domain;
 
-import static idorm.idormServer.common.exception.ExceptionCode.*;
-
 import java.time.LocalDateTime;
 
-import idorm.idormServer.common.exception.CustomException;
-import idorm.idormServer.common.exception.ExceptionCode;
 import idorm.idormServer.common.util.Validator;
+import idorm.idormServer.email.adapter.out.api.EmailResponseCode;
+import idorm.idormServer.email.adapter.out.api.exception.DuplicatedEmailException;
+import idorm.idormServer.email.adapter.out.api.exception.ExpiredEmailVerificationCodeException;
+import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -41,6 +41,7 @@ public class Email {
 		final VerificationCode code,
 		final LocalDateTime issuedAt,
 		final boolean registered) {
+
 		this.id = id;
 		this.email = email;
 		this.emailStatus = emailStatus;
@@ -51,7 +52,7 @@ public class Email {
 
 	private static void validateConstructor(final String value) {
 		Validator.validateNotBlank(value);
-		Validator.validateFormat(value, EMAIL_REGEX, EMAIL_CHARACTER_INVALID);
+		Validator.validateFormat(value, EMAIL_REGEX, EmailResponseCode.INVALID_EMAIL_CHARACTER);
 	}
 
 	public static Email forMapper(final Long id,
@@ -60,6 +61,7 @@ public class Email {
 		final VerificationCode code,
 		final LocalDateTime issuedAt,
 		final boolean registered) {
+
 		return new Email(id, email, emailStatus, code, issuedAt, registered);
 	}
 
@@ -69,7 +71,6 @@ public class Email {
 
 	public void updateVerificationCode(VerificationCode code) {
 		validateNotSignUp();
-
 		this.code = code;
 		this.issuedAt = LocalDateTime.now();
 		this.emailStatus = EmailStatus.SEND;
@@ -77,7 +78,6 @@ public class Email {
 
 	public void updateReVerificationCode(VerificationCode code) {
 		validateSignUpEmail();
-
 		this.code = code;
 		this.issuedAt = LocalDateTime.now();
 		this.emailStatus = EmailStatus.RE_SEND;
@@ -108,19 +108,19 @@ public class Email {
 		LocalDateTime now = LocalDateTime.now();
 
 		if (now.isAfter(expiredTime)) {
-			throw new CustomException(null, ExceptionCode.EXPIRED_CODE);
+			throw new ExpiredEmailVerificationCodeException();
 		}
 	}
 
 	private void validateNotSignUp() {
 		if (isRegistered()) {
-			throw new CustomException(null, DUPLICATE_EMAIL);
+			throw new DuplicatedEmailException();
 		}
 	}
 
 	private void validateSignUpEmail() {
 		if (!isRegistered()) {
-			throw new CustomException(null, MEMBER_NOT_FOUND);
+			throw new NotFoundMemberException();
 		}
 	}
 }

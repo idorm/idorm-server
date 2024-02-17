@@ -21,8 +21,8 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class JwtTokenService implements JwtTokenUseCase {
 
 	private final Key signingKey;

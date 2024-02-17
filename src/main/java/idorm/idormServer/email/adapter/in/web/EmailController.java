@@ -1,6 +1,16 @@
 package idorm.idormServer.email.adapter.in.web;
 
-import idorm.idormServer.common.dto.DefaultResponseDto;
+import static idorm.idormServer.email.adapter.out.api.EmailResponseCode.*;
+
+import javax.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.email.application.port.in.EmailUseCase;
 import idorm.idormServer.email.application.port.in.dto.EmailSendRequest;
 import idorm.idormServer.email.application.port.in.dto.EmailVerifyRequest;
@@ -11,10 +21,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Tag(name = "9. Email", description = "이메일 인증 api")
 @RestController
@@ -22,104 +28,81 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1")
 public class EmailController {
 
-    private final EmailUseCase emailUseCase;
+	private final EmailUseCase emailUseCase;
 
-    @Operation(summary = "[회원가입용] 이메일 인증코드 발송")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200", description = "SEND_EMAIL",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "EMAIL_CHARACTER_INVALID / FIELD_REQUIRED"),
-            @ApiResponse(responseCode = "409", description = "DUPLICATE_EMAIL"),
-            @ApiResponse(responseCode = "500", description = "SERVER_ERROR / EMAIL_SERVER_ERROR"),
-    }
-    )
-    @PostMapping("/signup/email/send")
-    public ResponseEntity<DefaultResponseDto<Object>> sendAuthenticationEmail(
-            @RequestBody @Valid EmailSendRequest request) {
+	@Operation(summary = "[회원가입용] 이메일 인증코드 발송")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200", description = "SEND_EMAIL",
+			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "400", description = "EMAIL_CHARACTER_INVALID / FIELD_REQUIRED"),
+		@ApiResponse(responseCode = "409", description = "DUPLICATE_EMAIL"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR / EMAIL_SERVER_ERROR"),
+	}
+	)
+	@PostMapping("/signup/email/send")
+	public ResponseEntity<SuccessResponse<Object>> sendAuthenticationEmail(
+		@RequestBody @Valid EmailSendRequest request) {
 
-        emailUseCase.sendVerificationEmail(request);
+		emailUseCase.sendVerificationEmail(request);
 
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("SEND_EMAIL")
-                        .responseMessage("이메일 인증코드 전송 완료")
-                        .build());
+		return ResponseEntity.ok().body(SuccessResponse.from(SEND_EMAIL));
+	}
 
-    }
+	@Operation(summary = "[회원가입용] 이메일 인증코드 검증", description = "/email 인증코드 확인 용도")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "EMAIL_VERIFIED",
+			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED"),
+		@ApiResponse(responseCode = "401", description = "INVALID_VERIFICATION_CODE / EXPIRED_EMAIL_VERIFICATION_CODE"),
+		@ApiResponse(responseCode = "404", description = "EMAIL_NOT_FOUND"),
+		@ApiResponse(responseCode = "409", description = "DUPLICATE_EMAIL"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
+	}
+	)
+	@PostMapping("/signup/email/verification")
+	public ResponseEntity<SuccessResponse<Object>> verifyAuthenticationCode(
+		@RequestBody @Valid EmailVerifyRequest request) {
 
+		emailUseCase.verifyCode(request);
 
-    @Operation(summary = "[회원가입용] 이메일 인증코드 검증", description = "/email 인증코드 확인 용도")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "EMAIL_VERIFIED",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / EMAIL_CHARACTER_INVALID"),
-            @ApiResponse(responseCode = "401",
-                    description = "INVALID_CODE / EXPIRED_CODE"),
-            @ApiResponse(responseCode = "404", description = "EMAIL_NOT_FOUND"),
-            @ApiResponse(responseCode = "409", description = "DUPLICATE_MEMBER"),
-            @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-    }
-    )
-    @PostMapping("/signup/email/verification")
-    public ResponseEntity<DefaultResponseDto<Object>> verifyAuthenticationCode(
-            @RequestBody @Valid EmailVerifyRequest request) {
+		return ResponseEntity.ok().body(SuccessResponse.from(EMAIL_VERIFIED));
+	}
 
-        emailUseCase.verifyCode(request);
+	@Operation(summary = "[비밀번호 수정용] 이메일 인증코드 발송")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "SEND_REGISTERED_EMAIL",
+			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_EMAIL / NOT_FOUND_MEMBER"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
+	}
+	)
+	@PostMapping("/members/me/password/email/send")
+	public ResponseEntity<SuccessResponse<Object>> sendReAuthenticationEmail(
+		@RequestBody @Valid EmailSendRequest request) {
 
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("EMAIL_VERIFIED")
-                        .responseMessage("이메일 인증코드 검증 완료")
-                        .build());
-    }
+		emailUseCase.sendReverificationEmail(request);
 
-    @Operation(summary = "[비밀번호 수정용] 이메일 인증코드 발송")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SEND_REGISTERED_EMAIL",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
-            @ApiResponse(responseCode = "400", description = "EMAIL_CHARACTER_INVALID"),
-            @ApiResponse(responseCode = "404", description = "MEMBER_NOT_FOUND"),
-            @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-    }
-    )
-    @PostMapping("/members/me/password/email/send")
-    public ResponseEntity<DefaultResponseDto<Object>> sendReAuthenticationEmail(
-            @RequestBody @Valid EmailSendRequest request) {
+		return ResponseEntity.ok().body(SuccessResponse.from(SEND_REGISTERED_EMAIL));
+	}
 
-        emailUseCase.sendReverificationEmail(request);
+	@Operation(summary = "[비밀번호 수정용] 이메일 인증코드 검증", description = "/email/password 인증코드 확인 용도")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "REGISTERED_EMAIL_VERIFIED",
+			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED"),
+		@ApiResponse(responseCode = "401", description = "INVALID_VERIFICATION_CODE / EXPIRED_EMAIL_VERIFICATION_CODE"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_EMAIL / NOT_FOUND_MEMBER"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
+	}
+	)
+	@PostMapping("/members/me/password/email/verification")
+	public ResponseEntity<SuccessResponse<Object>> verifyReAuthenticationCode(
+		@RequestBody EmailVerifyRequest request) {
 
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("SEND_REGISTERED_EMAIL")
-                        .responseMessage("등록된 이메일 인증코드 전송 완료")
-                        .build());
+		emailUseCase.reVerifyCode(request);
 
-    }
-
-    @Operation(summary = "[비밀번호 수정용] 이메일 인증코드 검증", description = "/email/password 인증코드 확인 용도")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "REGISTERED_EMAIL_VERIFIED",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
-            @ApiResponse(responseCode = "401",
-                    description = "INVALID_CODE / EXPIRED_CODE"),
-            @ApiResponse(responseCode = "404",
-                    description = "EMAIL_NOT_FOUND / MEMBER_NOT_FOUND"),
-            @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-    }
-    )
-    @PostMapping("/members/me/password/email/verification")
-    public ResponseEntity<DefaultResponseDto<Object>> verifyReAuthenticationCode(
-            @RequestBody EmailVerifyRequest request) {
-
-        emailUseCase.reVerifyCode(request);
-
-        return ResponseEntity.status(200)
-                .body(DefaultResponseDto.builder()
-                        .responseCode("REGISTERED_EMAIL_VERIFIED")
-                        .responseMessage("등록된 이메일 인증코드 검증 완료")
-                        .build());
-    }
+		return ResponseEntity.ok().body(SuccessResponse.from(REGISTERED_EMAIL_VERIFIED));
+	}
 }

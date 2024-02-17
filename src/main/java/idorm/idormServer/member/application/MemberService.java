@@ -91,4 +91,29 @@ public class MemberService implements MemberUseCase {
     //         throw new CustomException(null, DUPLICATE_NICKNAME);
     //     }
     // }
+
+    // 기존 EmailService 존재 코드
+    // TODO: Member 리팩 시 수정 코드
+    //    public void validateNewMember(final String email) {
+    //        Email mail = emailRepository.findByEmailAndEmailStatus(email, EmailStatus.VERIFIED)
+    //                .orElseThrow(() -> new CustomException(null, UNAUTHORIZED_EMAIL));
+    //
+    //        mail.validateValidTime(LocalDateTime.now());
+    //        validateNotSignUpEmail(mail);
+    //    }
+    //
+    //    public void validateUpdatePassword(final String email) {
+    //        Email mail = emailRepository.findByEmailAndEmailStatus(email, EmailStatus.RE_VERIFIED)
+    //                .orElseThrow(() -> new CustomException(null, UNAUTHORIZED_EMAIL));
+    //
+    //        mail.validateValidTime(LocalDateTime.now());
+    //        validateSignUpEmail(mail);
+    //    }
+    //
+    //    @Transactional
+    //    public void useEmail(final String email) {
+    //        Email mail = emailRepository.findByEmail(email)
+    //                .orElseThrow(() -> new CustomException(null, EMAIL_NOT_FOUND));
+    //        mail.register();
+    //    }
 }
