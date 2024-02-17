@@ -22,11 +22,11 @@ public class SuccessResponse<T> {
 		this.data = data;
 	}
 
-	public static <T> SuccessResponse<T> of(BaseResponseCode baseResponseCode, T data) {
+	public static <T> SuccessResponse<T> of(final BaseResponseCode baseResponseCode, final T data) {
 		return new SuccessResponse<>(baseResponseCode, data);
 	}
 
-	public static <T> SuccessResponse<T> from(BaseResponseCode baseResponseCode) {
+	public static <T> SuccessResponse<T> from(final BaseResponseCode baseResponseCode) {
 		return new SuccessResponse<>(baseResponseCode);
 	}
 }
