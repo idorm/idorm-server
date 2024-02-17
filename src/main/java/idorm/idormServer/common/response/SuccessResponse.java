@@ -1,39 +1,42 @@
 package idorm.idormServer.common.response;
 
-import org.springframework.http.HttpStatus;
-
-import idorm.idormServer.common.exception.GlobalResponseCode;
+import idorm.idormServer.common.exception.BaseResponseCode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 
 @Getter
+@Builder
 @ToString
-public class SuccessResponse<T> extends BaseResponse {
+public class SuccessResponse<T> {
 
-	private final T data;
-	private final HttpStatus httpStatus;
+  private final T data;
+  private final String responseCode;
+  private final String responseMessage;
 
-	@Builder
-	public SuccessResponse(T data, String responseCode, String responseMessage,
-		HttpStatus httpStatus) {
-		super(true, responseCode, responseMessage);
-		this.data = data;
-		this.httpStatus = httpStatus;
-	}
+  public SuccessResponse(BaseResponseCode baseResponseCode) {
+    this.responseCode = baseResponseCode.getName();
+    this.responseMessage = baseResponseCode.getMessage();
+    this.data = null;
+  }
 
-	public static <T> SuccessResponse<T> of(GlobalResponseCode globalResponseCode, T data) {
-		return SuccessResponse.<T>builder()
-			.httpStatus(globalResponseCode.getStatus())
-			.responseCode(globalResponseCode.name())
-			.data(data)
-			.responseMessage(globalResponseCode.getMessage())
-			.build();
-	}
 
-	public static <T> SuccessResponse<T> empty(GlobalResponseCode globalResponseCode) {
-		return new SuccessResponse<>(null,
-			globalResponseCode.name(), globalResponseCode.getMessage(), globalResponseCode.getStatus());
-	}
+  public static <T> SuccessResponse<T> of(BaseResponseCode baseResponseCode, T data) {
+    return SuccessResponse.<T>builder()
+        .responseCode(baseResponseCode.getName())
+        .responseMessage(baseResponseCode.getMessage())
+        .data(data)
+        .build();
+  }
+
+  public static SuccessResponse empty(BaseResponseCode baseResponseCode) {
+    return SuccessResponse.builder()
+        .responseCode(baseResponseCode.getName())
+        .responseMessage(baseResponseCode.getMessage())
+        .data(null)
+        .build();
+  }
 
 }

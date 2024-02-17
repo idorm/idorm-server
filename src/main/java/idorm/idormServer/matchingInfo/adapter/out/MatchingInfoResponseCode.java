@@ -23,6 +23,7 @@ public enum MatchingInfoResponseCode implements BaseResponseCode {
   MATCHINGINFO_SAVED(CREATED, "온보딩 저장 완료"),
 
   //실패
+  INVALID_OPENKAKAOLINK_LENGTH(BAD_REQUEST, "오픈채팅 링크는 ~100자 이내여야 합니다."),
   INVALID_WAKEUPTIME_LENGTH(BAD_REQUEST, "기상 시간은 ~30자 이내여야 합니다."),
   INVALID_CLEENUP_STATUS_LENGTH(BAD_REQUEST, "정리정돈 상태는 ~30자 이내여야 합니다."),
   INVALID_SHOWERTIME_LENGTH(BAD_REQUEST, "샤워시간은 ~30자 이내여야 합니다."),

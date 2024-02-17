@@ -35,6 +35,7 @@ public enum CommunityResponseCode implements BaseResponseCode {
   ACCESS_DENIED_UPDATE_POST(FORBIDDEN, "게시글 업데이트 권한이 없습니다"),
   ACCESS_DENIED_UPDATE_COMMENT(FORBIDDEN, "댓글 업데이트 권한이 없습니다"),
 
+  NOT_FOUND_POST(NOT_FOUND, "등록된 게시글이 없습니다."),
   NOT_FOUND_POSTPHOTO(NOT_FOUND, "등록된 게시글 사진이 없습니다."),
   NOT_FOUND_COMMENT(NOT_FOUND, "등록된 댓글이 없습니다."),
   NOT_FOUND_POSTLIKE(NOT_FOUND, "공감하지 않은 게시글 입니다."),

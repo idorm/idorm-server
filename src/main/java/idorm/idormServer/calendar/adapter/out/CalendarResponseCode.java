@@ -37,7 +37,6 @@ public enum CalendarResponseCode implements BaseResponseCode {
   SLEEPOVER_CALENDAR_CREATED(CREATED, "외박 일정 생성 완료"),
 
   //실패
-  INVALID_OPENKAKAOLINK_LENGTH(BAD_REQUEST, "오픈채팅 링크는 ~100자 이내여야 합니다."),
   ILLEGAL_STATEMENT_EXPLODEDTEAM(BAD_REQUEST, "폭발한 팀은 요청 대상이 될 수 없습니다."),
   ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR(BAD_REQUEST, "외박 일정은 해당 요청의 설정 대상이 될 수 없습니다."),
   FIELD_TARGETS_REQUIRED(BAD_REQUEST, "팀 일정 대상자 입력은 필수 입니다."),
