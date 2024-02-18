@@ -1,9 +1,8 @@
 package idorm.idormServer.matchingInfo.domain;
 
-import static idorm.idormServer.common.exception.ExceptionCode.OPENKAKAOLINK_LENGTH_INVALID;
+import static idorm.idormServer.matchingInfo.adapter.out.MatchingInfoResponseCode.*;
 
 import idorm.idormServer.common.util.Validator;
-import idorm.idormServer.matchingInfo.adapter.out.MatchingInfoResponseCode;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -11,22 +10,21 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class SharedURL {
 
-  public static final int MAX_URL_SIZE = 100;
+	public static final int MAX_URL_SIZE = 100;
 
-  private String value;
+	private String value;
 
-  public SharedURL(final String value) {
-    validate(value);
-    this.value = value;
-  }
+	public SharedURL(final String value) {
+		validate(value);
+		this.value = value;
+	}
 
-  public static SharedURL forMapper(final String value) {
-    return new SharedURL(value);
-  }
+	public static SharedURL forMapper(final String value) {
+		return new SharedURL(value);
+	}
 
-  private void validate(final String value) {
-    Validator.validateNotBlank(value);
-    Validator.validateMaxLength(value, MAX_URL_SIZE,
-        MatchingInfoResponseCode.INVALID_OPENKAKAOLINK_LENGTH);
-  }
+	private void validate(final String value) {
+		Validator.validateNotBlank(value);
+		Validator.validateMaxLength(value, MAX_URL_SIZE, INVALID_OPENKAKAOLINK_LENGTH);
+	}
 }

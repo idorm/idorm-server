@@ -16,8 +16,10 @@ public class MatchingMateMapper {
 	private final MemberMapper memberMapper;
 
 	public MatchingMateJpaEntity toEntity(MatchingMate matchingMate) {
-		return new MatchingMateJpaEntity(memberMapper.toEntity(matchingMate.getMember()),
-			memberMapper.toEntity(matchingMate.getTargetMember()));
+		return new MatchingMateJpaEntity(matchingMate.getId(),
+			memberMapper.toEntity(matchingMate.getMember()),
+			memberMapper.toEntity(matchingMate.getTargetMember()),
+			matchingMate.getPreferenceType());
 	}
 
 	public List<MatchingMateJpaEntity> toEntity(List<MatchingMate> matchingMates) {
@@ -28,8 +30,10 @@ public class MatchingMateMapper {
 	}
 
 	public MatchingMate toDomain(MatchingMateJpaEntity matchingMateEntity) {
-		return MatchingMate.forMapper(memberMapper.toDomain(matchingMateEntity.getMember()),
-			memberMapper.toDomain(matchingMateEntity.getTargetMember()));
+		return MatchingMate.forMapper(matchingMateEntity.getId(),
+			memberMapper.toDomain(matchingMateEntity.getMember()),
+			memberMapper.toDomain(matchingMateEntity.getTargetMember()),
+			matchingMateEntity.getPreferenceType());
 	}
 
 	public List<MatchingMate> toDomain(List<MatchingMateJpaEntity> entities) {

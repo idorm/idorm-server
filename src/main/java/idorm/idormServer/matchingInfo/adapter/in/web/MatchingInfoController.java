@@ -37,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "6. MatchingInfo", description = "온보딩 api")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/members/me/matchinginfo")
+@RequestMapping("/api/v1/members/me/matching/info")
 public class MatchingInfoController {
 
 	private final MatchingInfoUseCase matchingInfoUseCase;
@@ -106,7 +106,7 @@ public class MatchingInfoController {
 	}
 
 	@Auth
-	@Operation(summary = "온보딩 단건 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+	@Operation(summary = "내 온보딩 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200", description = "MATCHINGINFO_FOUND",
@@ -123,7 +123,7 @@ public class MatchingInfoController {
 	}
 
 	@Auth
-	@Operation(summary = "온보딩 정보 삭제", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+	@Operation(summary = "온보딩 삭제", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200", description = "MATCHINGINFO_DELETED"),

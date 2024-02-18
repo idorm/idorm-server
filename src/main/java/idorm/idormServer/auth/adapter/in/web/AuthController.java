@@ -70,7 +70,7 @@ public class AuthController {
 	}
 
 	@Auth
-	@Operation(summary = "회원 액세스 토큰 재발급 완료", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION),
+	@Operation(summary = "Access Token 재발급", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION),
 		@SecurityRequirement(name = "Refresh-Token")})
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "MEMBER_REFRESH"),
@@ -86,14 +86,12 @@ public class AuthController {
 		@AuthInfo AuthResponse authResponse
 	) {
 		validateExistHeader(servletRequest);
-		Long memberId = authResponse.getId();
 		String refreshToken = AuthorizationExtractor.extractRefreshToken(servletRequest);
 
-		refreshTokenUseCase.matches(refreshToken, memberId);
+		refreshTokenUseCase.matches(refreshToken, authResponse.getId());
 		String reissueAccessToken = jwtTokenUseCase.createAccessToken(authResponse);
 
 		httpServletResponse.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + reissueAccessToken);
-
 		return ResponseEntity.ok().body(SuccessResponse.from(AuthResponseCode.MEMBER_REFRESH));
 	}
 

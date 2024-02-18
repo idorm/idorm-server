@@ -1,10 +1,11 @@
 package idorm.idormServer.matchingMate.domain;
 
-import idorm.idormServer.common.exception.CustomException;
-import idorm.idormServer.common.exception.ExceptionCode;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedFavoriteMateException;
+import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedNonFavoriteMateException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,70 +16,72 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MatchingMates {
 
-    private Set<MatchingMate> favoriteMates = new HashSet<>();
-    private Set<MatchingMate> nonFavoriteMates = new HashSet<>();
+	private Set<MatchingMate> favoriteMates = new HashSet<>();
+	private Set<MatchingMate> nonFavoriteMates = new HashSet<>();
 
-    public static MatchingMates empty() {
-        return new MatchingMates();
-    }
+	public static MatchingMates empty() {
+		return new MatchingMates();
+	}
 
-    public static MatchingMates forMapper(Set<MatchingMate> favoriteMates, Set<MatchingMate> nonFavoriteMates) {
-        return new MatchingMates(favoriteMates, nonFavoriteMates);
-    }
+	public static MatchingMates forMapper(final Set<MatchingMate> favoriteMates,
+		final Set<MatchingMate> nonFavoriteMates) {
 
-    void addFavoriteMate(MatchingMate mate) {
-        validateUniqueFavoriteMate(mate);
-        favoriteMates.add(mate);
+		return new MatchingMates(favoriteMates, nonFavoriteMates);
+	}
 
-        if (isNonFavoriteMate(mate)) {
-            deleteNonFavoriteMate(mate);
-        }
-    }
+	public void addFavoriteMate(final MatchingMate mate) {
+		validateUniqueFavoriteMate(mate);
+		favoriteMates.add(mate);
 
-    void deleteNonFavoriteMate(MatchingMate mate) {
-        Set<MatchingMate> deletedMates = nonFavoriteMates.stream()
-                .filter(nonFavoriteMate -> !nonFavoriteMate.equals(mate))
-                .collect(Collectors.toSet());
+		if (isNonFavoriteMate(mate)) {
+			deleteNonFavoriteMate(mate);
+		}
+	}
 
-        nonFavoriteMates.clear();
-        nonFavoriteMates.addAll(deletedMates);
-    }
+	public void deleteNonFavoriteMate(final MatchingMate mate) {
+		Set<MatchingMate> deletedMates = nonFavoriteMates.stream()
+			.filter(nonFavoriteMate -> !nonFavoriteMate.equals(mate))
+			.collect(Collectors.toSet());
 
-    void addNonFavoriteMate(MatchingMate mate) {
-        validateUniqueNonFavoriteMate(mate);
-        nonFavoriteMates.add(mate);
+		nonFavoriteMates.clear();
+		nonFavoriteMates.addAll(deletedMates);
+	}
 
-        if (isFavoriteMate(mate)) {
-            deleteFavoriteMate(mate);
-        }
-    }
+	public void addNonFavoriteMate(final MatchingMate mate) {
+		validateUniqueNonFavoriteMate(mate);
+		nonFavoriteMates.add(mate);
 
-    void deleteFavoriteMate(MatchingMate mate) {
-        Set<MatchingMate> deletedMates = favoriteMates.stream()
-                .filter(favoriteMate -> !favoriteMate.equals(mate))
-                .collect(Collectors.toSet());
+		if (isFavoriteMate(mate)) {
+			deleteFavoriteMate(mate);
+		}
+	}
 
-        favoriteMates.clear();
-        favoriteMates.addAll(deletedMates);
-    }
+	public void deleteFavoriteMate(final MatchingMate mate) {
+		Set<MatchingMate> deletedMates = favoriteMates.stream()
+			.filter(favoriteMate -> !favoriteMate.equals(mate))
+			.collect(Collectors.toSet());
 
-    private boolean isFavoriteMate(MatchingMate mate) {
-        return favoriteMates.contains(mate);
-    }
+		favoriteMates.clear();
+		favoriteMates.addAll(deletedMates);
+	}
 
-    private boolean isNonFavoriteMate(MatchingMate mate) {
-        return nonFavoriteMates.contains(mate);
-    }
+	private boolean isFavoriteMate(final MatchingMate mate) {
+		return favoriteMates.contains(mate);
+	}
 
-    private void validateUniqueFavoriteMate(MatchingMate mate) {
-        if (favoriteMates.contains(mate)) {
-            throw new CustomException(null, ExceptionCode.DUPLICATE_LIKED_MEMBER);
-        }
-    }
+	public boolean isNonFavoriteMate(final MatchingMate mate) {
+		return nonFavoriteMates.contains(mate);
+	}
 
-    private void validateUniqueNonFavoriteMate(MatchingMate mate) {
-        if (nonFavoriteMates.contains(mate)) {
-            throw new CustomException(null, ExceptionCode.DUPLICATE_DISLIKED_MEMBER);
-        }
-    }
+	private void validateUniqueFavoriteMate(final MatchingMate mate) {
+		if (favoriteMates.contains(mate)) {
+			throw new DuplicatedFavoriteMateException();
+		}
+	}
+
+	private void validateUniqueNonFavoriteMate(final MatchingMate mate) {
+		if (nonFavoriteMates.contains(mate)) {
+			throw new DuplicatedNonFavoriteMateException();
+		}
+	}
 }
