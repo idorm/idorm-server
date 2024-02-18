@@ -1,9 +1,7 @@
 package idorm.idormServer.common.exception;
 
-import idorm.idormServer.common.exception.BaseException;
-import idorm.idormServer.common.exception.GlobalResponseCode;
 import idorm.idormServer.common.response.ErrorResponse;
-import idorm.idormServer.photo.exception.PhotoResponseCode;
+import idorm.idormServer.photo.adapter.out.api.PhotoResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;

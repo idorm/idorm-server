@@ -1,10 +1,12 @@
 package idorm.idormServer.member.application.port.in;
 
-import idorm.idormServer.auth.domain.AuthInfo;
+import org.springframework.web.multipart.MultipartFile;
+
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 
 public interface MemberPhotoUseCase {
 
-	void savePhoto(AuthInfo authInfo);
+	void savePhoto(AuthResponse authResponse, MultipartFile file);
 
-	void deletePhoto(AuthInfo authInfo);
+	void deletePhoto(AuthResponse authResponse);
 }

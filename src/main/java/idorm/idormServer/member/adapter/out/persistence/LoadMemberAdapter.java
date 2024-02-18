@@ -16,7 +16,7 @@ public class LoadMemberAdapter implements LoadMemberPort {
 	private final MemberMapper memberMapper;
 
 	@Override
-	public Member loadMember(Long memberId) {
+	public Member loadMember(final Long memberId) {
 		MemberJpaEntity memberJpaEntity = memberRepository.findByIdAndMemberStatusIsActive(memberId)
 			.orElseThrow(NotFoundMemberException::new);
 
@@ -29,6 +29,14 @@ public class LoadMemberAdapter implements LoadMemberPort {
 		MemberJpaEntity memberJpaEntity = memberRepository.findByEmailAndPasswordValueAndMemberStatusIsActive(email,
 				password)
 			.orElseThrow(LoginFailedException::new);
+
+		return memberMapper.toDomain(memberJpaEntity);
+	}
+
+	@Override
+	public Member loadMember(final String email) {
+		MemberJpaEntity memberJpaEntity = memberRepository.findByEmailAndMemberStatusIsActive(email)
+			.orElseThrow(NotFoundMemberException::new);
 
 		return memberMapper.toDomain(memberJpaEntity);
 	}

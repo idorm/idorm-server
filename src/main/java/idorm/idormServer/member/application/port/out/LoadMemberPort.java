@@ -7,4 +7,6 @@ public interface LoadMemberPort {
 	Member loadMember(Long memberId);
 
 	Member loadMember(String email, String password);
+
+	Member loadMember(String email);
 }

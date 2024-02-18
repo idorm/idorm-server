@@ -1,17 +1,23 @@
 package idorm.idormServer.email.domain;
 
+import static idorm.idormServer.email.domain.EmailStatus.*;
+
 import java.time.LocalDateTime;
 
 import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.email.adapter.out.api.EmailResponseCode;
 import idorm.idormServer.email.adapter.out.api.exception.DuplicatedEmailException;
 import idorm.idormServer.email.adapter.out.api.exception.ExpiredEmailVerificationCodeException;
+import idorm.idormServer.email.adapter.out.api.exception.UnAuthorizedEmailException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(of = "id")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Email {
 
 	public static final int MAX_EMAIL_LENGTH = 20;
@@ -33,21 +39,6 @@ public class Email {
 		emailStatus = EmailStatus.SEND;
 		registered = false;
 		this.issuedAt = LocalDateTime.now();
-	}
-
-	private Email(final Long id,
-		final String email,
-		final EmailStatus emailStatus,
-		final VerificationCode code,
-		final LocalDateTime issuedAt,
-		final boolean registered) {
-
-		this.id = id;
-		this.email = email;
-		this.emailStatus = emailStatus;
-		this.code = code;
-		this.issuedAt = issuedAt;
-		this.registered = registered;
 	}
 
 	private static void validateConstructor(final String value) {
@@ -88,7 +79,7 @@ public class Email {
 		validateValidTime();
 
 		this.code.match(code);
-		this.emailStatus = EmailStatus.VERIFIED;
+		this.emailStatus = VERIFIED;
 	}
 
 	public void reVerify(final String code) {
@@ -100,10 +91,21 @@ public class Email {
 	}
 
 	public void register() {
+		if (VERIFIED.isNot(emailStatus)) {
+			throw new UnAuthorizedEmailException();
+		}
 		this.registered = true;
 	}
 
-	public void validateValidTime() {
+	public void validateReVerified() {
+		validateSignUpEmail();
+		if (RE_VERIFIED.isNot(emailStatus)) {
+			throw new UnAuthorizedEmailException();
+		}
+		validateValidTime();
+	}
+
+	private void validateValidTime() {
 		LocalDateTime expiredTime = this.issuedAt.plusMinutes(VALID_REGISTER_MINUTE);
 		LocalDateTime now = LocalDateTime.now();
 

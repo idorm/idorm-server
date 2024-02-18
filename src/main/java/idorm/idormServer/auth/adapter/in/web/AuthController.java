@@ -111,8 +111,7 @@ public class AuthController {
 	public ResponseEntity<SuccessResponse<Object>> logout(
 		@AuthInfo AuthResponse authResponse
 	) {
-		refreshTokenUseCase.deleteToken(authResponse.getId());
-
+		refreshTokenUseCase.expire(authResponse.getId());
 		return ResponseEntity.ok().body(SuccessResponse.from(MEMBER_LOGOUT));
 	}
 
