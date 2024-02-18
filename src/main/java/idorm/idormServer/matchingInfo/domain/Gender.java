@@ -8,7 +8,7 @@ public enum Gender {
     MALE,
     FEMALE;
 
-    public static Gender validateType(String gender) {
+    public static Gender from(String gender) {
         try {
             return Gender.valueOf(gender);
         } catch (IllegalArgumentException e) {

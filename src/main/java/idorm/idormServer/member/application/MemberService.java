@@ -14,7 +14,6 @@ import idorm.idormServer.member.application.port.in.dto.NicknameUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.PasswordUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.SignupRequest;
 import idorm.idormServer.member.application.port.out.CheckNicknamesPort;
-import idorm.idormServer.member.application.port.out.CreateMemberPort;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.application.port.out.SaveMemberPort;
 import idorm.idormServer.member.application.port.out.WithdrawMemberPort;
@@ -30,7 +29,6 @@ public class MemberService implements MemberUseCase {
 	private final LoadEmailPort loadEmailPort;
 	private final DeleteEmailPort deleteEmailPort;
 
-	private final CreateMemberPort createMemberPort;
 	private final SaveMemberPort saveMemberPort;
 	private final LoadMemberPort loadMemberPort;
 	private final CheckNicknamesPort checkNicknamesPort;
@@ -41,10 +39,10 @@ public class MemberService implements MemberUseCase {
 	@Override
 	@Transactional
 	public void signUp(final SignupRequest request) {
-		Email email = loadEmailPort.findByEmail(request.email());
+		Email email = loadEmailPort.findByEmail(request.getEmail());
 		email.register();
 
-		Member member = createMemberPort.create(request.email(), request.password(), request.nickname());
+		Member member = request.from();
 		saveMemberPort.save(member);
 	}
 

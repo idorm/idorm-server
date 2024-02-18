@@ -184,8 +184,8 @@ public class MatchingMateService {
         try {
             foundMatchingInfos = matchingInfoRepository.findFilteredMatchingMembers(
                     matchingInfo.getMember().getId(),
-                    DormCategory.validateType(request.getDormCategory()).getType(),
-                    JoinPeriod.validateType(request.getJoinPeriod()).getType(),
+                    DormCategory.from(request.getDormCategory()).getType(),
+                    JoinPeriod.from(request.getJoinPeriod()).getType(),
                     matchingInfo.getGender(),
                     !request.getIsSnoring(),
                     !request.getIsSmoking(),

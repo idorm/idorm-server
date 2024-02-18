@@ -61,7 +61,7 @@ public class ReportController {
                 Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
         Member member = memberService.findById(loginMemberId);
 
-        ReportType reportType = ReportType.validateType(request.getReportType());
+        ReportType reportType = ReportType.from(request.getReportType());
         if (reportType.equals(ReportType.MEMBER)) {
 
             Member reportedMember = memberService.findById(request.getMemberOrPostOrCommentId());

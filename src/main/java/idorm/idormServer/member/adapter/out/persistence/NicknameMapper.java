@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class NicknameMapper {
 
-    public NicknameEmbeddedEntity toEntity(Nickname nickname) {
+    NicknameEmbeddedEntity toEntity(Nickname nickname) {
         return new NicknameEmbeddedEntity(nickname.getValue());
     }
 
-    public Nickname toDomain(NicknameEmbeddedEntity nicknameEntity) {
+    Nickname toDomain(NicknameEmbeddedEntity nicknameEntity) {
         return Nickname.forMapper(nicknameEntity.getValue());
     }
 }
