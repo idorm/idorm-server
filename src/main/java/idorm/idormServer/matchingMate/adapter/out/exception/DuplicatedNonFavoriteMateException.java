@@ -3,9 +3,9 @@ package idorm.idormServer.matchingMate.adapter.out.exception;
 import idorm.idormServer.common.exception.BaseException;
 import idorm.idormServer.matchingMate.adapter.out.MatchingMateResponseCode;
 
-public class DuplicateDislikedMemberException extends BaseException {
+public class DuplicatedNonFavoriteMateException extends BaseException {
 
-  public DuplicateDislikedMemberException() {
+  public DuplicatedNonFavoriteMateException() {
     super(MatchingMateResponseCode.DUPLICATED_DISLIKED_MEMBER);
   }
 }

@@ -1,18 +1,16 @@
 package idorm.idormServer.matchingInfo.domain;
 
-import static idorm.idormServer.common.exception.ExceptionCode.GENDER_CHARACTER_INVALID;
-
-import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.matchingInfo.adapter.out.exception.InvalidGenderCharacterException;
 
 public enum Gender {
-    MALE,
-    FEMALE;
+	MALE,
+	FEMALE;
 
-    public static Gender from(String gender) {
-        try {
-            return Gender.valueOf(gender);
-        } catch (IllegalArgumentException e) {
-            throw new CustomException(null, GENDER_CHARACTER_INVALID);
-        }
-    }
+	public static Gender from(String gender) {
+		try {
+			return Gender.valueOf(gender);
+		} catch (IllegalArgumentException | NullPointerException e) {
+			throw new InvalidGenderCharacterException();
+		}
+	}
 }

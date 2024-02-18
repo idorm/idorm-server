@@ -1,10 +1,15 @@
 package idorm.idormServer.member.domain;
 
+import static idorm.idormServer.matchingMate.domain.MatePreferenceType.*;
+
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import idorm.idormServer.auth.domain.RoleType;
 import idorm.idormServer.common.util.Validator;
+import idorm.idormServer.matchingMate.domain.MatchingMate;
 import idorm.idormServer.matchingMate.domain.MatchingMates;
 import idorm.idormServer.photo.adapter.out.api.exception.NotFoundFileException;
 import lombok.AccessLevel;
@@ -104,5 +109,33 @@ public class Member {
 		roleType = null;
 		updatedAt = LocalDateTime.now();
 		matchingMates = null;
+	}
+
+	public Set<MatchingMate> getFavoriteMates() {
+		return Collections.unmodifiableSet(matchingMates.getFavoriteMates());
+	}
+
+	public Set<MatchingMate> getNonFavoriteMates() {
+		return Collections.unmodifiableSet(matchingMates.getNonFavoriteMates());
+	}
+
+	public void addFavoriteMate(final MatchingMate matchingMate) {
+		matchingMates.addFavoriteMate(matchingMate);
+	}
+
+	public void addNonFavoriteMate(final MatchingMate matchingMate) {
+		matchingMates.addNonFavoriteMate(matchingMate);
+	}
+
+	public void deleteFavoriteMate(final MatchingMate matchingMate) {
+		matchingMates.deleteFavoriteMate(matchingMate);
+	}
+
+	public void deleteNonFavoriteMate(final MatchingMate matchingMate) {
+		matchingMates.deleteNonFavoriteMate(matchingMate);
+	}
+
+	public boolean isNonFavoriteMate(final Member targetMember) {
+		return matchingMates.isNonFavoriteMate(MatchingMate.of(this, targetMember, NONFAVORITE));
 	}
 }
