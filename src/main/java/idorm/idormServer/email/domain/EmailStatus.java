@@ -5,4 +5,8 @@ public enum EmailStatus {
     VERIFIED,
     RE_SEND,
     RE_VERIFIED;
+
+    public boolean isNot(EmailStatus emailStatus) {
+        return !this.equals(emailStatus);
+    }
 }

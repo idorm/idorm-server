@@ -24,7 +24,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 	@Override
 	@Transactional
 	public void saveToken(String token, Long memberId) {
-		deleteToken(memberId);
+		expire(memberId);
 		RefreshToken refreshToken = new RefreshToken(memberId, token);
 		saveRefreshTokenPort.save(refreshToken);
 	}
@@ -45,7 +45,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 
 	@Override
 	@Transactional
-	public void deleteToken(Long memberId) {
+	public void expire(Long memberId) {
 		deleteRefreshTokenPort.deleteAll(memberId);
 	}
 }

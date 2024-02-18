@@ -1,6 +1,7 @@
-package idorm.idormServer.photo.exception;
+package idorm.idormServer.photo.adapter.out.api.exception;
 
 import idorm.idormServer.common.exception.BaseException;
+import idorm.idormServer.photo.adapter.out.api.PhotoResponseCode;
 
 public class UnsupportedFileTypeException extends BaseException {
 

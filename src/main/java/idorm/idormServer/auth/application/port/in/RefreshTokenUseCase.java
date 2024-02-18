@@ -6,5 +6,5 @@ public interface RefreshTokenUseCase {
 
 	void matches(String refreshToken, Long memberId);
 
-	void deleteToken(Long memberId);
+	void expire(Long memberId);
 }

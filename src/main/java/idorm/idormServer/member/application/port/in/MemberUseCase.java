@@ -1,6 +1,6 @@
 package idorm.idormServer.member.application.port.in;
 
-import idorm.idormServer.auth.domain.AuthInfo;
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.member.application.port.in.dto.MemberInfoResponse;
 import idorm.idormServer.member.application.port.in.dto.NicknameUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.PasswordUpdateRequest;
@@ -10,11 +10,11 @@ public interface MemberUseCase {
 
 	void signUp(SignupRequest request);
 
-	MemberInfoResponse getInfo(AuthInfo authInfo);
+	MemberInfoResponse getInfo(AuthResponse authResponse);
 
-	void editNickname(AuthInfo authInfo, NicknameUpdateRequest request);
+	void editNickname(AuthResponse authResponse, NicknameUpdateRequest request);
 
 	void editPassword(PasswordUpdateRequest request);
 
-	void leave(AuthInfo authInfo);
+	void withdraw(AuthResponse authResponse);
 }
