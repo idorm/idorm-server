@@ -19,7 +19,7 @@ public enum ReportType {
         this.type = type;
     }
 
-    public static ReportType validateType(String type) {
+    public static ReportType from(String type) {
         try {
             return ReportType.valueOf(type);
         } catch (IllegalArgumentException e) {

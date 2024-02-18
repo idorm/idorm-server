@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PasswordMapper {
 
-    public PasswordEmbeddedEntity toEntity(Password password) {
+    PasswordEmbeddedEntity toEntity(Password password) {
         return new PasswordEmbeddedEntity(password.getValue());
     }
 
-    public Password toDomain(PasswordEmbeddedEntity passwordEntity) {
+    Password toDomain(PasswordEmbeddedEntity passwordEntity) {
         return Password.forMapper(passwordEntity.getValue());
     }
 }

@@ -48,7 +48,7 @@ public class ReportRequest {
         return Report.MemberReportBuilder()
                 .reporterMember(reporterMember)
                 .reportedMember(reportedMember)
-                .reasonType(MemberReason.validateType(this.reasonType))
+                .reasonType(MemberReason.from(this.reasonType))
                 .reason(this.reason)
                 .build();
     }
@@ -58,7 +58,7 @@ public class ReportRequest {
                 .reporterMember(reporterMember)
                 .reportedMember(reportedPost.getMember())
                 .reportedPost(reportedPost)
-                .reasonType(CommunityReason.validateType(this.reasonType))
+                .reasonType(CommunityReason.from(this.reasonType))
                 .reason(this.reason)
                 .build();
     }
@@ -68,7 +68,7 @@ public class ReportRequest {
                 .reporterMember(reporterMember)
                 .reportedMember(reportedComment.getMember())
                 .reportedComment(reportedComment)
-                .reasonType(CommunityReason.validateType(this.reasonType))
+                .reasonType(CommunityReason.from(this.reasonType))
                 .reason(this.reason)
                 .build();
     }

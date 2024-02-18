@@ -20,7 +20,7 @@ public enum MemberReason {
         this.type = type;
     }
 
-    public  static MemberReason validateType(String memberReason) {
+    public  static MemberReason from(String memberReason) {
         try {
             return MemberReason.valueOf(memberReason);
         } catch (IllegalArgumentException e) {

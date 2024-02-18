@@ -1,159 +1,74 @@
-package idorm.idormServer.matchingInfo.service;
+package idorm.idormServer.matchingInfo.application;
 
-import idorm.idormServer.common.exception.CustomException;
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
-import idorm.idormServer.matchingInfo.dto.MatchingInfoRequest;
-import idorm.idormServer.matchingInfo.repository.MatchingInfoRepository;
-import idorm.idormServer.member.domain.Member;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-import static idorm.idormServer.common.exception.ExceptionCode.*;
-
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.matchingInfo.application.port.in.MatchingInfoUseCase;
+import idorm.idormServer.matchingInfo.application.port.in.dto.MatchingInfoRequest;
+import idorm.idormServer.matchingInfo.application.port.in.dto.MatchingInfoResponse;
+import idorm.idormServer.matchingInfo.application.port.in.dto.MatchingInfoVisibilityRequest;
+import idorm.idormServer.matchingInfo.application.port.out.DeleteMatchingInfoPort;
+import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
+import idorm.idormServer.matchingInfo.application.port.out.SaveMatchingInfoPort;
+import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.member.application.port.out.LoadMemberPort;
+import idorm.idormServer.member.domain.Member;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class MatchingInfoService {
+public class MatchingInfoService implements MatchingInfoUseCase {
 
-    private final MatchingInfoRepository matchingInfoRepository;
+	private final LoadMemberPort loadMemberPort;
+	private final LoadMatchingInfoPort loadMatchingInfoPort;
+	private final SaveMatchingInfoPort saveMatchingInfoPort;
+	private final DeleteMatchingInfoPort deleteMatchingInfoPort;
 
-    /**
-     * 매칭인포 저장 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public MatchingInfo save(MatchingInfo matchingInfo) {
-        try {
-            MatchingInfo savedMatchingInfo = matchingInfoRepository.save(matchingInfo);
-            savedMatchingInfo.getMember().updateDormCategory(savedMatchingInfo.getDormCategory());
-            return savedMatchingInfo;
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
+	@Override
+	@Transactional
+	public MatchingInfoResponse save(final AuthResponse auth, final MatchingInfoRequest request) {
+		final Member member = loadMemberPort.loadMember(auth.getId());
+		loadMatchingInfoPort.validateNotExistence(member.getId());
 
-    /**
-     * 매칭정보 삭제 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void delete(MatchingInfo matchingInfo) {
+		final MatchingInfo matchingInfo = request.from(member);
+		saveMatchingInfoPort.save(matchingInfo);
 
-        try {
-            matchingInfo.delete();
-            matchingInfo.getMember().updateDormCategory(null);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
+		return MatchingInfoResponse.from(matchingInfo);
+	}
 
-    /**
-     * 매칭정보 데이터 삭제 |
-     * 회원 탈퇴 시 사용한다. |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void deleteData(Member member) {
-        try {
-            for (MatchingInfo matchingInfo : member.getAllMatchingInfo()) {
-                matchingInfo.deleteData();
-            }
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
+	@Override
+	@Transactional
+	public MatchingInfoResponse editAll(final AuthResponse auth, final MatchingInfoRequest request) {
+		final Member member = loadMemberPort.loadMember(auth.getId());
 
-    /**
-     * 매칭인포 공개 여부 수정 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void updateMatchingInfoIsPublic(MatchingInfo updateMatchingInfo, Boolean isMatchingInfoPublic) {
+		MatchingInfo matchingInfo = loadMatchingInfoPort.load(member.getId());
+		request.editAll(matchingInfo);
 
-        try {
-            updateMatchingInfo.updateIsMatchingInfoPublic(isMatchingInfoPublic);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
+		return MatchingInfoResponse.from(matchingInfo);
+	}
 
-    /**
-     * 매칭인포 수정 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void updateMatchingInfo(MatchingInfo updateMatchingInfo, MatchingInfoRequest request) {
+	@Override
+	@Transactional
+	public void editVisibility(final AuthResponse auth, final MatchingInfoVisibilityRequest request) {
+		final Member member = loadMemberPort.loadMember(auth.getId());
 
-        try {
-            updateMatchingInfo.updateMatchingInfo(request);
-            updateMatchingInfo.getMember().updateDormCategory(updateMatchingInfo.getDormCategory());
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
+		MatchingInfo matchingInfo = loadMatchingInfoPort.load(member.getId());
+		matchingInfo.editVisibility(request.isMatchingInfoPublic());
+	}
 
-    /**
-     * 매칭인포 단건 조회 |
-     * 404(MATCHINGINFO_NOT_FOUND)
-     */
-//    public MatchingInfo findById(Long matchingInfoId) {
-//
-//        return matchingInfoRepository.findByIdAndIsDeletedIsFalse(matchingInfoId)
-//                .orElseThrow(() -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
-//    }
+	@Override
+	public MatchingInfoResponse getInfo(final AuthResponse auth) {
+		final Member member = loadMemberPort.loadMember(auth.getId());
+		return MatchingInfoResponse.from(loadMatchingInfoPort.load(member.getId()));
+	}
 
-    /**
-     * 회원으로 매칭정보 조회 Optional |
-     */
-    public Optional<MatchingInfo> findByMemberOp(Member member) {
-        return matchingInfoRepository.findByMemberIdAndIsDeletedIsFalse(member.getId());
-    }
-
-
-    /**
-     * 회원 식별자로 매칭정보 단건 조회 |
-     * 404(MATCHINGINFO_NOT_FOUND)
-     */
-    public MatchingInfo findByMemberId(Long memberId) {
-
-        return matchingInfoRepository.findByMemberIdAndIsDeletedIsFalse(memberId)
-                .orElseThrow(() -> new CustomException(null, MATCHINGINFO_NOT_FOUND));
-    }
-
-    /**
-     * 매칭정보 공개 여부 확인 |
-     * 400(ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC)
-     */
-    public void validateMatchingInfoIsPublic(MatchingInfo matchingInfo) {
-
-        if (matchingInfo.getIsMatchingInfoPublic())
-            throw new CustomException(null, ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC);
-    }
-
-    /**
-     * MBTI 요청 검증 |
-     * 400(MBTI_CHARACTER_INVALID)
-     */
-    public String validateMBTI(String mbti) {
-
-        if (mbti == null || mbti.length() == 0)
-            return null;
-
-        if (mbti.length() < 4)
-            throw new CustomException(null, MBTI_LENGTH_INVALID);
-        if (mbti.charAt(0) != 'E' && mbti.charAt(0) != 'I')
-            throw new CustomException(null, MBTI_CHARACTER_INVALID);
-        if (mbti.charAt(1) != 'S' && mbti.charAt(1) != 'N')
-            throw new CustomException(null, MBTI_CHARACTER_INVALID);
-        if (mbti.charAt(2) != 'T' && mbti.charAt(2) != 'F')
-            throw new CustomException(null, MBTI_CHARACTER_INVALID);
-        if (mbti.charAt(3) != 'J' && mbti.charAt(3) != 'P')
-            throw new CustomException(null, MBTI_CHARACTER_INVALID);
-
-        return mbti.toUpperCase();
-    }
+	@Override
+	@Transactional
+	public void delete(final AuthResponse auth) {
+		loadMemberPort.loadMember(auth.getId());
+		MatchingInfo matchingInfo = loadMatchingInfoPort.load(auth.getId());
+		deleteMatchingInfoPort.delete(matchingInfo);
+	}
 }

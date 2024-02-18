@@ -1,19 +1,17 @@
 package idorm.idormServer.matchingInfo.domain;
 
-import static idorm.idormServer.common.exception.ExceptionCode.DORMCATEGORY_CHARACTER_INVALID;
-
-import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.matchingInfo.adapter.out.exception.InvalidDormCategoryCharacterException;
 
 public enum DormCategory {
-    DORM1,
-    DORM2,
-    DORM3;
+	DORM1,
+	DORM2,
+	DORM3;
 
-    public static DormCategory validateType(String dormCategory) {
-        try {
-            return DormCategory.valueOf(dormCategory);
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new CustomException(null, DORMCATEGORY_CHARACTER_INVALID);
-        }
-    }
+	public static DormCategory from(String dormCategory) {
+		try {
+			return DormCategory.valueOf(dormCategory);
+		} catch (IllegalArgumentException | NullPointerException e) {
+			throw new InvalidDormCategoryCharacterException();
+		}
+	}
 }
