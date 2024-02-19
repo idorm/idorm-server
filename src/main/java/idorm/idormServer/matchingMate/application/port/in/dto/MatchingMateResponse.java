@@ -19,8 +19,7 @@ public record MatchingMateResponse(
 	String showerTime,
 	String openKakaoLink,
 	String mbti,
-	String wishText,
-	Boolean isMatchingInfoPublic
+	String wishText
 ) {
 
 	public static MatchingMateResponse from(final MatchingInfo matchingInfo) {
@@ -41,7 +40,6 @@ public record MatchingMateResponse(
 			matchingInfo.getTextInfo().getShowerTime(),
 			matchingInfo.getSharedURL().getValue(),
 			matchingInfo.getTextInfo().getMbti(),
-			matchingInfo.getTextInfo().getWishText(),
-			matchingInfo.getIsPublic());
+			matchingInfo.getTextInfo().getWishText());
 	}
 }

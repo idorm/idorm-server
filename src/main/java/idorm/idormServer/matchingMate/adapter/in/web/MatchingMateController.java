@@ -34,12 +34,10 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "7. Matching Mate", description = "룸메이트 매칭 api")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/members/me/matching/mates")
+@RequestMapping("/api/v1/matching/mates")
 public class MatchingMateController {
 
 	private final MatchingMateUseCase matchingMateUseCase;
-
-	// TODO: 응답 코드 수정하기
 
 	@Auth
 	@Operation(summary = "좋아요한 메이트들 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
@@ -47,8 +45,8 @@ public class MatchingMateController {
 		@ApiResponse(
 			responseCode = "200", description = "LIKEDMEMBERS_FOUND",
 			content = @Content(schema = @Schema(implementation = MatchingMateResponse.class))),
-		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
-		@ApiResponse(responseCode = "404", description = "LIKEDMEMBER_NOT_FOUND"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_MATCHINGINFO"),
+		@ApiResponse(responseCode = "409", description = "ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@GetMapping("/favorite")
@@ -65,8 +63,8 @@ public class MatchingMateController {
 		@ApiResponse(
 			responseCode = "200", description = "DISLIKEDMEMBERS_FOUND",
 			content = @Content(schema = @Schema(implementation = MatchingMateResponse.class))),
-		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
-		@ApiResponse(responseCode = "404", description = "DISLIKEDMEMBER_NOT_FOUND"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_MATCHINGINFO"),
+		@ApiResponse(responseCode = "409", description = "ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@GetMapping("/nonfavorite")
@@ -83,16 +81,11 @@ public class MatchingMateController {
 		@ApiResponse(
 			responseCode = "200",
 			description = "LIKEDMEMBER_SAVED / DISLIKEDMEMBER_SAVED"),
-		@ApiResponse(responseCode = "400",
-			description = "- SELECTEDMEMBERID_NEGATIVEORZERO_INVALID \n " +
-				"- ILLEGAL_ARGUMENT_SELF \n" +
-				"- ILLEGAL_ARGUMENT_ADMIN \n" +
-				"- ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
-		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
-		@ApiResponse(responseCode = "404",
-			description = "MEMBER_NOT_FOUND / MATCHINGINFO_NOT_FOUND"),
-		@ApiResponse(responseCode = "409",
-			description = "DUPLICATE_LIKED_MEMBER / DUPLICATE_DISLIKED_MEMBER"),
+		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / TARGETMEMBERID_NEGATIVEORZERO_INVALID / "
+			+ "INVALID_MATE_PREFERENCE_CHARACTER"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_MATCHINGINFO"),
+		@ApiResponse(responseCode = "409", description = "ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC / "
+			+ "DUPLICATED_LIKED_MEMBER / DUPLICATED_DISLIKED_MEMBER"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@PostMapping
@@ -114,9 +107,9 @@ public class MatchingMateController {
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200", description = "LIKEDMEMBER_DELETED / DISLIKEDMEMBER_DELETED"),
-		@ApiResponse(responseCode = "400", description = "SELECTEDMEMBERID_NEGATIVEORZERO_INVALID"),
-		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
-		@ApiResponse(responseCode = "404", description = "LIKEDMEMBER_NOT_FOUND / DISLIKEDMEMBER_NOT_FOUND"),
+		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / TARGETMEMBERID_NEGATIVEORZERO_INVALID / "
+			+ "INVALID_MATE_PREFERENCE_CHARACTER"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@DeleteMapping
@@ -140,14 +133,9 @@ public class MatchingMateController {
 			responseCode = "200",
 			description = "MATCHING_MEMBERS_FOUND",
 			content = @Content(schema = @Schema(implementation = MatchingMateResponse.class))),
-		@ApiResponse(responseCode = "400",
-			description = "ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
-		@ApiResponse(responseCode = "401",
-			description = "UNAUTHORIZED_MEMBER"),
-		@ApiResponse(responseCode = "404",
-			description = "MATCHINGINFO_NOT_FOUND"),
-		@ApiResponse(responseCode = "500",
-			description = "SERVER_ERROR"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_MATCHINGINFO"),
+		@ApiResponse(responseCode = "409", description = "ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@GetMapping
 	public ResponseEntity<SuccessResponse<Object>> findMates(
@@ -163,11 +151,10 @@ public class MatchingMateController {
 		@ApiResponse(
 			responseCode = "200", description = "FILTERED_MATCHING_MEMBERS_FOUND",
 			content = @Content(schema = @Schema(implementation = MatchingMateResponse.class))),
-		@ApiResponse(responseCode = "400",
-			description = "- FIELD_REQUIRED\n- DORMCATEGORY_CHARACTER_INVALID\n" +
-				"- JOINPERIOD_CHARACTER_INVALID\n- ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
-		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
-		@ApiResponse(responseCode = "404", description = "MATCHINGINFO_NOT_FOUND"),
+		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / INVALID_DORMCATEGORY_CHARACTER / "
+			+ "INVALID_JOIN_PERIOD_CHARACTER / INVALID_AGE_LENGTH"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_MATCHINGINFO"),
+		@ApiResponse(responseCode = "409", description = "ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@PostMapping("/filter")

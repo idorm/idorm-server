@@ -3,6 +3,7 @@ package idorm.idormServer.matchingMate.application;
 import static idorm.idormServer.matchingMate.domain.MatePreferenceType.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -35,14 +36,7 @@ public class MatchingMateService implements MatchingMateUseCase {
 		Member member = loadMemberPort.loadMember(auth.getId());
 		validateMatchingCondition(member);
 
-		Set<MatchingMate> favoriteMates = member.getFavoriteMates();
-
-		List<MatchingMateResponse> responses = favoriteMates.stream()
-			.map(mate -> loadMatchingInfoPort.load(mate.getTargetMember().getId()))
-			.filter(MatchingInfo::getIsPublic)
-			.map(MatchingMateResponse::from)
-			.toList();
-		return responses;
+		return getMatchingInfoOfMate(member.getFavoriteMates());
 	}
 
 	@Override
@@ -50,14 +44,7 @@ public class MatchingMateService implements MatchingMateUseCase {
 		Member member = loadMemberPort.loadMember(auth.getId());
 		validateMatchingCondition(member);
 
-		Set<MatchingMate> nonFavoriteMates = member.getNonFavoriteMates();
-
-		List<MatchingMateResponse> responses = nonFavoriteMates.stream()
-			.map(mate -> loadMatchingInfoPort.load(mate.getTargetMember().getId()))
-			.filter(MatchingInfo::getIsPublic)
-			.map(MatchingMateResponse::from)
-			.toList();
-		return responses;
+		return getMatchingInfoOfMate(member.getNonFavoriteMates());
 	}
 
 	@Override
@@ -129,6 +116,21 @@ public class MatchingMateService implements MatchingMateUseCase {
 		List<MatchingInfo> matchingInfos = loadMatchingInfoPort.loadBySpecialConditions(matchingInfo, request);
 
 		return removeNonFavoriteMates(member, matchingInfos);
+	}
+
+	private List<MatchingMateResponse> getMatchingInfoOfMate(final Set<MatchingMate> mates) {
+		List<MatchingMateResponse> responses = mates.stream()
+			.map(mate -> {
+				Optional<MatchingInfo> matchingInfo = loadMatchingInfoPort.loadWithOptional(
+					mate.getTargetMember().getId());
+
+				if (matchingInfo.isPresent() && matchingInfo.get().getIsPublic()) {
+					return MatchingMateResponse.from(matchingInfo.get());
+				}
+				return null;
+			})
+			.toList();
+		return responses;
 	}
 
 	private List<MatchingMateResponse> removeNonFavoriteMates(final Member loginMember,
