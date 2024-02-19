@@ -3,7 +3,7 @@ package idorm.idormServer.auth.application.port.in;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 
 public interface JwtTokenUseCase {
-	String createAccessToken(AuthResponse authInfo);
+	String createAccessToken(AuthResponse auth);
 
 	String createRefreshToken();
 

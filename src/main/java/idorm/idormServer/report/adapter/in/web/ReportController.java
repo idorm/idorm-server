@@ -1,103 +1,70 @@
-package idorm.idormServer.report.controller;
+package idorm.idormServer.report.adapter.in.web;
 
-import idorm.idormServer.common.dto.DefaultResponseDto;
-import idorm.idormServer.community.domain.Comment;
-import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.community.service.CommentService;
-import idorm.idormServer.community.service.PostService;
-import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.service.MemberService;
-import idorm.idormServer.report.domain.ReportType;
-import idorm.idormServer.report.dto.ReportRequest;
-import idorm.idormServer.report.application.ReportService;
-import idorm.idormServer.support.token.JwtTokenProvider;
+import static idorm.idormServer.report.adapter.out.ReportResponseCode.*;
+
+import javax.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.auth.domain.Auth;
+import idorm.idormServer.auth.domain.AuthInfo;
+import idorm.idormServer.common.response.SuccessResponse;
+import idorm.idormServer.report.adapter.out.ReportResponseCode;
+import idorm.idormServer.report.application.port.in.ReportUseCase;
+import idorm.idormServer.report.application.port.in.dto.ReportRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 @Tag(name = "X. Report", description = "신고 api")
-@Validated
 @RestController
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@RequestMapping("/api/v1/member/report")
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/report")
 public class ReportController {
 
-    private final ReportService reportService;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final MemberService memberService;
-    private final PostService postService;
-    private final CommentService commentService;
+	private final ReportUseCase reportUseCase;
 
-    @Operation(summary = "회원/게시글/댓글/대댓글 신고")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "*_REPORTED",
-                    content = @Content(schema = @Schema(implementation = Object.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "FIELD_REQUIRED / MEMBERORPOSTORCOMMENTID_NEGATIVEORZERO_INVALID / " +
-                            "*_CHARACTER_INVALID"),
-            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_PASSWORD"),
-            @ApiResponse(responseCode = "404", description = "MEMBER_NOT_FOUND / POST_NOT_FOUND / COMMENT_NOT_FOUND"),
-            @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
-    })
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DefaultResponseDto<Object>> reportMemberOrPostOrComment(
-            HttpServletRequest servletRequest,
-            @RequestBody @Valid ReportRequest request) {
+	@Auth
+	@Operation(summary = "회원/게시글/댓글/대댓글 신고")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "201", description = "*_REPORTED",
+			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "400",
+			description = "FIELD_REQUIRED / MEMBERORPOSTORCOMMENTID_NEGATIVEORZERO_INVALID / " +
+				"*_CHARACTER_INVALID"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_PASSWORD"),
+		@ApiResponse(responseCode = "404", description = "MEMBER_NOT_FOUND / POST_NOT_FOUND / COMMENT_NOT_FOUND"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR")
+	})
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity<SuccessResponse<Object>> report(
+		@AuthInfo AuthResponse auth,
+		@RequestBody @Valid ReportRequest request) {
 
-        long loginMemberId =
-                Long.parseLong(jwtTokenProvider.getUsername(servletRequest.getHeader(AUTHENTICATION_HEADER_NAME)));
-        Member member = memberService.findById(loginMemberId);
+		ReportResponseCode responseCode = MEMBER_REPORTED;
 
-        ReportType reportType = ReportType.from(request.getReportType());
-        if (reportType.equals(ReportType.MEMBER)) {
+		if (request.isMemberReport()) {
+			reportUseCase.reportMember(auth, request);
+		} else if (request.isPostReport()) {
+			reportUseCase.reportPost(auth, request);
+			responseCode = POST_REPORTED;
+		} else {
+			reportUseCase.reportComment(auth, request);
+			responseCode = COMMENT_REPORTED;
+		}
 
-            Member reportedMember = memberService.findById(request.getMemberOrPostOrCommentId());
-
-            reportService.validateReportMember(member, reportedMember);
-            reportService.save(request.toMemberReportEntity(member, reportedMember));
-
-            return ResponseEntity.status(201)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("MEMBER_REPORTED")
-                            .responseMessage("회원 신고 완료")
-                            .build());
-        } else if (reportType.equals(ReportType.POST)){
-
-            Post reportedPost = postService.findById(request.getMemberOrPostOrCommentId());
-
-            reportService.validateReportPost(member, reportedPost);
-            reportService.save(request.toPostReportEntity(member, reportedPost));
-
-            return ResponseEntity.status(201)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("POST_REPORTED")
-                            .responseMessage("커뮤니티 게시글 신고 완료")
-                            .build());
-        } else {
-
-            Comment reportedComment = commentService.findById(request.getMemberOrPostOrCommentId());
-
-            reportService.validateReportComment(member, reportedComment);
-            reportService.save(request.toCommentReportEntity(member, reportedComment));
-
-            return ResponseEntity.status(201)
-                    .body(DefaultResponseDto.builder()
-                            .responseCode("COMMENT_REPORTED")
-                            .responseMessage("커뮤니티 댓글 신고 완료")
-                            .build());
-        }
-    }
+		return ResponseEntity.status(201).body(SuccessResponse.from(responseCode));
+	}
 }

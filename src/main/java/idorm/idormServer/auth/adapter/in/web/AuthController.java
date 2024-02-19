@@ -83,13 +83,13 @@ public class AuthController {
 	public ResponseEntity<SuccessResponse<Object>> refresh(
 		HttpServletRequest servletRequest,
 		HttpServletResponse httpServletResponse,
-		@AuthInfo AuthResponse authResponse
+		@AuthInfo AuthResponse auth
 	) {
 		validateExistHeader(servletRequest);
 		String refreshToken = AuthorizationExtractor.extractRefreshToken(servletRequest);
 
-		refreshTokenUseCase.matches(refreshToken, authResponse.getId());
-		String reissueAccessToken = jwtTokenUseCase.createAccessToken(authResponse);
+		refreshTokenUseCase.matches(refreshToken, auth.getId());
+		String reissueAccessToken = jwtTokenUseCase.createAccessToken(auth);
 
 		httpServletResponse.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + reissueAccessToken);
 		return ResponseEntity.ok().body(SuccessResponse.from(AuthResponseCode.MEMBER_REFRESH));
@@ -107,9 +107,9 @@ public class AuthController {
 	)
 	@GetMapping("/logout")
 	public ResponseEntity<SuccessResponse<Object>> logout(
-		@AuthInfo AuthResponse authResponse
+		@AuthInfo AuthResponse auth
 	) {
-		refreshTokenUseCase.expire(authResponse.getId());
+		refreshTokenUseCase.expire(auth.getId());
 		return ResponseEntity.ok().body(SuccessResponse.from(MEMBER_LOGOUT));
 	}
 

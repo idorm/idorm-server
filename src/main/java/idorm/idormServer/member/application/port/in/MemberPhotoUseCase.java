@@ -6,7 +6,7 @@ import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 
 public interface MemberPhotoUseCase {
 
-	void savePhoto(AuthResponse authResponse, MultipartFile file);
+	void savePhoto(AuthResponse auth, MultipartFile file);
 
-	void deletePhoto(AuthResponse authResponse);
+	void deletePhoto(AuthResponse auth);
 }

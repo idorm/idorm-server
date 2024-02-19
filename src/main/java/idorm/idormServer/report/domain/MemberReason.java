@@ -1,51 +1,46 @@
 package idorm.idormServer.report.domain;
 
-import idorm.idormServer.common.exception.CustomException;
+import idorm.idormServer.report.adapter.out.exception.InvalidMemberReportTypeException;
 import lombok.Getter;
-
-import static idorm.idormServer.common.exception.ExceptionCode.MEMBER_REPORT_TYPE_CHARACTER_INVALID;
-import static idorm.idormServer.common.exception.ExceptionCode.SERVER_ERROR;
 
 public enum MemberReason {
 
-    NICKNAME('N'),
-    PROFILE_PHOTO('P'),
-    MATCHINGINFO('M'),
-    ETC('E');
+	NICKNAME('N'),
+	PROFILE_PHOTO('P'),
+	MATCHINGINFO('M'),
+	ETC('E');
 
-    @Getter
-    Character type;
+	@Getter
+	Character type;
 
-    MemberReason(Character type) {
-        this.type = type;
-    }
+	MemberReason(Character type) {
+		this.type = type;
+	}
 
-    public  static MemberReason from(String memberReason) {
-        try {
-            return MemberReason.valueOf(memberReason);
-        } catch (IllegalArgumentException e) {
-            throw new CustomException(null, MEMBER_REPORT_TYPE_CHARACTER_INVALID);
-        }
-    }
+	public static MemberReason from(String memberReason) {
+		try {
+			return MemberReason.valueOf(memberReason);
+		} catch (IllegalArgumentException e) {
+			throw new InvalidMemberReportTypeException();
+		}
+	}
 
-    public static MemberReason valueOf(Character type) {
-        MemberReason memberReason = null;
-        switch (type) {
-            case 'N':
-                memberReason = MemberReason.NICKNAME;
-                break;
-            case 'P':
-                memberReason = MemberReason.PROFILE_PHOTO;
-                break;
-            case 'M':
-                memberReason = MemberReason.MATCHINGINFO;
-                break;
-            case 'E':
-                memberReason = MemberReason.ETC;
-                break;
-            default:
-                throw new CustomException(null, SERVER_ERROR);
-        }
-        return memberReason;
-    }
+	public static MemberReason valueOf(Character type) {
+		MemberReason memberReason = null;
+		switch (type) {
+			case 'N':
+				memberReason = MemberReason.NICKNAME;
+				break;
+			case 'P':
+				memberReason = MemberReason.PROFILE_PHOTO;
+				break;
+			case 'M':
+				memberReason = MemberReason.MATCHINGINFO;
+				break;
+			case 'E':
+				memberReason = MemberReason.ETC;
+				break;
+		}
+		return memberReason;
+	}
 }

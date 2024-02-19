@@ -47,15 +47,15 @@ public class MemberService implements MemberUseCase {
 	}
 
 	@Override
-	public MemberInfoResponse getInfo(final AuthResponse authResponse) {
-		Member member = loadMemberPort.loadMember(authResponse.getId());
+	public MemberInfoResponse getInfo(final AuthResponse auth) {
+		Member member = loadMemberPort.loadMember(auth.getId());
 		return MemberInfoResponse.of(member);
 	}
 
 	@Override
 	@Transactional
-	public void editNickname(final AuthResponse authResponse, final NicknameUpdateRequest request) {
-		Member member = loadMemberPort.loadMember(authResponse.getId());
+	public void editNickname(final AuthResponse auth, final NicknameUpdateRequest request) {
+		Member member = loadMemberPort.loadMember(auth.getId());
 		Nickname newNickname = Nickname.from(request.nickname());
 
 		checkNicknamesPort.validateUniqueNickname(newNickname);
