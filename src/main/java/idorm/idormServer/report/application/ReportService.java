@@ -1,76 +1,58 @@
-package idorm.idormServer.report.service;
+package idorm.idormServer.report.application;
 
-import idorm.idormServer.community.domain.Comment;
-import idorm.idormServer.community.domain.Post;
-import idorm.idormServer.common.exception.CustomException;
-import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.report.domain.Report;
-import idorm.idormServer.report.repository.ReportRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static idorm.idormServer.common.exception.ExceptionCode.ILLEGAL_ARGUMENT_SELF;
-import static idorm.idormServer.common.exception.ExceptionCode.SERVER_ERROR;
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.community.domain.Comment;
+import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.member.application.port.out.LoadMemberPort;
+import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.report.application.port.in.ReportUseCase;
+import idorm.idormServer.report.application.port.in.dto.ReportRequest;
+import idorm.idormServer.report.application.port.out.SaveReportPort;
+import idorm.idormServer.report.domain.Report;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class ReportService {
+public class ReportService implements ReportUseCase {
 
-    private final ReportRepository reportRepository;
+	private LoadMemberPort loadMemberPort;
+	private SaveReportPort saveReportPort;
 
-    /**
-     * 신고 저장 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void save(Report report) {
+	// TODO: 커뮤니티 코드 반영 후 수정
+	// private LoadPostPort loadPostPort;
 
-        try {
-            reportRepository.save(report);
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
+	@Override
+	@Transactional
+	public void reportMember(final AuthResponse auth, final ReportRequest request) {
+		final Member loginMember = loadMemberPort.loadMember(auth.getId());
+		Report memberReport = request.toMemberReportDomain(loginMember,
+			loadMemberPort.loadMember(request.targetId()));
 
-    /**
-     * 신고 확인 |
-     * 500(SERVER_ERROR)
-     */
-    @Transactional
-    public void delete(Report report) {
-        try {
-            report.delete();
-        } catch (RuntimeException e) {
-            throw new CustomException(e, SERVER_ERROR);
-        }
-    }
+		saveReportPort.save(memberReport);
+	}
 
-    /**
-     * 회원 신고 검증 |
-     * 400(ILLEGAL_ARGUMENT_SELF)
-     */
-    public void validateReportMember(Member reporterMember, Member reportedMember) {
-        if (reportedMember.equals(reporterMember))
-            throw new CustomException(null, ILLEGAL_ARGUMENT_SELF);
-    }
+	@Override
+	@Transactional
+	public void reportPost(final AuthResponse auth, final ReportRequest request) {
+		final Member loginMember = loadMemberPort.loadMember(auth.getId());
+		// TODO: 커뮤니티 코드 반영 후 수정
+		final Post post = null;
+		Report postReport = request.toPostReportDomain(loginMember, post);
 
-    /**
-     * 게시글 신고 검증 |
-     * 400(ILLEGAL_ARGUMENT_SELF)
-     */
-    public void validateReportPost(Member reporterMember, Post reportedPost) {
-        if (reportedPost.getMember().equals(reporterMember))
-            throw new CustomException(null, ILLEGAL_ARGUMENT_SELF);
-    }
+		saveReportPort.save(postReport);
+	}
 
-    /**
-     * 댓글 신고 검증 |
-     * 400(ILLEGAL_ARGUMENT_SELF)
-     */
-    public void validateReportComment(Member reporterMember, Comment reportedComment) {
-        if (reportedComment.getMember().equals(reporterMember))
-            throw new CustomException(null, ILLEGAL_ARGUMENT_SELF);
-    }
+	@Override
+	@Transactional
+	public void reportComment(final AuthResponse auth, final ReportRequest request) {
+		final Member loginMember = loadMemberPort.loadMember(auth.getId());
+		// TODO: 커뮤니티 코드 반영 후 수정
+		final Comment comment = null;
+		Report commentReport = request.toCommentReportDomain(loginMember, comment);
+
+		saveReportPort.save(commentReport);
+	}
 }

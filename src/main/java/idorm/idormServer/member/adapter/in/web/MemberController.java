@@ -81,9 +81,9 @@ public class MemberController {
 	})
 	@GetMapping("/members/me")
 	public ResponseEntity<SuccessResponse<Object>> getMyInfo(
-		@AuthInfo AuthResponse authResponse
+		@AuthInfo AuthResponse auth
 	) {
-		MemberInfoResponse memberInfoResponse = memberUseCase.getInfo(authResponse);
+		MemberInfoResponse memberInfoResponse = memberUseCase.getInfo(auth);
 		return ResponseEntity.ok().body(SuccessResponse.of(MEMBER_FOUND, memberInfoResponse));
 	}
 
@@ -101,9 +101,9 @@ public class MemberController {
 	)
 	@PatchMapping("/members/me/nickname")
 	public ResponseEntity<SuccessResponse<Object>> editNickname(
-		@AuthInfo AuthResponse authResponse, @RequestBody @Valid NicknameUpdateRequest request
+		@AuthInfo AuthResponse auth, @RequestBody @Valid NicknameUpdateRequest request
 	) {
-		memberUseCase.editNickname(authResponse, request);
+		memberUseCase.editNickname(auth, request);
 		return ResponseEntity.ok().body(SuccessResponse.from(NICKNAME_UPDATED));
 	}
 
@@ -138,9 +138,9 @@ public class MemberController {
 	)
 	@DeleteMapping("/members/me")
 	public ResponseEntity<SuccessResponse<Object>> deleteAccount(
-		@AuthInfo AuthResponse authResponse
+		@AuthInfo AuthResponse auth
 	) {
-		memberUseCase.withdraw(authResponse);
+		memberUseCase.withdraw(auth);
 		return ResponseEntity.ok().body(SuccessResponse.from(MEMBER_DELETED));
 	}
 
@@ -158,10 +158,10 @@ public class MemberController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping("/members/me/profile-photo")
 	public ResponseEntity<SuccessResponse<Object>> saveMemberPhoto(
-		@AuthInfo AuthResponse authResponse,
+		@AuthInfo AuthResponse auth,
 		@RequestPart(value = "file", required = false) MultipartFile file
 	) {
-		memberPhotoUseCase.savePhoto(authResponse, file);
+		memberPhotoUseCase.savePhoto(auth, file);
 		return ResponseEntity.status(201).body(SuccessResponse.from(PROFILE_PHOTO_SAVED));
 	}
 
@@ -179,9 +179,9 @@ public class MemberController {
 	})
 	@DeleteMapping("/members/me/profile-photo")
 	public ResponseEntity<SuccessResponse<Object>> deleteMemberPhoto(
-		@AuthInfo AuthResponse authResponse
+		@AuthInfo AuthResponse auth
 	) {
-		memberPhotoUseCase.deletePhoto(authResponse);
+		memberPhotoUseCase.deletePhoto(auth);
 		return ResponseEntity.ok().body(SuccessResponse.from(PROFILE_PHOTO_DELETED));
 	}
 }

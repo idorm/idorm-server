@@ -22,8 +22,8 @@ public class MemberPhotoService implements MemberPhotoUseCase {
 
 	@Override
 	@Transactional
-	public void savePhoto(final AuthResponse authResponse, final MultipartFile file) {
-		Member member = loadMemberPort.loadMember(authResponse.getId());
+	public void savePhoto(final AuthResponse auth, final MultipartFile file) {
+		Member member = loadMemberPort.loadMember(auth.getId());
 		if (member.existsOfMemberPhoto()) {
 			deleteFilePort.deleteMemberPhotoFile(member);
 		}
@@ -34,8 +34,8 @@ public class MemberPhotoService implements MemberPhotoUseCase {
 
 	@Override
 	@Transactional
-	public void deletePhoto(final AuthResponse authResponse) {
-		Member member = loadMemberPort.loadMember(authResponse.getId());
+	public void deletePhoto(final AuthResponse auth) {
+		Member member = loadMemberPort.loadMember(auth.getId());
 		member.deleteMemberPhoto();
 
 		deleteFilePort.deleteMemberPhotoFile(member);
