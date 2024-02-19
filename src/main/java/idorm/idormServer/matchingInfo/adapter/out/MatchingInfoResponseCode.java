@@ -28,12 +28,12 @@ public enum MatchingInfoResponseCode implements BaseResponseCode {
 	INVALID_DORMCATEGORY_CHARACTER(BAD_REQUEST, "올바른 형식의 기숙사 분류가 아닙니다."),
 	INVALID_JOIN_PERIOD_CHARACTER(BAD_REQUEST, "올바른 형식의 입사 기간이 아닙니다."),
 	INVALID_GENDER_CHARACTER(BAD_REQUEST, "올바른 형식의 성별이 아닙니다."),
-	INVALID_AGE_LENGTH(BAD_REQUEST, "나이는 20~50살 사이여야 합니다."),
+	INVALID_AGE_LENGTH(BAD_REQUEST, "나이는 20~100살 사이여야 합니다."),
 	INVALID_WISHTEXT_LENGTH(BAD_REQUEST, "하고싶은 말은 ~150자 이내여야 합니다."),
-	ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(BAD_REQUEST, "비공개 상태의 온보딩 정보 입니다."),
 
 	NOT_FOUND_MATCHINGINFO(NOT_FOUND, "등록된 온보딩 정보가 없습니다."),
 
+	ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(CONFLICT, "비공개 상태의 온보딩 정보 입니다."),
 	DUPLICATE_MATCHINGINFO(CONFLICT, "등록된 온보딩 정보가 존재합니다.");
 
 	private final HttpStatus status;

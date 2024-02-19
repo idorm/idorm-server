@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "9. Email", description = "이메일 인증 api")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/email")
 public class EmailController {
 
 	private final EmailUseCase emailUseCase;
@@ -40,7 +40,7 @@ public class EmailController {
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR / EMAIL_SERVER_ERROR"),
 	}
 	)
-	@PostMapping("/signup/email/send")
+	@PostMapping("/verify")
 	public ResponseEntity<SuccessResponse<Object>> sendAuthenticationEmail(
 		@RequestBody @Valid EmailSendRequest request) {
 
@@ -60,7 +60,7 @@ public class EmailController {
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	}
 	)
-	@PostMapping("/signup/email/verification")
+	@PostMapping("/verification")
 	public ResponseEntity<SuccessResponse<Object>> verifyAuthenticationCode(
 		@RequestBody @Valid EmailVerifyRequest request) {
 
@@ -78,7 +78,7 @@ public class EmailController {
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	}
 	)
-	@PostMapping("/members/me/password/email/send")
+	@PostMapping("/reverify")
 	public ResponseEntity<SuccessResponse<Object>> sendReAuthenticationEmail(
 		@RequestBody @Valid EmailSendRequest request) {
 
@@ -97,7 +97,7 @@ public class EmailController {
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	}
 	)
-	@PostMapping("/members/me/password/email/verification")
+	@PostMapping("/reverification")
 	public ResponseEntity<SuccessResponse<Object>> verifyReAuthenticationCode(
 		@RequestBody EmailVerifyRequest request) {
 

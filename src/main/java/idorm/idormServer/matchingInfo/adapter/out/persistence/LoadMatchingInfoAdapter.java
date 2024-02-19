@@ -2,6 +2,7 @@ package idorm.idormServer.matchingInfo.adapter.out.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,13 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 			.orElseThrow(NotFoundMatchingInfoException::new);
 
 		return matchingInfoMapper.toDomain(matchingInfoJpaEntity);
+	}
+
+	@Override
+	public Optional<MatchingInfo> loadWithOptional(Long memberId) {
+		Optional<MatchingInfoJpaEntity> entityOptional = matchingInfoRepository.findByMemberId(memberId);
+
+		return Optional.ofNullable(entityOptional.map(matchingInfoMapper::toDomain)).orElse(null);
 	}
 
 	@Override

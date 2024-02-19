@@ -37,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "6. MatchingInfo", description = "온보딩 api")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/members/me/matching/info")
+@RequestMapping("/api/v1/matching/me")
 public class MatchingInfoController {
 
 	private final MatchingInfoUseCase matchingInfoUseCase;

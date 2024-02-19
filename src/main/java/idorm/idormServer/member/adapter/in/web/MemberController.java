@@ -60,7 +60,7 @@ public class MemberController {
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping("/members/signup")
+	@PostMapping("/signup")
 	public ResponseEntity<SuccessResponse<Object>> signUp(
 		@Valid @RequestBody SignupRequest request
 	) {
