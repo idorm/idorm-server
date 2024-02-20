@@ -1,7 +1,10 @@
 package idorm.idormServer.calendar.domain;
 
-import idorm.idormServer.common.util.Validator;
 import java.util.List;
+
+import idorm.idormServer.calendar.adapter.out.exception.AccessDeniedTeamCalendarException;
+import idorm.idormServer.common.util.Validator;
+import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,38 +13,44 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SleepoverCalendar {
 
-    private Long id;
-    private Period period;
-    private Participant participant;
-    private Team team;
+	private Long id;
+	private Period period;
+	private Participant participant;
+	private Team team;
 
-    public SleepoverCalendar(final Period period, final Participant participant, final Team team) {
-        validateConstructor(period, participant, team);
-        this.period = period;
-        this.participant = participant;
-        this.team = team;
-    }
+	public SleepoverCalendar(final Period period, final Participant participant, final Team team) {
+		validateConstructor(period, participant, team);
+		this.period = period;
+		this.participant = participant;
+		this.team = team;
+	}
 
-    public void assignId(Long generatedId) {
-        this.id = generatedId;
-    }
+	public void assignId(Long generatedId) {
+		this.id = generatedId;
+	}
 
-    public static SleepoverCalendar forMapper(final Long id,
-                                              final Period period,
-                                              final Participant participant,
-                                              final Team team) {
-        return new SleepoverCalendar(id, period, participant, team);
-    }
+	public static SleepoverCalendar forMapper(final Long id,
+		final Period period,
+		final Participant participant,
+		final Team team) {
+		return new SleepoverCalendar(id, period, participant, team);
+	}
 
-    private void validateConstructor(Period period, Participant participant, Team team) {
-        Validator.validateNotNull(List.of(period, participant, team));
-    }
+	public void update(Period period) {
+		this.period.update(period.getStartDate(), period.getEndDate());
+	}
 
-    public void validateUniqueDate(Period newPeriod) {
-        this.period.validateUniqueDate(newPeriod);
-    }
+	private void validateConstructor(Period period, Participant participant, Team team) {
+		Validator.validateNotNull(List.of(period, participant, team));
+	}
 
-    public void delete() {
-        this.delete();
-    }
+	public void validateUniqueDate(Period newPeriod) {
+		this.period.validateUniqueDate(newPeriod);
+	}
+
+	public void validateSleepoverCalendarAceessMember(Member member) {
+		if (!this.participant.equals(member.getId())) {
+			throw new AccessDeniedTeamCalendarException();
+		}
+	}
 }

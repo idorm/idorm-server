@@ -1,62 +1,31 @@
 package idorm.idormServer.calendar.application.port.in.dto;
 
 import idorm.idormServer.calendar.domain.OfficialCalendar;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Schema(title = "[사용자 용도] 공식 일정 응답")
-public class OfficialCalendarResponse {
 
-    @Schema(required = true, description= "캘린더 식별자")
-    private Long calendarId;
+public record OfficialCalendarResponse(
+    Long calendarId,
+    Boolean isDorm1Yn,
+    Boolean isDorm2Yn,
+    Boolean isDorm3Yn,
+    LocalDate startDate,
+    LocalDate endDate,
+    String title,
+    String postUrl,
+    LocalDate inuPostCreatedAt
 
-    @Schema(required = true, description= "1기숙사 대상 여부")
-    private Boolean isDorm1Yn;
+) {
 
-    @Schema(required = true, description= "2기숙사 대상 여부")
-    private Boolean isDorm2Yn;
-
-    @Schema(required = true, description= "3기숙사 대상 여부")
-    private Boolean isDorm3Yn;
-
-    @Schema(description= "시작 일자")
-    private LocalDate startDate;
-
-    @Schema(description= "종료 일자")
-    private LocalDate endDate;
-
-    @Schema(description= "제목")
-    private String title;
-
-    @Schema(description= "생활원 홈페이지 공지 게시글 링크")
-    private String postUrl;
-
-    @Schema(description= "생활원 홈페이지 게시글 작성일")
-    private String inuPostCreatedAt;
-
-    public OfficialCalendarResponse(OfficialCalendar calendar) {
-
-        this.calendarId = calendar.getId();
-        this.isDorm1Yn = calendar.getIsDorm1Yn();
-        this.isDorm2Yn = calendar.getIsDorm2Yn();
-        this.isDorm3Yn = calendar.getIsDorm3Yn();
-
-        if (calendar.getStartDate() != null)
-            this.startDate = calendar.getStartDate();
-
-        if (calendar.getEndDate() != null)
-            this.endDate = calendar.getEndDate();
-
-        if (calendar.getPostUrl() != null)
-            this.postUrl = calendar.getPostUrl();
-
-        this.inuPostCreatedAt = calendar.getInuPostCreatedAt().toString();
-    }
+  public static OfficialCalendarResponse from(final OfficialCalendar calendar) {
+    return new OfficialCalendarResponse(calendar.getId(),
+        calendar.getIsDorm1Yn(),
+        calendar.getIsDorm2Yn(),
+        calendar.getIsDorm3Yn(),
+        calendar.getPeriod().getStartDate(),
+        calendar.getPeriod().getEndDate(),
+        calendar.getTitle().getValue(),
+        calendar.getInuPostUrl(),
+        calendar.getInuPostCreatedAt());
+  }
 }

@@ -1,7 +1,5 @@
 package idorm.idormServer.calendar.domain;
 
-import idorm.idormServer.common.exception.CustomException;
-import idorm.idormServer.common.exception.ExceptionCode;
 import java.time.LocalTime;
 import java.util.Objects;
 import lombok.Getter;
@@ -9,42 +7,42 @@ import lombok.Getter;
 @Getter
 public class Duration {
 
-    private LocalTime startTime;
-    private LocalTime endTime;
+  private LocalTime startTime;
+  private LocalTime endTime;
 
-    public Duration(final LocalTime startTime, final LocalTime endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
+  public Duration(final LocalTime startTime, final LocalTime endTime) {
+    this.startTime = startTime;
+    this.endTime = endTime;
+  }
+
+  public static Duration of(Period period, LocalTime start, LocalTime end) {
+    validate(period, start, end);
+    return new Duration(start, end);
+  }
+
+  public static Duration forMapper(final LocalTime startTime, final LocalTime endTime) {
+    return new Duration(startTime, endTime);
+  }
+
+  private static void validate(Period period, LocalTime startTime, LocalTime endTime) {
+    if (Objects.isNull(startTime) || Objects.isNull(endTime)) {
+      return;
     }
 
-    public static Duration of(Period period, LocalTime start, LocalTime end) {
-        validate(period, start, end);
-        return new Duration(start, end);
+    if (period.isSameDate()) {
+      validateValidDateTime(startTime, endTime);
     }
+  }
 
-    public static Duration forMapper(final LocalTime startTime, final LocalTime endTime) {
-        return new Duration(startTime, endTime);
+  public static void validateValidDateTime(LocalTime startTime, LocalTime endTime) {
+    if (endTime.isBefore(startTime)) {
+      throw new CustomException(null, ExceptionCode.ILLEGAL_ARGUMENT_DATE_SET);
     }
+  }
 
-    private static void validate(Period period, LocalTime startTime, LocalTime endTime) {
-        if (Objects.isNull(startTime) || Objects.isNull(endTime)) {
-            return;
-        }
-
-        if (period.isSameDate()) {
-            validateValidDateTime(startTime, endTime);
-        }
-    }
-
-    public static void validateValidDateTime(LocalTime startTime, LocalTime endTime) {
-        if (endTime.isBefore(startTime)) {
-            throw new CustomException(null, ExceptionCode.ILLEGAL_ARGUMENT_DATE_SET);
-        }
-    }
-
-    void update(Period period, LocalTime startTime, LocalTime endTime){
-        validate(period, startTime, endTime);
-        this. startTime = startTime;
-        this.endTime = endTime;
-    }
+  void update(Period period, LocalTime startTime, LocalTime endTime) {
+    validate(period, startTime, endTime);
+    this.startTime = startTime;
+    this.endTime = endTime;
+  }
 }

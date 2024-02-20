@@ -9,11 +9,11 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 class ContentMapper {
-	public ContentEmbeddedEntity toEntity(Content content) {
-		return new ContentEmbeddedEntity(content.getValue());
+	public CalendarContentEmbeddedEntity toEntity(Content content) {
+		return new CalendarContentEmbeddedEntity(content.getValue());
 	}
 
-	public Content toDomain(ContentEmbeddedEntity content) {
+	public Content toDomain(CalendarContentEmbeddedEntity content) {
 		return Content.forMapper(content.getValue());
 	}
 }

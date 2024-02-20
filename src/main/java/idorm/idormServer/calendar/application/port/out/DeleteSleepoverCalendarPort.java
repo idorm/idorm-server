@@ -1,5 +1,7 @@
 package idorm.idormServer.calendar.application.port.out;
 
+import idorm.idormServer.calendar.domain.SleepoverCalendar;
+
 public interface DeleteSleepoverCalendarPort {
-    void deleteSleepoverCalendar(Long sleepoverCalendar);
+    void delete(SleepoverCalendar sleepoverCalendar);
 }

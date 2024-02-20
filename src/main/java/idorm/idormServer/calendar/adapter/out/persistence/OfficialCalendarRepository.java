@@ -1,6 +1,7 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
 import idorm.idormServer.calendar.domain.OfficialCalendar;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,7 +19,7 @@ public interface OfficialCalendarRepository extends JpaRepository<OfficialCalend
             "WHERE (c.inu_post_created_at LIKE :now " +
             "OR c.inu_post_created_at LIKE :lastWeek) " +
             "AND c.is_deleted = 0", nativeQuery = true)
-    List<OfficialCalendar> findByMonthByAdmin(String now, String lastWeek);
+    List<OfficialCalendarJpaEntity> findByMonthByAdmin(String now, String lastWeek);
 
     @Query(value = "SELECT * " +
             "FROM official_calendar c " +
@@ -26,7 +27,7 @@ public interface OfficialCalendarRepository extends JpaRepository<OfficialCalend
             "OR c.end_date LIKE :yearMonth) " +
             "AND c.is_deleted = 0 " +
             "AND c.is_public = 1", nativeQuery = true)
-    List<OfficialCalendar> findByMonthByMember(@Param("yearMonth") String yearMonth);
+    List<OfficialCalendarJpaEntity> findByMonthByMember(@Param("yearMonth") YearMonth yearMonth);
 
     @Query(value = "SELECT * " +
             "FROM official_calendar c " +
@@ -34,7 +35,7 @@ public interface OfficialCalendarRepository extends JpaRepository<OfficialCalend
             "AND c.start_date = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 9 HOUR), '%Y-%m-%d') " +
             "AND c.is_deleted = 0 " +
             "AND c.is_public = 1", nativeQuery = true)
-    List<OfficialCalendar> findCalendarsByDorm1AndTodayStartDate();
+    List<OfficialCalendarJpaEntity> findCalendarsByDorm1AndTodayStartDate();
 
     @Query(value = "SELECT * " +
             "FROM official_calendar c " +
@@ -42,7 +43,7 @@ public interface OfficialCalendarRepository extends JpaRepository<OfficialCalend
             "AND c.start_date = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 9 HOUR), '%Y-%m-%d') " +
             "AND c.is_deleted = 0 " +
             "AND c.is_public = 1", nativeQuery = true)
-    List<OfficialCalendar> findCalendarsByDorm2AndTodayStartDate();
+    List<OfficialCalendarJpaEntity> findCalendarsByDorm2AndTodayStartDate();
 
     @Query(value = "SELECT * " +
             "FROM official_calendar c " +
@@ -50,6 +51,6 @@ public interface OfficialCalendarRepository extends JpaRepository<OfficialCalend
             "AND c.start_date = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 9 HOUR), '%Y-%m-%d') " +
             "AND c.is_deleted = 0 " +
             "AND c.is_public = 1", nativeQuery = true)
-    List<OfficialCalendar> findCalendarsByDorm3AndTodayStartDate();
+    List<OfficialCalendarJpaEntity> findCalendarsByDorm3AndTodayStartDate();
 }
 

@@ -1,6 +1,5 @@
 package idorm.idormServer.calendar.domain;
 
-import static idorm.idormServer.common.exception.ExceptionCode.CONTENT_LENGTH_INVALID;
 
 import idorm.idormServer.common.util.Validator;
 import lombok.Getter;

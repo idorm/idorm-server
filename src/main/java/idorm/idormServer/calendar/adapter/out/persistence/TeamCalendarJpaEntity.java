@@ -35,7 +35,7 @@ public class TeamCalendarJpaEntity {
     private TitleEmbeddedEntity title;
 
     @Embedded
-    private ContentEmbeddedEntity content;
+    private CalendarContentEmbeddedEntity content;
 
     @Embedded
     private ParticipantsEmbeddedEntity participants;
