@@ -1,7 +1,7 @@
-package idorm.idormServer.fcm.adapter.out.exception;
+package idorm.idormServer.notification.adapter.out.exception;
 
 import idorm.idormServer.common.exception.BaseException;
-import idorm.idormServer.fcm.adapter.out.FcmResponseCode;
+import idorm.idormServer.notification.adapter.out.FcmResponseCode;
 
 public class IllegalArgumentFcmTokenException extends BaseException {
 

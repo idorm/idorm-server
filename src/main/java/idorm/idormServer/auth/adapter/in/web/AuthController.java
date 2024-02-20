@@ -57,11 +57,11 @@ public class AuthController {
 		HttpServletResponse httpServletResponse,
 		@Valid @RequestBody LoginRequest request
 	) {
-		AuthResponse authResponse = authUseCase.login(request);
+		AuthResponse auth = authUseCase.login(request);
 
-		String accessToken = jwtTokenUseCase.createAccessToken(authResponse);
+		String accessToken = jwtTokenUseCase.createAccessToken(auth);
 		String refreshToken = jwtTokenUseCase.createRefreshToken();
-		refreshTokenUseCase.saveToken(refreshToken, authResponse.getId());
+		refreshTokenUseCase.saveToken(refreshToken, auth.getId());
 
 		httpServletResponse.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 		httpServletResponse.setHeader("Refresh-Token", "Bearer " + refreshToken);

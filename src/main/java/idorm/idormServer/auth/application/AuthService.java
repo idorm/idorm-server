@@ -9,20 +9,23 @@ import idorm.idormServer.auth.application.port.in.dto.LoginRequest;
 import idorm.idormServer.auth.application.port.out.EncryptPort;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.notification.application.port.in.dto.RegisterTokenRequest;
+import idorm.idormServer.notification.application.port.out.RegisterNotificationTokenPort;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class AuthService implements AuthUseCase {
 
-    private final LoadMemberPort loadMemberPort;
-    private final EncryptPort encryptorPort;
+	private final LoadMemberPort loadMemberPort;
+	private final RegisterNotificationTokenPort registerNotificationTokenPort;
+	private final EncryptPort encryptorPort;
 
-    @Override
-    public AuthResponse login(final LoginRequest request) {
-        Member member = loadMemberPort.loadMember(request.email(), encryptorPort.encrypt(request.password()));
-
-        return new AuthResponse(member.getId(), member.getRoleType().getName(), member.getNickname().getValue());
-    }
+	@Override
+	@Transactional
+	public AuthResponse login(final LoginRequest request) {
+		Member member = loadMemberPort.loadMember(request.email(), encryptorPort.encrypt(request.password()));
+		registerNotificationTokenPort.save(new RegisterTokenRequest(member.getId(), request.fcmToken()));
+		return new AuthResponse(member.getId(), member.getRoleType().getName(), member.getNickname().getValue());
+	}
 }
