@@ -24,9 +24,9 @@ public class LoggingAdvice {
             "execution(* idorm.idormServer.community..*Controller.*(..)) || " +
             "execution(* idorm.idormServer.community..*Service.*(..)) || " +
             "execution(* idorm.idormServer.community..*Repository.*(..)) || " +
-            "execution(* idorm.idormServer.fcm..*Controller.*(..)) || " +
-            "execution(* idorm.idormServer.fcm..*Service.*(..)) || " +
-            "execution(* idorm.idormServer.fcm..*Repository.*(..)) || " +
+            "execution(* idorm.idormServer.notification..*Controller.*(..)) || " +
+            "execution(* idorm.idormServer.notification..*Service.*(..)) || " +
+            "execution(* idorm.idormServer.notification..*Repository.*(..)) || " +
             "execution(* idorm.idormServer.matchingInfo..*Controller.*(..)) || " +
             "execution(* idorm.idormServer.matchingInfo..*Service.*(..)) || " +
             "execution(* idorm.idormServer.matchingInfo..*Repository.*(..)) || " +

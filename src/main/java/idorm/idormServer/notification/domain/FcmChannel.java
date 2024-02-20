@@ -1,6 +1,6 @@
-package idorm.idormServer.fcm.domain;
+package idorm.idormServer.notification.domain;
 
-public enum NotifyType {
+public enum FcmChannel {
     CALENDAR,
     COMMENT,
     SUBCOMMENT,
