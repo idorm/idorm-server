@@ -1,16 +1,23 @@
 package idorm.idormServer.calendar.application.port.in;
 
-import idorm.idormServer.calendar.application.port.in.dto.RoomMateCalendarSaveRequest;
-import idorm.idormServer.calendar.application.port.in.dto.RoomMateCalendarUpdateRequest;
-import idorm.idormServer.member.domain.Member;
-import java.time.YearMonth;
+import idorm.idormServer.calendar.application.port.in.dto.TeamCalendarResponse;
+import java.util.List;
+
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;
+import idorm.idormServer.calendar.application.port.in.dto.FindOfficialCalendarsRequest;
+import idorm.idormServer.calendar.application.port.in.dto.SaveTeamCalendarRequest;
+import idorm.idormServer.calendar.application.port.in.dto.UpdateTeamCalendarRequest;
 
 public interface TeamCalendarUseCase {
 
-    void save(Member member, RoomMateCalendarSaveRequest request);
+	TeamCalendarResponse save(AuthResponse authResponse, SaveTeamCalendarRequest request);
 
-    void findById(Long teamCalendarId);
-    void findAllByMonth(YearMonth month);
-    void update(RoomMateCalendarUpdateRequest request);
-    void delete(Long teamCalendarId);
+	TeamCalendarResponse update(AuthResponse authResponse, UpdateTeamCalendarRequest request);
+
+	void delete(AuthResponse authResponse, Long teamCalendarId);
+
+	TeamCalendarResponse findById(AuthResponse authResponse, Long teamCalendarId);
+
+	List<TeamCalendarResponse> findTeamCalendarsByMonth(AuthResponse authResponse, FindOfficialCalendarsRequest request);
 }

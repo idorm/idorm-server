@@ -40,6 +40,7 @@ public enum CalendarResponseCode implements BaseResponseCode {
   ILLEGAL_STATEMENT_EXPLODEDTEAM(BAD_REQUEST, "폭발한 팀은 요청 대상이 될 수 없습니다."),
   ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR(BAD_REQUEST, "외박 일정은 해당 요청의 설정 대상이 될 수 없습니다."),
   FIELD_TARGETS_REQUIRED(BAD_REQUEST, "팀 일정 대상자 입력은 필수 입니다."),
+  ILLEGAL_ARGUMENT_DATE_SET(BAD_REQUEST, "시작일자가 종료일자보다 빠르거나 같아야 합니다."),
 
   ACCESS_DENIED_TEAM(FORBIDDEN, "팀 접근 권한이 없습니다."),
   ACCESS_DENIED_TEAM_CALENDAR(FORBIDDEN, "팀 일정 접근 권한이 없습니다."),
@@ -49,9 +50,11 @@ public enum CalendarResponseCode implements BaseResponseCode {
   NOT_FOUND_TEAM(NOT_FOUND, "등록된 팀이 없습니다."),
   NOT_FOUND_TEAM_MEMBER(NOT_FOUND, "등록되지 않은 팀 회원이 있습니다."),
   NOT_FOUND_CALENDAR(NOT_FOUND, "등록된 공식 일정이 없습니다."),
+  NOT_FOUND_SLEEPOVER_CALENDAR(NOT_FOUND, "등록된 외박 일정이 없습니다."),
 
   DUPLICATED_SLEEPOVER_DATE(CONFLICT, "중복인 외박 일자가 존재합니다."),
   CANNOT_EXPLODE_TEAM(CONFLICT, "다른 팀원 존재 시 팀을 삭제할 수 없습니다."),
+  ALREADY_REGISTERED_TEAM(CONFLICT, "이미 등록된 팀이 있습니다."),
   CANNOT_REGISTER_TEAM_STATUS_FULL(CONFLICT, "등록하려는 팀이 정원 초과 입니다.");
 
   private final HttpStatus status;

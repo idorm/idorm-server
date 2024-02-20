@@ -1,13 +1,19 @@
 package idorm.idormServer.calendar.application.port.in;
 
-import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarsFindRequest;
-import idorm.idormServer.member.domain.Member;
-import java.util.List;
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;
+import idorm.idormServer.calendar.application.port.in.dto.FindOfficialCalendarsRequest;
+import idorm.idormServer.calendar.application.port.in.dto.TeamResponse;
 
 public interface TeamUseCase {
-    void findAllCalendars(Member member, OfficialCalendarsFindRequest request);
-    void addTeamMember(Member member, Long registerMemberId);
-    void deleteMember(Member member, Long memberId);
-    List<Member> findTeamMembers(Member member);
-    void isConfirmTeamExploded(Member member);
+
+	void addTeamMember(AuthResponse authResponse, Long registerMemberId);
+
+	void deleteMember(AuthResponse authResponse, Long memberId);
+
+	void explodeTeam(AuthResponse authResponse);
+
+	TeamResponse findTeam(AuthResponse authResponse);
+
+	CalendarsResponse findTeamAndSleepoverCalendars(AuthResponse authResponse, FindOfficialCalendarsRequest request);
 }

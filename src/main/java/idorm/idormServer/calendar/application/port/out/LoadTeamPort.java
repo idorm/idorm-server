@@ -1,9 +1,14 @@
 package idorm.idormServer.calendar.application.port.out;
 
+import java.util.Optional;
+
 import idorm.idormServer.calendar.domain.Team;
-import idorm.idormServer.member.domain.Member;
 
 public interface LoadTeamPort {
 
-    Team load(Member member);
+	Optional<Team> findByMemberIdWithOptional(Long memberId);
+
+	Team findByMemberIdWithTeamMember(Long memberId);
+
+	Team findByMemberId(Long memberid);
 }

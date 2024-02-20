@@ -1,11 +1,11 @@
 package idorm.idormServer.report.adapter.out.persistence;
 
+import idorm.idormServer.community.comment.adapter.out.persistence.CommentMapper;
+import idorm.idormServer.community.post.adapter.out.persistence.PostMapper;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import idorm.idormServer.community.adapter.out.persistence.CommentMapper;
-import idorm.idormServer.community.adapter.out.persistence.PostMapper;
 import idorm.idormServer.member.adapter.out.persistence.MemberMapper;
 import idorm.idormServer.report.domain.Report;
 import lombok.AccessLevel;
