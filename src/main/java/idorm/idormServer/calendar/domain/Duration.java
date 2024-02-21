@@ -1,5 +1,6 @@
 package idorm.idormServer.calendar.domain;
 
+import idorm.idormServer.calendar.adapter.out.exception.IllegalArgumentDateSetException;
 import java.time.LocalTime;
 import java.util.Objects;
 import lombok.Getter;
@@ -23,6 +24,11 @@ public class Duration {
   public static Duration forMapper(final LocalTime startTime, final LocalTime endTime) {
     return new Duration(startTime, endTime);
   }
+  void update(Period period, LocalTime startTime, LocalTime endTime) {
+    validate(period, startTime, endTime);
+    this.startTime = startTime;
+    this.endTime = endTime;
+  }
 
   private static void validate(Period period, LocalTime startTime, LocalTime endTime) {
     if (Objects.isNull(startTime) || Objects.isNull(endTime)) {
@@ -36,13 +42,8 @@ public class Duration {
 
   public static void validateValidDateTime(LocalTime startTime, LocalTime endTime) {
     if (endTime.isBefore(startTime)) {
-      throw new CustomException(null, ExceptionCode.ILLEGAL_ARGUMENT_DATE_SET);
+     throw new IllegalArgumentDateSetException();
     }
   }
 
-  void update(Period period, LocalTime startTime, LocalTime endTime) {
-    validate(period, startTime, endTime);
-    this.startTime = startTime;
-    this.endTime = endTime;
-  }
 }

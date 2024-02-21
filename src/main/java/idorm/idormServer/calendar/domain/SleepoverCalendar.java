@@ -37,20 +37,16 @@ public class SleepoverCalendar {
 	}
 
 	public void update(Period period) {
-		this.period.update(period.getStartDate(), period.getEndDate());
+		validateUniqueDate(period);
+		this.period.update(period);
 	}
 
 	private void validateConstructor(Period period, Participant participant, Team team) {
 		Validator.validateNotNull(List.of(period, participant, team));
 	}
 
-	public void validateUniqueDate(Period newPeriod) {
+	private void validateUniqueDate(Period newPeriod) {
 		this.period.validateUniqueDate(newPeriod);
 	}
 
-	public void validateSleepoverCalendarAceessMember(Member member) {
-		if (!this.participant.equals(member.getId())) {
-			throw new AccessDeniedTeamCalendarException();
-		}
-	}
 }

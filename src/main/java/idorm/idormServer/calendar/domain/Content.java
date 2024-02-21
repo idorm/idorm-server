@@ -1,6 +1,9 @@
 package idorm.idormServer.calendar.domain;
 
 
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.INVALID_CONTENT_LENGTH;
+
+import idorm.idormServer.calendar.adapter.out.CalendarResponseCode;
 import idorm.idormServer.common.util.Validator;
 import lombok.Getter;
 
@@ -28,6 +31,6 @@ public class Content {
 
     private void validate(String value) {
         Validator.validateNotBlank(value);
-        Validator.validateLength(value, MIN_LENGTH, MAX_LENGTH, CONTENT_LENGTH_INVALID);
+        Validator.validateLength(value, MIN_LENGTH, MAX_LENGTH, INVALID_CONTENT_LENGTH);
     }
 }
