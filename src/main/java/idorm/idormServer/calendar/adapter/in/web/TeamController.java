@@ -1,15 +1,14 @@
 package idorm.idormServer.calendar.adapter.in.web;
 
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.*;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_EXPLODED_CHECKED;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_MEMBERS_FOUND;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_MEMBER_CREATED;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_MEMBER_DELETED;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.domain.Auth;
 import idorm.idormServer.auth.domain.AuthInfo;
-import idorm.idormServer.calendar.adapter.out.CalendarResponseCode;
 import idorm.idormServer.calendar.application.port.in.TeamUseCase;
-import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;
-import idorm.idormServer.calendar.application.port.in.dto.FindOfficialCalendarsRequest;
-import idorm.idormServer.calendar.application.port.in.dto.TeamParticipantResponse;
 import idorm.idormServer.calendar.application.port.in.dto.TeamResponse;
 import idorm.idormServer.common.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,15 +18,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.util.List;
-
-import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +29,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -136,27 +128,5 @@ public class TeamController {
   ) {
     teamUseCase.explodeTeam(authResponse);
     return ResponseEntity.ok().body(SuccessResponse.from(TEAM_EXPLODED_CHECKED));
-  }
-
-  @Auth
-  @Operation(summary = "[팀] 일정 전체 조회", security = {
-      @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "200", description = "TEAM_CALENDERS_FOUND",
-          content = @Content(schema = @Schema(implementation = CalendarResponseCode.class))),
-      @ApiResponse(responseCode = "400", description = "YEARMONTH_FIELD_REQUIRED"),
-      @ApiResponse(responseCode = "404",
-          description = "- MEMBER_NOT_FOUND\n- TEAM_NOT_FOUND"),
-      @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-  })
-  @PostMapping("/member/team/calendars")
-  public ResponseEntity<SuccessResponse<Object>> findTeamCalenders(
-      @AuthInfo AuthResponse authResponse,
-      @RequestBody @Valid FindOfficialCalendarsRequest request
-  ) {
-    CalendarsResponse response = teamUseCase.findTeamAndSleepoverCalendars(authResponse,
-        request);
-    return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_FOUND, response));
   }
 }

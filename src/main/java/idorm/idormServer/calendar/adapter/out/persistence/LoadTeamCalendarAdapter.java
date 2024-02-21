@@ -17,9 +17,17 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
   private final TeamCalendarMapper teamCalendarMapper;
   private final TeamCalendarRepository teamCalendarRepository;
 
+
   @Override
-  public TeamCalendar findById(Long teamCalendarId) {
-    TeamCalendarJpaEntity response = teamCalendarRepository.findById(teamCalendarId)
+  public TeamCalendar findByIdAndTeamId(Long teamCalendarId, Long teamId) {
+    TeamCalendarJpaEntity response = teamCalendarRepository.findByIdAndTeamId(teamCalendarId, teamId)
+        .orElseThrow(NotFoundTeamCalendarException::new);
+    return teamCalendarMapper.toDomain(response);
+  }
+
+  @Override
+  public TeamCalendar findByIdAndMemberId(Long teamCalendarId, Long memberId) {
+    TeamCalendarJpaEntity response = teamCalendarRepository.findByIdAndMemberId(teamCalendarId, memberId)
         .orElseThrow(NotFoundTeamCalendarException::new);
     return teamCalendarMapper.toDomain(response);
   }
@@ -38,7 +46,7 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
 
   @Override
   public List<TeamCalendar> findByYearMonth(Team team, YearMonth yearMonth) {
-    List<TeamCalendarJpaEntity> responses = teamCalendarRepository.findByYearMonth(
+    List<TeamCalendarJpaEntity> responses = teamCalendarRepository.findByIdAndYearMonth(
         team.getId(), yearMonth.toString());
     return teamCalendarMapper.toDomain(responses);
   }

@@ -23,10 +23,21 @@ public class Period {
     return new Period(startDate, endDate);
   }
 
-  void update(LocalDate startDate, LocalDate endDate) {
-    validate(startDate, endDate);
-    this.startDate = startDate;
-    this.endDate = endDate;
+  void update(Period period) {
+    validate(period.getStartDate(), period.getEndDate());
+    validateUniqueDate(period);
+    this.startDate = period.getStartDate();
+    this.endDate = period.getEndDate();
+  }
+
+  boolean isSameDate() {
+    return startDate.equals(endDate);
+  }
+
+  void validateUniqueDate(Period otherPeriod) {
+    if (startDate.isBefore(otherPeriod.endDate) && endDate.isAfter(otherPeriod.startDate)) {
+      throw new DuplicatedSleepoverDateException();
+    }
   }
 
   void validate(LocalDate startDate, LocalDate endDate) {
@@ -38,15 +49,5 @@ public class Period {
     if (endDate.isBefore(startDate)) {
       throw new IllegalArgumentDateSetException();
     }
-  }
-
-  void validateUniqueDate(Period otherPeriod) {
-    if (startDate.isBefore(otherPeriod.endDate) && endDate.isAfter(otherPeriod.startDate)) {
-      throw new DuplicatedSleepoverDateException();
-    }
-  }
-
-  boolean isSameDate() {
-    return startDate.equals(endDate);
   }
 }

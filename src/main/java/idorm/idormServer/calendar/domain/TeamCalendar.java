@@ -49,27 +49,22 @@ public class TeamCalendar {
 		participants.participate(memberId);
 	}
 
-	public void update(Team team, String title, String content, LocalDate startDate, LocalDate endDate,
+	public void update(Team team, String title, String content, Period period,
 		LocalTime startTime, LocalTime endTime) {
 		validateAuthorization(team);
 		this.title.updateTeamCalendar(title);
 		this.content.update(content);
-		this.period.update(startDate, endDate);
-		this.duration.update(this.period, startTime, endTime);
-	}
-
-	public void delete(final Team team) {
-		validateAuthorization(team);
-		// TODO: this.delete();
+		this.period.update(period);
+		this.duration.update(period, startTime, endTime);
 	}
 
 	public void deleteParticipant(Long participant) {
 		this.participants.delete(participant);
 	}
 
-	// public void validateAuthorization(final Team team) {
-	// 	if (!this.team.equals(team)) {
-	// 		throw new AccessDeniedTeamCalendarException();
-	// 	}
-	// }
+	 public void validateAuthorization(final Team team) {
+	 	if (!this.team.equals(team)) {
+	 		throw new AccessDeniedTeamCalendarException();
+	 	}
+	 }
 }
