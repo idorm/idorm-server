@@ -5,8 +5,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import idorm.idormServer.community.domain.Comment;
-import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.comment.domain.Comment;
+import idorm.idormServer.community.post.domain.Post;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.report.adapter.out.exception.InvalidTargetSelfException;
 import idorm.idormServer.report.domain.CommunityReason;

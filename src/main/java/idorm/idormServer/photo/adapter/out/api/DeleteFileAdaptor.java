@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 
-import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.post.domain.Post;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.photo.adapter.out.api.exception.S3ClientException;
 import idorm.idormServer.photo.application.port.out.DeleteFilePort;

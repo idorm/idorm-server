@@ -30,6 +30,7 @@ public enum MemberResponseCode implements BaseResponseCode {
 	INVALID_NICKNAME_CHARACTER(HttpStatus.BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
 	INVALID_NICKNAME_LENGTH(HttpStatus.BAD_REQUEST, "닉네임은 2~8자만 이내여야 합니다."),
 
+	UNAUTHORIZED_PASSWORD(UNAUTHORIZED, "올바른 비밀번호가 아닙니다."),
 	UNAUTHORIZED_DELETED_MEMBER(UNAUTHORIZED, "탈퇴한 회원입니다. 로그아웃이 필요합니다."),
 
 	NOT_FOUND_MEMBER(NOT_FOUND, "등록된 멤버가 없습니다."),

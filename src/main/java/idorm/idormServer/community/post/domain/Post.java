@@ -12,7 +12,7 @@ import idorm.idormServer.community.postLike.domain.PostLike;
 import idorm.idormServer.community.postPhoto.domain.PostPhoto;
 import idorm.idormServer.matchingInfo.domain.DormCategory;
 import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.photo.exception.ExceedFileCountException;
+import idorm.idormServer.photo.adapter.out.api.exception.ExceedFileCountException;
 import idorm.idormServer.report.domain.Report;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -147,7 +147,8 @@ public class Post {
 	public void deleteComment(Comment comment) {
 		this.comments.remove(comment);
 	}
-	public void deletePostPhoto(List<PostPhoto> postPhotos){
+
+	public void deletePostPhoto(List<PostPhoto> postPhotos) {
 		this.postPhotos.remove(postPhotos);
 	}
 

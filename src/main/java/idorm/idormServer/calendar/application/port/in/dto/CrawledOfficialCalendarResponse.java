@@ -5,9 +5,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import idorm.idormServer.calendar.domain.OfficialCalendar;
-import lombok.Setter;
 
-@Setter
 public record CrawledOfficialCalendarResponse(
 	Long officialCalendarId,
 	String inuPostId,

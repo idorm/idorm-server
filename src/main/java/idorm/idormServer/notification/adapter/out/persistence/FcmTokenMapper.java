@@ -15,9 +15,7 @@ public class FcmTokenMapper {
 	public FcmTokenJpaEntity toEntity(FcmToken memberFCM) {
 		return new FcmTokenJpaEntity(memberFCM.getId(),
 			memberFCM.getMemberId(),
-			memberFCM.getValue(),
-			memberFCM.getCreatedAt(),
-			memberFCM.getUpdatedAt());
+			memberFCM.getValue());
 	}
 
 	public List<FcmTokenJpaEntity> toEntity(List<FcmToken> memberFCMs) {
@@ -30,9 +28,7 @@ public class FcmTokenMapper {
 	public FcmToken toDomain(FcmTokenJpaEntity memberFCMJpaEntity) {
 		return FcmToken.forMapper(memberFCMJpaEntity.getId(),
 			memberFCMJpaEntity.getMemberId(),
-			memberFCMJpaEntity.getValue(),
-			memberFCMJpaEntity.getCreatedAt(),
-			memberFCMJpaEntity.getUpdatedAt());
+			memberFCMJpaEntity.getValue());
 	}
 
 	public List<FcmToken> toDomain(List<FcmTokenJpaEntity> entities) {

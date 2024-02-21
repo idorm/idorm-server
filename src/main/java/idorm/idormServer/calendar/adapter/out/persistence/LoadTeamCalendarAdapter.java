@@ -33,7 +33,7 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
   @Override
   public List<TeamCalendar> findByTeamId(Long teamId) {
     List<TeamCalendarJpaEntity> responses = teamCalendarRepository.findByTeamId(teamId);
-    return teamCalendarMapper.toDomain(responses)
+    return teamCalendarMapper.toDomain(responses);
   }
 
   @Override

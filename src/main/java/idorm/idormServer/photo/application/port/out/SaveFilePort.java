@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.post.domain.Post;
 import idorm.idormServer.member.domain.Member;
 
 public interface SaveFilePort {

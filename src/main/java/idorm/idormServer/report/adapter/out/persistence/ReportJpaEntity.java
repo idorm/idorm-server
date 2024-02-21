@@ -11,8 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import idorm.idormServer.community.adapter.out.persistence.CommentJpaEntity;
-import idorm.idormServer.community.adapter.out.persistence.PostJpaEntity;
+import idorm.idormServer.community.comment.adapter.out.persistence.CommentJpaEntity;
+import idorm.idormServer.community.post.adapter.out.persistence.PostJpaEntity;
 import idorm.idormServer.member.adapter.out.persistence.MemberJpaEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

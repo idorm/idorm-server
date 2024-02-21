@@ -1,6 +1,7 @@
 package idorm.idormServer.notification.adapter.out.api;
 
 import idorm.idormServer.notification.domain.FcmChannel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ public class NotificationRequest {
 	private NotificationMessage message;
 
 	@Getter
-	@Builder
+	@AllArgsConstructor
 	public class NotificationMessage {
 
 		private FcmChannel notifyType;

@@ -1,11 +1,11 @@
 package idorm.idormServer.matchingInfo.adapter.out.exception;
 
-import idorm.idormServer.calendar.adapter.out.CalendarResponseCode;
 import idorm.idormServer.common.exception.BaseException;
+import idorm.idormServer.matchingInfo.adapter.out.MatchingInfoResponseCode;
 
 public class InvalidOpenKakaoLinkLengthException extends BaseException {
 
-  public InvalidOpenKakaoLinkLengthException() {
-    super(CalendarResponseCode.INVALID_OPENKAKAOLINK_LENGTH);
-  }
+	public InvalidOpenKakaoLinkLengthException() {
+		super(MatchingInfoResponseCode.INVALID_OPENKAKAOLINK_LENGTH);
+	}
 }

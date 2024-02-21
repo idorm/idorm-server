@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.community.domain.Comment;
-import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.comment.domain.Comment;
+import idorm.idormServer.community.post.domain.Post;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.domain.Member;
 import idorm.idormServer.report.application.port.in.ReportUseCase;

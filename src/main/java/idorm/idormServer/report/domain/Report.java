@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import idorm.idormServer.common.util.Validator;
-import idorm.idormServer.community.domain.Comment;
-import idorm.idormServer.community.domain.Post;
+import idorm.idormServer.community.comment.domain.Comment;
+import idorm.idormServer.community.post.domain.Post;
 import idorm.idormServer.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ public class Report {
 	private Member reportedMember;
 	private Member reporterMember;
 	private Post reportedPost;
-	private idorm.idormServer.community.domain.Comment reportedComment;
+	private Comment reportedComment;
 	private Character reasonType;
 	private String reason;
 	private LocalDateTime createdAt;

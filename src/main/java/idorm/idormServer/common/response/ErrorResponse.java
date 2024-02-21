@@ -9,14 +9,17 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class ErrorResponse extends BaseResponse {
+public class ErrorResponse {
 
-	private final Integer status;
+	private final String responseCode;
+	private final String responseMessage;
+	private final HttpStatus status;
 
 	@Builder
 	public ErrorResponse(String responseCode, String responseMessage, HttpStatus status) {
-		super(false, responseCode, responseMessage);
-		this.status = Integer.valueOf(status.value());
+		this.responseCode = responseCode;
+		this.responseMessage = responseMessage;
+		this.status = status;
 	}
 
 	public static ErrorResponse of(BaseResponseCode code) {
