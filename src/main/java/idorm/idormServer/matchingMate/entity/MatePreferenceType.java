@@ -1,4 +1,4 @@
-package idorm.idormServer.matchingMate.domain;
+package idorm.idormServer.matchingMate.entity;
 
 import idorm.idormServer.matchingMate.adapter.out.exception.InvalidMatePreferenceCharacterException;
 

@@ -4,7 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import idorm.idormServer.matchingMate.domain.MatePreferenceType;
+import idorm.idormServer.matchingMate.entity.MatePreferenceType;
 
 public record PreferenceMateRequest(
 	@NotBlank(message = "메이트 선호도 형식은 공백일 수 없습니다.")

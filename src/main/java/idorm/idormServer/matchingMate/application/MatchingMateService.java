@@ -1,6 +1,6 @@
 package idorm.idormServer.matchingMate.application;
 
-import static idorm.idormServer.matchingMate.domain.MatePreferenceType.*;
+import static idorm.idormServer.matchingMate.entity.MatePreferenceType.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,14 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.matchingInfo.adapter.out.exception.IllegalStatementMatchingInfoNonPublicException;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.MatchingMateUseCase;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
 import idorm.idormServer.matchingMate.application.port.out.SaveMatchingMatePort;
-import idorm.idormServer.matchingMate.domain.MatchingMate;
+import idorm.idormServer.matchingMate.entity.MatchingMate;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 
 @Service

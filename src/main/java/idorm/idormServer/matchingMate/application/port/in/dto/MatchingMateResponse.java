@@ -1,6 +1,6 @@
 package idorm.idormServer.matchingMate.application.port.in.dto;
 
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 
 public record MatchingMateResponse(
 	Long memberId,
@@ -29,7 +29,7 @@ public record MatchingMateResponse(
 			matchingInfo.getDormInfo().getDormCategory().name(),
 			matchingInfo.getDormInfo().getJoinPeriod().name(),
 			matchingInfo.getDormInfo().getGender().name(),
-			matchingInfo.getPreferenceInfo().getAge().getValue(),
+			matchingInfo.getPreferenceInfo().getAge(),
 			matchingInfo.getPreferenceInfo().getIsSnoring(),
 			matchingInfo.getPreferenceInfo().getIsGrinding(),
 			matchingInfo.getPreferenceInfo().getIsSmoking(),
@@ -38,7 +38,7 @@ public record MatchingMateResponse(
 			matchingInfo.getTextInfo().getWakeUpTime(),
 			matchingInfo.getTextInfo().getCleanUpStatus(),
 			matchingInfo.getTextInfo().getShowerTime(),
-			matchingInfo.getSharedURL().getValue(),
+			matchingInfo.getSharedURL(),
 			matchingInfo.getTextInfo().getMbti(),
 			matchingInfo.getTextInfo().getWishText());
 	}

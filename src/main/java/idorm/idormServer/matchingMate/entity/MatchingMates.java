@@ -1,32 +1,40 @@
-package idorm.idormServer.matchingMate.domain;
+package idorm.idormServer.matchingMate.entity;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+
 import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedFavoriteMateException;
 import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedNonFavoriteMateException;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Embeddable
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MatchingMates {
 
+	// cascade(영속성 전이)-PERSIST(저장) : 부모(MatchingMates) 영속화 시, 자식(MatchingMate)도 영속화 시킨다.
+	// cascade(영속성 전이)-REMOVE(삭제) : 부모(MatchingMates) 삭제 시, 자식(MatchingMate)도 삭제 시킨다.
+	// 외래키 조건에 따라 삭제 시, 자식 먼저 삭제 후 부모를 삭제 시킨다.
+
+	// TODO: fav, nonFav를 하나로 합친다? 중복 체크 검증 체크
+	@OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST,
+		CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<MatchingMate> favoriteMates = new HashSet<>();
+
+	@OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST,
+		CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<MatchingMate> nonFavoriteMates = new HashSet<>();
 
 	public static MatchingMates empty() {
 		return new MatchingMates();
-	}
-
-	public static MatchingMates forMapper(final Set<MatchingMate> favoriteMates,
-		final Set<MatchingMate> nonFavoriteMates) {
-
-		return new MatchingMates(favoriteMates, nonFavoriteMates);
 	}
 
 	public void addFavoriteMate(final MatchingMate mate) {
