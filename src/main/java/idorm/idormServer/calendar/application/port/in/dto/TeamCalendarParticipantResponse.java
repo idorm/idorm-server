@@ -1,6 +1,6 @@
 package idorm.idormServer.calendar.application.port.in.dto;
 
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.entity.Member;
 
 public record TeamCalendarParticipantResponse(
 	int order,
@@ -14,7 +14,7 @@ public record TeamCalendarParticipantResponse(
 			order,
 			member.getId(),
 			member.getNickname().getValue(),
-			member.getMemberPhoto().getValue()
+			member.getProfilePhotoUrl()
 		);
 	}
 }

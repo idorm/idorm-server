@@ -1,6 +1,5 @@
 package idorm.idormServer.calendar.application.port.in.dto;
 
-import idorm.idormServer.calendar.domain.Period;
 import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
@@ -8,6 +7,8 @@ import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import idorm.idormServer.calendar.entity.Period;
 
 public record UpdateSleepoverCalendarRequest(
 	@NotNull(message = "내용을 입력해 주세요.")

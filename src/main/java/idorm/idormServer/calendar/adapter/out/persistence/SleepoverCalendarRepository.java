@@ -3,37 +3,40 @@ package idorm.idormServer.calendar.adapter.out.persistence;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface SleepoverCalendarRepository extends
-    JpaRepository<SleepoverCalendarJpaEntity, Long> {
+import idorm.idormServer.calendar.entity.SleepoverCalendar;
 
-  Optional<SleepoverCalendarJpaEntity> findByIdAndIsDeletedIsFalse(Long id);
+public interface SleepoverCalendarRepository extends JpaRepository<SleepoverCalendar, Long> {
+
+  // Optional<SleepoverCalendar> findByIdAndIsDeletedIsFalse(Long id);
 
   @Query(value = "SELECT * "
       + "FROM SleepoverCalendarJpaEntity s "
       + "JOIN FETCH s.participant p "
       + "WHERE p.memberId = :memberId "
       + "AND s.id = : sleepoverCalendarId", nativeQuery = true)
-  Optional<SleepoverCalendarJpaEntity> findByIdAndMemberId(Long sleepoverCalendarId, Long memberId);
+  Optional<SleepoverCalendar> findByIdAndMemberId(Long sleepoverCalendarId, Long memberId);
 
   @Query(value = "SELECT * "
       + "FROM SleepoverCalendarJpaEntity s "
       + "JOIN FETCH s.paticipant participant "
       + "WHERE participant.memberId = :memberId", nativeQuery = true)
-  List<SleepoverCalendarJpaEntity> findByMemberId(Long memberId);
+  List<SleepoverCalendar> findByMemberId(Long memberId);
+
   @Query(value = "SELECT * "
       + "FROM SleepoverCalendarJpaEntity s "
       + "WHERE s.team_id = :teamId", nativeQuery = true)
-  List<SleepoverCalendarJpaEntity> findByTeamId(Long teamId);
+  List<SleepoverCalendar> findByTeamId(Long teamId);
 
   @Query(value = "SELECT * " +
       "FROM SleepoverCalendarJpaEntity s " +
       "WHERE s.team_id = :teamId " +
-      "AND DATE(s.start_date) <= CURRENT_DATE "+
+      "AND DATE(s.start_date) <= CURRENT_DATE " +
       "AND DATE(s.end_date) >= CURRENT_DATE", nativeQuery = true)
-  List<SleepoverCalendarJpaEntity> findByToday(Long teamId);
+  List<SleepoverCalendar> findByToday(Long teamId);
 
   @Query(value = "SELECT COUNT(s) "
       + "FROM SleepoverCalendarJpaEntity s "
@@ -48,6 +51,6 @@ public interface SleepoverCalendarRepository extends
       "WHERE s.team_id = :teamId " +
       "AND (p.start_date LIKE :yearMonth " +
       "OR p.end_date LIKE :yearMonth)", nativeQuery = true)
-  List<SleepoverCalendarJpaEntity> findByYearMonth(Long teamId, String yearMonth);
+  List<SleepoverCalendar> findByYearMonth(Long teamId, String yearMonth);
 
 }

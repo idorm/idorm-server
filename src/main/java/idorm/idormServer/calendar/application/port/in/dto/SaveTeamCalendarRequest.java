@@ -9,14 +9,12 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import idorm.idormServer.calendar.domain.Content;
-import idorm.idormServer.calendar.domain.Duration;
-import idorm.idormServer.calendar.domain.Participant;
-import idorm.idormServer.calendar.domain.Participants;
-import idorm.idormServer.calendar.domain.Period;
-import idorm.idormServer.calendar.domain.Team;
-import idorm.idormServer.calendar.domain.TeamCalendar;
-import idorm.idormServer.calendar.domain.Title;
+import idorm.idormServer.calendar.entity.Duration;
+import idorm.idormServer.calendar.entity.Participant;
+import idorm.idormServer.calendar.entity.Participants;
+import idorm.idormServer.calendar.entity.Period;
+import idorm.idormServer.calendar.entity.Team;
+import idorm.idormServer.calendar.entity.TeamCalendar;
 
 public record SaveTeamCalendarRequest(
 	@NotBlank(message = "내용을 입력해 주세요.")
@@ -34,16 +32,9 @@ public record SaveTeamCalendarRequest(
 	LocalTime endTime,
 	Set<Participant> participants
 ) {
-
-	public TeamCalendar from(final Team team) {
-		return new TeamCalendar(
-			new Title(title),
-			new Content(content),
-			new Period(startDate, endDate),
-			new Duration(startTime, endTime),
-			new Participants(participants),
-			team
+	public TeamCalendar toEntity(final Team team) {
+		return new TeamCalendar(title, content, new Period(startDate, endDate), new Duration(startTime, endTime),
+			new Participants(participants), team
 		);
 	}
-
 }

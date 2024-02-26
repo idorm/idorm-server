@@ -1,9 +1,10 @@
 package idorm.idormServer.calendar.application.port.out;
 
-import idorm.idormServer.calendar.domain.Team;
-import idorm.idormServer.calendar.domain.TeamCalendar;
 import java.time.YearMonth;
 import java.util.List;
+
+import idorm.idormServer.calendar.entity.Team;
+import idorm.idormServer.calendar.entity.TeamCalendar;
 
 public interface LoadTeamCalendarPort {
 

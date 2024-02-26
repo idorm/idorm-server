@@ -1,11 +1,11 @@
 package idorm.idormServer.calendar.application.port.out;
 
-
-import idorm.idormServer.calendar.domain.Period;
-import idorm.idormServer.calendar.domain.SleepoverCalendar;
-import idorm.idormServer.calendar.domain.Team;
 import java.time.YearMonth;
 import java.util.List;
+
+import idorm.idormServer.calendar.entity.Period;
+import idorm.idormServer.calendar.entity.SleepoverCalendar;
+import idorm.idormServer.calendar.entity.Team;
 
 public interface LoadSleepoverCalendarPort {
 

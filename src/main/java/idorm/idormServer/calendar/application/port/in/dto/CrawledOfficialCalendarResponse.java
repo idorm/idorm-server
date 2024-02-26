@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import idorm.idormServer.calendar.domain.OfficialCalendar;
+import idorm.idormServer.calendar.entity.OfficialCalendar;
 
 public record CrawledOfficialCalendarResponse(
 	Long officialCalendarId,
@@ -19,7 +19,7 @@ public record CrawledOfficialCalendarResponse(
 	public static CrawledOfficialCalendarResponse from(final OfficialCalendar officialCalendar) {
 		return new CrawledOfficialCalendarResponse(officialCalendar.getId(),
 			officialCalendar.getInuPostId(),
-			officialCalendar.getTitle().getValue(),
+			officialCalendar.getTitle(),
 			officialCalendar.getInuPostCreatedAt(),
 			officialCalendar.getInuPostUrl(),
 			officialCalendar.getIsPublic());

@@ -6,33 +6,32 @@ import org.springframework.stereotype.Component;
 
 import idorm.idormServer.calendar.adapter.out.exception.NotFoundTeamException;
 import idorm.idormServer.calendar.application.port.out.LoadTeamPort;
-import idorm.idormServer.calendar.domain.Team;
+import idorm.idormServer.calendar.entity.Team;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class LoadTeamAdapter implements LoadTeamPort {
 
-	private final TeamMapper teamMapper;
 	private final TeamRepository teamRepository;
 
 	@Override
 	public Optional<Team> findByMemberIdWithOptional(Long memberId) {
-		Optional<TeamJpaEntity> response = teamRepository.findByMemberIdWithOptional(memberId);
-		return Optional.ofNullable(response.map(teamMapper::toDomain).orElse(null));
+		Optional<Team> response = teamRepository.findByMemberIdWithOptional(memberId);
+		return Optional.ofNullable(response).orElse(null);
 	}
 
 	@Override
 	public Team findByMemberId(Long memberId) {
-		TeamJpaEntity response = teamRepository.findByMemberIdWithCalendarsAndMembers(memberId)
+		Team response = teamRepository.findByMemberIdWithCalendarsAndMembers(memberId)
 			.orElseThrow(NotFoundTeamException::new);
-		return teamMapper.toDomain(response);
+		return response;
 	}
 
 	@Override
 	public Team findByMemberIdWithTeamMember(Long memberId) {
-		TeamJpaEntity response = teamRepository.findByMemberIdWithTeamMember(memberId)
+		Team response = teamRepository.findByMemberIdWithTeamMember(memberId)
 			.orElseThrow(NotFoundTeamException::new);
-		return teamMapper.toDomain(response);
+		return response;
 	}
 }

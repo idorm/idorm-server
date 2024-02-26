@@ -1,16 +1,12 @@
 package idorm.idormServer.calendar.adapter.out;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
+
+import org.springframework.http.HttpStatus;
 
 import idorm.idormServer.common.exception.BaseResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -37,10 +33,11 @@ public enum CalendarResponseCode implements BaseResponseCode {
   SLEEPOVER_CALENDAR_CREATED(CREATED, "외박 일정 생성 완료"),
 
   //실패
+  INVALID_TITLE_LENGTH(BAD_REQUEST, "일정 제목은 1~30자 이내여야 합니다."),
+  INVALID_CONTENT_LENGTH(BAD_REQUEST, "일정 내용은 1~100자 이내여야 합니다."),
   ILLEGAL_STATEMENT_EXPLODEDTEAM(BAD_REQUEST, "폭발한 팀은 요청 대상이 될 수 없습니다."),
   ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR(BAD_REQUEST, "외박 일정은 해당 요청의 설정 대상이 될 수 없습니다."),
   ILLEGAL_ARGUMENT_DATE_SET(BAD_REQUEST, "시작일자가 종료일자보다 빠르거나 같아야 합니다."),
-  INVALID_CONTENT_LENGTH(BAD_REQUEST, "캘린더 내용은 1~100자 이내여야 합니다."),
   FIELD_TARGETS_REQUIRED(BAD_REQUEST, "팀 일정 대상자 입력은 필수 입니다."),
 
   ACCESS_DENIED_TEAM(FORBIDDEN, "팀 접근 권한이 없습니다."),

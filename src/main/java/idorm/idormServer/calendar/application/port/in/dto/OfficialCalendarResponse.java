@@ -1,7 +1,8 @@
 package idorm.idormServer.calendar.application.port.in.dto;
 
-import idorm.idormServer.calendar.domain.OfficialCalendar;
 import java.time.LocalDate;
+
+import idorm.idormServer.calendar.entity.OfficialCalendar;
 
 
 public record OfficialCalendarResponse(
@@ -24,7 +25,7 @@ public record OfficialCalendarResponse(
         calendar.getIsDorm3Yn(),
         calendar.getPeriod().getStartDate(),
         calendar.getPeriod().getEndDate(),
-        calendar.getTitle().getValue(),
+        calendar.getTitle(),
         calendar.getInuPostUrl(),
         calendar.getInuPostCreatedAt());
   }

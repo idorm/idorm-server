@@ -1,13 +1,12 @@
 package idorm.idormServer.calendar.application.port.in;
 
+import java.util.List;
+
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;
 import idorm.idormServer.calendar.application.port.in.dto.FindSleepoverCalendarsRequest;
 import idorm.idormServer.calendar.application.port.in.dto.SaveSleepoverCalendarRequest;
 import idorm.idormServer.calendar.application.port.in.dto.SleepoverCalendarResponse;
 import idorm.idormServer.calendar.application.port.in.dto.UpdateSleepoverCalendarRequest;
-
-import java.util.List;
 
 public interface SleepoverCalendarUseCase {
 

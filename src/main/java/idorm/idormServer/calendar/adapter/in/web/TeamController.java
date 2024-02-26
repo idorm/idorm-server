@@ -1,26 +1,9 @@
 package idorm.idormServer.calendar.adapter.in.web;
 
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_EXPLODED_CHECKED;
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_MEMBERS_FOUND;
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_MEMBER_CREATED;
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_MEMBER_DELETED;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.*;
 
-import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.auth.domain.Auth;
-import idorm.idormServer.auth.domain.AuthInfo;
-import idorm.idormServer.calendar.application.port.in.TeamUseCase;
-import idorm.idormServer.calendar.application.port.in.dto.TeamResponse;
-import idorm.idormServer.common.response.SuccessResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.constraints.Positive;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +16,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.auth.adapter.in.api.Auth;
+import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.calendar.application.port.in.TeamUseCase;
+import idorm.idormServer.calendar.application.port.in.dto.TeamResponse;
+import idorm.idormServer.common.response.SuccessResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 @Tag(name = "3. RoomMateTeam", description = "룸메이트 팀원 관리 api")
 @Validated
@@ -95,8 +94,7 @@ public class TeamController {
   }
 
   @Auth
-  @Operation(summary = "팀원 전체 조회", security = {
-      @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+  @Operation(summary = "팀원 전체 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "TEAM_MEMBERS_FOUND",

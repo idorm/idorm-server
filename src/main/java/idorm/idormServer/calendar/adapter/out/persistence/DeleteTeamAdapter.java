@@ -1,9 +1,10 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
-import idorm.idormServer.calendar.application.port.out.DeleteTeamPort;
-import idorm.idormServer.calendar.domain.Team;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import idorm.idormServer.calendar.application.port.out.DeleteTeamPort;
+import idorm.idormServer.calendar.entity.Team;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -13,6 +14,6 @@ public class DeleteTeamAdapter implements DeleteTeamPort {
 
     @Override
     public void deleteTeam(Team team) {
-        teamRepository.deleteById(team.getId());
+        teamRepository.delete(team);
     }
 }

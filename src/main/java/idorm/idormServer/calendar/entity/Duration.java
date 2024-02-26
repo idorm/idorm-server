@@ -1,29 +1,35 @@
-package idorm.idormServer.calendar.domain;
+package idorm.idormServer.calendar.entity;
 
-import idorm.idormServer.calendar.adapter.out.exception.IllegalArgumentDateSetException;
 import java.time.LocalTime;
 import java.util.Objects;
-import lombok.Getter;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+import idorm.idormServer.calendar.adapter.out.exception.IllegalArgumentDateSetException;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Embeddable
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class Duration {
 
+  @Column(nullable = false)
   private LocalTime startTime;
-  private LocalTime endTime;
 
-  public Duration(final LocalTime startTime, final LocalTime endTime) {
-    this.startTime = startTime;
-    this.endTime = endTime;
-  }
+  @Column(nullable = false)
+  private LocalTime endTime;
 
   public static Duration of(Period period, LocalTime start, LocalTime end) {
     validate(period, start, end);
     return new Duration(start, end);
   }
 
-  public static Duration forMapper(final LocalTime startTime, final LocalTime endTime) {
-    return new Duration(startTime, endTime);
-  }
+
   void update(Period period, LocalTime startTime, LocalTime endTime) {
     validate(period, startTime, endTime);
     this.startTime = startTime;

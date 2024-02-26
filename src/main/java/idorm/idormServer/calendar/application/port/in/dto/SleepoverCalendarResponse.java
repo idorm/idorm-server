@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import idorm.idormServer.calendar.domain.SleepoverCalendar;
+import idorm.idormServer.calendar.entity.SleepoverCalendar;
 
 public record SleepoverCalendarResponse(
 	Long sleepoverCalendarId,

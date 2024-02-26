@@ -1,12 +1,11 @@
 package idorm.idormServer.calendar.application.port.in;
 
-import idorm.idormServer.calendar.application.port.in.dto.TeamCalendarResponse;
 import java.util.List;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;
 import idorm.idormServer.calendar.application.port.in.dto.FindOfficialCalendarsRequest;
 import idorm.idormServer.calendar.application.port.in.dto.SaveTeamCalendarRequest;
+import idorm.idormServer.calendar.application.port.in.dto.TeamCalendarResponse;
 import idorm.idormServer.calendar.application.port.in.dto.UpdateTeamCalendarRequest;
 
 public interface TeamCalendarUseCase {

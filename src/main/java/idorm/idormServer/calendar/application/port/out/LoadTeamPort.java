@@ -2,7 +2,7 @@ package idorm.idormServer.calendar.application.port.out;
 
 import java.util.Optional;
 
-import idorm.idormServer.calendar.domain.Team;
+import idorm.idormServer.calendar.entity.Team;
 
 public interface LoadTeamPort {
 

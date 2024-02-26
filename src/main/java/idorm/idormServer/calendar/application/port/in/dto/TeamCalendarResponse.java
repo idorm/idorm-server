@@ -1,10 +1,12 @@
 package idorm.idormServer.calendar.application.port.in.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import idorm.idormServer.calendar.domain.TeamCalendar;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import idorm.idormServer.calendar.entity.TeamCalendar;
 
 public record TeamCalendarResponse(
     Long teamCalendarId,
@@ -25,8 +27,8 @@ public record TeamCalendarResponse(
       List<TeamCalendarParticipantResponse> targets) {
     return new TeamCalendarResponse(
         teamCalendar.getId(),
-        teamCalendar.getTitle().getValue(),
-        teamCalendar.getContent().getValue(),
+        teamCalendar.getTitle(),
+        teamCalendar.getContent(),
         teamCalendar.getPeriod().getStartDate(),
         teamCalendar.getPeriod().getEndDate(),
         teamCalendar.getDuration().getStartTime(),

@@ -1,25 +1,33 @@
-package idorm.idormServer.calendar.domain;
+package idorm.idormServer.calendar.entity;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 
 import idorm.idormServer.calendar.adapter.out.exception.FieldTargetsRequiredException;
 import idorm.idormServer.member.adapter.out.exception.DuplicatedMemberException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Embeddable
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Participants {
 
+	@ElementCollection
+	@CollectionTable(name = "participant", joinColumns = @JoinColumn(name = "team_calendar_id"))
 	private Set<Participant> participants = new HashSet<>();
 
 	public Participants(final Set<Participant> participants) {
 		this.participants = participants;
-	}
-
-	public static Participants forMapper(final Set<Participant> participants) {
-		return new Participants(participants);
 	}
 
 	void participate(Long memberId) {
@@ -49,6 +57,13 @@ public class Participants {
 		List<Participant> responses = participants.stream()
 			.sorted()
 			.toList();
+		return responses;
+	}
+
+	public Set<Participant> getParticipantsSet() {
+		Set<Participant> responses = participants.stream()
+			.sorted()
+			.collect(Collectors.toSet());
 		return responses;
 	}
 }

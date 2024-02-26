@@ -1,33 +1,12 @@
 package idorm.idormServer.calendar.adapter.in.web;
 
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.SLEEPOVER_CALENDAR_CREATED;
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_CALENDER_DELETED;
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_CALENDER_FOUND;
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_CALENDER_UPDATED;
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_SLEEPOVER_CALENDERS_FOUND;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.*;
 
-import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.auth.domain.Auth;
-import idorm.idormServer.auth.domain.AuthInfo;
-import idorm.idormServer.calendar.application.port.in.SleepoverCalendarUseCase;
-import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;
-import idorm.idormServer.calendar.application.port.in.dto.FindSleepoverCalendarsRequest;
-import idorm.idormServer.calendar.application.port.in.dto.SaveSleepoverCalendarRequest;
-import idorm.idormServer.calendar.application.port.in.dto.SleepoverCalendarResponse;
-import idorm.idormServer.calendar.application.port.in.dto.UpdateSleepoverCalendarRequest;
-import idorm.idormServer.common.response.SuccessResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +21,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "4. RoomMate TeamJpaEntity Calendar", description = "룸메이트 팀 일정 api")
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.auth.adapter.in.api.Auth;
+import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.calendar.application.port.in.SleepoverCalendarUseCase;
+import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;
+import idorm.idormServer.calendar.application.port.in.dto.FindSleepoverCalendarsRequest;
+import idorm.idormServer.calendar.application.port.in.dto.SaveSleepoverCalendarRequest;
+import idorm.idormServer.calendar.application.port.in.dto.SleepoverCalendarResponse;
+import idorm.idormServer.calendar.application.port.in.dto.UpdateSleepoverCalendarRequest;
+import idorm.idormServer.common.response.SuccessResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+
+@Tag(name = "4. RoomMate TeamDomain Calendar", description = "룸메이트 팀 일정 api")
 @Validated
 @RestController
 @RequestMapping("api/v1")

@@ -1,5 +1,12 @@
 package idorm.idormServer.calendar.application;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.OfficialCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.CrawledOfficialCalendarResponse;
@@ -8,13 +15,8 @@ import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarRespon
 import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarUpdateRequest;
 import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
 import idorm.idormServer.calendar.application.port.out.SaveOfficialCalendarPort;
-import idorm.idormServer.calendar.domain.OfficialCalendar;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+import idorm.idormServer.calendar.entity.OfficialCalendar;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)

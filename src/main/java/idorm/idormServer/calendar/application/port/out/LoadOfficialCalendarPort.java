@@ -1,8 +1,9 @@
 package idorm.idormServer.calendar.application.port.out;
 
-import idorm.idormServer.calendar.domain.OfficialCalendar;
 import java.time.YearMonth;
 import java.util.List;
+
+import idorm.idormServer.calendar.entity.OfficialCalendar;
 
 public interface LoadOfficialCalendarPort {
 

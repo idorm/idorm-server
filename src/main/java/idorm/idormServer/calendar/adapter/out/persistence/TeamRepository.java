@@ -5,13 +5,15 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface TeamRepository extends JpaRepository<TeamJpaEntity, Long> {
+import idorm.idormServer.calendar.entity.Team;
+
+public interface TeamRepository extends JpaRepository<Team, Long> {
 
 	@Query(value = "SELECT * "
 		+ "FROM TeamJpaEntity t "
 		+ "JOIN FETCH t.members m "
 		+ "WHERE m.id = :memberId", nativeQuery = true)
-	Optional<TeamJpaEntity> findByMemberIdWithOptional(Long memberId);
+	Optional<Team> findByMemberIdWithOptional(Long memberId);
 
 	@Query(value = "SELECT * "
 		+ "FROM TeamJpaEntity t "
@@ -19,10 +21,10 @@ public interface TeamRepository extends JpaRepository<TeamJpaEntity, Long> {
 		+ "JOIN FETCH t.teamCalendars tc "
 		+ "JOIN t.members m "
 		+ "WHERE m.id = :memberId", nativeQuery = true)
-	Optional<TeamJpaEntity> findByMemberIdWithCalendarsAndMembers(Long memberId);
+	Optional<Team> findByMemberIdWithCalendarsAndMembers(Long memberId);
 
 	@Query(value = "SELECT * "
 		+ "FROM TeamJpaEntity t "
 		+ "JOIN FETCH t.members m ", nativeQuery = true)
-	Optional<TeamJpaEntity> findByMemberIdWithTeamMember(Long memberId);
+	Optional<Team> findByMemberIdWithTeamMember(Long memberId);
 }

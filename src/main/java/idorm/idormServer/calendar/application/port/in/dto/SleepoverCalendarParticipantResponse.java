@@ -1,6 +1,6 @@
 package idorm.idormServer.calendar.application.port.in.dto;
 
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.entity.Member;
 
 public record SleepoverCalendarParticipantResponse(
 	Long memberId,
@@ -12,7 +12,7 @@ public record SleepoverCalendarParticipantResponse(
 		return new SleepoverCalendarParticipantResponse(
 			member.getId(),
 			member.getNickname().getValue(),
-			member.getMemberPhoto().getValue()
+			member.getProfilePhotoUrl()
 		);
 	}
 }
