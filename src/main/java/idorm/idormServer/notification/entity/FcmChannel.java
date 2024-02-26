@@ -1,4 +1,4 @@
-package idorm.idormServer.notification.domain;
+package idorm.idormServer.notification.entity;
 
 public enum FcmChannel {
     CALENDAR,

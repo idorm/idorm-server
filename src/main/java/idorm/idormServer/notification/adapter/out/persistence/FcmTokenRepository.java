@@ -4,9 +4,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface FcmTokenRepository extends JpaRepository<FcmTokenJpaEntity, Long> {
+import idorm.idormServer.notification.entity.FcmToken;
 
-	Optional<FcmTokenJpaEntity> findByMemberId(Long memberId);
+public interface FcmTokenRepository extends JpaRepository<FcmToken, Long> {
+
+	Optional<FcmToken> findByMemberId(Long memberId);
 
 	boolean existsByMemberId(Long memberId);
 }

@@ -7,7 +7,7 @@ import idorm.idormServer.notification.application.port.in.FcmTokenUseCase;
 import idorm.idormServer.notification.application.port.in.dto.RegisterTokenRequest;
 import idorm.idormServer.notification.application.port.out.LoadFcmTokenPort;
 import idorm.idormServer.notification.application.port.out.SaveFcmTokenPort;
-import idorm.idormServer.notification.domain.FcmToken;
+import idorm.idormServer.notification.entity.FcmToken;
 import lombok.RequiredArgsConstructor;
 
 @Service
