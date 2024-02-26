@@ -11,9 +11,9 @@ import idorm.idormServer.matchingInfo.application.port.in.dto.MatchingInfoVisibi
 import idorm.idormServer.matchingInfo.application.port.out.DeleteMatchingInfoPort;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
 import idorm.idormServer.matchingInfo.application.port.out.SaveMatchingInfoPort;
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 
 @Service

@@ -1,14 +1,21 @@
-package idorm.idormServer.matchingInfo.domain;
+package idorm.idormServer.matchingInfo.entity;
 
 import static idorm.idormServer.matchingInfo.adapter.out.MatchingInfoResponseCode.*;
 
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
 import idorm.idormServer.common.util.Validator;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Embeddable
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TextInfo {
 
 	public static final int MAX_WAKE_UP_TIME_SIZE = 30;
@@ -18,10 +25,19 @@ public class TextInfo {
 
 	private static final String MBTI_REGEX = "^[EI][SN][TF][JP]$";
 
+	@Column(nullable = false, length = MAX_WAKE_UP_TIME_SIZE)
 	private String wakeUpTime;
+
+	@Column(nullable = false, length = MAX_CLEAN_UP_STATUS_SIZE)
 	private String cleanUpStatus;
+
+	@Column(nullable = false, length = MAX_SHOWER_TIME_SIZE)
 	private String showerTime;
+
+	@Column(length = MAX_WISH_TEXT_SIZE)
 	private String wishText;
+
+	@Column(length = 4)
 	private String mbti;
 
 	@Builder
@@ -37,15 +53,6 @@ public class TextInfo {
 		this.showerTime = showerTime;
 		this.wishText = wishText;
 		this.mbti = mbti.toUpperCase();
-	}
-
-	public static TextInfo forMapper(final String wakeUpTime,
-		final String cleanUpStatus,
-		final String showerTime,
-		final String wishText,
-		final String mbti) {
-
-		return new TextInfo(wakeUpTime, cleanUpStatus, showerTime, wishText, mbti);
 	}
 
 	private void validate(final String wakeUpTime,

@@ -7,23 +7,30 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import idorm.idormServer.matchingInfo.domain.DormCategory;
-import idorm.idormServer.matchingInfo.domain.Gender;
-import idorm.idormServer.matchingInfo.domain.JoinPeriod;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
+import idorm.idormServer.matchingInfo.entity.Gender;
+import idorm.idormServer.matchingInfo.entity.JoinPeriod;
+import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 
-public interface MatchingInfoRepository extends JpaRepository<MatchingInfoJpaEntity, Long> {
+public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long> {
 
-	Optional<MatchingInfoJpaEntity> findByMemberId(Long memberId);
+	Optional<MatchingInfo> findByMemberId(Long memberId);
 
 	boolean existsByMemberId(Long memberId);
 
-	List<MatchingInfoJpaEntity> findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
+	@Query(value = "SELECT m "
+		+ "FROM MatchingInfo m "
+		+ "WHERE m.dormInfo.dormCategory = :dormCategory "
+		+ "AND m.dormInfo.dormCategory = :joinPeriod "
+		+ "AND m.dormInfo.gender = :gender "
+		+ "AND m.isPublic = true")
+	List<MatchingInfo> findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
 		Long memberId,
 		DormCategory dormCategory,
 		JoinPeriod joinPeriod,
 		Gender gender);
 
-	@Query(value = "SELECT m FROM MatchingInfoJpaEntity m " +
+	@Query(value = "SELECT m FROM MatchingInfo m " +
 		"WHERE m.member.id <> :memberId AND " +
 		"m.dormInfo.dormCategory = :dormCategory AND " +
 		"m.dormInfo.joinPeriod = :joinPeriod AND " +
@@ -36,15 +43,15 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfoJpaEnt
 		"m.preferenceInfo.age >= :minAge AND " +
 		"m.preferenceInfo.age <= :maxAge AND " +
 		"m.isPublic = true")
-	List<MatchingInfoJpaEntity> findFilteredMates(@Param("memberId") Long memberId,
-	                                               @Param("dormCategory") DormCategory dormCategory,
-	                                               @Param("joinPeriod") JoinPeriod joinPeriod,
-	                                               @Param("gender") Gender gender,
-	                                               @Param("isSnoring") Boolean isSnoring,
-	                                               @Param("isSmoking") Boolean isSmoking,
-	                                               @Param("isGrinding") Boolean isGrinding,
-	                                               @Param("isWearEarphones") Boolean isWearEarphones,
-	                                               @Param("isAllowedFood") Boolean isAllowedFood,
-	                                               @Param("minAge") Integer minAge,
-	                                               @Param("maxAge") Integer maxAge);
+	List<MatchingInfo> findFilteredMates(@Param("memberId") Long memberId,
+		@Param("dormCategory") DormCategory dormCategory,
+		@Param("joinPeriod") JoinPeriod joinPeriod,
+		@Param("gender") Gender gender,
+		@Param("isSnoring") Boolean isSnoring,
+		@Param("isSmoking") Boolean isSmoking,
+		@Param("isGrinding") Boolean isGrinding,
+		@Param("isWearEarphones") Boolean isWearEarphones,
+		@Param("isAllowedFood") Boolean isAllowedFood,
+		@Param("minAge") Integer minAge,
+		@Param("maxAge") Integer maxAge);
 }

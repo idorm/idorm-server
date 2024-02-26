@@ -1,6 +1,6 @@
 package idorm.idormServer.matchingInfo.application.port.in.dto;
 
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 
 public record MatchingInfoResponse(
 	Long matchingInfoId,
@@ -28,7 +28,7 @@ public record MatchingInfoResponse(
 			matchingInfo.getDormInfo().getDormCategory().toString(),
 			matchingInfo.getDormInfo().getJoinPeriod().toString(),
 			matchingInfo.getDormInfo().getGender().toString(),
-			matchingInfo.getPreferenceInfo().getAge().getValue(),
+			matchingInfo.getPreferenceInfo().getAge(),
 			matchingInfo.getPreferenceInfo().getIsSnoring(),
 			matchingInfo.getPreferenceInfo().getIsGrinding(),
 			matchingInfo.getPreferenceInfo().getIsSmoking(),
@@ -37,7 +37,7 @@ public record MatchingInfoResponse(
 			matchingInfo.getTextInfo().getWakeUpTime(),
 			matchingInfo.getTextInfo().getCleanUpStatus(),
 			matchingInfo.getTextInfo().getShowerTime(),
-			matchingInfo.getSharedURL().getValue(),
+			matchingInfo.getSharedURL(),
 			matchingInfo.getTextInfo().getMbti(),
 			matchingInfo.getTextInfo().getWishText(),
 			matchingInfo.getIsPublic());

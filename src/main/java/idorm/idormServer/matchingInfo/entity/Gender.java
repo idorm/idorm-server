@@ -1,4 +1,4 @@
-package idorm.idormServer.matchingInfo.domain;
+package idorm.idormServer.matchingInfo.entity;
 
 import idorm.idormServer.matchingInfo.adapter.out.exception.InvalidGenderCharacterException;
 

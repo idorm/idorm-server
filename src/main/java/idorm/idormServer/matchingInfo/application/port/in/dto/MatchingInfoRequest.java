@@ -6,16 +6,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 
-import idorm.idormServer.matchingInfo.domain.Age;
-import idorm.idormServer.matchingInfo.domain.DormCategory;
-import idorm.idormServer.matchingInfo.domain.DormInfo;
-import idorm.idormServer.matchingInfo.domain.Gender;
-import idorm.idormServer.matchingInfo.domain.JoinPeriod;
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
-import idorm.idormServer.matchingInfo.domain.PreferenceInfo;
-import idorm.idormServer.matchingInfo.domain.SharedURL;
-import idorm.idormServer.matchingInfo.domain.TextInfo;
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
+import idorm.idormServer.matchingInfo.entity.DormInfo;
+import idorm.idormServer.matchingInfo.entity.Gender;
+import idorm.idormServer.matchingInfo.entity.JoinPeriod;
+import idorm.idormServer.matchingInfo.entity.MatchingInfo;
+import idorm.idormServer.matchingInfo.entity.PreferenceInfo;
+import idorm.idormServer.matchingInfo.entity.TextInfo;
+import idorm.idormServer.member.entity.Member;
 
 public record MatchingInfoRequest(
 	@NotBlank(message = "기숙사 분류를 입력해 주세요.")
@@ -76,12 +74,12 @@ public record MatchingInfoRequest(
 			.dormInfo(dormInfoOf())
 			.preferenceInfo(preferenceInfoOf())
 			.textInfo(textInfoOf())
-			.sharedURL(new SharedURL(openKakaoLink))
+			.sharedURL(openKakaoLink)
 			.build();
 	}
 
 	public void editAll(MatchingInfo matchingInfo) {
-		matchingInfo.editAll(dormInfoOf(), preferenceInfoOf(), textInfoOf(), new SharedURL(openKakaoLink));
+		matchingInfo.editAll(dormInfoOf(), preferenceInfoOf(), textInfoOf(), openKakaoLink);
 	}
 
 	private DormInfo dormInfoOf() {
@@ -89,7 +87,7 @@ public record MatchingInfoRequest(
 	}
 
 	private PreferenceInfo preferenceInfoOf() {
-		return new PreferenceInfo(isSnoring, isGrinding, isSmoking, isAllowedFood, isWearEarphones, new Age(age));
+		return new PreferenceInfo(isSnoring, isGrinding, isSmoking, isAllowedFood, isWearEarphones, age);
 	}
 
 	private TextInfo textInfoOf() {

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import idorm.idormServer.matchingInfo.adapter.out.exception.DuplicatedMatchingInfoException;
 import idorm.idormServer.matchingInfo.adapter.out.exception.NotFoundMatchingInfoException;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
-import idorm.idormServer.matchingInfo.domain.DormCategory;
-import idorm.idormServer.matchingInfo.domain.JoinPeriod;
-import idorm.idormServer.matchingInfo.domain.MatchingInfo;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
+import idorm.idormServer.matchingInfo.entity.JoinPeriod;
+import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 
 	private final MatchingInfoRepository matchingInfoRepository;
-	private final MatchingInfoMapper matchingInfoMapper;
 
 	@Override
 	public void validateNotExistence(final Long memberId) {
@@ -33,40 +32,32 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 
 	@Override
 	public MatchingInfo load(final Long memberId) {
-		MatchingInfoJpaEntity matchingInfoJpaEntity = matchingInfoRepository.findByMemberId(memberId)
+		return matchingInfoRepository.findByMemberId(memberId)
 			.orElseThrow(NotFoundMatchingInfoException::new);
-
-		return matchingInfoMapper.toDomain(matchingInfoJpaEntity);
 	}
 
 	@Override
 	public Optional<MatchingInfo> loadWithOptional(Long memberId) {
-		Optional<MatchingInfoJpaEntity> entityOptional = matchingInfoRepository.findByMemberId(memberId);
-
-		return Optional.ofNullable(entityOptional.map(matchingInfoMapper::toDomain)).orElse(null);
+		return matchingInfoRepository.findByMemberId(memberId);
 	}
 
 	@Override
 	public List<MatchingInfo> loadByBasicConditions(final MatchingInfo matchingInfo) {
 
-		MatchingInfoJpaEntity entity = matchingInfoMapper.toEntity(matchingInfo);
-
-		List<MatchingInfoJpaEntity> results = matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
+		final List<MatchingInfo> results = matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
 			matchingInfo.getMember().getId(),
-			entity.getDormInfo().getDormCategory(),
-			entity.getDormInfo().getJoinPeriod(),
-			entity.getDormInfo().getGender());
+			matchingInfo.getDormInfo().getDormCategory(),
+			matchingInfo.getDormInfo().getJoinPeriod(),
+			matchingInfo.getDormInfo().getGender());
 
-		return results.isEmpty() ? new ArrayList<>() : matchingInfoMapper.toDomain(results);
+		return results.isEmpty() ? new ArrayList<>() : results;
 	}
 
 	@Override
 	public List<MatchingInfo> loadBySpecialConditions(final MatchingInfo matchingInfo,
 		final MatchingMateFilterRequest request) {
 
-		MatchingInfoJpaEntity entity = matchingInfoMapper.toEntity(matchingInfo);
-
-		List<MatchingInfoJpaEntity> results = matchingInfoRepository.findFilteredMates(
+		final List<MatchingInfo> results = matchingInfoRepository.findFilteredMates(
 			matchingInfo.getMember().getId(),
 			DormCategory.from(request.dormCategory()),
 			JoinPeriod.from(request.joinPeriod()),
@@ -79,6 +70,6 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 			request.minAge(),
 			request.maxAge());
 
-		return results.isEmpty() ? new ArrayList<>() : matchingInfoMapper.toDomain(results);
+		return results.isEmpty() ? new ArrayList<>() : results;
 	}
 }
