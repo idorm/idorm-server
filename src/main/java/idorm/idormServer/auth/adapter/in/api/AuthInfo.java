@@ -1,4 +1,4 @@
-package idorm.idormServer.auth.domain;
+package idorm.idormServer.auth.adapter.in.api;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

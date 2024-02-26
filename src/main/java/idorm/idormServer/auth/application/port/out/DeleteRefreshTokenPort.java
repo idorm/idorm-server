@@ -1,6 +1,6 @@
 package idorm.idormServer.auth.application.port.out;
 
-import idorm.idormServer.auth.domain.RefreshToken;
+import idorm.idormServer.auth.entity.RefreshToken;
 
 public interface DeleteRefreshTokenPort {
 

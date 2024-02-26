@@ -11,11 +11,17 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.auth.domain.AuthInfo;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
-public class AuthInfoResolver implements HandlerMethodArgumentResolver {
+@RequiredArgsConstructor
+@Slf4j
+public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArgumentResolver {
+
+	private final JwtTokenUseCase jwtTokenUseCase;
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
@@ -25,13 +31,12 @@ public class AuthInfoResolver implements HandlerMethodArgumentResolver {
 	@Override
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
 		NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+
 		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-
-		Object authInfo = request.getAttribute("authInfo");
-		if (Objects.isNull(authInfo)) {
-			authInfo = new AuthResponse(null, null, null);
+		String token = AuthorizationExtractor.extractAccessToken(Objects.requireNonNull(request));
+		if (token == null) {
+			return new AuthResponse(null, null, null);
 		}
-
-		return authInfo;
+		return jwtTokenUseCase.getParsedClaims(token);
 	}
 }

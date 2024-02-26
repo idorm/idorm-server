@@ -16,8 +16,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import idorm.idormServer.auth.adapter.out.api.exception.AccessDeniedAdminException;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.auth.domain.Auth;
-import idorm.idormServer.auth.domain.RoleType;
+import idorm.idormServer.auth.entity.RoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,16 +30,21 @@ public class AuthInterceptor implements HandlerInterceptor {
 	private final JwtTokenUseCase jwtTokenUseCase;
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
+		Exception {
+
+		String requestURI = request.getRequestURI();
+		System.out.println(requestURI);
+		LOGGER.info("인증 체크 인터셉터 실행 {}", requestURI);
 
 		if (!(handler instanceof HandlerMethod)) {
 			return true;
 		}
-
 		HandlerMethod handlerMethod = (HandlerMethod)handler;
 		Auth auth = handlerMethod.getMethodAnnotation(Auth.class);
-
-		if (Objects.isNull(auth)) {
+		if (auth == null) {
+			LOGGER.info("미인증 사용자 요청");
+			response.sendRedirect(requestURI);
 			return true;
 		}
 
@@ -64,6 +68,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 		}
 
 		request.setAttribute("authInfo", authInfo);
+
 		return true;
 	}
 

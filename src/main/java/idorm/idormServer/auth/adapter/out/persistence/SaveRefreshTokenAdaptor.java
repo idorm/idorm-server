@@ -3,7 +3,7 @@ package idorm.idormServer.auth.adapter.out.persistence;
 import org.springframework.stereotype.Component;
 
 import idorm.idormServer.auth.application.port.out.SaveRefreshTokenPort;
-import idorm.idormServer.auth.domain.RefreshToken;
+import idorm.idormServer.auth.entity.RefreshToken;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -11,10 +11,9 @@ import lombok.RequiredArgsConstructor;
 public class SaveRefreshTokenAdaptor implements SaveRefreshTokenPort {
 
 	private final RefreshTokenRepository refreshTokenRepository;
-	private final RefreshTokenMapper refreshTokenMapper;
 
 	@Override
 	public void save(final RefreshToken refreshToken) {
-		refreshTokenRepository.save(refreshTokenMapper.toEntity(refreshToken));
+		refreshTokenRepository.save(refreshToken);
 	}
 }

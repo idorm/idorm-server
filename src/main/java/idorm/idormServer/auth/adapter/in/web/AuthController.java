@@ -23,8 +23,8 @@ import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import idorm.idormServer.auth.application.port.in.RefreshTokenUseCase;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.application.port.in.dto.LoginRequest;
-import idorm.idormServer.auth.domain.Auth;
-import idorm.idormServer.auth.domain.AuthInfo;
+import idorm.idormServer.auth.adapter.in.api.Auth;
+import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "8. Auth", description = "회원 인증 api")
+@Tag(name = "1. Auth", description = "회원 인증 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")

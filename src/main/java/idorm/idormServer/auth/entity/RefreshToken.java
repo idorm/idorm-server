@@ -1,4 +1,4 @@
-package idorm.idormServer.auth.adapter.out.persistence;
+package idorm.idormServer.auth.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -6,16 +6,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import idorm.idormServer.auth.adapter.out.api.exception.UnAuthorizedRefreshTokenException;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class RefreshTokenJpaEntity {
+public class RefreshToken {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +26,15 @@ public class RefreshTokenJpaEntity {
 
 	@Column(name = "refresh_token", nullable = false)
 	private String token;
+
+	public RefreshToken(final Long memberId, final String token) {
+		this.memberId = memberId;
+		this.token = token;
+	}
+
+	public void validateSameToken(final String token) {
+		if (!this.token.equals(token)) {
+			throw new UnAuthorizedRefreshTokenException();
+		}
+	}
 }

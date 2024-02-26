@@ -1,4 +1,4 @@
-package idorm.idormServer.auth.domain;
+package idorm.idormServer.auth.entity;
 
 public enum RoleType {
 	MEMBER("MEMBER"),

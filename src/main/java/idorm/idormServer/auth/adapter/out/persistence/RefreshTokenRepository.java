@@ -4,9 +4,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RefreshTokenRepository extends JpaRepository<RefreshTokenJpaEntity, Long> {
+import idorm.idormServer.auth.entity.RefreshToken;
 
-	Optional<RefreshTokenJpaEntity> findByMemberId(Long memberId);
+public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
+
+	Optional<RefreshToken> findByMemberId(Long memberId);
 
 	void deleteAllByMemberId(Long memberId);
 }

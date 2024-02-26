@@ -9,7 +9,7 @@ import idorm.idormServer.auth.application.port.in.RefreshTokenUseCase;
 import idorm.idormServer.auth.application.port.out.DeleteRefreshTokenPort;
 import idorm.idormServer.auth.application.port.out.LoadRefreshTokenPort;
 import idorm.idormServer.auth.application.port.out.SaveRefreshTokenPort;
-import idorm.idormServer.auth.domain.RefreshToken;
+import idorm.idormServer.auth.entity.RefreshToken;
 import lombok.RequiredArgsConstructor;
 
 @Service
