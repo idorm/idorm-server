@@ -3,7 +3,7 @@ package idorm.idormServer.community.comment.application.port.in.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import idorm.idormServer.community.comment.domain.Comment;
+import idorm.idormServer.community.comment.entity.Comment;
 
 public record CommentResponse(Long commentId,
 							  Long memberId,
@@ -15,6 +15,7 @@ public record CommentResponse(Long commentId,
 							  String profileUrl,
 							  String content,
 							  LocalDateTime createdAt) {
+
 	public static List<CommentResponse> from(final List<Comment> comments) {
 		List<CommentResponse> responses = comments.stream()
 			.map(CommentResponse::from)
@@ -26,12 +27,12 @@ public record CommentResponse(Long commentId,
 		return new CommentResponse(
 			comment.getId(),
 			comment.getMember().getId(),
-			comment.getParent().getId(),
+			(comment.getParent() != null) ? comment.getParent().getId() : null,
 			comment.getPost().getId(),
 			comment.getIsDeleted(),
 			comment.getIsAnonymous(),
 			isAnonymous(comment),
-			comment.getMember().getMemberPhoto().getValue(),
+			comment.getMember().getProfilePhotoUrl(),
 			comment.getContentValue(),
 			comment.getCreatedAt()
 		);

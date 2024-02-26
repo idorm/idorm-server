@@ -1,21 +1,21 @@
 package idorm.idormServer.community.postPhoto.adapter.out.persistence;
 
+import org.springframework.stereotype.Component;
+
 import idorm.idormServer.community.postPhoto.application.port.out.DeletePostPhotoPort;
-import idorm.idormServer.community.postPhoto.domain.PostPhoto;
+import idorm.idormServer.community.postPhoto.entity.PostPhoto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeletePostPhotoAdapter implements DeletePostPhotoPort {
 
-  private final PostPhotoMapper postPhotoMapper;
   private final PostPhotoRepository postPhotoRepository;
 
   @Override
   public void delete(final PostPhoto postPhoto) {
-    postPhotoRepository.delete(postPhotoMapper.toEntity(postPhoto));
+    postPhotoRepository.delete(postPhoto);
   }
 
   @Override

@@ -1,6 +1,6 @@
 package idorm.idormServer.community.post.adapter.in.web;
 
-import static idorm.idormServer.community.exception.CommunityResponseCode.*;
+import static idorm.idormServer.community.post.adapter.out.PostResponseCode.*;
 
 import java.util.List;
 
@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import idorm.idormServer.auth.adapter.in.api.Auth;
+import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.auth.domain.Auth;
-import idorm.idormServer.auth.domain.AuthInfo;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.community.post.application.port.in.PostUseCase;
 import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "5. Community", description = "커뮤니티 api")
+@Tag(name = "5. PostDomain", description = "게시글 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -140,7 +140,7 @@ public class PostController {
 		@AuthInfo AuthResponse authResponse
 	) {
 		List<PostListResponse> responses = postUseCase.findPostsByMember(authResponse);
-		return ResponseEntity.ok().body(SuccessResponse.of(POST_MANY_FOUND, responses));
+		return ResponseEntity.ok().body(SuccessResponse.of(MY_POST_MANY_FOUND, responses));
 	}
 
 	@Auth
@@ -160,7 +160,7 @@ public class PostController {
 		@RequestParam(value = "page") int pageNum
 	) {
 		Page<PostListResponse> responses = postUseCase.findPostsByDormCategory(dormCategoryRequest, pageNum);
-		return ResponseEntity.ok().body(SuccessResponse.of(POST_MANY_FOUND, responses));
+		return ResponseEntity.ok().body(SuccessResponse.of(MAIN_POST_MANY_FOUND, responses));
 	}
 
 	@Auth

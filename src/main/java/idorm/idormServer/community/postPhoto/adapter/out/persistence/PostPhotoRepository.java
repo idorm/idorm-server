@@ -6,15 +6,16 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 
-import idorm.idormServer.community.post.adapter.out.persistence.PostJpaEntity;
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.community.postPhoto.entity.PostPhoto;
 
-public interface PostPhotoRepository extends JpaRepository<PostPhotoJpaEntity, Long> {
+public interface PostPhotoRepository extends JpaRepository<PostPhoto, Long> {
 
-	Optional<PostPhotoJpaEntity> findByIdAndPostId(Long id, Long postId);
+	Optional<PostPhoto> findByIdAndPostId(Long id, Long postId);
 
-	List<PostPhotoJpaEntity> findAllByPost(PostJpaEntity postJpaEntity);
+	List<PostPhoto> findAllByPost(Post post);
 
-	List<PostPhotoJpaEntity> findAllByPostId(Long postId);
+	List<PostPhoto> findAllByPostId(Long postId);
 
 	@Modifying
 	void deleteAllByPostId(Long postId);

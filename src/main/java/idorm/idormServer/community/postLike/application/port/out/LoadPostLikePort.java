@@ -1,18 +1,18 @@
 package idorm.idormServer.community.postLike.application.port.out;
 
-import idorm.idormServer.community.post.domain.Post;
-import idorm.idormServer.community.postLike.domain.PostLike;
-import idorm.idormServer.member.domain.Member;
-
 import java.util.List;
+
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.community.postLike.entity.PostLike;
+import idorm.idormServer.member.entity.Member;
 
 public interface LoadPostLikePort {
 
-  PostLike findByMemberIdAndPostId(Long memberId, Long postId);
+	PostLike findByMemberIdAndPostId(Long memberId, Long postId);
 
-  List<PostLike> findAllByPost(Post post);
+	List<PostLike> findAllByPost(Post post);
 
-  boolean existsByMemberIdAndPostId(Long memberId, Long postId);
+	boolean existsByMemberIdAndPostId(Long memberId, Long postId);
 
-  void validateExists(Member member, Post post);
+	void validateExists(Member member, Post post);
 }

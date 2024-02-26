@@ -1,13 +1,12 @@
 package idorm.idormServer.community.post.application.port.out;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import idorm.idormServer.community.post.domain.Post;
-import idorm.idormServer.matchingInfo.domain.DormCategory;
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
 
 public interface LoadPostPort {
 

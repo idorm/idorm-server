@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import idorm.idormServer.community.comment.application.port.in.dto.ParentCommentResponse;
-import idorm.idormServer.community.comment.domain.Comment;
-import idorm.idormServer.community.post.domain.Post;
+import idorm.idormServer.community.comment.entity.Comment;
+import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.community.postPhoto.application.port.in.dto.PostPhotoResponse;
-import idorm.idormServer.community.postPhoto.domain.PostPhoto;
+import idorm.idormServer.community.postPhoto.entity.PostPhoto;
 
 public record PostResponse(
 
@@ -32,10 +32,10 @@ public record PostResponse(
 		return new PostResponse(post.getId(),
 			post.getMember().getId(),
 			post.getDormCategory().toString(),
-			post.getTitle().getValue(),
-			post.getContent().getValue(),
+			post.getTitle(),
+			post.getContent(),
 			post.getMember().getNickname().getValue(),
-			post.getMember().getMemberPhoto().getValue(),
+			post.getMember().getProfilePhotoUrl(),
 			post.getLikeCount(),
 			isLiked,
 			post.getCreatedAt(),

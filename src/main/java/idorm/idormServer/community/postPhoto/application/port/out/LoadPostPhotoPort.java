@@ -1,7 +1,8 @@
 package idorm.idormServer.community.postPhoto.application.port.out;
 
-import idorm.idormServer.community.postPhoto.domain.PostPhoto;
 import java.util.List;
+
+import idorm.idormServer.community.postPhoto.entity.PostPhoto;
 
 public interface LoadPostPhotoPort {
 

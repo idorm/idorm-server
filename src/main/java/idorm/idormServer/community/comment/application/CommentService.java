@@ -11,12 +11,11 @@ import idorm.idormServer.community.comment.application.port.in.dto.CommentReques
 import idorm.idormServer.community.comment.application.port.in.dto.CommentResponse;
 import idorm.idormServer.community.comment.application.port.out.LoadCommentPort;
 import idorm.idormServer.community.comment.application.port.out.SaveCommentPort;
-import idorm.idormServer.community.comment.domain.Comment;
-import idorm.idormServer.community.comment.domain.CommentContent;
+import idorm.idormServer.community.comment.entity.Comment;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
-import idorm.idormServer.community.post.domain.Post;
+import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -63,16 +62,13 @@ public class CommentService implements CommentUseCase {
 	}
 
 	private Comment createParentComment(final Member member, final Post post, final CommentRequest request) {
-		return Comment.parent(CommentContent.from(request.content()), request.isAnonymous(), post, member);
+		return Comment.parent(request.content(), request.isAnonymous(), post, member);
 	}
 
 	private Comment createChildComment(final Member member, final Post post, final CommentRequest request) {
-		final Comment parentComment = loadCommentPort.findById(request.parentCommentId());
+		final Comment parentCommentDomain = loadCommentPort.findById(request.parentCommentId());
 
-		return Comment.child(request.isAnonymous(),
-			CommentContent.from(request.content()),
-			parentComment,
-			post,
+		return Comment.child(request.isAnonymous(), request.content(), parentCommentDomain, post,
 			member);
 	}
 }

@@ -1,9 +1,8 @@
 package idorm.idormServer.community.comment.application.port.out;
 
 import java.util.List;
-import java.util.Optional;
 
-import idorm.idormServer.community.comment.domain.Comment;
+import idorm.idormServer.community.comment.entity.Comment;
 
 public interface LoadCommentPort {
 

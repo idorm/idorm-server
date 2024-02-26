@@ -1,9 +1,10 @@
 package idorm.idormServer.community.comment.application.port.in;
 
+import java.util.List;
+
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.community.comment.application.port.in.dto.CommentRequest;
 import idorm.idormServer.community.comment.application.port.in.dto.CommentResponse;
-import java.util.List;
 
 public interface CommentUseCase {
 

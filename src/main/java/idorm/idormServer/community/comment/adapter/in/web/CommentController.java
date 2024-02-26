@@ -1,26 +1,12 @@
 package idorm.idormServer.community.comment.adapter.in.web;
 
-import static idorm.idormServer.community.exception.CommunityResponseCode.*;
+import static idorm.idormServer.community.comment.adapter.out.CommentResponseCode.*;
 
-import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.auth.domain.Auth;
-import idorm.idormServer.auth.domain.AuthInfo;
-import idorm.idormServer.common.response.SuccessResponse;
-import idorm.idormServer.community.comment.application.port.in.CommentUseCase;
-import idorm.idormServer.community.comment.application.port.in.dto.CommentRequest;
-import idorm.idormServer.community.comment.application.port.in.dto.CommentResponse;
-import idorm.idormServer.community.exception.CommunityResponseCode;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,15 +19,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "5. Comment", description = "댓글 api")
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.auth.adapter.in.api.Auth;
+import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.common.response.SuccessResponse;
+import idorm.idormServer.community.comment.application.port.in.CommentUseCase;
+import idorm.idormServer.community.comment.application.port.in.dto.CommentRequest;
+import idorm.idormServer.community.comment.application.port.in.dto.CommentResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
+@Tag(name = "5. CommentDomain", description = "댓글 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class CommentController {
 
 	private final CommentUseCase commentUseCase;
-
-	// TODO: 응답 코드 수정
 
 	@Auth
 	@Operation(summary = "댓글/대댓글 저장", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
@@ -52,8 +52,8 @@ public class CommentController {
 		@ApiResponse(responseCode = "400",
 			description = "FIELD_REQUIRED / *_NEGATIVEORZERO_INVALID"),
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
-		@ApiResponse(responseCode = "404",
-			description = "NOT_FOUND_MEMBER/ POST_NOT_FOUND / DELETED_POST / COMMENT_NOT_FOUND"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER/ NOT_FOUND_POST / ALREADY_DELETED_POST / "
+			+ "NOT_FOUND_COMMENT"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@ResponseStatus(value = HttpStatus.CREATED)
@@ -80,8 +80,8 @@ public class CommentController {
 			description = "POSTID_NEGATIVEORZERO_INVALID / COMMENTID_NEGATIVEORZERO_INVALID"),
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
 		@ApiResponse(responseCode = "403", description = "ACCESS_DENIED_COMMENT"),
-		@ApiResponse(responseCode = "404",
-			description = "POST_NOT_FOUND / DELETED_POST / COMMENT_NOT_FOUND / DELETED_COMMENT"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_POST / ALREADY_DELETED_POST / NOT_FOUND_COMMENT / "
+			+ "ALREADY_DELETED_COMMENT"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	public ResponseEntity<SuccessResponse<Object>> deleteComment(

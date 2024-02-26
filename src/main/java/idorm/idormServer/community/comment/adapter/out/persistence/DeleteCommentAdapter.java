@@ -1,9 +1,10 @@
 package idorm.idormServer.community.comment.adapter.out.persistence;
 
+import org.springframework.stereotype.Component;
+
 import idorm.idormServer.community.comment.application.port.out.DeleteCommentPort;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)

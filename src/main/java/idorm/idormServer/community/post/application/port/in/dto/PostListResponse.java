@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import idorm.idormServer.community.comment.application.port.in.dto.ParentCommentResponse;
-import idorm.idormServer.community.post.domain.Post;
+import idorm.idormServer.community.post.entity.Post;
 
 public record PostListResponse(
 
@@ -21,20 +21,21 @@ public record PostListResponse(
 	LocalDateTime createdAt,
 	LocalDateTime updatedAt
 ) {
+
 	public static PostListResponse of(final Post post) {
 		return new PostListResponse(
-			post.getId(),
-			post.getMember().getId(),
-			post.getDormCategory().toString(),
-			post.getTitle().getValue(),
-			post.getContent().getValue(),
+				post.getId(),
+				post.getMember().getId(),
+				post.getDormCategory().toString(),
+				post.getTitle(),
+				post.getContent(),
 			isAnonymous(post),
-			post.getIsAnonymous(),
-			post.getLikeCount(),
-			post.getComments().size(),
-			post.getPostPhotos().size(),
-			post.getCreatedAt(),
-			post.getUpdatedAt()
+				post.getIsAnonymous(),
+				post.getLikeCount(),
+				post.getComments().size(),
+				post.getPostPhotos().size(),
+				post.getCreatedAt(),
+				post.getUpdatedAt()
 		);
 	}
 

@@ -3,7 +3,7 @@ package idorm.idormServer.community.comment.application.port.in.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import idorm.idormServer.community.comment.domain.Comment;
+import idorm.idormServer.community.comment.entity.Comment;
 
 public record ParentCommentResponse(
 	Long commentId,
@@ -17,6 +17,7 @@ public record ParentCommentResponse(
 	List<CommentResponse> subComments,
 	LocalDateTime createdAt
 ) {
+
 	public static List<ParentCommentResponse> of(final List<Comment> comments) {
 		List<ParentCommentResponse> responses = comments.stream()
 			.map(ParentCommentResponse::of)
@@ -31,7 +32,7 @@ public record ParentCommentResponse(
 			comment.getPost().getId(),
 			isAnonymous(comment),
 			isProfileUrl(comment),
-			comment.getContent().getValue(),
+			comment.getContent(),
 			comment.getIsDeleted(),
 			comment.getIsAnonymous(),
 			CommentResponse.from(comment.getChild()),
@@ -50,7 +51,7 @@ public record ParentCommentResponse(
 	}
 
 	private static String isProfileUrl(Comment comment) {
-		return (comment.getMember().getMemberPhoto() != null) ? // TODO: Member 메서드 생성
-			comment.getMember().getMemberPhoto().getValue() : null;
+		return (comment.getMember().getProfilePhotoUrl() != null) ? // TODO: Member 메서드 생성
+			comment.getMember().getProfilePhotoUrl() : null;
 	}
 }
