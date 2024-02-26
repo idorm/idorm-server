@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 import idorm.idormServer.auth.adapter.out.api.exception.LoginFailedException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.entity.Member;
+import idorm.idormServer.member.entity.MemberStatus;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -13,31 +14,22 @@ import lombok.RequiredArgsConstructor;
 public class LoadMemberAdapter implements LoadMemberPort {
 
 	private final MemberRepository memberRepository;
-	private final MemberMapper memberMapper;
 
 	@Override
 	public Member loadMember(final Long memberId) {
-		MemberJpaEntity memberJpaEntity = memberRepository.findByIdAndMemberStatusIsActive(memberId)
+		return memberRepository.findByIdAndMemberStatus(memberId, MemberStatus.ACTIVE)
 			.orElseThrow(NotFoundMemberException::new);
-
-		return memberMapper.toDomain(memberJpaEntity);
 	}
 
 	@Override
 	public Member loadMember(final String email, final String password) {
-
-		MemberJpaEntity memberJpaEntity = memberRepository.findByEmailAndPasswordValueAndMemberStatusIsActive(email,
-				password)
+		return memberRepository.findByEmailAndPasswordValueAndMemberStatus(email, password, MemberStatus.ACTIVE)
 			.orElseThrow(LoginFailedException::new);
-
-		return memberMapper.toDomain(memberJpaEntity);
 	}
 
 	@Override
 	public Member loadMember(final String email) {
-		MemberJpaEntity memberJpaEntity = memberRepository.findByEmailAndMemberStatusIsActive(email)
+		return memberRepository.findByEmailAndMemberStatus(email, MemberStatus.ACTIVE)
 			.orElseThrow(NotFoundMemberException::new);
-
-		return memberMapper.toDomain(memberJpaEntity);
 	}
 }

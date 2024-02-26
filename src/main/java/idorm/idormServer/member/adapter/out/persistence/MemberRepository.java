@@ -4,13 +4,17 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MemberRepository extends JpaRepository<MemberJpaEntity, Long> {
+import idorm.idormServer.member.entity.Member;
+import idorm.idormServer.member.entity.MemberStatus;
 
-	boolean existsMemberByNicknameValueAndMemberStatusIsActive(NicknameEmbeddedEntity nickname);
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
-	Optional<MemberJpaEntity> findByEmailAndPasswordValueAndMemberStatusIsActive(String email, String password);
+	boolean existsByNicknameValueAndMemberStatus(String nickname, MemberStatus memberStatus);
 
-	Optional<MemberJpaEntity> findByIdAndMemberStatusIsActive(Long id);
+	Optional<Member> findByEmailAndPasswordValueAndMemberStatus(String email, String password,
+		MemberStatus memberStatus);
 
-	Optional<MemberJpaEntity> findByEmailAndMemberStatusIsActive(String email);
+	Optional<Member> findByIdAndMemberStatus(Long id, MemberStatus memberStatus);
+
+	Optional<Member> findByEmailAndMemberStatus(String email, MemberStatus memberStatus);
 }

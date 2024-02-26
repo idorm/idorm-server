@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.member.application.port.in.MemberPhotoUseCase;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.entity.Member;
 import idorm.idormServer.photo.application.port.out.DeleteFilePort;
 import idorm.idormServer.photo.application.port.out.SaveFilePort;
 import lombok.RequiredArgsConstructor;

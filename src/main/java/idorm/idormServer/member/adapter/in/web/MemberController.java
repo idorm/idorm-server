@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.auth.domain.Auth;
-import idorm.idormServer.auth.domain.AuthInfo;
+import idorm.idormServer.auth.adapter.in.api.Auth;
+import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.member.application.port.in.MemberPhotoUseCase;
 import idorm.idormServer.member.application.port.in.MemberUseCase;
@@ -37,7 +37,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "8. Member", description = "회원 api")
+@Tag(name = "1. Member", description = "회원 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")

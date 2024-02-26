@@ -1,6 +1,6 @@
 package idorm.idormServer.member.application.port.in.dto;
 
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.entity.Member;
 
 public record MemberInfoResponse(
 	Long memberId,
@@ -13,6 +13,6 @@ public record MemberInfoResponse(
 		return new MemberInfoResponse(member.getId(),
 			member.getEmail(),
 			member.getNickname().getValue(),
-			member.getMemberPhoto().getValue());
+			member.getProfilePhotoUrl());
 	}
 }

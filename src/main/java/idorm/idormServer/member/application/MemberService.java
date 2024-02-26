@@ -5,9 +5,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.application.port.out.DeleteRefreshTokenPort;
+import idorm.idormServer.auth.application.port.out.EncryptPort;
 import idorm.idormServer.email.application.port.out.DeleteEmailPort;
 import idorm.idormServer.email.application.port.out.LoadEmailPort;
-import idorm.idormServer.email.domain.Email;
+import idorm.idormServer.email.application.port.out.SaveEmailPort;
+import idorm.idormServer.email.entity.Email;
 import idorm.idormServer.member.application.port.in.MemberUseCase;
 import idorm.idormServer.member.application.port.in.dto.MemberInfoResponse;
 import idorm.idormServer.member.application.port.in.dto.NicknameUpdateRequest;
@@ -17,16 +19,17 @@ import idorm.idormServer.member.application.port.out.CheckNicknamesPort;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.application.port.out.SaveMemberPort;
 import idorm.idormServer.member.application.port.out.WithdrawMemberPort;
-import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.domain.Nickname;
-import idorm.idormServer.member.domain.Password;
+import idorm.idormServer.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService implements MemberUseCase {
 
+	private final EncryptPort encryptPort; // TODO: 이동 예정
+
 	private final LoadEmailPort loadEmailPort;
+	private final SaveEmailPort saveEmailPort;
 	private final DeleteEmailPort deleteEmailPort;
 
 	private final SaveMemberPort saveMemberPort;
@@ -41,8 +44,9 @@ public class MemberService implements MemberUseCase {
 	public void signUp(final SignupRequest request) {
 		Email email = loadEmailPort.findByEmail(request.getEmail());
 		email.register();
+		saveEmailPort.save(email);
 
-		Member member = request.from();
+		Member member = request.from(encryptPort, request.getPassword());
 		saveMemberPort.save(member);
 	}
 
@@ -56,10 +60,9 @@ public class MemberService implements MemberUseCase {
 	@Transactional
 	public void editNickname(final AuthResponse auth, final NicknameUpdateRequest request) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		Nickname newNickname = Nickname.from(request.nickname());
 
-		checkNicknamesPort.validateUniqueNickname(newNickname);
-		member.updateNickname(newNickname);
+		checkNicknamesPort.validateUniqueNickname(request.nickname());
+		member.updateNickname(request.nickname());
 	}
 
 	@Override
@@ -69,7 +72,7 @@ public class MemberService implements MemberUseCase {
 		email.validateReVerified();
 
 		Member member = loadMemberPort.loadMember(request.email());
-		member.updatePassword(Password.from(request.password()));
+		member.updatePassword(encryptPort, request.password());
 	}
 
 	@Override

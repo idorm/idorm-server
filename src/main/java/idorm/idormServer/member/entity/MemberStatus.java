@@ -1,4 +1,4 @@
-package idorm.idormServer.member.domain;
+package idorm.idormServer.member.entity;
 
 public enum MemberStatus {
     ACTIVE,

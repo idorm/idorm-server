@@ -1,6 +1,6 @@
 package idorm.idormServer.member.application.port.out;
 
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.member.entity.Member;
 
 public interface WithdrawMemberPort {
 

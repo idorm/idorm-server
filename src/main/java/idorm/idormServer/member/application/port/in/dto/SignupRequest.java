@@ -5,9 +5,7 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 
 import idorm.idormServer.auth.application.port.out.EncryptPort;
-import idorm.idormServer.member.domain.Member;
-import idorm.idormServer.member.domain.Nickname;
-import idorm.idormServer.member.domain.Password;
+import idorm.idormServer.member.entity.Member;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class SignupRequest {
-
-	private final EncryptPort encryptPort;
 
 	@NotBlank(message = "이메일은 공백일 수 없습니다.")
 	String email;
@@ -27,11 +23,11 @@ public class SignupRequest {
 	@NotBlank(message = "닉네임은 공백일 수 없습니다.")
 	String nickname;
 
-	public Member from() {
+	public Member from(final EncryptPort encryptPort, final String encryptedPassword) {
 		return Member.builder()
 			.email(email)
-			.password(Password.from(encryptPort.encrypt(password)))
-			.nickname(Nickname.from(nickname))
+			.password(encryptedPassword)
+			.nickname(nickname)
 			.build();
 	}
 }
