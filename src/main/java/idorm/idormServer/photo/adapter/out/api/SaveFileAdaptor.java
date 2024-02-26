@@ -16,8 +16,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
-import idorm.idormServer.community.post.domain.Post;
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.member.entity.Member;
 import idorm.idormServer.photo.adapter.out.api.exception.NotFoundFileException;
 import idorm.idormServer.photo.adapter.out.api.exception.S3ClientException;
 import idorm.idormServer.photo.adapter.out.api.exception.UnsupportedFileTypeException;
