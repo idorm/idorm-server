@@ -1,4 +1,4 @@
-package idorm.idormServer.report.domain;
+package idorm.idormServer.report.entity;
 
 import idorm.idormServer.report.adapter.out.exception.InvalidReportTypeException;
 import lombok.Getter;

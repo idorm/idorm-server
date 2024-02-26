@@ -5,14 +5,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import idorm.idormServer.community.comment.domain.Comment;
-import idorm.idormServer.community.post.domain.Post;
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.community.comment.entity.Comment;
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.member.entity.Member;
 import idorm.idormServer.report.adapter.out.exception.InvalidTargetSelfException;
-import idorm.idormServer.report.domain.CommunityReason;
-import idorm.idormServer.report.domain.MemberReason;
-import idorm.idormServer.report.domain.Report;
-import idorm.idormServer.report.domain.ReportType;
+import idorm.idormServer.report.entity.CommunityReason;
+import idorm.idormServer.report.entity.MemberReason;
+import idorm.idormServer.report.entity.Report;
+import idorm.idormServer.report.entity.ReportType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record ReportRequest(

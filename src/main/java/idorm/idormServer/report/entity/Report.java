@@ -1,27 +1,64 @@
-package idorm.idormServer.report.domain;
+package idorm.idormServer.report.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import idorm.idormServer.common.util.Validator;
-import idorm.idormServer.community.comment.domain.Comment;
-import idorm.idormServer.community.post.domain.Post;
-import idorm.idormServer.member.domain.Member;
+import idorm.idormServer.community.comment.entity.Comment;
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Entity
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // pg. 249
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Report {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "report_id")
 	private Long id;
-	private Member reportedMember;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "reporter_member_id")
 	private Member reporterMember;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "reported_member_id")
+	private Member reportedMember;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "reported_post_id")
 	private Post reportedPost;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "reported_comment_id")
 	private Comment reportedComment;
+
 	private Character reasonType;
+
 	private String reason;
+
+	@Column(updatable = false)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime createdAt;
 
 	private Report(Member reporterMember,
@@ -80,17 +117,5 @@ public class Report {
 			reportedComment,
 			reasonType.getType(),
 			reason);
-	}
-
-	public static Report forMapper(final Long id,
-		final Member reportedMember,
-		final Member reporterMember,
-		final Post reportedPost,
-		final Comment reportedComment,
-		final Character reasonType,
-		final String reason,
-		final LocalDateTime createdAt) {
-		return new Report(id, reportedMember, reporterMember, reportedPost, reportedComment, reasonType, reason,
-			createdAt);
 	}
 }

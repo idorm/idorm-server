@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.auth.domain.Auth;
-import idorm.idormServer.auth.domain.AuthInfo;
+import idorm.idormServer.auth.adapter.in.api.Auth;
+import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.report.adapter.out.ReportResponseCode;
 import idorm.idormServer.report.application.port.in.ReportUseCase;
