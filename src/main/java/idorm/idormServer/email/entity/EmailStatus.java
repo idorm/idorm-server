@@ -1,4 +1,4 @@
-package idorm.idormServer.email.domain;
+package idorm.idormServer.email.entity;
 
 public enum EmailStatus {
     SEND,

@@ -1,39 +1,70 @@
-package idorm.idormServer.email.domain;
+package idorm.idormServer.email.entity;
 
-import static idorm.idormServer.email.domain.EmailStatus.*;
+import static idorm.idormServer.email.entity.EmailStatus.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.email.adapter.out.api.EmailResponseCode;
 import idorm.idormServer.email.adapter.out.api.exception.DuplicatedEmailException;
 import idorm.idormServer.email.adapter.out.api.exception.ExpiredEmailVerificationCodeException;
+import idorm.idormServer.email.adapter.out.api.exception.InvalidVerificationCode;
 import idorm.idormServer.email.adapter.out.api.exception.UnAuthorizedEmailException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Entity
 @Getter
-@EqualsAndHashCode(of = "id")
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Email {
 
 	public static final int MAX_EMAIL_LENGTH = 20;
 	private static final String EMAIL_REGEX = "^([\\w-]+(?:\\.[\\w-]+)*)+@(inu.ac.kr)$";
+	public static final int CODE_LENGTH = 7;
+	private static final String CODE_REGEX = "^\\d{3}-\\d{3}$";
+
 	private static final long VALID_VERIFY_MINUTE = 5L;
 	private static final long VALID_REGISTER_MINUTE = 10L;
 
+	@Id
+	@Column(name = "email_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(nullable = false, unique = true, length = MAX_EMAIL_LENGTH)
 	private String email;
-	private EmailStatus emailStatus;
-	private VerificationCode code;
+
+	@Column(nullable = false, length = CODE_LENGTH)
+	private String code;
+
+	@Column(nullable = false)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime issuedAt;
+
+	@Column(nullable = false)
 	private boolean registered;
 
-	public Email(final String email, final VerificationCode code) {
-		validateConstructor(email);
+	@Enumerated(value = EnumType.STRING)
+	@Column(columnDefinition = "ENUM('SEND', 'VERIFIED', 'RE_SEND', 'RE_VERIFIED')")
+	private EmailStatus emailStatus;
+
+	public Email(final String email, final String code) {
+		validateConstructor(email, code);
 		this.email = email;
 		this.code = code;
 		emailStatus = EmailStatus.SEND;
@@ -41,33 +72,19 @@ public class Email {
 		this.issuedAt = LocalDateTime.now();
 	}
 
-	private static void validateConstructor(final String value) {
-		Validator.validateNotBlank(value);
-		Validator.validateFormat(value, EMAIL_REGEX, EmailResponseCode.INVALID_EMAIL_CHARACTER);
+	private static void validateConstructor(final String email, final String code) {
+		Validator.validateNotBlank(List.of(email, code));
+		Validator.validateFormat(email, EMAIL_REGEX, EmailResponseCode.INVALID_EMAIL_CHARACTER);
 	}
 
-	public static Email forMapper(final Long id,
-		final String email,
-		final EmailStatus emailStatus,
-		final VerificationCode code,
-		final LocalDateTime issuedAt,
-		final boolean registered) {
-
-		return new Email(id, email, emailStatus, code, issuedAt, registered);
-	}
-
-	public void assignId(final Long id) {
-		this.id = id;
-	}
-
-	public void updateVerificationCode(VerificationCode code) {
+	public void updateVerificationCode(String code) {
 		validateNotSignUp();
 		this.code = code;
 		this.issuedAt = LocalDateTime.now();
 		this.emailStatus = EmailStatus.SEND;
 	}
 
-	public void updateReVerificationCode(VerificationCode code) {
+	public void updateReVerificationCode(String code) {
 		validateSignUpEmail();
 		this.code = code;
 		this.issuedAt = LocalDateTime.now();
@@ -78,7 +95,7 @@ public class Email {
 		validateNotSignUp();
 		validateValidTime();
 
-		this.code.match(code);
+		matchCode(code);
 		this.emailStatus = VERIFIED;
 	}
 
@@ -86,7 +103,7 @@ public class Email {
 		validateSignUpEmail();
 		validateValidTime();
 
-		this.code.match(code);
+		matchCode(code);
 		this.emailStatus = EmailStatus.RE_VERIFIED;
 	}
 
@@ -123,6 +140,15 @@ public class Email {
 	private void validateSignUpEmail() {
 		if (!isRegistered()) {
 			throw new NotFoundMemberException();
+		}
+	}
+
+	private void matchCode(String inputCode) {
+		Validator.validateNotBlank(inputCode);
+		Validator.validateFormat(inputCode, CODE_REGEX, EmailResponseCode.INVALID_VERIFICATION_CODE);
+
+		if (!this.code.equals(inputCode)) {
+			throw new InvalidVerificationCode();
 		}
 	}
 }

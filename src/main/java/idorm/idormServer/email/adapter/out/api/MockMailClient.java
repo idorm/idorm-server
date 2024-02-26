@@ -1,7 +1,7 @@
 package idorm.idormServer.email.adapter.out.api;
 
 import idorm.idormServer.email.application.port.out.SendEmailPort;
-import idorm.idormServer.email.domain.Email;
+import idorm.idormServer.email.entity.Email;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 

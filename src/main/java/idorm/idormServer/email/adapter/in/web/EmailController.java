@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "9. Email", description = "이메일 인증 api")
+@Tag(name = "1. Email", description = "이메일 인증 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/email")
@@ -38,8 +38,7 @@ public class EmailController {
 		@ApiResponse(responseCode = "400", description = "EMAIL_CHARACTER_INVALID / FIELD_REQUIRED"),
 		@ApiResponse(responseCode = "409", description = "DUPLICATE_EMAIL"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR / EMAIL_SERVER_ERROR"),
-	}
-	)
+	})
 	@PostMapping("/verify")
 	public ResponseEntity<SuccessResponse<Object>> sendAuthenticationEmail(
 		@RequestBody @Valid EmailSendRequest request) {

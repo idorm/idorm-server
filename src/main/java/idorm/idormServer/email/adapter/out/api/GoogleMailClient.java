@@ -4,13 +4,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 
 import idorm.idormServer.email.application.port.out.SendEmailPort;
-import idorm.idormServer.email.domain.Email;
-import idorm.idormServer.email.domain.VerificationCode;
+import idorm.idormServer.email.entity.Email;
 
-@Component
+// @Component // TODO: 메일 서버 변경
 public class GoogleMailClient implements SendEmailPort {
 
 	private final MailSender mailSender;
@@ -38,7 +36,7 @@ public class GoogleMailClient implements SendEmailPort {
 		mailSender.send(mailMessage);
 	}
 
-	private String generateEmailContent(VerificationCode verificationCode) {
+	private String generateEmailContent(String verificationCode) {
 
 		String template = "<head> " +
 			"<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" /> " +
@@ -55,7 +53,7 @@ public class GoogleMailClient implements SendEmailPort {
 			"<p style=\" border: 1px #e3e1ec; border-top-style: solid; padding: 25px; background-color: #f2f5fa; \" > 인증번호 <span style=\"color: #ff6868\">${verificationCode}</span> </p> </div>"
 			+
 			"</body>";
-		template = template.replace("${verificationCode}", verificationCode.getValue());
+		template = template.replace("${verificationCode}", verificationCode);
 		template = template.replace("${logoUrl}", idormLogoImageUrl);
 		return template;
 	}

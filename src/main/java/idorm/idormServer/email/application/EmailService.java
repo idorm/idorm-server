@@ -12,8 +12,7 @@ import idorm.idormServer.email.application.port.out.GenerateVerificationCodePort
 import idorm.idormServer.email.application.port.out.LoadEmailPort;
 import idorm.idormServer.email.application.port.out.SaveEmailPort;
 import idorm.idormServer.email.application.port.out.SendEmailPort;
-import idorm.idormServer.email.domain.Email;
-import idorm.idormServer.email.domain.VerificationCode;
+import idorm.idormServer.email.entity.Email;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -47,7 +46,6 @@ public class EmailService implements EmailUseCase {
 		Email email = loadEmailPort.findByEmail(request.email());
 		email.updateReVerificationCode(generateVerificationCode());
 
-		saveEmailPort.save(email);
 		sendEmailPort.send(email);
 	}
 
@@ -64,7 +62,7 @@ public class EmailService implements EmailUseCase {
 		email.reVerify(request.code());
 	}
 
-	private VerificationCode generateVerificationCode() {
+	private String generateVerificationCode() {
 		return verificationCodePort.generate();
 	}
 }
