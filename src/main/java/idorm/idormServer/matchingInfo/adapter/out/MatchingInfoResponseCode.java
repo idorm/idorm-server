@@ -33,7 +33,7 @@ public enum MatchingInfoResponseCode implements BaseResponseCode {
 
 	NOT_FOUND_MATCHINGINFO(NOT_FOUND, "등록된 온보딩 정보가 없습니다."),
 
-	ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(CONFLICT, "비공개 상태의 온보딩 정보 입니다."),
+	ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(CONFLICT, "본인 혹은 상대방이 비공개 상태의 온보딩 정보 입니다."),
 	DUPLICATE_MATCHINGINFO(CONFLICT, "등록된 온보딩 정보가 존재합니다.");
 
 	private final HttpStatus status;

@@ -14,7 +14,7 @@ public record PreferenceMateRequest(
 	@Positive(message = "대상 회원 식별자는 양수만 가능합니다.")
 	Long targetMemberId
 ) {
-	public boolean isFavorite() {
-		return MatePreferenceType.isFavorite(preferenceType);
+	public MatePreferenceType getPreferenceType() {
+		return MatePreferenceType.from(preferenceType);
 	}
 }

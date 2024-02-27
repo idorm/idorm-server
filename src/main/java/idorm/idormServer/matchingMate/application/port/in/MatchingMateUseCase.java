@@ -5,6 +5,7 @@ import java.util.List;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
+import idorm.idormServer.matchingMate.application.port.in.dto.PreferenceMateRequest;
 
 public interface MatchingMateUseCase {
 
@@ -12,13 +13,9 @@ public interface MatchingMateUseCase {
 
 	List<MatchingMateResponse> findNonFavoriteMates(AuthResponse auth);
 
-	void addFavoriteMate(AuthResponse auth, Long targetMemberId);
+	void addMate(AuthResponse auth, PreferenceMateRequest request);
 
-	void addNonFavoriteMate(AuthResponse auth, Long targetMemberId);
-
-	void deleteFavoriteMate(AuthResponse auth, Long targetMemberId);
-
-	void deleteNonFavoriteMate(AuthResponse auth, Long targetMemberId);
+	void deleteMate(AuthResponse auth, PreferenceMateRequest request);
 
 	List<MatchingMateResponse> findMates(AuthResponse auth);
 

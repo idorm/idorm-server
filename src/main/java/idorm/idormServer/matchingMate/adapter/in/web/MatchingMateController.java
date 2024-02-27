@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.adapter.in.api.Auth;
 import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.response.SuccessResponse;
-import idorm.idormServer.matchingMate.adapter.out.MatchingMateResponseCode;
 import idorm.idormServer.matchingMate.application.port.in.MatchingMateUseCase;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
@@ -93,11 +92,11 @@ public class MatchingMateController {
 		@AuthInfo AuthResponse auth,
 		@RequestBody @Valid PreferenceMateRequest request
 	) {
-		if (request.isFavorite()) {
-			matchingMateUseCase.addFavoriteMate(auth, request.targetMemberId());
+		matchingMateUseCase.addMate(auth, request);
+
+		if (request.getPreferenceType().isFavorite()) {
 			return ResponseEntity.ok().body(SuccessResponse.from(LIKED_MEMBER_SAVED));
 		} else {
-			matchingMateUseCase.addNonFavoriteMate(auth, request.targetMemberId());
 			return ResponseEntity.ok().body(SuccessResponse.from(DISLIKED_MEMBER_SAVED));
 		}
 	}
@@ -117,12 +116,12 @@ public class MatchingMateController {
 		@AuthInfo AuthResponse auth,
 		@RequestBody @Valid PreferenceMateRequest request
 	) {
-		if (request.isFavorite()) {
-			matchingMateUseCase.deleteFavoriteMate(auth, request.targetMemberId());
-			return ResponseEntity.ok().body(SuccessResponse.from(MatchingMateResponseCode.LIKED_MEMBER_DELETED));
+		matchingMateUseCase.deleteMate(auth, request);
+
+		if (request.getPreferenceType().isFavorite()) {
+			return ResponseEntity.ok().body(SuccessResponse.from(LIKED_MEMBER_DELETED));
 		} else {
-			matchingMateUseCase.deleteNonFavoriteMate(auth, request.targetMemberId());
-			return ResponseEntity.ok().body(SuccessResponse.from(MatchingMateResponseCode.DISLIKED_MEMBER_DELETED));
+			return ResponseEntity.ok().body(SuccessResponse.from(DISLIKED_MEMBER_DELETED));
 		}
 	}
 

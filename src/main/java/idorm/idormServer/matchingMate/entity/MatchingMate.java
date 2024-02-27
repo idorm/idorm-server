@@ -1,11 +1,13 @@
 package idorm.idormServer.matchingMate.entity;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import idorm.idormServer.common.util.Validator;
+import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,32 +31,67 @@ public class MatchingMate {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "member_id")
-	private Member member;
-
-	@ManyToOne
-	@JoinColumn(name = "target_member_id")
-	private Member targetMember;
-
 	@Enumerated(value = EnumType.STRING)
 	@Column(columnDefinition = "ENUM('FAVORITE', 'NONFAVORITE')")
 	private MatePreferenceType preferenceType;
 
-	private MatchingMate(final Member loginMember, final Member targetMember, final MatePreferenceType preferenceType) {
-		validateConstructor(loginMember, targetMember);
-		this.member = loginMember;
-		this.targetMember = targetMember;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id")
+	private Member owner;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "matching_info_id")
+	private MatchingInfo matchingInfoForTarget;
+
+	private MatchingMate(final MatePreferenceType preferenceType, final Member owner, final MatchingInfo matchingInfo) {
+		validateConstructor(owner, matchingInfo);
 		this.preferenceType = preferenceType;
+		this.owner = owner;
+		this.matchingInfoForTarget = matchingInfo;
+
+		this.matchingInfoForTarget.addMatchingMate(this);
 	}
 
-	public static MatchingMate of(final Member loginMember,
-		final Member targetMember,
-		final MatePreferenceType preferenceType) {
-		return new MatchingMate(loginMember, targetMember, preferenceType);
+	public static MatchingMate favoriteFrom(final Member owner, final MatchingInfo matchingInfo) {
+		return new MatchingMate(MatePreferenceType.FAVORITE, owner, matchingInfo);
 	}
 
-	private static void validateConstructor(Member loginMember, Member targetMember) {
-		Validator.validateNotNull(List.of(loginMember, targetMember));
+	public static MatchingMate nonFavoriteFrom(final Member owner, final MatchingInfo matchingInfo) {
+		return new MatchingMate(MatePreferenceType.NONFAVORITE, owner, matchingInfo);
+	}
+
+	private void validateConstructor(final Member member, final MatchingInfo matchingInfo) {
+		Validator.validateNotNull(List.of(member, matchingInfo));
+	}
+
+	public boolean isPublic() {
+		return matchingInfoForTarget.getIsPublic();
+	}
+
+	public boolean isFavorite() {
+		return preferenceType.equals(MatePreferenceType.FAVORITE);
+	}
+
+	public boolean isNonFavorte() {
+		return !preferenceType.equals(MatePreferenceType.FAVORITE);
+	}
+
+	public boolean isNonFavorite(final MatchingInfo matchingInfo) {
+		return this.matchingInfoForTarget.equals(matchingInfo) && isNonFavorte();
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object)
+			return true;
+		if (object == null || getClass() != object.getClass())
+			return false;
+		MatchingMate that = (MatchingMate)object;
+		return Objects.equals(matchingInfoForTarget, that.matchingInfoForTarget);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(matchingInfoForTarget);
 	}
 }

@@ -1,12 +1,12 @@
 package idorm.idormServer.member.entity;
 
 import static idorm.idormServer.email.entity.Email.*;
-import static idorm.idormServer.matchingMate.entity.MatePreferenceType.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,9 +29,13 @@ import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.community.comment.entity.Comment;
 import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.matchingInfo.adapter.out.exception.IllegalStatementMatchingInfoNonPublicException;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
+import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedFavoriteMateException;
+import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedNonFavoriteMateException;
+import idorm.idormServer.matchingMate.adapter.out.exception.NotFoundDisLikedMemberException;
+import idorm.idormServer.matchingMate.adapter.out.exception.NotFoundLikedMemberException;
 import idorm.idormServer.matchingMate.entity.MatchingMate;
-import idorm.idormServer.matchingMate.entity.MatchingMates;
 import idorm.idormServer.photo.adapter.out.api.exception.NotFoundFileException;
 import idorm.idormServer.report.entity.Report;
 import lombok.AccessLevel;
@@ -68,12 +72,13 @@ public class Member {
 	@Column(columnDefinition = "ENUM('MEMBER', 'ADMIN')")
 	private RoleType roleType;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	@JoinColumn(name = "matching_info_id")
 	private MatchingInfo matchingInfo;
 
-	@Embedded
-	private MatchingMates matchingMates;
+	@OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+		orphanRemoval = true)
+	private List<MatchingMate> matchingMates = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "team_id")
@@ -97,7 +102,6 @@ public class Member {
 		this.password = Password.from(encryptPort, password);
 		profilePhotoUrl = null;
 		roleType = RoleType.MEMBER;
-		matchingMates = MatchingMates.empty();
 	}
 
 	private void validateConstructor(final String email) {
@@ -121,6 +125,11 @@ public class Member {
 		this.profilePhotoUrl = photoUrl;
 	}
 
+	public void updateMatchingInfo(final MatchingInfo matchingInfo) {
+		// TODO : 기존 온보딩 정보가 있다면 예외 throws
+		this.matchingInfo = matchingInfo;
+	}
+
 	public void deleteMemberPhoto() {
 		if (this.profilePhotoUrl == null) {
 			throw new NotFoundFileException();
@@ -141,31 +150,82 @@ public class Member {
 		comments = null;
 	}
 
-	public Set<MatchingMate> getFavoriteMates() {
-		return Collections.unmodifiableSet(matchingMates.getFavoriteMates());
+	public List<MatchingMate> getFavoriteMates() {
+		List<MatchingMate> results = this.matchingMates.stream()
+			.filter(MatchingMate::isPublic)
+			.filter(MatchingMate::isFavorite)
+			.collect(Collectors.toUnmodifiableList());
+		return results;
 	}
 
-	public Set<MatchingMate> getNonFavoriteMates() {
-		return Collections.unmodifiableSet(matchingMates.getNonFavoriteMates());
+	public List<MatchingMate> getNonFavoriteMates() {
+		List<MatchingMate> results = this.matchingMates.stream()
+			.filter(MatchingMate::isPublic)
+			.filter(MatchingMate::isNonFavorte)
+			.collect(Collectors.toUnmodifiableList());
+		return results;
 	}
 
-	public void addFavoriteMate(final MatchingMate matchingMate) {
-		matchingMates.addFavoriteMate(matchingMate);
+	public void addMate(final MatchingMate newMate) {
+		Optional<MatchingMate> existMate = getDuplicateMate(newMate);
+		if (existMate.isEmpty()) {
+			this.matchingMates.add(newMate);
+			return;
+		}
+		validateDuplicateTypeMate(existMate.get(), newMate);
+
+		this.matchingMates.remove(existMate.get());
+		this.matchingMates.add(newMate);
 	}
 
-	public void addNonFavoriteMate(final MatchingMate matchingMate) {
-		matchingMates.addNonFavoriteMate(matchingMate);
+	public void deleteMate(final MatchingMate deleteMate) {
+		Optional<MatchingMate> existMate = getDuplicateMate(deleteMate);
+		if (existMate.isEmpty()) {
+			handleNotFoundMate(deleteMate);
+		}
+		validateOtherTypeMate(existMate.get(), deleteMate);
+		this.matchingMates.remove(existMate.get());
 	}
 
-	public void deleteFavoriteMate(final MatchingMate matchingMate) {
-		matchingMates.deleteFavoriteMate(matchingMate);
+	public boolean isNotNonFavoriteMate(final MatchingInfo matchingInfo) {
+		boolean result = matchingMates.stream()
+			.anyMatch(mate -> mate.isNonFavorite(matchingInfo));
+		return !result;
 	}
 
-	public void deleteNonFavoriteMate(final MatchingMate matchingMate) {
-		matchingMates.deleteNonFavoriteMate(matchingMate);
+	private Optional<MatchingMate> getDuplicateMate(MatchingMate matchingMate) {
+		Optional<MatchingMate> duplicateMate = this.matchingMates.stream()
+			.filter(mate -> mate.equals(matchingMate))
+			.findAny();
+		return duplicateMate;
 	}
 
-	public boolean isNonFavoriteMate(final Member targetMember) {
-		return matchingMates.isNonFavoriteMate(MatchingMate.of(this, targetMember, NONFAVORITE));
+	private void validateDuplicateTypeMate(MatchingMate existMate, MatchingMate newMate) {
+		if (existMate.isFavorite() && newMate.isFavorite()) {
+			throw new DuplicatedFavoriteMateException();
+		}
+		if (existMate.isNonFavorte() && newMate.isNonFavorte()) {
+			throw new DuplicatedNonFavoriteMateException();
+		}
+	}
+
+	private void validateOtherTypeMate(MatchingMate existMate, MatchingMate deleteMate) {
+		if (existMate.getPreferenceType() != deleteMate.getPreferenceType()) {
+			handleNotFoundMate(deleteMate);
+		}
+	}
+
+	public void validateMatchingStatement() {
+		if (Objects.isNull(matchingInfo) || !matchingInfo.getIsPublic()) {
+			throw new IllegalStatementMatchingInfoNonPublicException();
+		}
+	}
+
+	private void handleNotFoundMate(MatchingMate deleteMate) {
+		if (deleteMate.isFavorite()) {
+			throw new NotFoundLikedMemberException();
+		} else {
+			throw new NotFoundDisLikedMemberException();
+		}
 	}
 }

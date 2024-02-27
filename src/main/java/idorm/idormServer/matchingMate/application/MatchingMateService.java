@@ -1,23 +1,20 @@
 package idorm.idormServer.matchingMate.application;
 
-import static idorm.idormServer.matchingMate.entity.MatePreferenceType.*;
-
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.matchingInfo.adapter.out.exception.IllegalStatementMatchingInfoNonPublicException;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.MatchingMateUseCase;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
+import idorm.idormServer.matchingMate.application.port.in.dto.PreferenceMateRequest;
 import idorm.idormServer.matchingMate.application.port.out.SaveMatchingMatePort;
 import idorm.idormServer.matchingMate.entity.MatchingMate;
+import idorm.idormServer.matchingMate.entity.MatePreferenceType;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
 import lombok.RequiredArgsConstructor;
@@ -28,107 +25,81 @@ import lombok.RequiredArgsConstructor;
 public class MatchingMateService implements MatchingMateUseCase {
 
 	private final LoadMemberPort loadMemberPort;
+
 	private final LoadMatchingInfoPort loadMatchingInfoPort;
+
 	private final SaveMatchingMatePort saveMatchingMatePort;
 
 	@Override
 	public List<MatchingMateResponse> findFavoriteMates(final AuthResponse auth) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		validateMatchingCondition(member);
-
-		return getMatchingInfoOfMate(member.getFavoriteMates());
+		return convertMateResponses(member.getFavoriteMates());
 	}
 
 	@Override
 	public List<MatchingMateResponse> findNonFavoriteMates(final AuthResponse auth) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		validateMatchingCondition(member);
-
-		return getMatchingInfoOfMate(member.getNonFavoriteMates());
+		return convertMateResponses(member.getNonFavoriteMates());
 	}
 
 	@Override
 	@Transactional
-	public void addFavoriteMate(final AuthResponse auth, final Long targetMemberId) {
+	public void addMate(final AuthResponse auth, final PreferenceMateRequest request) {
+		MatePreferenceType preferenceType = request.getPreferenceType();
+
 		Member member = loadMemberPort.loadMember(auth.getId());
-		Member targetMember = loadMemberPort.loadMember(targetMemberId);
+		Member targetMember = loadMemberPort.loadMember(request.targetMemberId());
 
-		validateMatchingCondition(member);
-		validateMatchingCondition(targetMember);
+		member.validateMatchingStatement();
+		targetMember.validateMatchingStatement();
 
-		MatchingMate matchingMate = MatchingMate.of(member, targetMember, FAVORITE);
-		saveMatchingMatePort.save(matchingMate);
-		member.addFavoriteMate(matchingMate);
+		MatchingMate mate =
+			preferenceType.isFavorite() ? MatchingMate.favoriteFrom(member, targetMember.getMatchingInfo()) :
+				MatchingMate.nonFavoriteFrom(member, targetMember.getMatchingInfo());
+		saveMatchingMatePort.save(mate);
+		member.addMate(mate);
 	}
 
 	@Override
 	@Transactional
-	public void addNonFavoriteMate(final AuthResponse auth, final Long targetMemberId) {
+	public void deleteMate(final AuthResponse auth, final PreferenceMateRequest request) {
+		MatePreferenceType preferenceType = request.getPreferenceType();
+
 		Member member = loadMemberPort.loadMember(auth.getId());
-		Member targetMember = loadMemberPort.loadMember(targetMemberId);
+		Member targetMember = loadMemberPort.loadMember(request.targetMemberId());
 
-		validateMatchingCondition(member);
-		validateMatchingCondition(targetMember);
-
-		MatchingMate matchingMate = MatchingMate.of(member, targetMember, NONFAVORITE);
-		saveMatchingMatePort.save(matchingMate);
-		member.addNonFavoriteMate(matchingMate);
-	}
-
-	@Override
-	@Transactional
-	public void deleteFavoriteMate(final AuthResponse auth, final Long targetMemberId) {
-		Member member = loadMemberPort.loadMember(auth.getId());
-		Member targetMember = loadMemberPort.loadMember(targetMemberId);
-
-		MatchingMate matchingMate = MatchingMate.of(member, targetMember, FAVORITE);
-		saveMatchingMatePort.save(matchingMate);
-		member.deleteFavoriteMate(matchingMate);
-	}
-
-	@Override
-	@Transactional
-	public void deleteNonFavoriteMate(final AuthResponse auth, final Long targetMemberId) {
-		Member member = loadMemberPort.loadMember(auth.getId());
-		Member targetMember = loadMemberPort.loadMember(targetMemberId);
-
-		MatchingMate matchingMate = MatchingMate.of(member, targetMember, NONFAVORITE);
-		saveMatchingMatePort.save(matchingMate);
-		member.deleteNonFavoriteMate(matchingMate);
+		MatchingMate mate =
+			preferenceType.isFavorite() ? MatchingMate.favoriteFrom(member, targetMember.getMatchingInfo()) :
+				MatchingMate.nonFavoriteFrom(member, targetMember.getMatchingInfo());
+		member.deleteMate(mate);
 	}
 
 	@Override
 	public List<MatchingMateResponse> findMates(final AuthResponse auth) {
 		Member member = loadMemberPort.loadMember(auth.getId());
+		MatchingInfo matchingInfo = loadMatchingInfoPort.load(member.getId());
+		matchingInfo.validateStatement();
 
-		MatchingInfo matchingInfo = validateMatchingCondition(member);
 		List<MatchingInfo> matchingInfos = loadMatchingInfoPort.loadByBasicConditions(matchingInfo);
-
 		return removeNonFavoriteMates(member, matchingInfos);
 	}
 
 	@Override
 	public List<MatchingMateResponse> findFilteredMates(final AuthResponse auth,
 		final MatchingMateFilterRequest request) {
+
 		Member member = loadMemberPort.loadMember(auth.getId());
+		MatchingInfo matchingInfo = loadMatchingInfoPort.load(member.getId());
+		matchingInfo.validateStatement();
 
-		MatchingInfo matchingInfo = validateMatchingCondition(member);
 		List<MatchingInfo> matchingInfos = loadMatchingInfoPort.loadBySpecialConditions(matchingInfo, request);
-
 		return removeNonFavoriteMates(member, matchingInfos);
 	}
 
-	private List<MatchingMateResponse> getMatchingInfoOfMate(final Set<MatchingMate> mates) {
+	private List<MatchingMateResponse> convertMateResponses(final List<MatchingMate> mates) {
 		List<MatchingMateResponse> responses = mates.stream()
-			.map(mate -> {
-				Optional<MatchingInfo> matchingInfo = loadMatchingInfoPort.loadWithOptional(
-					mate.getTargetMember().getId());
-
-				if (matchingInfo.isPresent() && matchingInfo.get().getIsPublic()) {
-					return MatchingMateResponse.from(matchingInfo.get());
-				}
-				return null;
-			})
+			.map(MatchingMate::getMatchingInfoForTarget)
+			.map(MatchingMateResponse::from)
 			.toList();
 		return responses;
 	}
@@ -136,22 +107,9 @@ public class MatchingMateService implements MatchingMateUseCase {
 	private List<MatchingMateResponse> removeNonFavoriteMates(final Member loginMember,
 		final List<MatchingInfo> matchingInfos) {
 		List<MatchingMateResponse> responses = matchingInfos.stream()
-			.map(info -> {
-				Member owner = loadMemberPort.loadMember(info.getMember().getId());
-				if (loginMember.isNonFavoriteMate(owner)) {
-					return null;
-				}
-				return MatchingMateResponse.from(info);
-			})
+			.filter(loginMember::isNotNonFavoriteMate)
+			.map(MatchingMateResponse::from)
 			.toList();
 		return responses;
-	}
-
-	private MatchingInfo validateMatchingCondition(final Member loginMember) {
-		MatchingInfo matchingInfo = loadMatchingInfoPort.load(loginMember.getId());
-		if (!matchingInfo.getIsPublic()) {
-			throw new IllegalStatementMatchingInfoNonPublicException();
-		}
-		return matchingInfo;
 	}
 }

@@ -14,7 +14,7 @@ public enum MatePreferenceType {
 		}
 	}
 
-	public static boolean isFavorite(String preference) {
-		return FAVORITE.equals(from(preference));
+	public boolean isFavorite() {
+		return this.equals(FAVORITE);
 	}
 }
