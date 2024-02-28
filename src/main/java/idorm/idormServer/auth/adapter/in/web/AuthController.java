@@ -1,11 +1,11 @@
 package idorm.idormServer.auth.adapter.in.web;
 
 import static idorm.idormServer.auth.adapter.out.api.AuthResponseCode.*;
+import static org.springframework.http.HttpHeaders.*;
 
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
@@ -16,17 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import idorm.idormServer.auth.adapter.in.api.Auth;
+import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.auth.adapter.in.api.AuthorizationExtractor;
 import idorm.idormServer.auth.adapter.out.api.AuthResponseCode;
+import idorm.idormServer.auth.adapter.out.api.exception.UnAuthorizedRefreshTokenException;
 import idorm.idormServer.auth.application.port.in.AuthUseCase;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import idorm.idormServer.auth.application.port.in.RefreshTokenUseCase;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.application.port.in.dto.LoginRequest;
-import idorm.idormServer.auth.adapter.in.api.Auth;
-import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.common.response.SuccessResponse;
-import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "1. Auth", description = "회원 인증 api")
+@Tag(name = "2. Auth", description = "회원 인증 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -54,7 +54,6 @@ public class AuthController {
 	)
 	@PostMapping("/signin")
 	public ResponseEntity<SuccessResponse<Object>> login(
-		HttpServletResponse httpServletResponse,
 		@Valid @RequestBody LoginRequest request
 	) {
 		AuthResponse auth = authUseCase.login(request);
@@ -63,14 +62,14 @@ public class AuthController {
 		String refreshToken = jwtTokenUseCase.createRefreshToken();
 		refreshTokenUseCase.saveToken(refreshToken, auth.getId());
 
-		httpServletResponse.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-		httpServletResponse.setHeader("Refresh-Token", "Bearer " + refreshToken);
-
-		return ResponseEntity.ok().body(SuccessResponse.from(AuthResponseCode.MEMBER_LOGIN));
+		return ResponseEntity.ok()
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+			.header("Refresh-Token", "Bearer " + refreshToken)
+			.body(SuccessResponse.from(AuthResponseCode.MEMBER_LOGIN));
 	}
 
 	@Auth
-	@Operation(summary = "Access Token 재발급", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION),
+	@Operation(summary = "Access Token 재발급", security = {@SecurityRequirement(name = AUTHORIZATION),
 		@SecurityRequirement(name = "Refresh-Token")})
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "MEMBER_REFRESH"),
@@ -82,7 +81,6 @@ public class AuthController {
 	@GetMapping("/refresh")
 	public ResponseEntity<SuccessResponse<Object>> refresh(
 		HttpServletRequest servletRequest,
-		HttpServletResponse httpServletResponse,
 		@AuthInfo AuthResponse auth
 	) {
 		validateExistHeader(servletRequest);
@@ -91,12 +89,13 @@ public class AuthController {
 		refreshTokenUseCase.matches(refreshToken, auth.getId());
 		String reissueAccessToken = jwtTokenUseCase.createAccessToken(auth);
 
-		httpServletResponse.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + reissueAccessToken);
-		return ResponseEntity.ok().body(SuccessResponse.from(AuthResponseCode.MEMBER_REFRESH));
+		return ResponseEntity.ok()
+			.header(AUTHORIZATION, "Bearer " + reissueAccessToken)
+			.body(SuccessResponse.from(AuthResponseCode.MEMBER_REFRESH));
 	}
 
 	@Auth
-	@Operation(summary = "로그아웃", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+	@Operation(summary = "로그아웃", security = {@SecurityRequirement(name = AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200", description = "MEMBER_LOGOUT"),
@@ -110,16 +109,15 @@ public class AuthController {
 		@AuthInfo AuthResponse auth
 	) {
 		refreshTokenUseCase.expire(auth.getId());
+		// TODO : fcm 토큰 만료
 		return ResponseEntity.ok().body(SuccessResponse.from(MEMBER_LOGOUT));
 	}
 
 	private void validateExistHeader(HttpServletRequest request) {
-
-		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String refreshTokenHeader = request.getHeader("Refresh-Token");
 
-		if (Objects.isNull(authorizationHeader) || Objects.isNull(refreshTokenHeader)) {
-			throw new NotFoundMemberException();
+		if (Objects.isNull(refreshTokenHeader)) {
+			throw new UnAuthorizedRefreshTokenException();
 		}
 	}
 }

@@ -30,9 +30,9 @@ public class JwtTokenService implements JwtTokenUseCase {
 	private final long refreshTokenValidityMilliseconds;
 
 	@Autowired
-	public JwtTokenService(@Value("${spring.security.jwt.token.secret-key}") String secretKey,
-		@Value("${spring.security.jwt.token.expire-length.access}") long accessTokenValidityMilliseconds,
-		@Value("${spring.security.jwt.token.expire-length.refresh}") long refreshTokenValidityMilliseconds) {
+	public JwtTokenService(@Value("${security.jwt.token.secret-key}") String secretKey,
+		@Value("${security.jwt.token.expire-length.access}") long accessTokenValidityMilliseconds,
+		@Value("${security.jwt.token.expire-length.refresh}") long refreshTokenValidityMilliseconds) {
 
 		byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
 		this.signingKey = Keys.hmacShaKeyFor(keyBytes);
@@ -82,7 +82,7 @@ public class JwtTokenService implements JwtTokenUseCase {
 			return new AuthResponse(id, role, nickname);
 		}
 
-		Long id = (Long)claims.get("id");
+		Long id = (long)(int)claims.get("id");
 		String role = (String)claims.get("role");
 		String nickname = (String)claims.get("nickname");
 		return new AuthResponse(id, role, nickname);
