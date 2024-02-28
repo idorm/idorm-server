@@ -8,7 +8,6 @@ import idorm.idormServer.matchingInfo.application.port.in.MatchingInfoUseCase;
 import idorm.idormServer.matchingInfo.application.port.in.dto.MatchingInfoRequest;
 import idorm.idormServer.matchingInfo.application.port.in.dto.MatchingInfoResponse;
 import idorm.idormServer.matchingInfo.application.port.in.dto.MatchingInfoVisibilityRequest;
-import idorm.idormServer.matchingInfo.application.port.out.DeleteMatchingInfoPort;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
 import idorm.idormServer.matchingInfo.application.port.out.SaveMatchingInfoPort;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
@@ -24,7 +23,6 @@ public class MatchingInfoService implements MatchingInfoUseCase {
 	private final LoadMemberPort loadMemberPort;
 	private final LoadMatchingInfoPort loadMatchingInfoPort;
 	private final SaveMatchingInfoPort saveMatchingInfoPort;
-	private final DeleteMatchingInfoPort deleteMatchingInfoPort;
 
 	@Override
 	@Transactional
@@ -67,8 +65,7 @@ public class MatchingInfoService implements MatchingInfoUseCase {
 	@Override
 	@Transactional
 	public void delete(final AuthResponse auth) {
-		loadMemberPort.loadMember(auth.getId());
-		MatchingInfo matchingInfo = loadMatchingInfoPort.load(auth.getId());
-		deleteMatchingInfoPort.delete(matchingInfo);
+		Member member = loadMemberPort.loadMember(auth.getId());
+		member.deleteMatchingInfo();
 	}
 }

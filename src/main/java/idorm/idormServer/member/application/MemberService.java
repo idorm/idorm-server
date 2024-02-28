@@ -8,7 +8,6 @@ import idorm.idormServer.auth.application.port.out.DeleteRefreshTokenPort;
 import idorm.idormServer.auth.application.port.out.EncryptPort;
 import idorm.idormServer.email.application.port.out.DeleteEmailPort;
 import idorm.idormServer.email.application.port.out.LoadEmailPort;
-import idorm.idormServer.email.application.port.out.SaveEmailPort;
 import idorm.idormServer.email.entity.Email;
 import idorm.idormServer.member.application.port.in.MemberUseCase;
 import idorm.idormServer.member.application.port.in.dto.MemberInfoResponse;
@@ -28,12 +27,10 @@ public class MemberService implements MemberUseCase {
 	private final EncryptPort encryptPort;
 
 	private final LoadEmailPort loadEmailPort;
-	private final SaveEmailPort saveEmailPort;
 	private final DeleteEmailPort deleteEmailPort;
 
 	private final SaveMemberPort saveMemberPort;
 	private final LoadMemberPort loadMemberPort;
-	// private final CheckNicknamesPort checkNicknamesPort;
 	private final WithdrawMemberPort withdrawMemberPort;
 
 	private final DeleteRefreshTokenPort deleteRefreshTokenPort;

@@ -28,7 +28,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class MatchingInfo {
@@ -58,14 +57,13 @@ public class MatchingInfo {
 	@OneToOne(mappedBy = "matchingInfo", fetch = FetchType.LAZY)
 	private Member member;
 
-	@OneToMany(mappedBy = "matchingInfoForTarget", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OneToMany(mappedBy = "matchingInfoForTarget", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE,
+		orphanRemoval = true)
 	private List<MatchingMate> matchingMates = new ArrayList<>();
 
-	public MatchingInfo(final DormInfo dormInfo,
-		final PreferenceInfo preferenceInfo,
-		final TextInfo textInfo,
-		final String sharedURL,
-		final Member member) {
+	@Builder
+	public MatchingInfo(final DormInfo dormInfo, final PreferenceInfo preferenceInfo, final TextInfo textInfo,
+		final String sharedURL, final Member member) {
 		validateConstructor(dormInfo, preferenceInfo, textInfo, sharedURL, member);
 		this.dormInfo = dormInfo;
 		this.preferenceInfo = preferenceInfo;
@@ -77,11 +75,8 @@ public class MatchingInfo {
 		member.updateMatchingInfo(this);
 	}
 
-	private void validateConstructor(final DormInfo dormInfo,
-		final PreferenceInfo preferenceInfo,
-		final TextInfo textInfo,
-		final String sharedURL,
-		final Member member) {
+	private void validateConstructor(final DormInfo dormInfo, final PreferenceInfo preferenceInfo,
+		final TextInfo textInfo, final String sharedURL, final Member member) {
 		Validator.validateNotNull(List.of(dormInfo, preferenceInfo, textInfo, member));
 		Validator.validateMaxLength(sharedURL, MAX_URL_SIZE, INVALID_OPENKAKAOLINK_LENGTH);
 	}

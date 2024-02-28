@@ -30,6 +30,7 @@ import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.community.comment.entity.Comment;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.adapter.out.exception.IllegalStatementMatchingInfoNonPublicException;
+import idorm.idormServer.matchingInfo.adapter.out.exception.NotFoundMatchingInfoException;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedFavoriteMateException;
 import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedNonFavoriteMateException;
@@ -72,7 +73,7 @@ public class Member {
 	@Column(columnDefinition = "ENUM('MEMBER', 'ADMIN')")
 	private RoleType roleType;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
 	@JoinColumn(name = "matching_info_id")
 	private MatchingInfo matchingInfo;
 
@@ -194,6 +195,13 @@ public class Member {
 
 	public void addReport(final Report report) {
 		this.reports.add(report);
+	}
+
+	public void deleteMatchingInfo() {
+		if (matchingInfo == null) {
+			throw new NotFoundMatchingInfoException();
+		}
+		matchingInfo = null;
 	}
 
 	private Optional<MatchingMate> getDuplicateMate(MatchingMate matchingMate) {
