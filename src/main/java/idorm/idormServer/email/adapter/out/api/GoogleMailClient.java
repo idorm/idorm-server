@@ -1,21 +1,29 @@
 package idorm.idormServer.email.adapter.out.api;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.scheduling.annotation.Async;
+import java.io.UnsupportedEncodingException;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import idorm.idormServer.email.adapter.out.api.exception.EmailServerErrorException;
 import idorm.idormServer.email.application.port.out.SendEmailPort;
 import idorm.idormServer.email.entity.Email;
 
-// @Component // TODO: 메일 서버 변경
+@Component
 public class GoogleMailClient implements SendEmailPort {
 
-	private final MailSender mailSender;
+	private final JavaMailSender mailSender;
 	private final String adminMail;
 	private final String idormLogoImageUrl;
 
-	public GoogleMailClient(MailSender mailSender,
+	public GoogleMailClient(JavaMailSender mailSender,
 		@Value("${spring.mail.username}") String adminMail,
 		@Value("${s3.logo}") String idormLogoImageUrl) {
 		this.mailSender = mailSender;
@@ -26,14 +34,15 @@ public class GoogleMailClient implements SendEmailPort {
 	@Override
 	@Async
 	public void send(final Email email) {
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-
-		mailMessage.setTo(email.getEmail());
-		mailMessage.setSubject("[idorm] 인증 코드: " + email.getCode());
-		mailMessage.setText(generateEmailContent(email.getCode()));
-		mailMessage.setFrom(adminMail);
-
-		mailSender.send(mailMessage);
+		MimeMessage message = mailSender.createMimeMessage();
+		try {
+			message.setSubject("[idorm] 인증 코드: " + email.getCode());
+			message.setText(generateEmailContent(email.getCode()), "UTF-8", "html");
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(email.getEmail(), "히히", "UTF-8"));
+		} catch (MessagingException | UnsupportedEncodingException e) {
+			throw new EmailServerErrorException();
+		}
+		mailSender.send(message);
 	}
 
 	private String generateEmailContent(String verificationCode) {
