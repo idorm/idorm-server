@@ -40,7 +40,7 @@ public class SaveFileAdaptor implements SaveFilePort {
 
 	@Override
 	public String saveMemberPhotoFile(final Member member, final MultipartFile multipartFile) {
-		String fileName = member.getId() + "/" + UUID.randomUUID() + getFileType(multipartFile);
+		String fileName = member.getId() + "/" + UUID.randomUUID() + "." + getFileType(multipartFile);
 		File file = convertMultiPartToFile(multipartFile);
 
 		return insertMemberPhotoFileToS3(fileName, file);

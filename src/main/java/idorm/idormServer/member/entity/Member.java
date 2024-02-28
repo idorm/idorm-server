@@ -112,7 +112,7 @@ public class Member {
 		this.nickname.update(newNickname);
 	}
 
-	public void updatePassword(final EncryptPort encryptPort, final String newPassword) {
+	public void updatePassword(EncryptPort encryptPort, String newPassword) {
 		this.password.update(encryptPort, newPassword);
 	}
 
@@ -126,7 +126,6 @@ public class Member {
 	}
 
 	public void updateMatchingInfo(final MatchingInfo matchingInfo) {
-		// TODO : 기존 온보딩 정보가 있다면 예외 throws
 		this.matchingInfo = matchingInfo;
 	}
 
@@ -191,6 +190,10 @@ public class Member {
 		boolean result = matchingMates.stream()
 			.anyMatch(mate -> mate.isNonFavorite(matchingInfo));
 		return !result;
+	}
+
+	public void addReport(final Report report) {
+		this.reports.add(report);
 	}
 
 	private Optional<MatchingMate> getDuplicateMate(MatchingMate matchingMate) {

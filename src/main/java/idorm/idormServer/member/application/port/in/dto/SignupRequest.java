@@ -2,32 +2,19 @@ package idorm.idormServer.member.application.port.in.dto;
 
 import javax.validation.constraints.NotBlank;
 
-import org.springframework.stereotype.Component;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import idorm.idormServer.auth.application.port.out.EncryptPort;
-import idorm.idormServer.member.entity.Member;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@Component
-@RequiredArgsConstructor
-public class SignupRequest {
-
+public record SignupRequest(
+	@Schema(example = "knh709@inu.ac.kr")
 	@NotBlank(message = "이메일은 공백일 수 없습니다.")
-	String email;
+	String email,
 
+	@Schema(example = "idorm2023!")
 	@NotBlank(message = "비밀번호는 공백일 수 없습니다.")
-	String password;
+	String password,
 
+	@Schema(example = "나도미")
 	@NotBlank(message = "닉네임은 공백일 수 없습니다.")
-	String nickname;
-
-	public Member from(final EncryptPort encryptPort, final String encryptedPassword) {
-		return Member.builder()
-			.email(email)
-			.password(encryptedPassword)
-			.nickname(nickname)
-			.build();
-	}
+	String nickname
+) {
 }

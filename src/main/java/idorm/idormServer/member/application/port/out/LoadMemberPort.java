@@ -9,4 +9,8 @@ public interface LoadMemberPort {
 	Member loadMember(String email, String password);
 
 	Member loadMember(String email);
+
+	void validateUniqueNickname(String nickname);
+
+	void validateUniqueEmail(String email);
 }

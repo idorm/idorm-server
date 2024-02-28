@@ -7,7 +7,6 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 
 import idorm.idormServer.community.post.entity.Post;
-import idorm.idormServer.member.entity.Member;
 import idorm.idormServer.photo.adapter.out.api.exception.S3ClientException;
 import idorm.idormServer.photo.application.port.out.DeleteFilePort;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +24,8 @@ public class DeleteFileAdaptor implements DeleteFilePort {
 	private String postPhotoBucketName;
 
 	@Override
-	public void deleteMemberPhotoFile(final Member member) {
-		deleteFileFromS3(memberPhotoBucketName, member.getProfilePhotoUrl());
+	public void deleteMemberPhotoFile(final String profileUrl) {
+		deleteFileFromS3(memberPhotoBucketName, profileUrl);
 	}
 
 	@Override

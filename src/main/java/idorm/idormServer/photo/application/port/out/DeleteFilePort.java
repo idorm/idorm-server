@@ -5,8 +5,8 @@ import idorm.idormServer.member.entity.Member;
 
 public interface DeleteFilePort {
 
-	void deleteMemberPhotoFile(Member member);
+	void deleteMemberPhotoFile(String profileUrl);
 
-	// TODO : 사진 일부 삭제
+	// TODO : 사진 일부 삭제, transaction 대상 아니므로 사진 Url들 받아오기
 	void deletePostPhotoFiles(Post post);
 }

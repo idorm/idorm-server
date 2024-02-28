@@ -15,7 +15,6 @@ import idorm.idormServer.member.application.port.in.dto.MemberInfoResponse;
 import idorm.idormServer.member.application.port.in.dto.NicknameUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.PasswordUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.SignupRequest;
-import idorm.idormServer.member.application.port.out.CheckNicknamesPort;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.application.port.out.SaveMemberPort;
 import idorm.idormServer.member.application.port.out.WithdrawMemberPort;
@@ -26,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService implements MemberUseCase {
 
-	private final EncryptPort encryptPort; // TODO: 이동 예정
+	private final EncryptPort encryptPort;
 
 	private final LoadEmailPort loadEmailPort;
 	private final SaveEmailPort saveEmailPort;
@@ -34,7 +33,7 @@ public class MemberService implements MemberUseCase {
 
 	private final SaveMemberPort saveMemberPort;
 	private final LoadMemberPort loadMemberPort;
-	private final CheckNicknamesPort checkNicknamesPort;
+	// private final CheckNicknamesPort checkNicknamesPort;
 	private final WithdrawMemberPort withdrawMemberPort;
 
 	private final DeleteRefreshTokenPort deleteRefreshTokenPort;
@@ -42,11 +41,13 @@ public class MemberService implements MemberUseCase {
 	@Override
 	@Transactional
 	public void signUp(final SignupRequest request) {
-		Email email = loadEmailPort.findByEmail(request.getEmail());
-		email.register();
-		saveEmailPort.save(email);
+		Email email = loadEmailPort.findByEmail(request.email());
 
-		Member member = request.from(encryptPort, request.getPassword());
+		loadMemberPort.validateUniqueEmail(request.email());
+		loadMemberPort.validateUniqueNickname(request.nickname());
+
+		email.register();
+		Member member = new Member(request.email(), request.password(), request.nickname(), encryptPort);
 		saveMemberPort.save(member);
 	}
 
@@ -61,7 +62,7 @@ public class MemberService implements MemberUseCase {
 	public void editNickname(final AuthResponse auth, final NicknameUpdateRequest request) {
 		Member member = loadMemberPort.loadMember(auth.getId());
 
-		checkNicknamesPort.validateUniqueNickname(request.nickname());
+		loadMemberPort.validateUniqueNickname(request.nickname());
 		member.updateNickname(request.nickname());
 	}
 

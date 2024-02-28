@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +19,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.adapter.in.api.Auth;
 import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.member.application.port.in.MemberPhotoUseCase;
 import idorm.idormServer.member.application.port.in.MemberUseCase;
@@ -29,6 +30,7 @@ import idorm.idormServer.member.application.port.in.dto.NicknameUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.PasswordUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.SignupRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -101,7 +103,8 @@ public class MemberController {
 	)
 	@PatchMapping("/members/me/nickname")
 	public ResponseEntity<SuccessResponse<Object>> editNickname(
-		@AuthInfo AuthResponse auth, @RequestBody @Valid NicknameUpdateRequest request
+		@AuthInfo AuthResponse auth,
+		@RequestBody @Valid NicknameUpdateRequest request
 	) {
 		memberUseCase.editNickname(auth, request);
 		return ResponseEntity.ok().body(SuccessResponse.from(NICKNAME_UPDATED));
@@ -156,10 +159,10 @@ public class MemberController {
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR / S3_SERVER_ERROR"),
 	})
 	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping("/members/me/profile-photo")
+	@PostMapping(value = "/members/me/profile-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<SuccessResponse<Object>> saveMemberPhoto(
 		@AuthInfo AuthResponse auth,
-		@RequestPart(value = "file", required = false) MultipartFile file
+		@RequestPart(value = "file", required = true) MultipartFile file
 	) {
 		memberPhotoUseCase.savePhoto(auth, file);
 		return ResponseEntity.status(201).body(SuccessResponse.from(PROFILE_PHOTO_SAVED));

@@ -3,6 +3,8 @@ package idorm.idormServer.member.adapter.out.persistence;
 import org.springframework.stereotype.Component;
 
 import idorm.idormServer.auth.adapter.out.api.exception.LoginFailedException;
+import idorm.idormServer.email.adapter.out.api.exception.DuplicatedEmailException;
+import idorm.idormServer.member.adapter.out.exception.DuplicatedNicknameException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
@@ -31,5 +33,21 @@ public class LoadMemberAdapter implements LoadMemberPort {
 	public Member loadMember(final String email) {
 		return memberRepository.findByEmailAndMemberStatus(email, MemberStatus.ACTIVE)
 			.orElseThrow(NotFoundMemberException::new);
+	}
+
+	@Override
+	public void validateUniqueNickname(final String nickname) {
+		boolean exists = memberRepository.existsByNicknameValueAndMemberStatus(nickname, MemberStatus.ACTIVE);
+		if (exists) {
+			throw new DuplicatedNicknameException();
+		}
+	}
+
+	@Override
+	public void validateUniqueEmail(final String email) {
+		boolean exists = memberRepository.existsByEmailAndMemberStatus(email, MemberStatus.ACTIVE);
+		if (exists) {
+			throw new DuplicatedEmailException();
+		}
 	}
 }
