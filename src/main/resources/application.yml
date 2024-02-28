@@ -12,13 +12,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${DB_DDL_TYPE}
-      use-new-id-generator-mappings: false
+      use-new-id-generator-mappings: true
     properties:
       hibernate:
         show_sql: false
-        format_sql: true
-        highlight_sql: true
-        use_sql_comments: true
+        default_batch_fetch_size: 1000
+        jdbc:
+          time_zone: Asia/Seoul
     generate-ddl: false
     open-in-view: false
 
@@ -41,23 +41,25 @@ spring:
     properties:
       mail:
         smtp:
-          auth: false
+          auth: true
+          timeout: 5000
           starttls:
-            enable: false
+            enable: true
 
-  security:
-    jwt:
-      token:
-        secret-key: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcwNTg5NDMxMiwiaWF0IjoxNzA1ODk0MzEyfQ.FhuQUTWCvIuIHJnpgTRk0_bn1Ku0R8rA6KEALrhuhRo
-        expire-length:
-          access: 3600000
-          refresh: 1210000000
+security:
+  jwt:
+    token:
+      secret-key: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcwNTg5NDMxMiwiaWF0IjoxNzA1ODk0MzEyfQ.FhuQUTWCvIuIHJnpgTRk0_bn1Ku0R8rA6KEALrhuhRo
+      expire-length:
+        access: 3600000
+        refresh: 1210000000
 
   flyway:
     enabled: true
     baseline-on-migrate: true
     locations: ${DB_MIGRATION_SCRIPT_PATH}
 
+# JPA log
 logging:
   level:
     org.hibernate:
@@ -99,17 +101,8 @@ firebase:
 springdoc:
   api-docs:
     enabled: false
-  default-consumes-media-type: application/json;charset=UTF-8
-  default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
     enabled: false
-    path: /index.html
-    disable-swagger-default-url: true
-    display-request-duration: true
-    tags-sorter: alpha
-    operations-sorter: alpha
-  cache:
-    disabled: true
 
 management:
   server:
@@ -122,4 +115,4 @@ management:
   endpoints:
     web:
       exposure:
-        include:  health, info, metrics, prometheus
+        include: health, info, metrics, prometheus

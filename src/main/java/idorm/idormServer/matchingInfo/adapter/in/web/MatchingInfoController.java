@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.adapter.in.api.Auth;
 import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.matchingInfo.application.port.in.MatchingInfoUseCase;
 import idorm.idormServer.matchingInfo.application.port.in.dto.MatchingInfoRequest;

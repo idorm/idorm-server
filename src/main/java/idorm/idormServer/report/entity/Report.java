@@ -76,32 +76,26 @@ public class Report {
 		this.createdAt = LocalDateTime.now();
 	}
 
-	public static Report memberReport(final Member reporterMember,
-		final Member reportedMember,
-		final MemberReason reasonType,
-		final String reason) {
+	public static Report memberReport(final Member reporterMember, final Member reportedMember,
+		final MemberReason reasonType, final String reason) {
 		Validator.validateNotNull(List.of(reportedMember, reporterMember, reasonType));
-		return new Report(reporterMember,
-			reportedMember,
-			null,
-			null,
-			reasonType.getType(),
-			reason);
+
+		Report report = new Report(reporterMember, reportedMember, null, null,
+			reasonType.getType(), reason);
+		reportedMember.addReport(report);
+		return report;
 	}
 
-	public static Report postReport(final Member reporterMember,
-		final Member reportedMember,
-		final Post reportedPost,
-		final CommunityReason reasonType,
-		final String reason) {
+	public static Report postReport(final Member reporterMember, final Member reportedMember, final Post reportedPost,
+		final CommunityReason reasonType, final String reason) {
 
 		Validator.validateNotNull(List.of(reportedMember, reporterMember, reportedPost, reasonType));
-		return new Report(reporterMember,
-			reportedMember,
-			reportedPost,
-			null,
-			reasonType.getType(),
-			reason);
+
+		Report report = new Report(reporterMember, reportedMember, reportedPost, null,
+			reasonType.getType(), reason);
+		reportedPost.addReport(report);
+		reportedMember.addReport(report);
+		return report;
 	}
 
 	public static Report commentReport(final Member reporterMember,
@@ -109,13 +103,12 @@ public class Report {
 		final Comment reportedComment,
 		final CommunityReason reasonType,
 		final String reason) {
-
 		Validator.validateNotNull(List.of(reportedMember, reporterMember, reportedComment, reasonType));
-		return new Report(reporterMember,
-			reportedMember,
-			null,
-			reportedComment,
-			reasonType.getType(),
-			reason);
+
+		Report report = new Report(reporterMember, reportedMember, null, reportedComment,
+			reasonType.getType(), reason);
+		reportedComment.addReport(report);
+		reportedMember.addReport(report);
+		return report;
 	}
 }
