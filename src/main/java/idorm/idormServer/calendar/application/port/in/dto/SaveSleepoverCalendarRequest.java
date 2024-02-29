@@ -18,7 +18,7 @@ public record SaveSleepoverCalendarRequest(
 		return new SleepoverCalendar(new Period(startDate, endDate), memberId, teamDomain);
 	}
 
-	public Period periodOf() {
+	public Period period() {
 		return new Period(startDate, endDate);
 	}
 }

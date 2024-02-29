@@ -12,9 +12,9 @@ public record FindSleepoverCalendarsRequest(
     @NotNull(message = "내용을 입력해 주세요.")
     @Positive(message = "조회할 회원 식별자는 양수만 가능합니다.")
     Long memberId,
-    @NotNull(message = "년/월를 입력해 주세요.")
+
+    @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
-    @JsonProperty("yearMonth")
     YearMonth yearMonth
 ) {
 

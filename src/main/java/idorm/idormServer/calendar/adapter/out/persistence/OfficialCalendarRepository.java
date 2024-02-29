@@ -12,8 +12,6 @@ import idorm.idormServer.calendar.entity.OfficialCalendar;
 
 public interface OfficialCalendarRepository extends JpaRepository<OfficialCalendar, Long> {
 
-  Optional<OfficialCalendar> findByIdAndIsDeletedIsFalse(Long id);
-
   boolean existsByInuPostIdAndIsDeletedIsFalse(String inuPostId);
 
   @Query(value = "SELECT * " +
@@ -31,28 +29,5 @@ public interface OfficialCalendarRepository extends JpaRepository<OfficialCalend
       "AND c.is_public = 1", nativeQuery = true)
   List<OfficialCalendar> findByMonthByMember(@Param("yearMonth") YearMonth yearMonth);
 
-  @Query(value = "SELECT * " +
-      "FROM official_calendar c " +
-      "WHERE c.is_dorm1yn = 1 " +
-      "AND c.start_date = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 9 HOUR), '%Y-%m-%d') " +
-      "AND c.is_deleted = 0 " +
-      "AND c.is_public = 1", nativeQuery = true)
-  List<OfficialCalendar> findCalendarsByDorm1AndTodayStartDate();
-
-  @Query(value = "SELECT * " +
-      "FROM official_calendar c " +
-      "WHERE c.is_dorm2yn = 1 " +
-      "AND c.start_date = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 9 HOUR), '%Y-%m-%d') " +
-      "AND c.is_deleted = 0 " +
-      "AND c.is_public = 1", nativeQuery = true)
-  List<OfficialCalendar> findCalendarsByDorm2AndTodayStartDate();
-
-  @Query(value = "SELECT * " +
-      "FROM official_calendar c " +
-      "WHERE c.is_dorm3yn = 1 " +
-      "AND c.start_date = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 9 HOUR), '%Y-%m-%d') " +
-      "AND c.is_deleted = 0 " +
-      "AND c.is_public = 1", nativeQuery = true)
-  List<OfficialCalendar> findCalendarsByDorm3AndTodayStartDate();
 }
 

@@ -1,5 +1,9 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
+import static idorm.idormServer.calendar.entity.QTeam.team;
+import static idorm.idormServer.member.entity.QMember.member;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -13,25 +17,27 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LoadTeamAdapter implements LoadTeamPort {
 
+	private final JPAQueryFactory queryFactory;
 	private final TeamRepository teamRepository;
 
 	@Override
 	public Optional<Team> findByMemberIdWithOptional(Long memberId) {
-		Optional<Team> response = teamRepository.findByMemberIdWithOptional(memberId);
+		Optional<Team> response = teamRepository.findByMembersId(memberId);
 		return Optional.ofNullable(response).orElse(null);
 	}
 
 	@Override
 	public Team findByMemberId(Long memberId) {
-		Team response = teamRepository.findByMemberIdWithCalendarsAndMembers(memberId)
-			.orElseThrow(NotFoundTeamException::new);
-		return response;
-	}
+		Team response = queryFactory
+				.select(team)
+				.from(team)
+				.join(team.members, member)
+				.where(member.id.eq(memberId))
+				.fetchOne();
 
-	@Override
-	public Team findByMemberIdWithTeamMember(Long memberId) {
-		Team response = teamRepository.findByMemberIdWithTeamMember(memberId)
-			.orElseThrow(NotFoundTeamException::new);
+		if(response == null) {
+			throw new NotFoundTeamException();
+		}
 		return response;
 	}
 }

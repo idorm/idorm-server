@@ -37,10 +37,10 @@ public class CommentService implements CommentUseCase {
 		final Post post = loadPostPort.findById(postId);
 
 		Comment comment = null;
-		if (request.isChild()) {
-			comment = createChildComment(member, post, request);
-		} else {
+		if (request.isParent()) {
 			comment = createParentComment(member, post, request);
+		} else {
+			comment = createChildComment(member, post, request);
 		}
 		saveCommentPort.save(comment);
 	}
@@ -54,9 +54,8 @@ public class CommentService implements CommentUseCase {
 	}
 
 	@Override
-	public List<CommentResponse> findCommentsByMember(final AuthResponse authResponse) {
-		final Member member = loadMemberPort.loadMember(authResponse.getId());
-		List<Comment> comments = loadCommentPort.findAllByMemberId(member.getId());
+	public List<CommentResponse> findAllByMember(final AuthResponse authResponse) {
+		List<Comment> comments = loadCommentPort.findAllByMemberId(authResponse.getId());
 
 		return CommentResponse.from(comments);
 	}
@@ -66,9 +65,8 @@ public class CommentService implements CommentUseCase {
 	}
 
 	private Comment createChildComment(final Member member, final Post post, final CommentRequest request) {
-		final Comment parentCommentDomain = loadCommentPort.findById(request.parentCommentId());
+		final Comment comment = loadCommentPort.findById(request.parentCommentId());
 
-		return Comment.child(request.isAnonymous(), request.content(), parentCommentDomain, post,
-			member);
+		return Comment.child(request.isAnonymous(), request.content(), comment, post, member);
 	}
 }

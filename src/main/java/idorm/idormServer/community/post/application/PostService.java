@@ -1,12 +1,5 @@
 package idorm.idormServer.community.post.application;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.community.comment.application.port.out.LoadCommentPort;
 import idorm.idormServer.community.post.application.port.in.PostUseCase;
@@ -24,120 +17,141 @@ import idorm.idormServer.community.postPhoto.entity.PostPhoto;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
+import idorm.idormServer.photo.application.port.out.DeleteFilePort;
+import idorm.idormServer.photo.application.port.out.SaveFilePort;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PostService implements PostUseCase {
 
-	private final LoadMemberPort loadMemberPort;
+  private final LoadMemberPort loadMemberPort;
 
-	private final SavePostPort savePostPort;
-	private final LoadPostPort loadPostPort;
+  private final SavePostPort savePostPort;
+  private final LoadPostPort loadPostPort;
 
-	private final LoadCommentPort loadCommentPort;
+  private final LoadCommentPort loadCommentPort;
 
-	private final LoadPostLikePort loadPostLikePort;
+  private final LoadPostLikePort loadPostLikePort;
 
-	//  private final SaveFilePort saveFilePort;
-	private final DeletePostPhotoPort deletePostPhotoPort;
-	private final PostPhotoUseCase postPhotoUseCase;
+  private final SaveFilePort saveFilePort;
+  private final DeleteFilePort deleteFilePort;
+  private final DeletePostPhotoPort deletePostPhotoPort;
+  private final PostPhotoUseCase postPhotoUseCase;
 
-	@Override
-	@Transactional
-	public void save(final AuthResponse authResponse, final PostSaveRequest request) {
-		final Member member = loadMemberPort.loadMember(authResponse.getId());
+  @Override
+  @Transactional
+  public void save(final AuthResponse authResponse, final PostSaveRequest request) {
+    final Member member = loadMemberPort.loadMember(authResponse.getId());
 
-		Post post = new Post(member, DormCategory.valueOf(
-			request.dormCategory()),
-			request.title(),
-			request.content(),
-			request.isAnonymous());
-		savePostPort.save(post);
+    Post post = new Post(member, DormCategory.valueOf(
+        request.dormCategory()),
+        request.title(),
+        request.content(),
+        request.isAnonymous());
+    savePostPort.save(post);
 
-		//    List<String> photoUrl = saveFilePort.savePostPhotoFiles(postDomain, request.files());
-		//    postPhotoUseCase.save(postDomain, photoUrl);
+    if (request.files() != null) {
+      List<String> photoUrl = saveFilePort.addPostPhotoFiles(post, request.files());
+      postPhotoUseCase.save(post, photoUrl);
 
-		final List<PostPhoto> postPhotos = postPhotoUseCase.findAllByPost(post);
-		post.updatePostPhotos(postPhotos);
-	}
+      final List<PostPhoto> postPhotos = postPhotoUseCase.findAllByPost(post);
+      post.addPostPhoto(postPhotos);
+    }
+  }
 
-	@Override
-	@Transactional
-	public void update(final AuthResponse authResponse, final Long postId, final PostUpdateRequest request) {
-		final Member member = loadMemberPort.loadMember(authResponse.getId());
-		final Post post = loadPostPort.findById(postId);
+  @Override
+  @Transactional
+  public void update(final AuthResponse authResponse, final Long postId, final PostUpdateRequest request) {
+    final Member member = loadMemberPort.loadMember(authResponse.getId());
+    final Post post = loadPostPort.findById(postId);
 
-		post.validatePostPhotoSize(request.files().size()); // 기존에 남은 사진들 개수 + 추가되는 개수
-		post.update(member, request.title(), request.content(), request.isAnonymous());
+    if (request.deletePostPhotoIds() != null) {
+      handleDeletePostPhotos(post, request);
+    }
+    if (request.files() != null) {
+      handleUpdatePost(member, post, request);
+    }
+    post.update(member, request.title(), request.content(), request.isAnonymous());
+  }
 
-		List<String> deletePhotoUrls = getPhotoUrls(post);
-		// TODO : PostDomain 리스트에 매핑된 PostPhoto를 먼저 삭제
-		request.deletePostPhotoIds().forEach(id -> deletePostPhotoPort.deleteById(id)); // 이후, PostPhotoDomain Entity 삭제
-		// TODO: S3 사진 삭제
-		// deleteFilePort.deletePostPhotoFiles(deletePhotoUrls);
+  @Override
+  @Transactional
+  public void delete(final AuthResponse authResponse, final Long postId) {
+    final Member member = loadMemberPort.loadMember(authResponse.getId());
+    final Post post = loadPostPort.findById(postId);
 
-		// List<String> photoUrls = saveFilePort.savePostPhotoFiles(postDomain, request.files()); // S3 사진 추가
+    List<String> deletePhotoUrls = getPhotoUrls(post);
 
-		// PostPhotos Entity 생성
-		// List<PostPhotoDomain> postPhotos = photoUrls.stream()
-		// 	.map(photoUrl -> postPhotoUseCase.save(postDomain, photoUrl))
-		// 	.toList();
+    post.delete(member);
 
-		// Post에 추가된 PostPhotos 추가
-		// postDomain.addPostPhotos(postPhotos);
-	}
+    deleteFilePort.deletePostPhotoFiles(deletePhotoUrls);
+  }
 
-	@Override
-	@Transactional
-	public void delete(final AuthResponse authResponse, final Long postId) {
-		final Member member = loadMemberPort.loadMember(authResponse.getId());
-		final Post post = loadPostPort.findById(postId);
+  @Override
+  public List<PostListResponse> findPostsByMember(final AuthResponse authResponse) {
+    final List<Post> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
+    return PostListResponse.of(posts);
+  }
 
-		List<String> deletePhotoUrls = getPhotoUrls(post);
+  @Override
+  public Page<PostListResponse> findPostsByDormCategory(final String dormCategory, final int pageNum) {
+    final Page<Post> posts = loadPostPort.findPostsByDormCategoryAndIsDeletedFalse(
+        DormCategory.from(dormCategory), PageRequest.of(pageNum, 10));
 
-		post.delete(member);
-		deletePostPhotoPort.deleteAllByPostId(post.getId());
+    Page<PostListResponse> responses = posts.map(PostListResponse::of);
+    return responses;
+  }
 
-		// deleteFilePort.deletePostPhotoFiles(deletePhotoUrls);
-	}
+  @Override
+  public List<PostListResponse> findTopPostsByDormCategory(final String dormCategory) {
+    final List<Post> posts = loadPostPort.findTopPostsByDormCateogry(DormCategory.from(dormCategory));
+    return PostListResponse.of(posts);
+  }
 
-	@Override
-	public List<PostListResponse> findPostsByMember(final AuthResponse authResponse) {
-		final List<Post> postDomains = loadPostPort.findPostsByMemberId(authResponse.getId());
-		return PostListResponse.of(postDomains);
-	}
+  @Override
+  public PostResponse findOneByPostId(final AuthResponse authResponse, final Long postId) {
+    final Post post = loadPostPort.findById(postId);
 
-	@Override
-	public Page<PostListResponse> findPostsByDormCategory(final String dormCategory, final int pageNum) {
-		final Page<Post> posts = loadPostPort.findPostsByDormCategoryAndIsDeletedFalse(
-			DormCategory.from(dormCategory), PageRequest.of(pageNum, 10));
+    System.out.println(post.getComments());
+    return PostResponse.of(post,
+        postPhotoUseCase.findAllByPost(post),
+        loadCommentPort.findAllByPostId(postId),
+        loadPostLikePort.existsByMemberIdAndPostId(authResponse.getId(), post.getId()));
+  }
 
-		Page<PostListResponse> responses = posts.map(PostListResponse::of);
-		return responses;
-	}
+  private List<String> getPhotoUrls(final Post post) {
+    List<String> photoUrls = post.getPostPhotos().stream()
+        .map(PostPhoto::getPhotoUrl)
+        .toList();
+    return photoUrls;
+  }
 
-	@Override
-	public List<PostListResponse> findTopPostsByDormCategory(final String dormCategory) {
-		final List<Post> posts = loadPostPort.findTopPostsByDormCateogry(DormCategory.from(dormCategory));
-		return PostListResponse.of(posts);
-	}
+  private void handleDeletePostPhotos(Post post, PostUpdateRequest request) {
+    final int photoCount = post.getPostPhotos().size() - request.deletePostPhotoIds().size() + request.files().size();
 
-	@Override
-	public PostResponse findOneByPostId(final AuthResponse authResponse, final Long postId) {
-		final Post post = loadPostPort.findById(postId);
+    post.validatePostPhotoSize(photoCount);
 
-		return PostResponse.of(post,
-			postPhotoUseCase.findAllByPost(post),
-			loadCommentPort.findAllByPostId(postId),
-			loadPostLikePort.existsByMemberIdAndPostId(authResponse.getId(), post.getId()));
-	}
+    List<String> deletePhotoUrls = getPhotoUrls(post);
+    deleteFilePort.deletePostPhotoFiles(deletePhotoUrls);
 
-	private List<String> getPhotoUrls(final Post post) {
-		List<String> photoUrls = post.getPostPhotos().stream()
-			.map(PostPhoto::getPhotoUrl)
-			.toList();
-		return photoUrls;
-	}
+    request.deletePostPhotoIds().forEach(id -> deletePostPhotoPort.deleteById(id));
+  }
+
+  private void handleUpdatePost(Member member, Post post, PostUpdateRequest request) {
+    post.update(member, request.title(), request.content(), request.isAnonymous());
+    List<String> photoUrls = saveFilePort.addPostPhotoFiles(post, request.files());
+
+    List<PostPhoto> postPhotos = photoUrls.stream()
+        .map(photoUrl -> new PostPhoto(post, photoUrl))
+        .toList();
+
+    post.addPostPhotos(postPhotos);
+  }
 }

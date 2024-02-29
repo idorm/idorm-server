@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "5. PostLikeDomain", description = "게시글 공감 api")
+@Tag(name = "5. PostLike", description = "게시글 공감 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -38,7 +38,7 @@ public class PostLikeController {
 
 	private final LikeUseCase likeUseCase;
 
-	@Auth
+	//	@Auth
 	@Operation(summary = "게시글 공감하기", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -53,7 +53,8 @@ public class PostLikeController {
 	})
 	@PutMapping("/post/{post-id}/like")
 	public ResponseEntity<SuccessResponse<Object>> savePostLikes(
-		@AuthInfo AuthResponse authResponse,
+//			@AuthInfo
+			AuthResponse authResponse,
 		@PathVariable("post-id")
 		@Positive(message = "게시글 식별자는 양수만 가능합니다.")
 		Long postId
@@ -62,7 +63,7 @@ public class PostLikeController {
 		return ResponseEntity.ok().body(SuccessResponse.from(MEMBER_LIKED_POST));
 	}
 
-	@Auth
+	//	@Auth
 	@Operation(summary = "게시글 공감 취소하기", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -76,7 +77,8 @@ public class PostLikeController {
 	})
 	@DeleteMapping("/post/{post-id}/like")
 	public ResponseEntity<SuccessResponse<Object>> deletePostLikes(
-		@AuthInfo AuthResponse authResponse,
+//			@AuthInfo
+			AuthResponse authResponse,
 		@PathVariable("post-id")
 		@Positive(message = "게시글 식별자는 양수만 가능합니다.")
 		Long postId
@@ -85,7 +87,7 @@ public class PostLikeController {
 		return ResponseEntity.ok().body(SuccessResponse.from(MEMBER_LIKED_POST_CANCELED));
 	}
 
-	@Auth
+	//	@Auth
 	@Operation(summary = "내가 공감한 게시글 목록 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -96,7 +98,8 @@ public class PostLikeController {
 	})
 	@GetMapping("/posts/likes/me")
 	public ResponseEntity<SuccessResponse<Object>> findLikedPostsByMember(
-		@AuthInfo AuthResponse authResponse
+//			@AuthInfo
+			AuthResponse authResponse
 	) {
 		List<PostListResponse> responses = likeUseCase.findLikedPostsByMember(authResponse);
 		return ResponseEntity.ok().body(SuccessResponse.of(LIKED_POST_MANY_FOUND, responses));

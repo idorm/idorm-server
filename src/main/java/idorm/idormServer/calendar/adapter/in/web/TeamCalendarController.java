@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "4. RoomMate TeamDomain Calendar", description = "룸메이트 팀 일정 api")
+@Tag(name = "4. Team Calendar", description = "룸메이트 팀 일정 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1")
@@ -47,7 +47,7 @@ public class TeamCalendarController {
 
   private final TeamCalendarUseCase teamCalendarUseCase;
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[팀] 일정 생성", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -58,20 +58,21 @@ public class TeamCalendarController {
           description = "- ILLEGAL_ARGUMENT_DATE_SET\n- *_FIELD_REQUIRED\n- *_LENGTH_INVALID\n" +
               "- ILLEGAL_STATEMENT_EXPLODEDTEAM\n- TARGETS_FIELD_REQUIRED\n- DATE_FIELD_REQUIRED"),
       @ApiResponse(responseCode = "404",
-          description = "- MEMBER_NOT_FOUND\n- TEAM_NOT_FOUND\n- TEAMMEMBER_NOT_FOUND"),
+          description = "- NOT_FOUND_MEMBER\n- NOT_FOUND_TEAM\n- NOT_FOUND_TEAM_MEMBER"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
   })
   @PostMapping("/calendar/team")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<SuccessResponse<Object>> createTeamCalender(
-      @AuthInfo AuthResponse authResponse,
+//      	@AuthInfo
+        AuthResponse authResponse,
       @RequestBody @Valid SaveTeamCalendarRequest request
   ) {
     TeamCalendarResponse response = teamCalendarUseCase.save(authResponse, request);
     return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_CREATED, response));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[팀] 일정 수정", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -85,12 +86,13 @@ public class TeamCalendarController {
                   +
                   "- ILLEGAL_ARGUMENT_SLEEPOVERCALENDAR\n- DATE_FIELD_REQUIRED"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM_CALENDAR"),
-      @ApiResponse(responseCode = "404", description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND / TEAMMEMBER_NOT_FOUND / TEAMCALENDAR_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_MEMBER / NOT_FOUND_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
   })
   @PutMapping("/calendar/team")
   public ResponseEntity<SuccessResponse<Object>> updateTeamCalender(
-      @AuthInfo AuthResponse authResponse,
+//      	@AuthInfo
+        AuthResponse authResponse,
       @RequestBody @Valid UpdateTeamCalendarRequest request
   ) {
 
@@ -99,7 +101,7 @@ public class TeamCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_UPDATED, response));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[팀] 일정 삭제", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -111,12 +113,13 @@ public class TeamCalendarController {
       @ApiResponse(responseCode = "403",
           description = "- ACCESS_DENIED_TEAM_CALENDAR\n- ACCESS_DENIED_SLEEPOVER_CALENDAR"),
       @ApiResponse(responseCode = "404",
-          description = "- MEMBER_NOT_FOUND\n- TEAM_NOT_FOUND\n- TEAMCALENDAR_NOT_FOUND"),
+          description = "- NOT_FOUND_MEMBER\n- NOT_FOUND_TEAM\n- NOT_FOUND_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @DeleteMapping("/calendar/team")
   public ResponseEntity<SuccessResponse<Object>> deleteTeamCalender(
-      @AuthInfo AuthResponse authResponse,
+//      	@AuthInfo
+        AuthResponse authResponse,
       @RequestParam(value = "teamCalendarId")
       @Positive(message = "삭제할 팀일정 식별자는 양수만 가능합니다.")
       Long teamCalendarId
@@ -125,7 +128,7 @@ public class TeamCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.from(TEAM_CALENDER_DELETED));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[팀] 일정 단건 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -135,12 +138,13 @@ public class TeamCalendarController {
       @ApiResponse(responseCode = "400", description = "TEAMCALENDARID_NEGATIVEORZERO_INVALID"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "404",
-          description = "- MEMBER_NOT_FOUND\n- TEAM_NOT_FOUND\n- TEAMCALENDAR_NOT_FOUND"),
+          description = "- NOT_FOUND_MEMBER\n- NOT_FOUND_TEAM\n- NOT_FOUND_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/calendar/team")
   public ResponseEntity<SuccessResponse<Object>> findTeamCalender(
-      @AuthInfo AuthResponse authResponse,
+//      	@AuthInfo
+        AuthResponse authResponse,
       @RequestParam(value = "teamCalendarId")
       @Positive(message = "조회할 팀일정 식별자는 양수만 가능합니다.")
       Long teamCalendarId
@@ -149,7 +153,7 @@ public class TeamCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_FOUND, response));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[팀] 일정 월별 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -158,12 +162,13 @@ public class TeamCalendarController {
           content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
       @ApiResponse(responseCode = "400", description = "YEARMONTH_FIELD_REQUIRED"),
       @ApiResponse(responseCode = "404",
-          description = "- MEMBER_NOT_FOUND\n- TEAM_NOT_FOUND"),
+          description = "- NOT_FOUND_MEMBER\n- NOT_FOUND_TEAM"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @PostMapping("/calendar/team/monthly")
   public ResponseEntity<SuccessResponse<Object>> findTeamCalenders(
-      @AuthInfo AuthResponse authResponse,
+//      	@AuthInfo
+        AuthResponse authResponse,
       @RequestBody @Valid FindOfficialCalendarsRequest request
   ) {
     List<TeamCalendarResponse> responses = teamCalendarUseCase.findTeamCalendarsByMonth(

@@ -12,5 +12,5 @@ public interface CommentUseCase {
 
   void delete(AuthResponse authResponse, Long postId, Long commentId);
 
-  List<CommentResponse> findCommentsByMember(AuthResponse authResponse);
+  List<CommentResponse> findAllByMember(AuthResponse authResponse);
 }

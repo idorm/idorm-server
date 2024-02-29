@@ -18,7 +18,7 @@ public record PostUpdateRequest(
 	@NotNull(message = "익명 여부는 공백일 수 없습니다.")
 	Boolean isAnonymous,
 
-	@NotNull(message = "익명 여부는 공백일 수 없습니다.")
+//	@NotNull(message = "익명 여부는 공백일 수 없습니다.")
 	List<Long> deletePostPhotoIds,
 
 	List<MultipartFile> files

@@ -1,5 +1,6 @@
 package idorm.idormServer.calendar.application;
 
+import idorm.idormServer.calendar.application.port.out.DeleteTeamPort;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -36,31 +37,28 @@ public class TeamService implements TeamUseCase {
 	private final LoadTeamPort loadTeamPort;
 
 	private final LoadSleepoverCalendarPort loadSleepoverCalendarPort;
-	private final DeleteSleepoverCalendarPort deleteSleepoverCalendarPort;
 
 	private final LoadTeamCalendarPort loadTeamCalendarPort;
-	private final DeleteTeamCalendarPort deleteTeamCalendarPort;
+
+	private final DeleteTeamPort deleteTeamPort;
 
 	@Override
 	@Transactional
 	public void addTeamMember(final AuthResponse authResponse, final Long registerMemberId) {
 		final Member loginMember = loadMemberPort.loadMember(authResponse.getId()); // 두 번째 팀원 (초대를 수락한 사람) : 팀이 없어야 함
-		final Member registerMember = loadMemberPort.loadMember(
-			registerMemberId); // 첫 번째 팀원 (초대한 사람) :: 팀이 있거나(두번 째 팀원 초대), 없어야 함(팀이 생성).
+		final Member registerMember = loadMemberPort.loadMember(registerMemberId); // 첫 번째 팀원 (초대한 사람) :: 팀이 있거나(두번 째 팀원 초대), 없어야 함(팀이 생성).
 		final Optional<Team> teamWithOptional = loadTeamPort.findByMemberIdWithOptional(registerMember.getId());
 
-		// TODO: loginMember가 팀이 없어야 함. 팀이 있으면 예외를 던져야 함. (Query exists로 변경)
-		// 	if(loginMember.getTeamDomain().isPresent()){
-		// 		throw new AlreadyRegisteredTeamException();
-		// 	}
+		loginMember.validateExistTeam();
 
 		Team teamDomain = null;
-		if (teamWithOptional.isEmpty()) { // 팀 생성 되는 경우
-			List<Member> members = List.of(registerMember, loginMember);
-			teamDomain = new Team(members);
-		} else { // 팀 존재하는 경우. (두 번째 팀원 초대)
-			teamDomain = teamWithOptional.get();
+		if (teamWithOptional.isEmpty()) { // 팀 없는 경우
+			teamDomain = new Team(registerMember);
 			teamDomain.addMember(loginMember);
+
+		} else { // 팀 존재하는 경우. (두 번째 팀원 초대)
+			registerMember.getTeam().addMember(loginMember);
+			teamDomain = registerMember.getTeam();
 		}
 		saveTeamPort.save(teamDomain);
 	}
@@ -70,14 +68,14 @@ public class TeamService implements TeamUseCase {
 	public void deleteMember(final AuthResponse authResponse, final Long targetId) {
 		final Member loginMember = loadMemberPort.loadMember(authResponse.getId());
 		final Member deleteMember = loadMemberPort.loadMember(targetId);
-		final Team teamDomain = loadTeamPort.findByMemberIdWithTeamMember(loginMember.getId());
+		final Team team = loadTeamPort.findByMemberId(loginMember.getId());
 
-		teamDomain.deleteMember(deleteMember);
+		team.deleteMember(deleteMember);
 	}
 
 	@Override
 	public TeamResponse findTeam(final AuthResponse authResponse) {
-		final Team team = loadTeamPort.findByMemberIdWithTeamMember(authResponse.getId());
+		final Team team = loadTeamPort.findByMemberId(authResponse.getId());
 		final List<SleepoverCalendar> sleepoverCalendars = loadSleepoverCalendarPort.findByToday(team);
 
 		List<Member> members = team.getMembers().stream()
@@ -94,16 +92,14 @@ public class TeamService implements TeamUseCase {
 		return TeamResponse.of(team, responses);
 	}
 
+	@Transactional
 	@Override
 	public void explodeTeam(final AuthResponse authResponse) {
-		final Team teamDomain = loadTeamPort.findByMemberIdWithTeamMember(authResponse.getId());
-		final List<TeamCalendar> teamCalendars = loadTeamCalendarPort.findByTeamId(teamDomain.getId());
-		final List<SleepoverCalendar> sleepoverCalendars = loadSleepoverCalendarPort.findByTeamId(
-			teamDomain.getId());
+		final Member member = loadMemberPort.loadMember(authResponse.getId());
+		final Team team = loadTeamPort.findByMemberId(authResponse.getId());
 
-		teamDomain.delete();
-		teamCalendars.forEach(deleteTeamCalendarPort::delete);
-		sleepoverCalendars.forEach(deleteSleepoverCalendarPort::delete);
+		team.delete(member);
+		deleteTeamPort.deleteTeam(team);
 	}
 
 	private boolean isTodaySleepover(Long memberId, List<SleepoverCalendar> sleepoverCalendars) {

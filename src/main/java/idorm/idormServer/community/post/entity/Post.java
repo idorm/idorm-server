@@ -76,16 +76,16 @@ public class Post extends BaseTimeEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<PostPhoto> postPhotos = new ArrayList<>();
 
-	@OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<PostLike> postLikes = new ArrayList<>();
 
-	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<>();
 
-	@OneToMany(mappedBy = "reportedPost", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "reportedPost", orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Report> reports = new ArrayList<>();
 
 	public Post(final Member member,
@@ -100,6 +100,7 @@ public class Post extends BaseTimeEntity {
 		this.isDeleted = false;
 		this.isAnonymous = isAnonymous;
 		this.member = member;
+		this.isBlocked = false;
 	}
 
 	private void validateConsturctor(String title, String content, Boolean isAnonymous) {
@@ -116,20 +117,12 @@ public class Post extends BaseTimeEntity {
 		this.isAnonymous = isAnonymous;
 	}
 
-	public void updatePostPhotos(final List<PostPhoto> postPhotos) {
-		// CASE1: 처음 게시글 사진 생성하는 경우
-		// CASE2: 존재하는 게시글 사진을 업데이트하는 경우
-
-		// 검증 개수 : 기존 사진 개수 - 삭제할 사진 개수 + 새로 추가할 사진 개수
-		validatePostPhotoSize(postPhotos.size());
-
-		// TODO: 입력 받은 삭제할 사진을 먼저 삭제 후, 새로 추가할 사진이 있다면 사진 추가
-		// this.postPhotos.clear();
-		// this.postPhotos = postPhotos;
-	}
-
 	public void addPostPhotos(final List<PostPhoto> postPhotos) {
 		this.postPhotos.addAll(postPhotos);
+	}
+
+	public void addReport(final Report report){
+		this.reports.add(report);
 	}
 
 	private boolean isBlocked() {
@@ -148,8 +141,8 @@ public class Post extends BaseTimeEntity {
 		}
 	}
 
-	public void addPostPhoto(PostPhoto postPhoto) {
-		this.postPhotos.add(postPhoto);
+	public void addPostPhoto(List<PostPhoto> postPhotos) {
+		this.postPhotos.addAll(postPhotos);
 	}
 
 	public void addComment(Comment comment) {
@@ -160,14 +153,10 @@ public class Post extends BaseTimeEntity {
 		this.comments.remove(comment);
 	}
 
-	public void deletePostPhoto(List<PostPhoto> postPhotos) {
-		this.postPhotos.remove(postPhotos);
-	}
-
 	public void delete(Member member) {
 		validatePostAuthorization(member);
 		this.isDeleted = true;
-		this.postPhotos = null;
+		this.postPhotos.clear();
 	}
 
 	public void validateNotWriter(final Member member) {
@@ -182,12 +171,9 @@ public class Post extends BaseTimeEntity {
 		}
 	}
 
-	void validateIsAnonymous() {
-		Validator.validateNotNull(this.isAnonymous);
-	}
 
 	private void validatePostAuthorization(final Member member) {
-		if (this.getMember() == null || !this.getMember().equals(member.getId())) {
+		if (this.getMember() == null || !this.getMember().equals(member)) {
 			throw new AccessDeniedPostException();
 		}
 	}

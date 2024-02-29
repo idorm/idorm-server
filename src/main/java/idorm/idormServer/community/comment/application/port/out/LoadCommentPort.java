@@ -6,13 +6,11 @@ import idorm.idormServer.community.comment.entity.Comment;
 
 public interface LoadCommentPort {
 
-	Comment findById(Long commentId);
+  Comment findById(Long commentId);
 
+  Comment findOneByCommentIdAndPostId(Long commentId, Long postId);
 
-	Comment findOneByCommentIdAndPostId(Long commentId, Long postId);
+  List<Comment> findAllByPostId(Long postId);
 
-
-	List<Comment> findAllByPostId(Long postId);
-
-	List<Comment> findAllByMemberId(Long memberId);
+  List<Comment> findAllByMemberId(Long memberId);
 }

@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "5. PostDomain", description = "게시글 api")
+@Tag(name = "5. Post", description = "게시글 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -47,7 +47,7 @@ public class PostController {
 
 	private final PostUseCase postUseCase;
 
-	@Auth
+//		@Auth
 	@Operation(summary = "게시글 저장", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -65,14 +65,15 @@ public class PostController {
 	@PostMapping(value = "/posts/new",
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SuccessResponse<Object>> savePost(
-		@AuthInfo AuthResponse authResponse,
+//			@AuthInfo
+			AuthResponse authResponse,
 		@ModelAttribute PostSaveRequest request
 	) {
 		postUseCase.save(authResponse, request);
 		return ResponseEntity.ok().body(SuccessResponse.from(POST_SAVED));
 	}
 
-	@Auth
+//		@Auth
 	@Operation(summary = "게시글 수정", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -93,7 +94,8 @@ public class PostController {
 	@PostMapping(value = "/posts/{post-id}",
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SuccessResponse<Object>> updatePost(
-		@AuthInfo AuthResponse authResponse,
+//			@AuthInfo
+			AuthResponse authResponse,
 		@PathVariable("post-id")
 		@Positive(message = "게시글 식별자는 양수만 가능합니다.")
 		Long postId,
@@ -103,7 +105,7 @@ public class PostController {
 		return ResponseEntity.ok().body(SuccessResponse.from(POST_UPDATED));
 	}
 
-	@Auth
+//		@Auth
 	@Operation(summary = "게시글 삭제", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -117,7 +119,8 @@ public class PostController {
 	})
 	@DeleteMapping("/posts/{post-id}")
 	public ResponseEntity<SuccessResponse<Object>> deletePost(
-		@AuthInfo AuthResponse authResponse,
+//			@AuthInfo
+			AuthResponse authResponse,
 		@PathVariable("post-id")
 		@Positive(message = "게시글 식별자는 양수만 가능합니다.")
 		Long postId
@@ -126,7 +129,7 @@ public class PostController {
 		return ResponseEntity.ok().body(SuccessResponse.from(POST_DELETED));
 	}
 
-	@Auth
+	//	@Auth
 	@Operation(summary = "내가 쓴 글 목록 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -137,13 +140,14 @@ public class PostController {
 	})
 	@GetMapping("/posts/me")
 	public ResponseEntity<SuccessResponse<Object>> findPostsByMember(
-		@AuthInfo AuthResponse authResponse
+//			@AuthInfo
+			AuthResponse authResponse
 	) {
 		List<PostListResponse> responses = postUseCase.findPostsByMember(authResponse);
 		return ResponseEntity.ok().body(SuccessResponse.of(MY_POST_MANY_FOUND, responses));
 	}
 
-	@Auth
+	//	@Auth
 	@Operation(summary = "기숙사별 홈화면 게시글 목록 조회", security = {
 		@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
@@ -154,7 +158,7 @@ public class PostController {
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
-	@GetMapping("/posts/{dormitory-category}")
+	@GetMapping("/posts/category/{dormitory-category}")
 	public ResponseEntity<SuccessResponse<Object>> findPostsByDormCategory(
 		@PathVariable(value = "dormitory-category") String dormCategoryRequest,
 		@RequestParam(value = "page") int pageNum
@@ -163,7 +167,7 @@ public class PostController {
 		return ResponseEntity.ok().body(SuccessResponse.of(MAIN_POST_MANY_FOUND, responses));
 	}
 
-	@Auth
+	//	@Auth
 	@Operation(summary = "기숙사별 인기 게시글 다건 조회", security = {
 		@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
@@ -182,7 +186,7 @@ public class PostController {
 		return ResponseEntity.ok().body(SuccessResponse.of(TOP_POST_MANY_FOUND, responses));
 	}
 
-	@Auth
+	//	@Auth
 	@Operation(summary = "게시글 단건 조회", security = {
 		@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
@@ -197,7 +201,8 @@ public class PostController {
 	})
 	@GetMapping("/posts/{post-id}")
 	public ResponseEntity<SuccessResponse<Object>> findOnePost(
-		@AuthInfo AuthResponse authResponse,
+//			@AuthInfo
+			AuthResponse authResponse,
 		@PathVariable("post-id")
 		@Positive(message = "게시글 식별자는 양수만 가능합니다.")
 		Long postId

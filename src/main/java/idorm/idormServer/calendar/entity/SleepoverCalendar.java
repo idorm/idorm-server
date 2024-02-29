@@ -45,7 +45,7 @@ public class SleepoverCalendar {
 
 	public void update(Period period) {
 		validateUniqueDate(period);
-		this.period.update(period);
+		this.period.updateSleepover(period);
 	}
 
 	private void validateConstructor(Period period, Long memberId, Team team) {
