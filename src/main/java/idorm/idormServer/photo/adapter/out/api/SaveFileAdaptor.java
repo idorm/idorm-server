@@ -40,36 +40,30 @@ public class SaveFileAdaptor implements SaveFilePort {
 
 	@Override
 	public String saveMemberPhotoFile(final Member member, final MultipartFile multipartFile) {
+		validateFileExistence(multipartFile);
 		String fileName = member.getId() + "/" + UUID.randomUUID() + "." + getFileType(multipartFile);
-		File file = convertMultiPartToFile(multipartFile);
-
-		return insertMemberPhotoFileToS3(fileName, file);
+		return insertFileToS3(memberPhotoBucketName, fileName, convertMultiPartToFile(multipartFile));
 	}
 
 	@Override
-	public List<String> savePostPhotoFiles(final Post post, final List<MultipartFile> multipartFiles) {
+	public List<String> addPostPhotoFiles(final Post post, final List<MultipartFile> multipartFiles) {
+		validateFileExistence(multipartFiles);
 		return insertPostPhotosFileToS3(post.getId(), multipartFiles);
 	}
 
-	private String insertMemberPhotoFileToS3(String fileName, File file) {
-		amazonS3Client.putObject(new PutObjectRequest(memberPhotoBucketName, fileName, file)
+	private String insertFileToS3(String bucketName, String fileName, File file) {
+		amazonS3Client.putObject(new PutObjectRequest(bucketName, fileName, file)
 			.withCannedAcl(CannedAccessControlList.PublicRead));
 		file.delete();
 
-		return amazonS3Client.getUrl(memberPhotoBucketName, fileName).toString();
+		return amazonS3Client.getUrl(bucketName, fileName).toString();
 	}
 
 	private List<String> insertPostPhotosFileToS3(Long postId, List<MultipartFile> multipartFiles) {
 		List<String> postPhotoUrls = multipartFiles.stream()
 			.map(multipartFile -> {
 				String fileName = postId + "/" + UUID.randomUUID() + getFileType(multipartFile);
-				File file = convertMultiPartToFile(multipartFile);
-
-				amazonS3Client.putObject(new PutObjectRequest(postPhotoBucketName, fileName, file)
-					.withCannedAcl(CannedAccessControlList.PublicRead));
-				file.delete();
-
-				return amazonS3Client.getUrl(postPhotoBucketName, fileName).toString();
+				return insertFileToS3(postPhotoBucketName, fileName, convertMultiPartToFile(multipartFile));
 			})
 			.toList();
 
@@ -99,5 +93,17 @@ public class SaveFileAdaptor implements SaveFilePort {
 			throw new UnsupportedFileTypeException();
 		}
 		return type;
+	}
+
+	private void validateFileExistence(MultipartFile file) {
+		if (Objects.isNull(file)) {
+			throw new NotFoundFileException();
+		}
+	}
+
+	private void validateFileExistence(List<MultipartFile> files) {
+		if (Objects.isNull(files) || files.isEmpty()) {
+			throw new NotFoundFileException();
+		}
 	}
 }
