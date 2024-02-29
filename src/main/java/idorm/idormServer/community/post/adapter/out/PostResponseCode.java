@@ -13,14 +13,14 @@ import lombok.RequiredArgsConstructor;
 public enum PostResponseCode implements BaseResponseCode {
 
 	//성공
-	MAIN_POST_MANY_FOUND(OK, "PostDomain 기숙사 필터링 후 게시글 다건 조회 완료"),
-	TOP_POST_MANY_FOUND(OK, "PostDomain 인기 게시글 다건 조회 완료"),
-	MY_POST_MANY_FOUND(OK, "PostDomain 내가 쓴 글 목록 조회 완료"),
-	POST_FOUND(OK, "PostDomain 단건 조회 완료"),
-	POST_UPDATED(OK, "PostDomain 수정 완료"),
-	POST_DELETED(OK, "PostDomain 게시글 삭제 완료"),
+	MAIN_POST_MANY_FOUND(OK, "Post 기숙사 필터링 후 게시글 다건 조회 완료"),
+	TOP_POST_MANY_FOUND(OK, "Post 인기 게시글 다건 조회 완료"),
+	MY_POST_MANY_FOUND(OK, "Post 내가 쓴 글 목록 조회 완료"),
+	POST_FOUND(OK, "Post 단건 조회 완료"),
+	POST_UPDATED(OK, "Post 수정 완료"),
+	POST_DELETED(OK, "Post 게시글 삭제 완료"),
 
-	POST_SAVED(CREATED, "PostDomain 저장 완료"),
+	POST_SAVED(CREATED, "Post 저장 완료"),
 
 	//실패
 	INVALID_TITLE_LENGTH(BAD_REQUEST, "게시글 제목은 1~30자 이내여야 합니다."),

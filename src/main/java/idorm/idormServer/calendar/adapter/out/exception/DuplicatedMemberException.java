@@ -1,4 +1,4 @@
-package idorm.idormServer.member.adapter.out.exception;
+package idorm.idormServer.calendar.adapter.out.exception;
 
 
 import idorm.idormServer.common.exception.BaseException;

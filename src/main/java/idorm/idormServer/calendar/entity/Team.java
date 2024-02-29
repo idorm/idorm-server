@@ -5,8 +5,7 @@ import idorm.idormServer.calendar.adapter.out.exception.AlreadyDeletedMemberExce
 import idorm.idormServer.calendar.adapter.out.exception.CannotExplodeTeamException;
 import idorm.idormServer.calendar.adapter.out.exception.CannotRegisterTeamStatusFullException;
 import idorm.idormServer.common.entity.BaseTimeEntity;
-import idorm.idormServer.member.adapter.out.exception.DuplicatedMemberException;
-import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
+import idorm.idormServer.calendar.adapter.out.exception.DuplicatedMemberException;
 import idorm.idormServer.member.entity.Member;
 import java.util.ArrayList;
 import java.util.List;
