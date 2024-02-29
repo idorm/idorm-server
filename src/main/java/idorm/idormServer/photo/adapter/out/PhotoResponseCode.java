@@ -1,4 +1,4 @@
-package idorm.idormServer.photo.adapter.out.api;
+package idorm.idormServer.photo.adapter.out;
 
 import static org.springframework.http.HttpStatus.*;
 

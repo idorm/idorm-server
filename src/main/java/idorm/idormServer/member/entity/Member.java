@@ -18,7 +18,7 @@ import idorm.idormServer.matchingMate.adapter.out.exception.NotFoundDisLikedMemb
 import idorm.idormServer.matchingMate.adapter.out.exception.NotFoundLikedMemberException;
 import idorm.idormServer.matchingMate.entity.MatchingMate;
 import idorm.idormServer.matchingMate.entity.MatePreferenceType;
-import idorm.idormServer.photo.adapter.out.api.exception.NotFoundFileException;
+import idorm.idormServer.photo.adapter.out.exception.NotFoundFileException;
 import idorm.idormServer.report.entity.Report;
 import java.util.ArrayList;
 import java.util.List;
