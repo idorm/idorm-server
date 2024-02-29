@@ -58,7 +58,7 @@ public class TeamCalendarController {
           description = "- ILLEGAL_ARGUMENT_DATE_SET / FIELD_*_REQUIRED / INVALID_*_LENGTH /" +
               " ILLEGAL_STATEMENT_EXPLODEDTEAM / FIELD_TARGETS_REQUIRED / FIELD_DATE_REQUIRED"),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "404", description = "- NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_MEMBER"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_MEMBER"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
   })
   @PostMapping("/calendar/team")
@@ -107,7 +107,7 @@ public class TeamCalendarController {
           content = @Content(schema = @Schema(implementation = Object.class))),
       @ApiResponse(responseCode = "400", description = "ILLEGAL_STATEMENT_EXPLODEDTEAM"),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM_CALENDAR / ACCESS_DENIED_SLEEPOVER_CALENDAR"),
+      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })

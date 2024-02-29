@@ -81,12 +81,13 @@ public class PostController {
       @ApiResponse(
           responseCode = "200", description = "POST_UPDATED",
           content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / TITLE_LENGTH_INVALID / CONTENT_LENGTH_INVALID /"),
+      @ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / INVALID_TITLE_LENGTH / INVALID_CONTENT_LENGTH / "
+          + "INVALID_*_LENGTH"),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_POST"),
-      @ApiResponse(responseCode = "404", description = "DELETED_POST / POST_NOT_FOUND / POSTPHOTO_NOT_FOUND"),
-      @ApiResponse(responseCode = "413", description = "FILE_SIZE_EXCEED / FILE_COUNT_EXCEED"),
-      @ApiResponse(responseCode = "415", description = "FILE_TYPE_UNSUPPORTED"),
+      @ApiResponse(responseCode = "404", description = "ALREADY_DELETED_POST / NOT_FOUND_POST / NOT_FOUND_POSTPHOTO"),
+      @ApiResponse(responseCode = "413", description = "EXCEED_FILE_SIZE / EXCEED_FILE_COUNT"),
+      @ApiResponse(responseCode = "415", description = "UNSUPPORTED_FILE_TYPE"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @PostMapping(value = "/posts/{post-id}",
@@ -110,7 +111,7 @@ public class PostController {
           content = @Content(schema = @Schema(implementation = Object.class))),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_POST"),
-      @ApiResponse(responseCode = "404", description = "POST_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_POST"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @DeleteMapping("/posts/{post-id}")
@@ -188,7 +189,7 @@ public class PostController {
           responseCode = "200", description = "POST_FOUND",
           content = @Content(schema = @Schema(implementation = PostResponse.class))),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "404", description = "POST_NOT_FOUND / DELETED_POST"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_POST / ALREADY_DELETED_POST"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/posts/{post-id}")

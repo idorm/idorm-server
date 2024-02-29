@@ -78,7 +78,7 @@ public class OfficialCalendarController {
           content = @Content(schema = @Schema(implementation = Object.class))),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED"),
-      @ApiResponse(responseCode = "404", description = "CALENDAR_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @DeleteMapping("/official/calendar/{official-calendar-id}")
@@ -99,7 +99,7 @@ public class OfficialCalendarController {
           content = @Content(schema = @Schema(implementation = CrawledOfficialCalendarResponse.class))),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED"),
-      @ApiResponse(responseCode = "404", description = "CALENDAR_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/official/calendar")
@@ -116,7 +116,7 @@ public class OfficialCalendarController {
           responseCode = "200", description = "CALENDAR_FOUND",
           content = @Content(schema = @Schema(implementation = OfficialCalendarResponse.class))),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "404", description = "CALENDAR_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/official/calendar/{official-calendar-id}")

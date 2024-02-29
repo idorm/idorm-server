@@ -46,7 +46,7 @@ public class PostLikeController {
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "404", description = "POST_NOT_FOUND / DELETED_POST"),
       @ApiResponse(responseCode = "409",
-          description = "DUPLICATE_LIKED / CANNOT_LIKED_SELF / CANNOT_LIKED_POST_BY_DELETED_MEMBER"),
+          description = "DUPLICATED_POST_LIKE / CANNOT_LIKED_SELF / CANNOT_LIKED_POST_BY_DELETED_MEMBER"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @PutMapping("/posts/{post-id}/like")
@@ -67,7 +67,7 @@ public class PostLikeController {
           responseCode = "200", description = "MEMBER_LIKED_POST_CANCELED",
           content = @Content(schema = @Schema(implementation = Object.class))),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "404", description = "POST_NOT_FOUND / DELETED_POST / POSTLIKEDMEMBER_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_POST / ALREADY_DELETED_POST / NOT_FOUND_POSTLIKE"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @DeleteMapping("/posts/{post-id}/likes/{like-id}")

@@ -112,7 +112,7 @@ public class SleepoverCalendarController {
       @ApiResponse(responseCode = "400", description = ""
           + "TEAMCALENDARID_NEGATIVEORZERO_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM"),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM_CALENDAR / ACCESS_DENIED_SLEEPOVER_CALENDAR"),
+      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_SLEEPOVER_CALENDAR"),
       @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
@@ -135,7 +135,7 @@ public class SleepoverCalendarController {
           responseCode = "200", description = "TEAM_CALENDER_FOUND",
           content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM_CALENDAR"),
+      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_SLEEPOVER_CALENDAR"),
       @ApiResponse(responseCode = "404",
           description = " NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAMCALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
@@ -161,7 +161,7 @@ public class SleepoverCalendarController {
           content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
       @ApiResponse(responseCode = "400", description = "REQUIRED_YEARMONTH_FIELD"),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM"),
+      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM / ACCESS_DENIED_SLEEPOVER_CALENDAR"),
       @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
