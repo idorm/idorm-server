@@ -54,7 +54,7 @@ public class MatchingInfoController {
 			+ "INVALID_JOIN_PERIOD_CHARACTER / INVALID_GENDER_CHARACTER / INVALID_AGE_LENGTH / INVALID_WISHTEXT_LENGTH"),
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
-		@ApiResponse(responseCode = "409", description = "DUPLICATE_MATCHINGINFO"),
+		@ApiResponse(responseCode = "409", description = "DUPLICATED_MATCHINGINFO"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@PostMapping

@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import idorm.idormServer.email.adapter.out.api.exception.NotFoundEmailException;
+import idorm.idormServer.email.adapter.out.exception.NotFoundEmailException;
 import idorm.idormServer.email.application.port.out.LoadEmailPort;
 import idorm.idormServer.email.entity.Email;
 import lombok.AccessLevel;

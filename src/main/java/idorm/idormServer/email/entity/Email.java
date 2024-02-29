@@ -16,11 +16,11 @@ import javax.persistence.Id;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import idorm.idormServer.common.util.Validator;
-import idorm.idormServer.email.adapter.out.api.EmailResponseCode;
-import idorm.idormServer.email.adapter.out.api.exception.DuplicatedEmailException;
-import idorm.idormServer.email.adapter.out.api.exception.ExpiredEmailVerificationCodeException;
-import idorm.idormServer.email.adapter.out.api.exception.InvalidVerificationCode;
-import idorm.idormServer.email.adapter.out.api.exception.UnAuthorizedEmailException;
+import idorm.idormServer.email.adapter.out.EmailResponseCode;
+import idorm.idormServer.email.adapter.out.exception.DuplicatedEmailException;
+import idorm.idormServer.email.adapter.out.exception.ExpiredEmailVerificationCodeException;
+import idorm.idormServer.email.adapter.out.exception.InvalidVerificationCode;
+import idorm.idormServer.member.adapter.out.exception.UnAuthorizedEmailException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

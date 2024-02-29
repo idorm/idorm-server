@@ -13,10 +13,11 @@ import lombok.RequiredArgsConstructor;
 public enum MatchingInfoResponseCode implements BaseResponseCode {
 	//성공
 	MATCHINGINFO_FOUND(OK, "온보딩 단건 조회 완료"),
-	MATCHINGINFO_SAVED(CREATED, "온보딩 저장 완료"),
 	MATCHINGINFO_UPDATED(OK, "온보딩 수정 완료"),
 	ISMATCHINGINFOPUBLIC_UPDATED(OK, "온보딩 공개 여부 수정 완료"),
 	MATCHINGINFO_DELETED(OK, "온보딩 삭제 완료"),
+
+	MATCHINGINFO_SAVED(CREATED, "온보딩 저장 완료"),
 
 	//실패
 	INVALID_OPENKAKAOLINK_LENGTH(BAD_REQUEST, "오픈채팅 링크는 ~100자 이내여야 합니다."),
@@ -33,8 +34,7 @@ public enum MatchingInfoResponseCode implements BaseResponseCode {
 
 	NOT_FOUND_MATCHINGINFO(NOT_FOUND, "등록된 온보딩 정보가 없습니다."),
 
-	ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(CONFLICT, "본인 혹은 상대방이 비공개 상태의 온보딩 정보 입니다."),
-	DUPLICATE_MATCHINGINFO(CONFLICT, "등록된 온보딩 정보가 존재합니다.");
+	DUPLICATED_MATCHINGINFO(CONFLICT, "등록된 온보딩 정보가 존재합니다.");
 
 	private final HttpStatus status;
 	private final String message;

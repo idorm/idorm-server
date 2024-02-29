@@ -25,9 +25,10 @@ public enum MatchingMateResponseCode implements BaseResponseCode {
 	//실패
 	INVALID_MATE_PREFERENCE_CHARACTER(BAD_REQUEST, "올바른 형식의 메이트 취향이 아닙니다."),
 
-	NOT_FOUD_LIKEDMEMBER(NOT_FOUND, "등록된 좋아요한 멤버가 없습니다."),
-	NOT_FOUD_DISLIKEDMEMBER(NOT_FOUND, "등록된 싫어요한 멤버가 없습니다."),
+	NOT_FOUND_LIKEDMEMBER(NOT_FOUND, "등록된 좋아요한 멤버가 없습니다."),
+	NOT_FOUND_DISLIKEDMEMBER(NOT_FOUND, "등록된 싫어요한 멤버가 없습니다."),
 
+	ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC(CONFLICT, "본인 혹은 상대방이 비공개 상태의 온보딩 정보 입니다."),
 	DUPLICATED_LIKED_MEMBER(CONFLICT, "좋아요한 멤버 입니다."),
 	DUPLICATED_DISLIKED_MEMBER(CONFLICT, "싫어요한 멤버 입니다.");
 
