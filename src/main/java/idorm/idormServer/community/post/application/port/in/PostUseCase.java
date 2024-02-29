@@ -12,7 +12,7 @@ import idorm.idormServer.community.post.application.port.in.dto.PostUpdateReques
 
 public interface PostUseCase {
 
-  void save(AuthResponse authResponse, PostSaveRequest request);
+  PostResponse save(AuthResponse authResponse, PostSaveRequest request);
 
   void update(AuthResponse authResponse, Long postId, PostUpdateRequest request);
 

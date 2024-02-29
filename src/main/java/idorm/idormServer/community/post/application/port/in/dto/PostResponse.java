@@ -44,4 +44,22 @@ public record PostResponse(
 			PostPhotoResponse.of(postPhotos),
 			ParentCommentResponse.of(comments));
 	}
+
+	public static PostResponse of(Post post, List<PostPhoto> postPhotos) {
+
+		return new PostResponse(post.getId(),
+				post.getMember().getId(),
+				post.getDormCategory().toString(),
+				post.getTitle(),
+				post.getContent(),
+				post.getMember().getNickname().getValue(),
+				post.getMember().getProfilePhotoUrl(),
+				post.getLikeCount(),
+				false,
+				post.getCreatedAt(),
+				post.getUpdatedAt(),
+				post.getIsAnonymous(),
+				PostPhotoResponse.of(postPhotos),
+				null);
+	}
 }

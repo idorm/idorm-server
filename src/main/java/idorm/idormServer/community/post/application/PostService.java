@@ -47,7 +47,7 @@ public class PostService implements PostUseCase {
 
   @Override
   @Transactional
-  public void save(final AuthResponse authResponse, final PostSaveRequest request) {
+  public PostResponse save(final AuthResponse authResponse, final PostSaveRequest request) {
     final Member member = loadMemberPort.loadMember(authResponse.getId());
 
     Post post = new Post(member, DormCategory.valueOf(
@@ -64,6 +64,7 @@ public class PostService implements PostUseCase {
       final List<PostPhoto> postPhotos = postPhotoUseCase.findAllByPost(post);
       post.addPostPhoto(postPhotos);
     }
+    return PostResponse.of(post, postPhotoUseCase.findAllByPost(post));
   }
 
   @Override
