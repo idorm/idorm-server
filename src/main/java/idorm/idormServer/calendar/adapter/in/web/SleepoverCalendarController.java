@@ -1,29 +1,14 @@
 package idorm.idormServer.calendar.adapter.in.web;
 
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.*;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.SLEEPOVER_CALENDAR_CREATED;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_CALENDER_DELETED;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_CALENDER_FOUND;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_CALENDER_UPDATED;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_SLEEPOVER_CALENDERS_FOUND;
 
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.adapter.in.api.Auth;
 import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.SleepoverCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;
 import idorm.idormServer.calendar.application.port.in.dto.FindSleepoverCalendarsRequest;
@@ -38,8 +23,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "X1. Sleepover Calendar", description = "룸메이트 팀 일정 api")
 @Validated
@@ -50,7 +51,7 @@ public class SleepoverCalendarController {
 
   private final SleepoverCalendarUseCase sleepoverCalendarUseCase;
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[외박] 일정 생성", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -67,15 +68,14 @@ public class SleepoverCalendarController {
   @PostMapping("/calendar/sleepover")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<SuccessResponse<Object>> createSleepoverCalender(
-//      	@AuthInfo
-        AuthResponse authResponse,
+      @AuthInfo AuthResponse authResponse,
       @RequestBody @Valid SaveSleepoverCalendarRequest request
   ) {
     SleepoverCalendarResponse response = sleepoverCalendarUseCase.save(authResponse, request);
     return ResponseEntity.ok().body(SuccessResponse.of(SLEEPOVER_CALENDAR_CREATED, response));
   }
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[외박] 일정 수정", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -93,15 +93,14 @@ public class SleepoverCalendarController {
   })
   @PutMapping("/calendar/sleepover")
   public ResponseEntity<SuccessResponse<Object>> updateSleepoverCalender(
-//      	@AuthInfo
-        AuthResponse authResponse,
+      @AuthInfo AuthResponse authResponse,
       @RequestBody @Valid UpdateSleepoverCalendarRequest request
   ) {
     SleepoverCalendarResponse response = sleepoverCalendarUseCase.update(authResponse, request);
     return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_UPDATED, response));
   }
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[외박] 일정 삭제", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -118,8 +117,7 @@ public class SleepoverCalendarController {
   })
   @DeleteMapping("/calendar/sleepover")
   public ResponseEntity<SuccessResponse<Object>> deleteTeamCalender(
-//      	@AuthInfo
-        AuthResponse authResponse,
+      @AuthInfo AuthResponse authResponse,
       @RequestParam(value = "teamCalendarId")
       @Positive(message = "삭제할 팀일정 식별자는 양수만 가능합니다.")
       Long sleepoverCalendarId
@@ -128,7 +126,7 @@ public class SleepoverCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.from(TEAM_CALENDER_DELETED));
   }
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[외박] 일정 단건 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -143,8 +141,7 @@ public class SleepoverCalendarController {
   })
   @GetMapping("/calendar/sleepover")
   public ResponseEntity<SuccessResponse<Object>> findTeamCalender(
-//      	@AuthInfo
-        AuthResponse authResponse,
+      @AuthInfo AuthResponse authResponse,
       @RequestParam(value = "teamCalendarId")
       @Positive(message = "조회할 팀일정 식별자는 양수만 가능합니다.")
       Long sleepoverCalendarId
@@ -154,7 +151,7 @@ public class SleepoverCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_FOUND, response));
   }
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[외박] 일정 월별 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -169,8 +166,7 @@ public class SleepoverCalendarController {
   })
   @PostMapping("/calendar/sleepover/monthly")
   public ResponseEntity<SuccessResponse<Object>> findTeamSleepoverCalenders(
-//      	@AuthInfo
-        AuthResponse authResponse,
+      @AuthInfo AuthResponse authResponse,
       @RequestBody @Valid FindSleepoverCalendarsRequest request
   ) {
     List<SleepoverCalendarResponse> responses = sleepoverCalendarUseCase.findSleepoverCalendarsByMonth(

@@ -79,12 +79,6 @@ public class LoadSleepoverCaldarAdapter implements LoadSleepoverCalendarPort {
   }
 
   @Override
-  public List<SleepoverCalendar> findByTeamId(Long teamId) {
-    List<SleepoverCalendar> responses = sleepoverCalendarRepository.findByTeamId(teamId);
-    return responses.isEmpty() ? new ArrayList<>() : responses;
-  }
-
-  @Override
   public void hasOverlappingDates(Long memberId, Period period, Long sleepoverCalendarId) {
     Long count = queryFactory
         .select(sleepoverCalendar)

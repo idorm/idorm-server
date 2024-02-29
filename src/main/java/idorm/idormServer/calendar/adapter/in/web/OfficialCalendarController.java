@@ -1,27 +1,14 @@
 package idorm.idormServer.calendar.adapter.in.web;
 
-import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.*;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.CALENDAR_FOUND;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.CALENDAR_MANY_FOUND;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.CALENDAR_UPDATED;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.OFFICIAL_CALENDARS_FOUND;
+import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.OFFICIAL_CALENDAR_DELETED;
 
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.adapter.in.api.Auth;
 import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.OfficialCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.CrawledOfficialCalendarResponse;
 import idorm.idormServer.calendar.application.port.in.dto.FindOfficialCalendarsRequest;
@@ -35,8 +22,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "X2. Official Calendar", description = "공식 일정 api")
 @RestController
@@ -46,7 +47,7 @@ public class OfficialCalendarController {
 
   private final OfficialCalendarUseCase officialCalendarUseCase;
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[관리자 용] 공식 일정 저장 및 수정", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -68,7 +69,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(CALENDAR_UPDATED, response));
   }
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[관리자 용] 일정 삭제", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -90,7 +91,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.from(OFFICIAL_CALENDAR_DELETED));
   }
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[관리자 용] 공식 일정 전체 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -109,7 +110,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(OFFICIAL_CALENDARS_FOUND, responses));
   }
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[관리자 용] 공식 일정 단건 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -129,7 +130,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(CALENDAR_FOUND, response));
   }
 
-  //	@Auth
+  @Auth
   @Operation(summary = "[사용자 용] 공식 일정 월별 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -148,7 +149,7 @@ public class OfficialCalendarController {
   })
   @PostMapping("/member/calendars")
   public ResponseEntity<SuccessResponse<Object>> findManyByMember(
-      	@AuthInfo AuthResponse authResponse,
+      @AuthInfo AuthResponse authResponse,
       @RequestBody @Valid FindOfficialCalendarsRequest request
   ) {
     List<OfficialCalendarResponse> responses = officialCalendarUseCase.findByMonthByMember(
