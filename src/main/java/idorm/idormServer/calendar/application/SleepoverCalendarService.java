@@ -40,7 +40,7 @@ public class SleepoverCalendarService implements SleepoverCalendarUseCase {
 	public SleepoverCalendarResponse save(final AuthResponse authResponse, final SaveSleepoverCalendarRequest request) {
 		final Team team = loadTeamPort.findByMemberId(authResponse.getId());
 
-		loadSleepoverCalendarPort.hasOverlappingDates(authResponse.getId(), request.period(), null);
+		loadSleepoverCalendarPort.hasOverlappingDatesWithoutSleepoverId(authResponse.getId(), request.period());
 		SleepoverCalendar sleepoverCalendar = request.from(authResponse.getId(), team);
 		saveSleepoverCalendarPort.save(sleepoverCalendar);
 
@@ -56,7 +56,7 @@ public class SleepoverCalendarService implements SleepoverCalendarUseCase {
 		final SleepoverCalendar sleepoverCalendar =
 				loadSleepoverCalendarPort.findByIdAndMemberId(request.teamCalendarId(), member.getId());
 
-		loadSleepoverCalendarPort.hasOverlappingDates(member.getId(), request.period(), sleepoverCalendar.getId());
+		loadSleepoverCalendarPort.hasOverlappingDatesWithSleepoverId(member.getId(), request.period(), sleepoverCalendar.getId());
 		sleepoverCalendar.update(request.period());
 
 		return SleepoverCalendarResponse.of(sleepoverCalendar,

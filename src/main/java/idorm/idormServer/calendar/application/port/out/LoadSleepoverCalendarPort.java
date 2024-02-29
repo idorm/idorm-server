@@ -19,5 +19,6 @@ public interface LoadSleepoverCalendarPort {
   List<SleepoverCalendar> findByYearMonth(Team team, YearMonth yearMonth);
 
 
-  void hasOverlappingDates(Long memberId, Period period, Long sleepoverCalendarId);
+  void hasOverlappingDatesWithSleepoverId(Long memberId, Period period, Long sleepoverCalendarId);
+  void hasOverlappingDatesWithoutSleepoverId(Long memberId, Period period);
 }
