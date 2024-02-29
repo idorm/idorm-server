@@ -79,7 +79,7 @@ public class LoadSleepoverCaldarAdapter implements LoadSleepoverCalendarPort {
   }
 
   @Override
-  public void hasOverlappingDates(Long memberId, Period period, Long sleepoverCalendarId) {
+  public void hasOverlappingDatesWithSleepoverId(Long memberId, Period period, Long sleepoverCalendarId) {
     Long count = queryFactory
         .select(sleepoverCalendar)
         .from(sleepoverCalendar)
@@ -92,4 +92,19 @@ public class LoadSleepoverCaldarAdapter implements LoadSleepoverCalendarPort {
       throw new DuplicatedSleepoverDateException();
     }
   }
+
+  @Override
+  public void hasOverlappingDatesWithoutSleepoverId(Long memberId, Period period) {
+    Long count = queryFactory
+        .select(sleepoverCalendar)
+        .from(sleepoverCalendar)
+        .where(sleepoverCalendar.period.endDate.goe(period.getStartDate()),
+            sleepoverCalendar.period.startDate.loe(period.getEndDate())
+                .and(sleepoverCalendar.memberId.eq(memberId)))
+        .fetchCount();
+    if(count > 0 ) {
+      throw new DuplicatedSleepoverDateException();
+    }
+  }
+
 }
