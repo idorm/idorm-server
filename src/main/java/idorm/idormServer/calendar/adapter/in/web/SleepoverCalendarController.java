@@ -57,11 +57,12 @@ public class SleepoverCalendarController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "201", description = "SLEEPOVER_CALENDAR_CREATED",
-          content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
+          content = @Content(schema = @Schema(implementation = Object.class))),
       @ApiResponse(responseCode = "400",
-          description = "- ILLEGAL_STATEMENT_EXPLODEDTEAM\n- ILLEGAL_ARGUMENT_DATE_SET\n" +
-              "-  FILED_DATE_REQUIRED"),
-      @ApiResponse(responseCode = "404", description = "- NOT_FOUND_MEMBER\n- NOT_FOUND_TEAM"),
+          description = "- ILLEGAL_STATEMENT_EXPLODEDTEAM / ILLEGAL_ARGUMENT_DATE_SET /" +
+              "  FILED_DATE_REQUIRED"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+      @ApiResponse(responseCode = "404", description = "- NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
       @ApiResponse(responseCode = "409", description = "DUPLICATE_SLEEPOVER_DATE"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
   })
@@ -83,9 +84,10 @@ public class SleepoverCalendarController {
           responseCode = "200", description = "SLEEPOVER_CALENDAR_UPDATED",
           content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
       @ApiResponse(responseCode = "400",
-          description = "- ILLEGAL_STATEMENT_EXPLODEDTEAM\n- TEAMCALENDARID_FIELD_REQUIRED\n" +
-              "- TEAMCALENDARID_NEGATIVEORZERO_INVALID\n- ILLEGAL_ARGUMENT_DATE_SET\n" +
+          description = "- ILLEGAL_STATEMENT_EXPLODEDTEAM / TEAMCALENDARID_FIELD_REQUIRED /" +
+              "- TEAMCALENDARID_NEGATIVEORZERO_INVALID / ILLEGAL_ARGUMENT_DATE_SET /" +
               "- FILED_DATE_REQUIRED"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_SLEEPOVER_CALENDAR"),
       @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "409", description = "DUPLICATE_SLEEPOVER_DATE"),
@@ -107,12 +109,11 @@ public class SleepoverCalendarController {
       @ApiResponse(
           responseCode = "200", description = "TEAM_CALENDER_DELETED",
           content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400",
-          description = "- TEAMCALENDARID_NEGATIVEORZERO_INVALID\n- ILLEGAL_STATEMENT_EXPLODEDTEAM"),
-      @ApiResponse(responseCode = "403",
-          description = "- ACCESS_DENIED_TEAM_CALENDAR\n- ACCESS_DENIED_SLEEPOVER_CALENDAR"),
-      @ApiResponse(responseCode = "404",
-          description = "- NOT_FOUND_MEMBER\n- NOT_FOUND_TEAM\n- NOT_FOUND_TEAM_CALENDAR"),
+      @ApiResponse(responseCode = "400", description = ""
+          + "TEAMCALENDARID_NEGATIVEORZERO_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM_CALENDAR / ACCESS_DENIED_SLEEPOVER_CALENDAR"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @DeleteMapping("/calendar/sleepover")
@@ -133,10 +134,10 @@ public class SleepoverCalendarController {
       @ApiResponse(
           responseCode = "200", description = "TEAM_CALENDER_FOUND",
           content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
-      @ApiResponse(responseCode = "400", description = "TEAMCALENDARID_NEGATIVEORZERO_INVALID"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM_CALENDAR"),
       @ApiResponse(responseCode = "404",
-          description = "- MEMBER_NOT_FOUND\n- TEAM_NOT_FOUND\n- TEAMCALENDAR_NOT_FOUND"),
+          description = " NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAMCALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/calendar/sleepover")
@@ -158,10 +159,10 @@ public class SleepoverCalendarController {
       @ApiResponse(
           responseCode = "200", description = "TEAM_SLEEPOVER_CALENDERS_FOUND",
           content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
-      @ApiResponse(responseCode = "400", description = "YEARMONTH_FIELD_REQUIRED"),
+      @ApiResponse(responseCode = "400", description = "REQUIRED_YEARMONTH_FIELD"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM"),
-      @ApiResponse(responseCode = "404",
-          description = "- MEMBER_NOT_FOUND\n- TEAM_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @PostMapping("/calendar/sleepover/monthly")

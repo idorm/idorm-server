@@ -51,16 +51,13 @@ public class TeamController {
           responseCode = "201", description = "TEAM_MEMBER_CREATED",
           content = @Content(schema = @Schema(implementation = Object.class))),
       @ApiResponse(responseCode = "400",
-          description =
-              "- REGISTERMEMBERID_NEGATIVEORZERO_INVALID\n- ILLEGAL_STATEMENT_EXPLODEDTEAM\n" +
-                  "- ACCESS_DENIED_ADMIN"),
-      @ApiResponse(responseCode = "404",
-          description = "- NOT_FOUND_MEMBER\n- NOT_FOUND_TEAM"),
-      @ApiResponse(responseCode = "409",
-          description = "- ALREADY_REGISTERED_TEAM\n- CANNOT_REGISTER_TEAM_STATUS_FULL"),
+          description = "ILLEGAL_STATEMENT_EXPLODEDTEAM / ACCESS_DENIED_ADMIN"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
+      @ApiResponse(responseCode = "409", description = "ALREADY_REGISTERED_TEAM / CANNOT_REGISTER_TEAM_STATUS_FULL"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
   })
-  @PostMapping("/member/team")
+  @PostMapping("/team")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<SuccessResponse<Object>> addTeamMember(
       @AuthInfo AuthResponse authResponse,
@@ -78,12 +75,12 @@ public class TeamController {
       @ApiResponse(
           responseCode = "200", description = "TEAM_MEMBER_DELETED",
           content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400", description = "MEMBERID_NEGATIVEORZERO_INVALID"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM"),
       @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
   })
-  @DeleteMapping("/member/team")
+  @DeleteMapping("/team")
   public ResponseEntity<SuccessResponse<Object>> deleteTeamMember(
       @AuthInfo AuthResponse authResponse,
       @RequestParam(value = "memberId")
@@ -100,10 +97,11 @@ public class TeamController {
       @ApiResponse(
           responseCode = "200", description = "TEAM_MEMBERS_FOUND",
           content = @Content(schema = @Schema(implementation = TeamResponse.class))),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
-  @GetMapping("/member/team")
+  @GetMapping("/team")
   public ResponseEntity<SuccessResponse<Object>> findTeamMembers(
       @AuthInfo AuthResponse authResponse
   ) {
@@ -118,10 +116,11 @@ public class TeamController {
       @ApiResponse(
           responseCode = "200", description = "TEAM_EXPLODED_CHECKED",
           content = @Content(schema = @Schema(implementation = Object.class))),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "409", description = "CANNOT_EXPLODE_TEAM"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
   })
-  @PatchMapping("/member/team")
+  @PatchMapping("/team/")
   public ResponseEntity<SuccessResponse<Object>> isConfirmTeamExploded(
       @AuthInfo AuthResponse authResponse
   ) {

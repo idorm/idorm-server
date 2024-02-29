@@ -47,10 +47,9 @@ public class CommentController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "201", description = "COMMENT_SAVED",
-          content = @Content(schema = @Schema(implementation = CommentResponse.class))),
-      @ApiResponse(responseCode = "400",
-          description = "FIELD_REQUIRED / *_NEGATIVEORZERO_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+          content = @Content(schema = @Schema(implementation = Object.class))),
+      @ApiResponse(responseCode = "400", description = "FIELD_REQUIRED"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER/ NOT_FOUND_POST / ALREADY_DELETED_POST / "
           + "NOT_FOUND_COMMENT"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
@@ -69,15 +68,13 @@ public class CommentController {
   }
 
   @Auth
-  @DeleteMapping(value = "/post/{post-id}/comment/{comment-id}")
+  @DeleteMapping(value = "/posts/comments/{comment-id}")
   @Operation(summary = "댓글 삭제", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "COMMENT_DELETED",
           content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400",
-          description = "POSTID_NEGATIVEORZERO_INVALID / COMMENTID_NEGATIVEORZERO_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_COMMENT"),
       @ApiResponse(responseCode = "404", description = "NOT_FOUND_POST / ALREADY_DELETED_POST / NOT_FOUND_COMMENT / "
           + "ALREADY_DELETED_COMMENT"),
@@ -102,7 +99,7 @@ public class CommentController {
       @ApiResponse(
           responseCode = "200", description = "COMMENT_MANY_FOUND",
           content = @Content(schema = @Schema(implementation = CommentResponse.class))),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping(value = "/comments/me")

@@ -59,7 +59,7 @@ public class PostController {
       @ApiResponse(responseCode = "400",
           description = "DORMCATEGORY_CHARACTER_INVALID / FIELD_REQUIRED / TITLE_LENGTH_INVALID / "
               + "CONTENT_LENGTH_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "413", description = "FILE_SIZE_EXCEED / FILE_COUNT_EXCEED"),
       @ApiResponse(responseCode = "415", description = "FILE_TYPE_UNSUPPORTED"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
@@ -71,8 +71,8 @@ public class PostController {
       @AuthInfo AuthResponse authResponse,
       @ModelAttribute PostSaveRequest request
   ) {
-    postUseCase.save(authResponse, request);
-    return ResponseEntity.ok().body(SuccessResponse.from(POST_SAVED));
+    PostResponse response = postUseCase.save(authResponse, request);
+    return ResponseEntity.ok().body(SuccessResponse.of(POST_SAVED, response));
   }
 
   @Auth
@@ -81,15 +81,11 @@ public class PostController {
       @ApiResponse(
           responseCode = "200", description = "POST_UPDATED",
           content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400",
-          description = "FIELD_REQUIRED / TITLE_LENGTH_INVALID / CONTENT_LENGTH_INVALID /" +
-              "POSTID_NEGATIVEORZERO_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / TITLE_LENGTH_INVALID / CONTENT_LENGTH_INVALID /"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_POST"),
-      @ApiResponse(responseCode = "404",
-          description = "DELETED_POST / POST_NOT_FOUND / POSTPHOTO_NOT_FOUND"),
-      @ApiResponse(responseCode = "413",
-          description = "FILE_SIZE_EXCEED / FILE_COUNT_EXCEED"),
+      @ApiResponse(responseCode = "404", description = "DELETED_POST / POST_NOT_FOUND / POSTPHOTO_NOT_FOUND"),
+      @ApiResponse(responseCode = "413", description = "FILE_SIZE_EXCEED / FILE_COUNT_EXCEED"),
       @ApiResponse(responseCode = "415", description = "FILE_TYPE_UNSUPPORTED"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
@@ -112,8 +108,7 @@ public class PostController {
       @ApiResponse(
           responseCode = "200", description = "POST_DELETED",
           content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400", description = "POSTID_NEGATIVEORZERO_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_POST"),
       @ApiResponse(responseCode = "404", description = "POST_NOT_FOUND"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
@@ -135,7 +130,7 @@ public class PostController {
       @ApiResponse(
           responseCode = "200", description = "POST_MANY_FOUND",
           content = @Content(schema = @Schema(implementation = PostListResponse.class))),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/posts/me")
@@ -153,11 +148,11 @@ public class PostController {
       @ApiResponse(
           responseCode = "200", description = "POST_MANY_FOUND",
           content = @Content(schema = @Schema(implementation = PostListResponse.class))),
-      @ApiResponse(responseCode = "400", description = "DORMCATEGORY_CHARACTER_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "400", description = "INVALID_DORMCATEGORY_CHARACTER"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
-  @GetMapping("/posts/category/{dormitory-category}")
+  @GetMapping("/posts/{dormitory-category}")
   public ResponseEntity<SuccessResponse<Object>> findPostsByDormCategory(
       @PathVariable(value = "dormitory-category") String dormCategoryRequest,
       @RequestParam(value = "page") int pageNum
@@ -173,8 +168,8 @@ public class PostController {
       @ApiResponse(
           responseCode = "200", description = "TOP_POST_MANY_FOUND",
           content = @Content(schema = @Schema(implementation = PostListResponse.class))),
-      @ApiResponse(responseCode = "400", description = "DORMCATEGORY_CHARACTER_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "400", description = "INVALID_DORMCATEGORY_CHARACTER"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/posts/{dormitory-category}/top")
@@ -192,10 +187,8 @@ public class PostController {
       @ApiResponse(
           responseCode = "200", description = "POST_FOUND",
           content = @Content(schema = @Schema(implementation = PostResponse.class))),
-      @ApiResponse(responseCode = "400", description = "POSTID_NEGATIVEORZERO_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
-      @ApiResponse(responseCode = "404",
-          description = "POST_NOT_FOUND / DELETED_POST"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+      @ApiResponse(responseCode = "404", description = "POST_NOT_FOUND / DELETED_POST"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/posts/{post-id}")

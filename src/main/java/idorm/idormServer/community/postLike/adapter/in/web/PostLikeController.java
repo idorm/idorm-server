@@ -43,14 +43,13 @@ public class PostLikeController {
       @ApiResponse(
           responseCode = "200", description = "MEMBER_LIKED_POST",
           content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400", description = "POSTID_NEGATIVEORZERO_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "404", description = "POST_NOT_FOUND / DELETED_POST"),
       @ApiResponse(responseCode = "409",
           description = "DUPLICATE_LIKED / CANNOT_LIKED_SELF / CANNOT_LIKED_POST_BY_DELETED_MEMBER"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
-  @PutMapping("/post/{post-id}/like")
+  @PutMapping("/posts/{post-id}/like")
   public ResponseEntity<SuccessResponse<Object>> savePostLikes(
       @AuthInfo AuthResponse authResponse,
       @PathVariable("post-id")
@@ -67,13 +66,11 @@ public class PostLikeController {
       @ApiResponse(
           responseCode = "200", description = "MEMBER_LIKED_POST_CANCELED",
           content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400", description = "POSTID_NEGATIVEORZERO_INVALID"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
-      @ApiResponse(responseCode = "404",
-          description = "POST_NOT_FOUND / DELETED_POST / POSTLIKEDMEMBER_NOT_FOUND"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+      @ApiResponse(responseCode = "404", description = "POST_NOT_FOUND / DELETED_POST / POSTLIKEDMEMBER_NOT_FOUND"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
-  @DeleteMapping("/post/{post-id}/like")
+  @DeleteMapping("/posts/{post-id}/likes/{like-id}")
   public ResponseEntity<SuccessResponse<Object>> deletePostLikes(
       @AuthInfo AuthResponse authResponse,
       @PathVariable("post-id")
@@ -90,7 +87,7 @@ public class PostLikeController {
       @ApiResponse(
           responseCode = "200", description = "LIKED_POST_MANY_FOUND",
           content = @Content(schema = @Schema(implementation = PostListResponse.class))),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
+      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/posts/likes/me")
