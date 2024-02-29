@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import idorm.idormServer.auth.adapter.out.exception.AccessDeniedAdminException;
 import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedAccessTokenException;
+import io.swagger.v3.oas.annotations.Hidden;
 
+@Hidden
 @RestController
 public class ErrorController {
 

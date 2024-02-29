@@ -14,16 +14,24 @@ public class NotificationRequest {
 	private String token;
 	private NotificationMessage message;
 
-	@Getter
 	@AllArgsConstructor
-	public class NotificationMessage {
+	@Builder
+	public static class NotificationMessage {
 
 		private FcmChannel notifyType;
-
 		private Long contentId;
 
+		@Getter
 		private String title;
-
+		@Getter
 		private String content;
+
+		public String getNotifyType() {
+			return notifyType.name();
+		}
+
+		public String getContentId() {
+			return contentId.toString();
+		}
 	}
 }
