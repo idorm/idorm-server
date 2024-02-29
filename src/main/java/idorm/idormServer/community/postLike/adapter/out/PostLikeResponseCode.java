@@ -13,9 +13,9 @@ import lombok.RequiredArgsConstructor;
 public enum PostLikeResponseCode implements BaseResponseCode {
 
 	//성공
-	LIKED_POST_MANY_FOUND(OK, "PostDomain 로그인한 멤버가 공감한 게시글 조회 완료"),
-	MEMBER_LIKED_POST(OK, "PostDomain 게시글 공감 완료"),
-	MEMBER_LIKED_POST_CANCELED(OK, "PostDomain 게시글 공감 삭제 완료"),
+	LIKED_POST_MANY_FOUND(OK, "Post 로그인한 멤버가 공감한 게시글 조회 완료"),
+	MEMBER_LIKED_POST(OK, "Post 게시글 공감 완료"),
+	MEMBER_LIKED_POST_CANCELED(OK, "Post 게시글 공감 삭제 완료"),
 
 	//실패
 	NOT_FOUND_POSTLIKE(NOT_FOUND, "공감하지 않은 게시글 입니다."),
