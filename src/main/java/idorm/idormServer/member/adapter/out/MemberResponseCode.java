@@ -36,7 +36,7 @@ public enum MemberResponseCode implements BaseResponseCode {
 	NOT_FOUND_MEMBER(NOT_FOUND, "등록된 멤버가 없습니다."),
 	NOT_FOUND_PROFILE_PHOTO(NOT_FOUND, "등록된 프로필 사진이 없습니다."),
 
-	DUPLICATED_MEMBER(HttpStatus.CONFLICT, "등록된 멤버 입니다."),
+	DUPLICATED_MEMBER(HttpStatus.CONFLICT, "등록된 멤버 입니다."), // TODO: 팀으로 이동
 	DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "등록된 닉네임 입니다."),
 	DUPLICATED_SAME_NICKNAME(HttpStatus.CONFLICT, "기존의 닉네임과 동일합니다."),
 	CANNOT_UPDATE_NICKNAME(HttpStatus.CONFLICT, "닉네임은 30일 간격으로 변경 가능합니다.");

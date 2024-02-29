@@ -30,7 +30,6 @@ import idorm.idormServer.member.application.port.in.dto.NicknameUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.PasswordUpdateRequest;
 import idorm.idormServer.member.application.port.in.dto.SignupRequest;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -53,12 +52,11 @@ public class MemberController {
 		@ApiResponse(
 			responseCode = "201", description = "MEMBER_REGISTERED",
 			content = @Content(schema = @Schema(implementation = Object.class))),
-		@ApiResponse(responseCode = "400",
-			description = "FIELD_REQUIRED / *_CHARACTER_INVALID / *_LENGTH_INVALID"),
+		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / INVALID_NICKNAME_CHARACTER / "
+			+ "INVALID_PASSWORD_CHARACTER"),
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_EMAIL"),
-		@ApiResponse(responseCode = "404", description = "EMAIL_NOT_FOUND"),
-		@ApiResponse(responseCode = "409",
-			description = "DUPLICATE_EMAIL / DUPLICATE_NICKNAME"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_EMAIL"),
+		@ApiResponse(responseCode = "409", description = "DUPLICATED_EMAIL / DUPLICATED_NICKNAME"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
 	@ResponseStatus(HttpStatus.CREATED)
@@ -77,7 +75,7 @@ public class MemberController {
 			responseCode = "200", description = "MEMBER_FOUND",
 			content = @Content(schema = @Schema(implementation = MemberInfoResponse.class))),
 		@ApiResponse(responseCode = "400", description = "FILED_REQUIRED"),
-		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_EMAIL"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_EMAIL / UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_EMAIL"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
@@ -95,7 +93,8 @@ public class MemberController {
 		@ApiResponse(
 			responseCode = "200", description = "NICKNAME_UPDATED",
 			content = @Content(schema = @Schema(implementation = Object.class))),
-		@ApiResponse(responseCode = "400", description = "FILED_REQUIRED / INVALID_NICKNAME_CHARACTER"),
+		@ApiResponse(responseCode = "400", description = "FILED_REQUIRED"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
 		@ApiResponse(responseCode = "409", description = "DUPLICATED_NICKNAME"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
@@ -119,8 +118,7 @@ public class MemberController {
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_EMAIL / EXPIRED_EMAIL_VERIFICATION_CODE"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_EMAIL"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-	}
-	)
+	})
 	@PatchMapping("/members/me/password")
 	public ResponseEntity<SuccessResponse<Object>> editPassword(
 		@RequestBody @Valid PasswordUpdateRequest request
@@ -135,10 +133,10 @@ public class MemberController {
 		@ApiResponse(
 			responseCode = "200", description = "MEMBER_DELETED",
 			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-	}
-	)
+	})
 	@DeleteMapping("/members/me")
 	public ResponseEntity<SuccessResponse<Object>> deleteAccount(
 		@AuthInfo AuthResponse auth
@@ -153,6 +151,7 @@ public class MemberController {
 		@ApiResponse(
 			responseCode = "201", description = "PROFILE_PHOTO_SAVED",
 			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_FILE"),
 		@ApiResponse(responseCode = "413", description = "EXCEED_FILE_SIZE"),
 		@ApiResponse(responseCode = "415", description = "UNSUPPORTED_FILE_TYPE"),
@@ -174,7 +173,7 @@ public class MemberController {
 		@ApiResponse(
 			responseCode = "200", description = "PROFILE_PHOTO_DELETED",
 			content = @Content(schema = @Schema(implementation = Object.class))),
-		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_FILE"),
 		@ApiResponse(responseCode = "413", description = "EXCEED_FILE_SIZE"),
 		@ApiResponse(responseCode = "415", description = "UNSUPPORTED_FILE_TYPE"),

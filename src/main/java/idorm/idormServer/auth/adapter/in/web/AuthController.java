@@ -103,8 +103,8 @@ public class AuthController {
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200", description = "MEMBER_LOGOUT"),
-		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_PASSWORD"),
-		@ApiResponse(responseCode = "404", description = "MEMBER_NOT_FOUND"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	}
 	)

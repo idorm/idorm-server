@@ -52,6 +52,7 @@ public class MatchingInfoController {
 			+ "INVALID_WAKEUPTIME_LENGTH / INVALID_CLEENUP_STATUS_LENGTH / INVALID_SHOWERTIME_LENGTH / "
 			+ "INVALID_MBTI_LENGTH / INVALID_MBTI_CHARACTER / INVALID_DORMCATEGORY_CHARACTER / "
 			+ "INVALID_JOIN_PERIOD_CHARACTER / INVALID_GENDER_CHARACTER / INVALID_AGE_LENGTH / INVALID_WISHTEXT_LENGTH"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
 		@ApiResponse(responseCode = "409", description = "DUPLICATE_MATCHINGINFO"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
@@ -76,6 +77,7 @@ public class MatchingInfoController {
 			+ "INVALID_WAKEUPTIME_LENGTH / INVALID_CLEENUP_STATUS_LENGTH / INVALID_SHOWERTIME_LENGTH / "
 			+ "INVALID_MBTI_LENGTH / INVALID_MBTI_CHARACTER / INVALID_DORMCATEGORY_CHARACTER / "
 			+ "INVALID_JOIN_PERIOD_CHARACTER / INVALID_GENDER_CHARACTER / INVALID_AGE_LENGTH / INVALID_WISHTEXT_LENGTH"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_MATCHINGINFO"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
@@ -91,8 +93,11 @@ public class MatchingInfoController {
 	@Auth
 	@Operation(summary = "온보딩 공개 여부 수정", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "ISMATCHINGINFOPUBLIC_UPDATED"),
+		@ApiResponse(
+			responseCode = "200", description = "ISMATCHINGINFOPUBLIC_UPDATED",
+			content = @Content(schema = @Schema(implementation = Object.class))),
 		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_MATCHINGINFO"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
@@ -111,6 +116,7 @@ public class MatchingInfoController {
 		@ApiResponse(
 			responseCode = "200", description = "MATCHINGINFO_FOUND",
 			content = @Content(schema = @Schema(implementation = MatchingInfoResponse.class))),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_MATCHINGINFO"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
@@ -126,7 +132,9 @@ public class MatchingInfoController {
 	@Operation(summary = "온보딩 삭제", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
-			responseCode = "200", description = "MATCHINGINFO_DELETED"),
+			responseCode = "200", description = "MATCHINGINFO_DELETED",
+			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
