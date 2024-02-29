@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import idorm.idormServer.auth.adapter.out.api.exception.UnAuthorizedRefreshTokenException;
+import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedRefreshTokenException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

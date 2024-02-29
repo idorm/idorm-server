@@ -1,6 +1,6 @@
 package idorm.idormServer.member.adapter.out.exception;
 
-import idorm.idormServer.auth.adapter.out.api.AuthResponseCode;
+import idorm.idormServer.auth.adapter.out.AuthResponseCode;
 import idorm.idormServer.common.exception.BaseException;
 
 public class NotFoundTokenException extends BaseException {
