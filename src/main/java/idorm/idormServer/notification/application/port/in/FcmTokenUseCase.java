@@ -5,4 +5,6 @@ import idorm.idormServer.notification.application.port.in.dto.RegisterTokenReque
 public interface FcmTokenUseCase {
 
 	void save(RegisterTokenRequest event);
+
+	void expire(Long memberId);
 }

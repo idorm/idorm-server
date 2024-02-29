@@ -36,7 +36,6 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 		RefreshToken savedToken = loadRefreshTokenPort.load(memberId);
 
 		if (!jwtTokenUseCase.isValid(savedToken.getToken())) {
-
 			deleteRefreshTokenPort.delete(savedToken);
 			throw new UnAuthorizedRefreshTokenException();
 		}

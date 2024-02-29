@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.notification.application.port.in.FcmTokenUseCase;
 import idorm.idormServer.notification.application.port.in.dto.RegisterTokenRequest;
+import idorm.idormServer.notification.application.port.out.DeleteFcmTokenPort;
 import idorm.idormServer.notification.application.port.out.LoadFcmTokenPort;
 import idorm.idormServer.notification.application.port.out.SaveFcmTokenPort;
 import idorm.idormServer.notification.entity.FcmToken;
@@ -16,6 +17,7 @@ public class FcmTokenService implements FcmTokenUseCase {
 
 	private final LoadFcmTokenPort loadFcmTokenPort;
 	private final SaveFcmTokenPort saveFcmTokenPort;
+	private final DeleteFcmTokenPort deleteFcmTokenPort;
 
 	@Override
 	@Transactional
@@ -23,5 +25,11 @@ public class FcmTokenService implements FcmTokenUseCase {
 		loadFcmTokenPort.load(event.memberId())
 			.ifPresentOrElse(fcmToken -> fcmToken.updateToken(event.fcmToken()),
 				() -> saveFcmTokenPort.save(new FcmToken(event.memberId(), event.fcmToken())));
+	}
+
+	@Override
+	@Transactional
+	public void expire(final Long memberId) {
+		deleteFcmTokenPort.deleteAll(memberId);
 	}
 }

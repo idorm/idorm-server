@@ -27,6 +27,8 @@ import idorm.idormServer.auth.application.port.in.RefreshTokenUseCase;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.application.port.in.dto.LoginRequest;
 import idorm.idormServer.common.response.SuccessResponse;
+import idorm.idormServer.notification.application.port.in.FcmTokenUseCase;
+import idorm.idormServer.notification.application.port.in.dto.RegisterTokenRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -43,6 +45,7 @@ public class AuthController {
 	private final AuthUseCase authUseCase;
 	private final JwtTokenUseCase jwtTokenUseCase;
 	private final RefreshTokenUseCase refreshTokenUseCase;
+	private final FcmTokenUseCase fcmTokenUseCase;
 
 	@Operation(summary = "회원 및 관리자 로그인")
 	@ApiResponses(value = {
@@ -61,6 +64,7 @@ public class AuthController {
 		String accessToken = jwtTokenUseCase.createAccessToken(auth);
 		String refreshToken = jwtTokenUseCase.createRefreshToken();
 		refreshTokenUseCase.saveToken(refreshToken, auth.getId());
+		fcmTokenUseCase.save(new RegisterTokenRequest(auth.getId(), request.fcmToken()));
 
 		return ResponseEntity.ok()
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -109,7 +113,7 @@ public class AuthController {
 		@AuthInfo AuthResponse auth
 	) {
 		refreshTokenUseCase.expire(auth.getId());
-		// TODO : fcm 토큰 만료
+		fcmTokenUseCase.expire(auth.getId());
 		return ResponseEntity.ok().body(SuccessResponse.from(MEMBER_LOGOUT));
 	}
 
