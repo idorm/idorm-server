@@ -26,8 +26,7 @@ public enum PostResponseCode implements BaseResponseCode {
 	INVALID_TITLE_LENGTH(BAD_REQUEST, "게시글 제목은 1~30자 이내여야 합니다."),
 	INVALID_CONTENT_LENGTH(BAD_REQUEST, "게시글 혹은 댓글 내용은 1~50자 이내여야 합니다."),
 
-	ACCESS_DENIED_POST(FORBIDDEN, "게시글 접근 권한이 없습니다"),
-	ACCESS_DENIED_UPDATE_POST(FORBIDDEN, "게시글 업데이트 권한이 없습니다"),
+	ACCESS_DENIED_POST(FORBIDDEN, "게시글 권한이 없습니다"),
 
 	NOT_FOUND_POST(NOT_FOUND, "등록된 게시글이 없습니다."),
 	ALREADY_DELETED_POST(NOT_FOUND, "삭제된 게시글 입니다.");
