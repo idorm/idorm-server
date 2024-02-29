@@ -3,7 +3,7 @@ package idorm.idormServer.member.adapter.out.persistence;
 import org.springframework.stereotype.Component;
 
 import idorm.idormServer.auth.adapter.out.exception.LoginFailedException;
-import idorm.idormServer.email.adapter.out.api.exception.DuplicatedEmailException;
+import idorm.idormServer.email.adapter.out.exception.DuplicatedEmailException;
 import idorm.idormServer.member.adapter.out.exception.DuplicatedNicknameException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;

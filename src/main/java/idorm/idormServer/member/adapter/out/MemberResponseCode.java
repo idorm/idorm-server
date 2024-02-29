@@ -25,21 +25,20 @@ public enum MemberResponseCode implements BaseResponseCode {
 	PROFILE_PHOTO_SAVED(CREATED, "회원 프로필 사진 저장 완료"),
 
 	//실패
-	INVALID_PASSWORD_CHARACTER(HttpStatus.BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
-	INVALID_PASSWORD_LENGTH(HttpStatus.BAD_REQUEST, "비밀번호는 8~15자 이내여야 합니다."),
-	INVALID_NICKNAME_CHARACTER(HttpStatus.BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
-	INVALID_NICKNAME_LENGTH(HttpStatus.BAD_REQUEST, "닉네임은 2~8자만 이내여야 합니다."),
+	INVALID_PASSWORD_CHARACTER(BAD_REQUEST, "올바른 형식의 비밀번호가 아닙니다."),
+	INVALID_PASSWORD_LENGTH(BAD_REQUEST, "비밀번호는 8~15자 이내여야 합니다."),
+	INVALID_NICKNAME_CHARACTER(BAD_REQUEST, "올바른 형식의 닉네임이 아닙니다."),
+	INVALID_NICKNAME_LENGTH(BAD_REQUEST, "닉네임은 2~8자만 이내여야 합니다."),
 
+	UNAUTHORIZED_EMAIL(UNAUTHORIZED, "인증이 되지 않은 이메일 입니다."),
 	UNAUTHORIZED_PASSWORD(UNAUTHORIZED, "올바른 비밀번호가 아닙니다."),
 	UNAUTHORIZED_DELETED_MEMBER(UNAUTHORIZED, "탈퇴한 회원입니다. 로그아웃이 필요합니다."),
 
 	NOT_FOUND_MEMBER(NOT_FOUND, "등록된 멤버가 없습니다."),
 	NOT_FOUND_PROFILE_PHOTO(NOT_FOUND, "등록된 프로필 사진이 없습니다."),
 
-	DUPLICATED_MEMBER(HttpStatus.CONFLICT, "등록된 멤버 입니다."), // TODO: 팀으로 이동
-	DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "등록된 닉네임 입니다."),
-	DUPLICATED_SAME_NICKNAME(HttpStatus.CONFLICT, "기존의 닉네임과 동일합니다."),
-	CANNOT_UPDATE_NICKNAME(HttpStatus.CONFLICT, "닉네임은 30일 간격으로 변경 가능합니다.");
+	DUPLICATED_NICKNAME(CONFLICT, "등록된 닉네임 입니다."),
+	CANNOT_UPDATE_NICKNAME(CONFLICT, "닉네임은 30일 간격으로 변경 가능합니다.");
 
 	private final HttpStatus status;
 	private final String message;

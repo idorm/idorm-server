@@ -12,7 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import idorm.idormServer.email.adapter.out.api.exception.EmailServerErrorException;
+import idorm.idormServer.email.adapter.out.exception.EmailServerErrorException;
 import idorm.idormServer.email.application.port.out.SendEmailPort;
 import idorm.idormServer.email.entity.Email;
 

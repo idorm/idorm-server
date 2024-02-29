@@ -9,7 +9,7 @@ import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.community.comment.entity.Comment;
 import idorm.idormServer.community.post.entity.Post;
-import idorm.idormServer.matchingInfo.adapter.out.exception.IllegalStatementMatchingInfoNonPublicException;
+import idorm.idormServer.matchingMate.adapter.out.exception.IllegalStatementMatchingInfoNonPublicException;
 import idorm.idormServer.matchingInfo.adapter.out.exception.NotFoundMatchingInfoException;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedFavoriteMateException;
@@ -18,7 +18,7 @@ import idorm.idormServer.matchingMate.adapter.out.exception.NotFoundDisLikedMemb
 import idorm.idormServer.matchingMate.adapter.out.exception.NotFoundLikedMemberException;
 import idorm.idormServer.matchingMate.entity.MatchingMate;
 import idorm.idormServer.matchingMate.entity.MatePreferenceType;
-import idorm.idormServer.photo.adapter.out.api.exception.NotFoundFileException;
+import idorm.idormServer.photo.adapter.out.exception.NotFoundFileException;
 import idorm.idormServer.report.entity.Report;
 import java.util.ArrayList;
 import java.util.List;

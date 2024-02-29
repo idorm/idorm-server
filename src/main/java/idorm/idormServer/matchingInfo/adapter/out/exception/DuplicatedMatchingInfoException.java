@@ -6,6 +6,6 @@ import idorm.idormServer.matchingInfo.adapter.out.MatchingInfoResponseCode;
 public class DuplicatedMatchingInfoException extends BaseException {
 
   public DuplicatedMatchingInfoException() {
-    super(MatchingInfoResponseCode.DUPLICATE_MATCHINGINFO);
+    super(MatchingInfoResponseCode.DUPLICATED_MATCHINGINFO);
   }
 }

@@ -6,6 +6,6 @@ import idorm.idormServer.matchingMate.adapter.out.MatchingMateResponseCode;
 public class NotFoundDisLikedMemberException extends BaseException {
 
   public NotFoundDisLikedMemberException() {
-    super(MatchingMateResponseCode.NOT_FOUD_DISLIKEDMEMBER);
+    super(MatchingMateResponseCode.NOT_FOUND_DISLIKEDMEMBER);
   }
 }

@@ -1,7 +1,7 @@
 package idorm.idormServer.common.exception;
 
 import idorm.idormServer.common.response.ErrorResponse;
-import idorm.idormServer.photo.adapter.out.api.PhotoResponseCode;
+import idorm.idormServer.photo.adapter.out.PhotoResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

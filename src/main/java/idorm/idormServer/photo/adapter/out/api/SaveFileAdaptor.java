@@ -18,9 +18,9 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.member.entity.Member;
-import idorm.idormServer.photo.adapter.out.api.exception.NotFoundFileException;
-import idorm.idormServer.photo.adapter.out.api.exception.S3ClientException;
-import idorm.idormServer.photo.adapter.out.api.exception.UnsupportedFileTypeException;
+import idorm.idormServer.photo.adapter.out.exception.NotFoundFileException;
+import idorm.idormServer.photo.adapter.out.exception.S3ClientException;
+import idorm.idormServer.photo.adapter.out.exception.UnsupportedFileTypeException;
 import idorm.idormServer.photo.application.port.out.SaveFilePort;
 import lombok.RequiredArgsConstructor;
 

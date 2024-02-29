@@ -1,11 +1,11 @@
-package idorm.idormServer.email.adapter.out.api.exception;
+package idorm.idormServer.email.adapter.out.exception;
 
 import idorm.idormServer.common.exception.BaseException;
-import idorm.idormServer.email.adapter.out.api.EmailResponseCode;
+import idorm.idormServer.email.adapter.out.EmailResponseCode;
 
 public class ExpiredEmailVerificationCodeException extends BaseException {
 
   public ExpiredEmailVerificationCodeException() {
-    super(EmailResponseCode.EXPIRED_EMAIL_VERIFICATION_CODE);
+    super(EmailResponseCode.EXPIRED_VERIFICATION_CODE);
   }
 }

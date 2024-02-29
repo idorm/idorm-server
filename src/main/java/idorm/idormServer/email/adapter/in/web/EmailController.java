@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-import static idorm.idormServer.email.adapter.out.api.EmailResponseCode.*;
+import static idorm.idormServer.email.adapter.out.EmailResponseCode.*;
 
 @Tag(name = "1. Email", description = "이메일 인증 api")
 @RestController
@@ -52,7 +52,7 @@ public class EmailController {
             @ApiResponse(responseCode = "200", description = "EMAIL_VERIFIED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400", description = "FIELD_REQUIRED"),
-            @ApiResponse(responseCode = "401", description = "INVALID_VERIFICATION_CODE / EXPIRED_EMAIL_VERIFICATION_CODE"),
+            @ApiResponse(responseCode = "401", description = "INVALID_VERIFICATION_CODE / EXPIRED_VERIFICATION_CODE"),
             @ApiResponse(responseCode = "404", description = "EMAIL_NOT_FOUND"),
             @ApiResponse(responseCode = "409", description = "DUPLICATE_EMAIL"),
             @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
@@ -90,7 +90,7 @@ public class EmailController {
             @ApiResponse(responseCode = "200", description = "REGISTERED_EMAIL_VERIFIED",
                     content = @Content(schema = @Schema(implementation = Object.class))),
             @ApiResponse(responseCode = "400", description = "FIELD_REQUIRED"),
-            @ApiResponse(responseCode = "401", description = "INVALID_VERIFICATION_CODE / EXPIRED_EMAIL_VERIFICATION_CODE"),
+            @ApiResponse(responseCode = "401", description = "INVALID_VERIFICATION_CODE / EXPIRED_VERIFICATION_CODE"),
             @ApiResponse(responseCode = "404", description = "NOT_FOUND_EMAIL / NOT_FOUND_MEMBER"),
             @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
     }

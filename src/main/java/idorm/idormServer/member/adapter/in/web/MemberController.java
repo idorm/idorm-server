@@ -115,7 +115,7 @@ public class MemberController {
 			responseCode = "200", description = "PASSWORD_UPDATED",
 			content = @Content(schema = @Schema(implementation = Object.class))),
 		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / INVALID_PASSWORD_CHARACTER"),
-		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_EMAIL / EXPIRED_EMAIL_VERIFICATION_CODE"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_EMAIL / EXPIRED_VERIFICATION_CODE"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_EMAIL"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})

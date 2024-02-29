@@ -6,7 +6,7 @@ import idorm.idormServer.common.exception.BaseException;
 public class AlreadyDeletedMemberException extends BaseException {
 
   public AlreadyDeletedMemberException() {
-    super(CalendarResponseCode.ALREADT_DELETED_MEMBER);
+    super(CalendarResponseCode.ALREADY_DELETED_MEMBER);
   }
 
 }

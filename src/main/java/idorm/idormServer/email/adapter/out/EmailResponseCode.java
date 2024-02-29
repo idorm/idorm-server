@@ -1,4 +1,4 @@
-package idorm.idormServer.email.adapter.out.api;
+package idorm.idormServer.email.adapter.out;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -26,8 +26,7 @@ public enum EmailResponseCode implements BaseResponseCode {
   INVALID_EMAIL_CHARACTER(BAD_REQUEST, "올바른 형식의 이메일이 아닙니다."),
 
   INVALID_VERIFICATION_CODE(UNAUTHORIZED, "올바르지 않은 코드 입니다."),
-  UNAUTHORIZED_EMAIL(UNAUTHORIZED, "인증이 되지 않은 이메일 입니다."),
-  EXPIRED_EMAIL_VERIFICATION_CODE(UNAUTHORIZED, "이메일 인증 유효시간이 초과되었습니다."),
+  EXPIRED_VERIFICATION_CODE(UNAUTHORIZED, "이메일 인증 유효시간이 초과되었습니다."),
 
   NOT_FOUND_EMAIL(NOT_FOUND, "등록된 이메일이 없습니다."),
 

@@ -27,7 +27,7 @@ import idorm.idormServer.community.postLike.entity.PostLike;
 import idorm.idormServer.community.postPhoto.entity.PostPhoto;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.member.entity.Member;
-import idorm.idormServer.photo.adapter.out.api.exception.ExceedFileCountException;
+import idorm.idormServer.photo.adapter.out.exception.ExceedFileCountException;
 import idorm.idormServer.report.entity.Report;
 import lombok.AccessLevel;
 import lombok.Getter;
