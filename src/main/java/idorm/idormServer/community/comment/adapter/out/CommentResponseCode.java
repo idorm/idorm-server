@@ -22,7 +22,6 @@ public enum CommentResponseCode implements BaseResponseCode {
 	INVALID_CONTENT_LENGTH(BAD_REQUEST, "댓글 내용은 1~50자 이내여야 합니다."),
 
 	ACCESS_DENIED_COMMENT(FORBIDDEN, "댓글 접근 권한이 없습니다."),
-	ACCESS_DENIED_UPDATE_COMMENT(FORBIDDEN, "댓글 업데이트 권한이 없습니다"),
 
 	NOT_FOUND_COMMENT(NOT_FOUND, "등록된 댓글이 없습니다."),
 	ALREADY_DELETED_COMMENT(NOT_FOUND, "삭제된 댓글 입니다."),
