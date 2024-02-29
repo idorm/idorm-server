@@ -33,7 +33,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "3. Team", description = "룸메이트 팀원 관리 api")
+@Tag(name = "9. Team", description = "룸메이트 팀원 관리 api")
 @Validated
 @RestController
 @RequestMapping("api/v1")

@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "4. Team Calendar", description = "룸메이트 팀 일정 api")
+@Tag(name = "X. Team Calendar", description = "룸메이트 팀 일정 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1")

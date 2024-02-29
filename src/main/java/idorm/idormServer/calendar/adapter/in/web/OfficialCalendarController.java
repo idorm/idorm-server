@@ -38,7 +38,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "2. Official Calendar", description = "공식 일정 api")
+@Tag(name = "X2. Official Calendar", description = "공식 일정 api")
 @RestController
 @RequestMapping("api/v1")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)

@@ -41,7 +41,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "4. Sleepover Calendar", description = "룸메이트 팀 일정 api")
+@Tag(name = "X1. Sleepover Calendar", description = "룸메이트 팀 일정 api")
 @Validated
 @RestController
 @RequestMapping("api/v1")

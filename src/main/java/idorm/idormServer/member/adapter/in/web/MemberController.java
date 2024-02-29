@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "1. Member", description = "회원 api")
+@Tag(name = "3. Member", description = "회원 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
