@@ -1,6 +1,6 @@
 package idorm.idormServer.auth.adapter.in.web;
 
-import static idorm.idormServer.auth.adapter.out.api.AuthResponseCode.*;
+import static idorm.idormServer.auth.adapter.out.AuthResponseCode.*;
 import static org.springframework.http.HttpHeaders.*;
 
 import java.util.Objects;
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import idorm.idormServer.auth.adapter.in.api.Auth;
 import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.auth.adapter.in.api.AuthorizationExtractor;
-import idorm.idormServer.auth.adapter.out.api.AuthResponseCode;
-import idorm.idormServer.auth.adapter.out.api.exception.UnAuthorizedRefreshTokenException;
+import idorm.idormServer.auth.adapter.out.AuthResponseCode;
+import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedRefreshTokenException;
 import idorm.idormServer.auth.application.port.in.AuthUseCase;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import idorm.idormServer.auth.application.port.in.RefreshTokenUseCase;

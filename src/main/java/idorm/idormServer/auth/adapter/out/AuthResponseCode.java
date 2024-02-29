@@ -1,4 +1,4 @@
-package idorm.idormServer.auth.adapter.out.api;
+package idorm.idormServer.auth.adapter.out;
 
 import static org.springframework.http.HttpStatus.*;
 

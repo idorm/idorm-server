@@ -2,7 +2,7 @@ package idorm.idormServer.auth.adapter.out.persistence;
 
 import org.springframework.stereotype.Component;
 
-import idorm.idormServer.auth.adapter.out.api.exception.UnAuthorizedRefreshTokenException;
+import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedRefreshTokenException;
 import idorm.idormServer.auth.application.port.out.LoadRefreshTokenPort;
 import idorm.idormServer.auth.entity.RefreshToken;
 import lombok.RequiredArgsConstructor;

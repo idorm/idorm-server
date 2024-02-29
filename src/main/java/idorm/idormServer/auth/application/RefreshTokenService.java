@@ -3,7 +3,7 @@ package idorm.idormServer.auth.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import idorm.idormServer.auth.adapter.out.api.exception.UnAuthorizedRefreshTokenException;
+import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedRefreshTokenException;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import idorm.idormServer.auth.application.port.in.RefreshTokenUseCase;
 import idorm.idormServer.auth.application.port.out.DeleteRefreshTokenPort;
