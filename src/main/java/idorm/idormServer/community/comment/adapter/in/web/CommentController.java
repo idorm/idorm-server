@@ -35,7 +35,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "5. CommentDomain", description = "댓글 api")
+@Tag(name = "5. Comment", description = "댓글 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -43,7 +43,7 @@ public class CommentController {
 
 	private final CommentUseCase commentUseCase;
 
-	@Auth
+	//	@Auth
 	@Operation(summary = "댓글/대댓글 저장", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -58,8 +58,9 @@ public class CommentController {
 	})
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping(value = "/posts/{post-id}/comments")
-	public ResponseEntity<SuccessResponse<Object>> saveComment(
-		@AuthInfo AuthResponse authResponse,
+	public ResponseEntity<SuccessResponse<Object>> save(
+//			@AuthInfo
+			AuthResponse authResponse,
 		@PathVariable("post-id")
 		@Positive(message = "게시글 식별자는 양수만 가능합니다.")
 		Long postId,
@@ -69,7 +70,7 @@ public class CommentController {
 		return ResponseEntity.ok().body(SuccessResponse.from(COMMENT_SAVED));
 	}
 
-	@Auth
+	//	@Auth
 	@DeleteMapping(value = "/post/{post-id}/comment/{comment-id}")
 	@Operation(summary = "댓글 삭제", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
@@ -84,8 +85,9 @@ public class CommentController {
 			+ "ALREADY_DELETED_COMMENT"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
-	public ResponseEntity<SuccessResponse<Object>> deleteComment(
-		@AuthInfo AuthResponse authResponse,
+	public ResponseEntity<SuccessResponse<Object>> delete(
+//			@AuthInfo
+			AuthResponse authResponse,
 		@PathVariable("post-id")
 		@Positive(message = "게시글 식별자는 양수만 가능합니다.")
 		Long postId,
@@ -97,7 +99,7 @@ public class CommentController {
 		return ResponseEntity.ok().body(SuccessResponse.from(COMMENT_DELETED));
 	}
 
-	@Auth
+	//	@Auth
 	@Operation(summary = "내가 작성한 댓글 목록 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@ApiResponses(value = {
 		@ApiResponse(
@@ -108,9 +110,10 @@ public class CommentController {
 	})
 	@GetMapping(value = "/comments/me")
 	public ResponseEntity<SuccessResponse<Object>> findCommentsByMember(
-		@AuthInfo AuthResponse authResponse
+//			@AuthInfo
+			AuthResponse authResponse
 	) {
-		List<CommentResponse> responses = commentUseCase.findCommentsByMember(authResponse);
+		List<CommentResponse> responses = commentUseCase.findAllByMember(authResponse);
 		return ResponseEntity.ok().body(SuccessResponse.of(COMMENT_MANY_FOUND, responses));
 	}
 }

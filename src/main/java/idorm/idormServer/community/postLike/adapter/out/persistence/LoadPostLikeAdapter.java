@@ -1,5 +1,9 @@
 package idorm.idormServer.community.postLike.adapter.out.persistence;
 
+import static idorm.idormServer.community.post.entity.QPost.post;
+import static idorm.idormServer.community.postLike.entity.QPostLike.postLike;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoadPostLikeAdapter implements LoadPostLikePort {
 
+	private final JPAQueryFactory queryFactory;
 	private final PostLikeMemberRepository postLikeMemberRepository;
 
 	@Override
@@ -27,8 +32,14 @@ public class LoadPostLikeAdapter implements LoadPostLikePort {
 	}
 
 	@Override
-	public List<PostLike> findAllByPost(Post post) {
-		return postLikeMemberRepository.findAllByPost(post);
+	public List<PostLike> findByMemberId(Long memberId) {
+		return queryFactory.select(postLike)
+				.from(postLike)
+				.join(postLike.post, post)
+				.where(post.isDeleted.eq(false)
+						.and(postLike.memberId.eq(memberId)))
+				.orderBy(postLike.id.desc())
+				.fetch();
 	}
 
 	@Override

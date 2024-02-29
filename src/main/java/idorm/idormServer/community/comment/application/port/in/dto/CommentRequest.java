@@ -10,7 +10,7 @@ public record CommentRequest(
 	Boolean isAnonymous,
 	Long parentCommentId
 ) {
-	public boolean isChild() {
-		return parentCommentId != null;
+	public boolean isParent() {
+		return parentCommentId == 0;
 	}
 }

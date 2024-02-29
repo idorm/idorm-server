@@ -12,11 +12,7 @@ public interface LoadPostPort {
 
 	Post findById(Long postId);
 
-	Post findByIdAndIsDeletedIsFalse(Long postId);
-
 	Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
-
-	List<Post> findLikePostsByMemberId(Long memberId);
 
 	List<Post> findTopPostsByDormCateogry(DormCategory dormCategory);
 

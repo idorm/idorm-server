@@ -17,7 +17,7 @@ public interface PostLikeMemberRepository extends JpaRepository<PostLike, Long> 
   //     "ORDER BY plm.created_at DESC", nativeQuery = true)
   // List<PostLikeDomain> findAllByMemberId(@Param("memberId") Long memberId);
 
-  List<PostLike> findAllByPost(Post post);
+  List<PostLike> findByMemberId(Long memberId);
 
   boolean existsByMemberIdAndPostId(Long memberId, Long postId);
 

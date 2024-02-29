@@ -42,11 +42,10 @@ public class LoadCommentAdapter implements LoadCommentPort {
 				.and(comment.id.eq(commentId)))
 			.fetchOne();
 
-		if (response == null) {
-			throw new NotFoundPostLikeException();
-		} else {
+		if (response == null) throw new NotFoundPostLikeException();
+
 			return response;
-		}
+
 	}
 
 	@Override
@@ -59,7 +58,7 @@ public class LoadCommentAdapter implements LoadCommentPort {
 				.and(post.isDeleted.eq(false)))
 			.orderBy(comment.createdAt.asc())
 			.fetch();
-		return responses.isEmpty() ? new ArrayList<>() : responses;
+		return responses.isEmpty() ?  new ArrayList<>() : responses;
 	}
 
 	@Override
