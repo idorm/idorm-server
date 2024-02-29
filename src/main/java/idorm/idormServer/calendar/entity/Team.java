@@ -1,9 +1,9 @@
 package idorm.idormServer.calendar.entity;
 
 import idorm.idormServer.calendar.adapter.out.exception.AccessDeniedTeamException;
-import idorm.idormServer.calendar.adapter.out.exception.AlreadyDeletedMemberException;
 import idorm.idormServer.calendar.adapter.out.exception.CannotExplodeTeamException;
 import idorm.idormServer.calendar.adapter.out.exception.CannotRegisterTeamStatusFullException;
+import idorm.idormServer.calendar.adapter.out.exception.NotFoundTeamMemberException;
 import idorm.idormServer.common.entity.BaseTimeEntity;
 import idorm.idormServer.calendar.adapter.out.exception.DuplicatedMemberException;
 import idorm.idormServer.member.entity.Member;
@@ -61,7 +61,7 @@ public class Team extends BaseTimeEntity {
 
   public void deleteMember(Member member) {
     if (!this.members.contains(member)) {
-      throw new AlreadyDeletedMemberException();
+      throw new NotFoundTeamMemberException();
     }
     member.removeTeam();
     if (this.members.size() == 1) {

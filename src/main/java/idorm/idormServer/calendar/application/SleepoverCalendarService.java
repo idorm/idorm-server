@@ -78,8 +78,7 @@ public class SleepoverCalendarService implements SleepoverCalendarUseCase {
 		final SleepoverCalendar sleepoverCalendar = loadSleepoverCalendarPort.findByIdAndMemberId(sleepoverCalendarId,
 			authResponse.getId());
 
-		return SleepoverCalendarResponse.of(sleepoverCalendar,
-			participant(sleepoverCalendar.getMemberId()));
+		return SleepoverCalendarResponse.of(sleepoverCalendar, participant(sleepoverCalendar.getMemberId()));
 	}
 
 	@Override
@@ -99,17 +98,4 @@ public class SleepoverCalendarService implements SleepoverCalendarUseCase {
 	private SleepoverCalendarParticipantResponse participant(Long memberId) {
 		return SleepoverCalendarParticipantResponse.of(loadMemberPort.loadMember(memberId));
 	}
-
-	// private void validateUniqueDate(Long memberId, Period period) {
-	//   Long count = loadSleepoverCalendarPort.countOverlappingDates(memberId, period);
-	//   if (count > 0) {
-	//     throw new DuplicatedSleepoverDateException();
-	//   }
-	// }
-	//
-	// private void validateSleepoverCalendarAccessMember(Member member, TeamDomain team,
-	//     SleepoverCalendar sleepoverCalendar) {
-	//   team.validateTeamAccessMember(member);
-	//   sleepoverCalendar.validateSleepoverCalendarAceessMember(member);
-	// }
 }
