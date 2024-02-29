@@ -37,6 +37,7 @@ import idorm.idormServer.matchingMate.adapter.out.exception.DuplicatedNonFavorit
 import idorm.idormServer.matchingMate.adapter.out.exception.NotFoundDisLikedMemberException;
 import idorm.idormServer.matchingMate.adapter.out.exception.NotFoundLikedMemberException;
 import idorm.idormServer.matchingMate.entity.MatchingMate;
+import idorm.idormServer.matchingMate.entity.MatePreferenceType;
 import idorm.idormServer.photo.adapter.out.api.exception.NotFoundFileException;
 import idorm.idormServer.report.entity.Report;
 import lombok.AccessLevel;
@@ -161,30 +162,9 @@ public class Member {
 	public List<MatchingMate> getNonFavoriteMates() {
 		List<MatchingMate> results = this.matchingMates.stream()
 			.filter(MatchingMate::isPublic)
-			.filter(MatchingMate::isNonFavorte)
+			.filter(MatchingMate::isNonFavorite)
 			.collect(Collectors.toUnmodifiableList());
 		return results;
-	}
-
-	public void addMate(final MatchingMate newMate) {
-		Optional<MatchingMate> existMate = getDuplicateMate(newMate);
-		if (existMate.isEmpty()) {
-			this.matchingMates.add(newMate);
-			return;
-		}
-		validateDuplicateTypeMate(existMate.get(), newMate);
-
-		this.matchingMates.remove(existMate.get());
-		this.matchingMates.add(newMate);
-	}
-
-	public void deleteMate(final MatchingMate deleteMate) {
-		Optional<MatchingMate> existMate = getDuplicateMate(deleteMate);
-		if (existMate.isEmpty()) {
-			handleNotFoundMate(deleteMate);
-		}
-		validateOtherTypeMate(existMate.get(), deleteMate);
-		this.matchingMates.remove(existMate.get());
 	}
 
 	public boolean isNotNonFavoriteMate(final MatchingInfo matchingInfo) {
@@ -204,6 +184,32 @@ public class Member {
 		matchingInfo = null;
 	}
 
+	public void addMate(final MatchingMate newMate) {
+		Optional<MatchingMate> existMate = getDuplicateMate(newMate);
+		if (existMate.isEmpty()) {
+			this.matchingMates.add(newMate);
+			return;
+		}
+
+		validateDuplicateTypeMate(existMate.get(), newMate);
+
+		this.matchingMates.remove(existMate.get());
+		this.matchingMates.add(newMate);
+	}
+
+	public void deleteMate(final MatchingInfo matchingInfo, final MatePreferenceType preferenceType) {
+		Optional<MatchingMate> deleteMate = this.matchingMates.stream()
+			.filter(matchingMate -> matchingMate.getMatchingInfoForTarget().equals(matchingInfo) &&
+				matchingMate.getPreferenceType().equals(preferenceType) &&
+				matchingMate.getOwner().equals(this)
+			)
+			.findAny();
+		if (deleteMate.isEmpty()) {
+			handleNotFoundMate(preferenceType);
+		}
+		this.matchingMates.remove(deleteMate.get());
+	}
+
 	private Optional<MatchingMate> getDuplicateMate(MatchingMate matchingMate) {
 		Optional<MatchingMate> duplicateMate = this.matchingMates.stream()
 			.filter(mate -> mate.equals(matchingMate))
@@ -212,17 +218,8 @@ public class Member {
 	}
 
 	private void validateDuplicateTypeMate(MatchingMate existMate, MatchingMate newMate) {
-		if (existMate.isFavorite() && newMate.isFavorite()) {
-			throw new DuplicatedFavoriteMateException();
-		}
-		if (existMate.isNonFavorte() && newMate.isNonFavorte()) {
-			throw new DuplicatedNonFavoriteMateException();
-		}
-	}
-
-	private void validateOtherTypeMate(MatchingMate existMate, MatchingMate deleteMate) {
-		if (existMate.getPreferenceType() != deleteMate.getPreferenceType()) {
-			handleNotFoundMate(deleteMate);
+		if (existMate.getPreferenceType().equals(newMate.getPreferenceType())) {
+			handleDuplicateMate(newMate.getPreferenceType());
 		}
 	}
 
@@ -232,11 +229,19 @@ public class Member {
 		}
 	}
 
-	private void handleNotFoundMate(MatchingMate deleteMate) {
-		if (deleteMate.isFavorite()) {
+	private void handleNotFoundMate(MatePreferenceType preferenceType) {
+		if (preferenceType.isFavorite()) {
 			throw new NotFoundLikedMemberException();
 		} else {
 			throw new NotFoundDisLikedMemberException();
+		}
+	}
+
+	private void handleDuplicateMate(MatePreferenceType preferenceType) {
+		if (preferenceType.isFavorite()) {
+			throw new DuplicatedFavoriteMateException();
+		} else {
+			throw new DuplicatedNonFavoriteMateException();
 		}
 	}
 }

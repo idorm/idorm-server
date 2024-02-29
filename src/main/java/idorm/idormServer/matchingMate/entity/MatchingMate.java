@@ -49,7 +49,8 @@ public class MatchingMate {
 		this.owner = owner;
 		this.matchingInfoForTarget = matchingInfo;
 
-		this.matchingInfoForTarget.addMatchingMate(this);
+		owner.addMate(this);
+		matchingInfoForTarget.addMatchingMate(this);
 	}
 
 	public static MatchingMate favoriteFrom(final Member owner, final MatchingInfo matchingInfo) {
@@ -62,6 +63,7 @@ public class MatchingMate {
 
 	private void validateConstructor(final Member member, final MatchingInfo matchingInfo) {
 		Validator.validateNotNull(List.of(member, matchingInfo));
+
 	}
 
 	public boolean isPublic() {
@@ -72,12 +74,12 @@ public class MatchingMate {
 		return preferenceType.equals(MatePreferenceType.FAVORITE);
 	}
 
-	public boolean isNonFavorte() {
-		return !preferenceType.equals(MatePreferenceType.FAVORITE);
+	public boolean isNonFavorite() {
+		return preferenceType.equals(MatePreferenceType.NONFAVORITE);
 	}
 
 	public boolean isNonFavorite(final MatchingInfo matchingInfo) {
-		return this.matchingInfoForTarget.equals(matchingInfo) && isNonFavorte();
+		return this.matchingInfoForTarget.equals(matchingInfo) && isNonFavorite();
 	}
 
 	@Override
@@ -86,12 +88,13 @@ public class MatchingMate {
 			return true;
 		if (object == null || getClass() != object.getClass())
 			return false;
-		MatchingMate that = (MatchingMate)object;
-		return Objects.equals(matchingInfoForTarget, that.matchingInfoForTarget);
+		MatchingMate mate = (MatchingMate)object;
+		return Objects.equals(owner, mate.owner) && Objects.equals(matchingInfoForTarget,
+			mate.matchingInfoForTarget);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(matchingInfoForTarget);
+		return Objects.hash(owner, matchingInfoForTarget);
 	}
 }

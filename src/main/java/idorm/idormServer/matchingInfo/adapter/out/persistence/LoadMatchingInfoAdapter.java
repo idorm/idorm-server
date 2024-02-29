@@ -58,7 +58,7 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 		final MatchingMateFilterRequest request) {
 
 		final List<MatchingInfo> results = matchingInfoRepository.findFilteredMates(
-			matchingInfo.getMember().getId(),
+			matchingInfo.getId(),
 			DormCategory.from(request.dormCategory()),
 			JoinPeriod.from(request.joinPeriod()),
 			matchingInfo.getDormInfo().getGender(),

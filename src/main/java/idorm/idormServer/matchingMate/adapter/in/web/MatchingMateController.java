@@ -81,7 +81,7 @@ public class MatchingMateController {
 			responseCode = "200",
 			description = "LIKEDMEMBER_SAVED / DISLIKEDMEMBER_SAVED"),
 		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / TARGETMEMBERID_NEGATIVEORZERO_INVALID / "
-			+ "INVALID_MATE_PREFERENCE_CHARACTER"),
+			+ "INVALID_MATE_PREFERENCE_CHARACTER / INVALID_TARGET_SELF"),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_MATCHINGINFO"),
 		@ApiResponse(responseCode = "409", description = "ILLEGAL_STATEMENT_MATCHINGINFO_NON_PUBLIC / "
 			+ "DUPLICATED_LIKED_MEMBER / DUPLICATED_DISLIKED_MEMBER"),
@@ -107,7 +107,7 @@ public class MatchingMateController {
 		@ApiResponse(
 			responseCode = "200", description = "LIKEDMEMBER_DELETED / DISLIKEDMEMBER_DELETED"),
 		@ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / TARGETMEMBERID_NEGATIVEORZERO_INVALID / "
-			+ "INVALID_MATE_PREFERENCE_CHARACTER"),
+			+ "INVALID_MATE_PREFERENCE_CHARACTER "),
 		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})

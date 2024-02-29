@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.common.exception.InvalidTargetSelfException;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.MatchingMateUseCase;
@@ -50,14 +51,21 @@ public class MatchingMateService implements MatchingMateUseCase {
 		Member member = loadMemberPort.loadMember(auth.getId());
 		Member targetMember = loadMemberPort.loadMember(request.targetMemberId());
 
-		member.validateMatchingStatement();
-		targetMember.validateMatchingStatement();
+		validateMatchingStatement(member, targetMember);
 
 		MatchingMate mate =
 			preferenceType.isFavorite() ? MatchingMate.favoriteFrom(member, targetMember.getMatchingInfo()) :
 				MatchingMate.nonFavoriteFrom(member, targetMember.getMatchingInfo());
+
 		saveMatchingMatePort.save(mate);
-		member.addMate(mate);
+	}
+
+	private void validateMatchingStatement(final Member owner, final Member target) {
+		if (owner.equals(target)) {
+			throw new InvalidTargetSelfException();
+		}
+		owner.validateMatchingStatement();
+		target.validateMatchingStatement();
 	}
 
 	@Override
@@ -68,10 +76,7 @@ public class MatchingMateService implements MatchingMateUseCase {
 		Member member = loadMemberPort.loadMember(auth.getId());
 		Member targetMember = loadMemberPort.loadMember(request.targetMemberId());
 
-		MatchingMate mate =
-			preferenceType.isFavorite() ? MatchingMate.favoriteFrom(member, targetMember.getMatchingInfo()) :
-				MatchingMate.nonFavoriteFrom(member, targetMember.getMatchingInfo());
-		member.deleteMate(mate);
+		member.deleteMate(targetMember.getMatchingInfo(), preferenceType);
 	}
 
 	@Override

@@ -26,13 +26,13 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
 		+ "AND m.isPublic = true "
 		+ "AND m.member.id != :memberId")
 	List<MatchingInfo> findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
-		Long memberId,
-		DormCategory dormCategory,
-		JoinPeriod joinPeriod,
-		Gender gender);
+		@Param("memberId") Long memberId,
+		@Param("dormCategory") DormCategory dormCategory,
+		@Param("joinPeriod") JoinPeriod joinPeriod,
+		@Param("gender") Gender gender);
 
 	@Query(value = "SELECT m FROM MatchingInfo m " +
-		"WHERE m.member.id <> :memberId AND " +
+		"WHERE m.id != :id AND " +
 		"m.dormInfo.dormCategory = :dormCategory AND " +
 		"m.dormInfo.joinPeriod = :joinPeriod AND " +
 		"m.dormInfo.gender = :gender AND " +
@@ -44,7 +44,7 @@ public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long
 		"m.preferenceInfo.age >= :minAge AND " +
 		"m.preferenceInfo.age <= :maxAge AND " +
 		"m.isPublic = true")
-	List<MatchingInfo> findFilteredMates(@Param("memberId") Long memberId,
+	List<MatchingInfo> findFilteredMates(@Param("id") Long id,
 		@Param("dormCategory") DormCategory dormCategory,
 		@Param("joinPeriod") JoinPeriod joinPeriod,
 		@Param("gender") Gender gender,
