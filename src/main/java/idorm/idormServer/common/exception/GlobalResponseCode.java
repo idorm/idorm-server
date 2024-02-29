@@ -13,6 +13,7 @@ public enum GlobalResponseCode implements BaseResponseCode {
 
 	// 실패
 	FILED_REQUIRED(BAD_REQUEST, "입력은 필수 입니다."),
+	INVALID_TARGET_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다."),
 
 	UNSUPPORTED_HTTP_METHOD(METHOD_NOT_ALLOWED, "지원하지 않는 메서드입니다."),
 

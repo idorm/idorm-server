@@ -20,8 +20,7 @@ public enum ReportResponseCode implements BaseResponseCode {
 	INVALID_REPORT_TYPE(BAD_REQUEST, "올바른 신고 형식이 아닙니다."),
 	INVALID_MEMBER_REPORT_TYPE(BAD_REQUEST, "올바른 회원 신고 형식이 아닙니다."),
 	INVALID_COMMUNITY_REPORT_TYPE(BAD_REQUEST, "올바른 커뮤니티 신고 형식이 아닙니다."),
-	INVALID_COMMENT_REPORT_TYPE(BAD_REQUEST, "올바른 커뮤니티 댓글 신고 형식이 아닙니다."),
-	INVALID_TARGET_SELF(BAD_REQUEST, "본인은 해당 요청의 설정 대상이 될 수 없습니다.");
+	INVALID_COMMENT_REPORT_TYPE(BAD_REQUEST, "올바른 커뮤니티 댓글 신고 형식이 아닙니다.");
 
 	private final HttpStatus status;
 	private final String message;

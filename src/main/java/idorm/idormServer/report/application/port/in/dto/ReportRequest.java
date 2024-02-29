@@ -5,10 +5,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import idorm.idormServer.common.exception.InvalidTargetSelfException;
 import idorm.idormServer.community.comment.entity.Comment;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.member.entity.Member;
-import idorm.idormServer.report.adapter.out.exception.InvalidTargetSelfException;
 import idorm.idormServer.report.entity.CommunityReason;
 import idorm.idormServer.report.entity.MemberReason;
 import idorm.idormServer.report.entity.Report;
