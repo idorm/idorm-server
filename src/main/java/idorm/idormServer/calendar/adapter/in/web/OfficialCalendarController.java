@@ -46,7 +46,7 @@ public class OfficialCalendarController {
 
   private final OfficialCalendarUseCase officialCalendarUseCase;
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[관리자 용] 공식 일정 저장 및 수정", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -56,7 +56,7 @@ public class OfficialCalendarController {
       @ApiResponse(responseCode = "400", description = "ILLEGAL_ARGUMENT_DATE_SET"),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_MEMBER"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED"),
-      @ApiResponse(responseCode = "404", description = "CALENDAR_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_CALENDAR"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @PostMapping("/admin/calendar")
@@ -68,7 +68,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(CALENDAR_UPDATED, response));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[관리자 용] 일정 삭제", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -90,7 +90,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.from(OFFICIAL_CALENDAR_DELETED));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[관리자 용] 공식 일정 전체 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -109,7 +109,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(OFFICIAL_CALENDARS_FOUND, responses));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[관리자 용] 공식 일정 단건 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -129,7 +129,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(CALENDAR_FOUND, response));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "[사용자 용] 공식 일정 월별 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -148,7 +148,7 @@ public class OfficialCalendarController {
   })
   @PostMapping("/member/calendars")
   public ResponseEntity<SuccessResponse<Object>> findManyByMember(
-      @AuthInfo AuthResponse authResponse,
+      	@AuthInfo AuthResponse authResponse,
       @RequestBody @Valid FindOfficialCalendarsRequest request
   ) {
     List<OfficialCalendarResponse> responses = officialCalendarUseCase.findByMonthByMember(

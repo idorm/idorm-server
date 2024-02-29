@@ -33,7 +33,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "3. RoomMateTeam", description = "룸메이트 팀원 관리 api")
+@Tag(name = "3. Team", description = "룸메이트 팀원 관리 api")
 @Validated
 @RestController
 @RequestMapping("api/v1")
@@ -42,7 +42,7 @@ public class TeamController {
 
   private final TeamUseCase teamUseCase;
 
-  @Auth
+  //	@Auth
   @Operation(summary = "룸메이트 초대 수락", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -52,17 +52,18 @@ public class TeamController {
       @ApiResponse(responseCode = "400",
           description =
               "- REGISTERMEMBERID_NEGATIVEORZERO_INVALID\n- ILLEGAL_STATEMENT_EXPLODEDTEAM\n" +
-                  "- ILLEGAL_ARGUMENT_ADMIN"),
+                  "- ACCESS_DENIED_ADMIN"),
       @ApiResponse(responseCode = "404",
-          description = "- MEMBER_NOT_FOUND\n- TEAM_NOT_FOUND"),
+          description = "- NOT_FOUND_MEMBER\n- NOT_FOUND_TEAM"),
       @ApiResponse(responseCode = "409",
-          description = "- DUPLICATE_TEAM\n- CANNOT_REGISTER_TEAM_STATUS_FULL"),
+          description = "- ALREADY_REGISTERED_TEAM\n- CANNOT_REGISTER_TEAM_STATUS_FULL"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
   })
   @PostMapping("/member/team")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<SuccessResponse<Object>> addTeamMember(
-      @AuthInfo AuthResponse authResponse,
+//      	@AuthInfo
+        AuthResponse authResponse,
       @RequestParam(value = "registerMemberId")
       @Positive(message = "회원 식별자는 양수만 가능합니다.")
       Long registerMemberId
@@ -71,7 +72,7 @@ public class TeamController {
     return ResponseEntity.ok().body(SuccessResponse.from(TEAM_MEMBER_CREATED));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "팀원 삭제", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
       @ApiResponse(
@@ -79,12 +80,13 @@ public class TeamController {
           content = @Content(schema = @Schema(implementation = Object.class))),
       @ApiResponse(responseCode = "400", description = "MEMBERID_NEGATIVEORZERO_INVALID"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM"),
-      @ApiResponse(responseCode = "404", description = "MEMBER_NOT_FOUND / TEAM_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
   })
   @DeleteMapping("/member/team")
   public ResponseEntity<SuccessResponse<Object>> deleteTeamMember(
-      @AuthInfo AuthResponse authResponse,
+//      	@AuthInfo
+        AuthResponse authResponse,
       @RequestParam(value = "memberId")
       @Positive(message = "삭제할 회원 식별자는 양수만 가능합니다.")
       Long memberId
@@ -93,24 +95,25 @@ public class TeamController {
     return ResponseEntity.ok().body(SuccessResponse.from(TEAM_MEMBER_DELETED));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "팀원 전체 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200", description = "TEAM_MEMBERS_FOUND",
           content = @Content(schema = @Schema(implementation = TeamResponse.class))),
-      @ApiResponse(responseCode = "404", description = "MEMBER_NOT_FOUND"),
+      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @GetMapping("/member/team")
   public ResponseEntity<SuccessResponse<Object>> findTeamMembers(
-      @AuthInfo AuthResponse authResponse
+//      	@AuthInfo
+        AuthResponse authResponse
   ) {
     TeamResponse responses = teamUseCase.findTeam(authResponse);
     return ResponseEntity.ok().body(SuccessResponse.of(TEAM_MEMBERS_FOUND, responses));
   }
 
-  @Auth
+  //	@Auth
   @Operation(summary = "팀 폭발 확인 OK", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -122,7 +125,8 @@ public class TeamController {
   })
   @PatchMapping("/member/team")
   public ResponseEntity<SuccessResponse<Object>> isConfirmTeamExploded(
-      @AuthInfo AuthResponse authResponse
+//      	@AuthInfo
+        AuthResponse authResponse
   ) {
     teamUseCase.explodeTeam(authResponse);
     return ResponseEntity.ok().body(SuccessResponse.from(TEAM_EXPLODED_CHECKED));

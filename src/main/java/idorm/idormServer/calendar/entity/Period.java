@@ -34,7 +34,13 @@ public class Period {
 		this.endDate = endDate;
 	}
 
-	void update(Period period) {
+	void updateTeamCalendar(Period period) {
+		validate(period.getStartDate(), period.getEndDate());
+		this.startDate = period.getStartDate();
+		this.endDate = period.getEndDate();
+	}
+
+	void updateSleepover(Period period) {
 		validate(period.getStartDate(), period.getEndDate());
 		validateUniqueDate(period);
 		this.startDate = period.getStartDate();
