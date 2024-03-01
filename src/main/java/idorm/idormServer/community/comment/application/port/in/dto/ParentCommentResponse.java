@@ -2,7 +2,10 @@ package idorm.idormServer.community.comment.application.port.in.dto;
 
 import idorm.idormServer.community.comment.entity.Comment;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public record ParentCommentResponse(
     Long commentId,
@@ -18,6 +21,7 @@ public record ParentCommentResponse(
 ) {
 
   public static List<ParentCommentResponse> of(final List<Comment> comments) {
+    sortedAnonymous(comments);
     List<ParentCommentResponse> responses = comments.stream()
         .filter(comment -> comment.getParent() == null)
         .map(ParentCommentResponse::of)
@@ -43,18 +47,29 @@ public record ParentCommentResponse(
     );
   }
 
+  static Map<Long, Integer> memberAnonymousCountMap = new HashMap<>();
+  static int totalAnonymousCount = 0;
+
+  private static void sortedAnonymous(List<Comment> comments) {
+    comments.stream()
+        .sorted(Comparator.comparing(Comment::getCreatedAt))
+        .map(comment -> comment.getMember().getId())
+        .distinct()
+        .forEach(comment -> memberAnonymousCountMap.computeIfAbsent(comment, k -> ++totalAnonymousCount));
+  }
+
   private static String isAnonymous(Comment comment) {
     if (comment.getMember().getMemberStatus().equals("DELETED")) {
-      return null;
+      return "-999";
     } else if (comment.getIsAnonymous()) {
-      return "익명";
+      return "익명" + memberAnonymousCountMap.get(comment.getMember().getId());
     } else {
       return comment.getMember().getNickname().getValue();
     }
   }
 
   private static String isProfileUrl(Comment comment) {
-    return (comment.getMember().getProfilePhotoUrl() != null) ? // TODO: Member 메서드 생성
+    return (comment.getMember().getProfilePhotoUrl() != null) ?
         comment.getMember().getProfilePhotoUrl() : null;
   }
 }
