@@ -1,6 +1,10 @@
 package idorm.idormServer.community.comment.entity;
 
+import static idorm.idormServer.community.comment.adapter.out.CommentResponseCode.*;
+
 import idorm.idormServer.common.entity.BaseTimeEntity;
+import idorm.idormServer.common.util.Validator;
+import idorm.idormServer.community.comment.adapter.out.CommentResponseCode;
 import idorm.idormServer.community.comment.adapter.out.exception.AccessDeniedCommentException;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.member.entity.Member;
@@ -63,6 +67,7 @@ public class Comment extends BaseTimeEntity {
 
   public Comment(final String content, final Comment parent, final Post post, final Member member,
       final Boolean isAnonymous) {
+    validateConsturctor(content, isAnonymous);
     this.content = content;
     this.parent = parent;
     this.post = post;
@@ -101,6 +106,15 @@ public class Comment extends BaseTimeEntity {
   public void delete(final Member member) {
     validateOwner(member);
     this.isDeleted = true;
+  }
+
+  private void validateConsturctor(String content, Boolean isAnonymous) {
+    validateContent(content);
+    Validator.validateNotNull(isAnonymous);
+  }
+  private void validateContent(final String content) {
+    Validator.validateNotBlank(content);
+    Validator.validateLength(content, MIN_LENGTH, MAX_LENGTH, INVALID_CONTENT_LENGTH);
   }
 
   private void validateOwner(Member member) {
