@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'idorm'
-version = '0.0.1-SNAPSHOT'
+version = '2.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
@@ -77,9 +77,9 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa"
     implementation "com.querydsl:querydsl-core"
     implementation "com.querydsl:querydsl-collections"
-    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
-    annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 대응 코드
-    annotationProcessor "jakarta.persistence:jakarta.persistence-api" // java.lang.NoClassDefFoundError (javax.annotation.Entity) 대응 코드
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
     // database migration
     implementation 'org.flywaydb:flyway-core:8.4.4'
