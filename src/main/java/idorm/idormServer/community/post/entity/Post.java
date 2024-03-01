@@ -40,7 +40,7 @@ public class Post extends BaseTimeEntity {
 
 	private static final String BLIND_POST_MESSAGE = "블라인드 처리된 게시글입니다.";
 	private static final int BLOCKED_CONDITION = 5;
-	private static final int MIN_LENGTH = 3;
+	private static final int MIN_LENGTH = 1;
 	private static final int MAX_LENGTH_FOR_CONTENT = 300;
 	private static final int MAX_LENGTH_FOR_TITLE = 50;
 	private static final int MAX_POST_PHOTO_SIZE = 10;
