@@ -1,7 +1,5 @@
 package idorm.idormServer.common.aop;
 
-import static org.springframework.http.HttpStatus.*;
-
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -12,50 +10,25 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import idorm.idormServer.common.exception.BaseException;
-import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 
+@Profile("local")
 @Slf4j
 @Aspect
 @Component
 public class LoggingAdvice {
 
-	// TODO: Pointcut 범위 재설정
-	// @Pointcut("execution(* idorm.idormServer.calendar..*Controller.*(..)) || " +
-	//         "execution(* idorm.idormServer.calendar..*Service.*(..)) || " +
-	//         "execution(* idorm.idormServer.calendar..*Repository.*(..)) || " +
-	//         "execution(* idorm.idormServer.community..*Controller.*(..)) || " +
-	//         "execution(* idorm.idormServer.community..*Service.*(..)) || " +
-	//         "execution(* idorm.idormServer.community..*Repository.*(..)) || " +
-	//         "execution(* idorm.idormServer.notification..*Controller.*(..)) || " +
-	//         "execution(* idorm.idormServer.notification..*Service.*(..)) || " +
-	//         "execution(* idorm.idormServer.notification..*Repository.*(..)) || " +
-	//         "execution(* idorm.idormServer.matchingInfo..*Controller.*(..)) || " +
-	//         "execution(* idorm.idormServer.matchingInfo..*Service.*(..)) || " +
-	//         "execution(* idorm.idormServer.matchingInfo..*Repository.*(..)) || " +
-	//         "execution(* idorm.idormServer.matchingInfo..*Controller.*(..)) || " +
-	//         "execution(* idorm.idormServer.matchingInfo..*Service.*(..)) || " +
-	//         "execution(* idorm.idormServer.matchingInfo..*Repository.*(..)) || " +
-	//         "execution(* idorm.idormServer.member..*Controller.*(..)) || " +
-	//         "execution(* idorm.idormServer.member..*Service.*(..)) || " +
-	//         "execution(* idorm.idormServer.member..*Repository.*(..)) || " +
-	//         "execution(* idorm.idormServer.photo..*Controller.*(..)) || " +
-	//         "execution(* idorm.idormServer.photo..*Service.*(..)) || " +
-	//         "execution(* idorm.idormServer.photo..*Repository.*(..)) || " +
-	//         "execution(* idorm.idormServer.report..*Repository.*(..)) || " +
-	//         "execution(* idorm.idormServer.report..*Service.*(..)) || " +
-	//         "execution(* idorm.idormServer.report..*Controller.*(..))")
 	@Pointcut("execution(* idorm.idormServer..*(..))")
-	private void allFromBusinessLogic() {
+	private void all() {
 	}
 
-	@Before("allFromBusinessLogic()")
+	@Before("all()")
 	public void beforeLogExceptRepository(JoinPoint joinPoint) {
 		final MethodSignature signature = (MethodSignature)joinPoint.getSignature();
-
 		final Class className = signature.getDeclaringType();
 		final Method method = signature.getMethod();
 
@@ -75,19 +48,17 @@ public class LoggingAdvice {
 		log.info("[START] {} | {} {}", className.getSimpleName(), method.getName(), returnArgs);
 	}
 
-	@AfterReturning(value = "allFromBusinessLogic()", returning = "result")
+	@AfterReturning(value = "all()", returning = "result")
 	public void logAfterSuccessAllMethodsExceptRepository(JoinPoint joinPoint, Object result) {
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
-
 		Class className = signature.getDeclaringType();
 		Method method = signature.getMethod();
 
 		log.info("[SUCCESS] {} | {} | return = {}", className.getSimpleName(), method.getName(), result);
 	}
 
-	@AfterThrowing(value = "allFromBusinessLogic()", throwing = "exception")
+	@AfterThrowing(value = "all()", throwing = "exception")
 	public void logAfterThrowing(JoinPoint joinPoint, BaseException exception) {
-
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 
 		String className = signature.getDeclaringType().getSimpleName();
@@ -107,18 +78,7 @@ public class LoggingAdvice {
 			}
 		}
 
-		log.error("[ERROR] {} | {} | throwing = {} | reqArgs : {}",
-			className,
-			method.getName(),
-			exception.getCode().getName(),
-			returnArgs);
-
-		if (exception.getCode().getStatus().equals(INTERNAL_SERVER_ERROR)) {
-
-			if (exception.getCode() != null) {
-				Sentry.captureException(exception);
-				log.error("##### SERVER ERROR DESCRIPTION #####", exception.getCode());
-			}
-		}
+		log.error("[ERROR] {} | {} | throwing = {} | reqArgs : {}", className, method.getName(),
+			exception.getCode().getName(), returnArgs);
 	}
 }
