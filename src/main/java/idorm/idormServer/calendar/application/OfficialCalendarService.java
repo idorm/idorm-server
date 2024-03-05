@@ -1,21 +1,20 @@
 package idorm.idormServer.calendar.application;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.OfficialCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.CrawledOfficialCalendarResponse;
-import idorm.idormServer.calendar.application.port.in.dto.FindOfficialCalendarsRequest;
+import idorm.idormServer.calendar.application.port.in.dto.FindCalendarsRequest;
 import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarResponse;
 import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarUpdateRequest;
 import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
+import idorm.idormServer.calendar.application.port.out.SaveOfficialCalendarPort;
 import idorm.idormServer.calendar.entity.OfficialCalendar;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,8 +22,10 @@ import lombok.RequiredArgsConstructor;
 public class OfficialCalendarService implements OfficialCalendarUseCase {
 
 	private final LoadOfficialCalendarPort loadOfficialCalendarPort;
+	private final SaveOfficialCalendarPort saveOfficialCalendarPort;
 
 	@Override
+	@Transactional
 	public OfficialCalendarResponse update(OfficialCalendarUpdateRequest request) {
 		OfficialCalendar officialCalendar = loadOfficialCalendarPort.findById(request.calendarId());
 
@@ -34,6 +35,7 @@ public class OfficialCalendarService implements OfficialCalendarUseCase {
 	}
 
 	@Override
+	@Transactional
 	public void delete(Long officialCalendarId) {
 		OfficialCalendar officialCalendar = loadOfficialCalendarPort.findById(officialCalendarId);
 		officialCalendar.delete();
@@ -45,11 +47,11 @@ public class OfficialCalendarService implements OfficialCalendarUseCase {
 		LocalDate now = LocalDate.now();
 		LocalDate lastWeek = now.minusDays(7);
 		List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByAdmin(
-			now.format(formatter) + "-%",
-			lastWeek.format(formatter) + "-%");
+				now.format(formatter) + "-%",
+				lastWeek.format(formatter) + "-%");
 		List<CrawledOfficialCalendarResponse> responses = officialCalendars.stream()
-			.map(CrawledOfficialCalendarResponse::from)
-			.toList();
+				.map(CrawledOfficialCalendarResponse::from)
+				.toList();
 		return responses;
 	}
 
@@ -60,14 +62,24 @@ public class OfficialCalendarService implements OfficialCalendarUseCase {
 	}
 
 	@Override
-	public List<OfficialCalendarResponse> findByMonthByMember(AuthResponse authResponse,
-		FindOfficialCalendarsRequest request) {
-		final List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByMember(
-			request.yearMonth());
+	public List<OfficialCalendarResponse> findByMonthByMember(AuthResponse authResponse, FindCalendarsRequest request) {
+		final List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByMember(request.yearMonth());
 		List<OfficialCalendarResponse> responses = officialCalendars.stream()
-			.map(OfficialCalendarResponse::from)
-			.toList();
+				.map(OfficialCalendarResponse::from)
+				.toList();
 		return responses;
+	}
+
+	@Transactional
+	public OfficialCalendarResponse save(String inuPostId, String title, LocalDate inuPostCreatedAt, String postUrl) {
+		OfficialCalendar officialCalendar = new OfficialCalendar(
+				inuPostId,
+				title,
+				postUrl,
+				inuPostCreatedAt);
+
+		saveOfficialCalendarPort.save(officialCalendar);
+		return OfficialCalendarResponse.from(officialCalendar);
 	}
 }
 

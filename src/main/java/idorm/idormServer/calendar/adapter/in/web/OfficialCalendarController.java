@@ -11,7 +11,7 @@ import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.OfficialCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.CrawledOfficialCalendarResponse;
-import idorm.idormServer.calendar.application.port.in.dto.FindOfficialCalendarsRequest;
+import idorm.idormServer.calendar.application.port.in.dto.FindCalendarsRequest;
 import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarResponse;
 import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarUpdateRequest;
 import idorm.idormServer.common.response.SuccessResponse;
@@ -144,7 +144,7 @@ public class OfficialCalendarController {
   @PostMapping("/official/calendar/monthly")
   public ResponseEntity<SuccessResponse<Object>> findManyByMember(
       @AuthInfo AuthResponse authResponse,
-      @RequestBody @Valid FindOfficialCalendarsRequest request
+      @RequestBody @Valid FindCalendarsRequest request
   ) {
     List<OfficialCalendarResponse> responses = officialCalendarUseCase.findByMonthByMember(
         authResponse,

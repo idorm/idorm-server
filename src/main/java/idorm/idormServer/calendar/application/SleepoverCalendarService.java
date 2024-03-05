@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.SleepoverCalendarUseCase;
-import idorm.idormServer.calendar.application.port.in.dto.FindSleepoverCalendarsRequest;
+import idorm.idormServer.calendar.application.port.in.dto.FindCalendarsRequest;
 import idorm.idormServer.calendar.application.port.in.dto.SaveSleepoverCalendarRequest;
 import idorm.idormServer.calendar.application.port.in.dto.SleepoverCalendarParticipantResponse;
 import idorm.idormServer.calendar.application.port.in.dto.SleepoverCalendarResponse;
@@ -83,7 +83,7 @@ public class SleepoverCalendarService implements SleepoverCalendarUseCase {
 
 	@Override
 	public List<SleepoverCalendarResponse> findSleepoverCalendarsByMonth(final AuthResponse authResponse,
-		final FindSleepoverCalendarsRequest request) {
+		final FindCalendarsRequest request) {
 		final Team team = loadTeamPort.findByMemberId(authResponse.getId());
 		final List<SleepoverCalendar> sleepoverCalendars = loadSleepoverCalendarPort.findByYearMonth(team,
 			request.yearMonth());

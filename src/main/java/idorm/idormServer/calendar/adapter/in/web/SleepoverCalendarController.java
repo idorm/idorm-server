@@ -11,7 +11,7 @@ import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.SleepoverCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;
-import idorm.idormServer.calendar.application.port.in.dto.FindSleepoverCalendarsRequest;
+import idorm.idormServer.calendar.application.port.in.dto.FindCalendarsRequest;
 import idorm.idormServer.calendar.application.port.in.dto.SaveSleepoverCalendarRequest;
 import idorm.idormServer.calendar.application.port.in.dto.SleepoverCalendarResponse;
 import idorm.idormServer.calendar.application.port.in.dto.UpdateSleepoverCalendarRequest;
@@ -168,7 +168,7 @@ public class SleepoverCalendarController {
   @PostMapping("/calendar/sleepover/monthly")
   public ResponseEntity<SuccessResponse<Object>> findTeamSleepoverCalenders(
       @AuthInfo AuthResponse authResponse,
-      @RequestBody @Valid FindSleepoverCalendarsRequest request
+      @RequestBody @Valid FindCalendarsRequest request
   ) {
     List<SleepoverCalendarResponse> responses = sleepoverCalendarUseCase.findSleepoverCalendarsByMonth(
         authResponse, request);
