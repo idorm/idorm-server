@@ -76,4 +76,10 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
         .fetch();
     return responses.isEmpty() ? new ArrayList<>() : responses;
   }
+
+  @Override
+  public List<TeamCalendar> findByStartDateIsToday() {
+    //TODO: 구현
+    return null;
+  }
 }

@@ -22,6 +22,7 @@ import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
 import idorm.idormServer.notification.adapter.out.event.NotificationClient;
 import idorm.idormServer.notification.adapter.out.event.NotificationRequest;
+import idorm.idormServer.notification.application.port.out.DeleteFcmTokenPort;
 import idorm.idormServer.notification.application.port.out.LoadFcmTokenPort;
 import idorm.idormServer.notification.entity.FcmChannel;
 import idorm.idormServer.notification.entity.FcmToken;
@@ -40,6 +41,8 @@ public class Scheduler {
 	private final LoadPostPort loadPostPort;
 	private final LoadOfficialCalendarPort loadOfficialCalendarPort;
 	private final LoadTeamCalendarPort loadTeamCalendarPort;
+
+	private final DeleteFcmTokenPort deleteFcmTokenPort;
 
 	@Transactional
 	@Scheduled(cron = "0 49 23 ? * MON,TUE,WED,THU,SUN") // UTC 23:49 ASIA/SEOUL 8:49
@@ -82,6 +85,12 @@ public class Scheduler {
 			.flatMap(List::stream)
 			.toList();
 		notificationClient.notify(requests);
+	}
+
+	@Transactional
+	@Scheduled(cron = "0 0 14 ? * SUN") // UTC 14:00 ASIA/SEOUL 23:00
+	public void manageFcmToken() {
+		deleteFcmTokenPort.deleteInactiveUserTokens();
 	}
 
 	private List<NotificationRequest> notificationRequestsFrom(DormCategory dormCategory) {
