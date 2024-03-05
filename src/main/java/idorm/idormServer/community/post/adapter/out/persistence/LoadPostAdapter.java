@@ -73,6 +73,12 @@ public class LoadPostAdapter implements LoadPostPort {
   }
 
   @Override
+  public Post findTopPostByDormCategory(DormCategory dormCategory) {
+    // TODO: 구현
+    return null;
+  }
+
+  @Override
   public List<Post> findPostsByMemberId(Long memberId) {
     List<Post> responses = queryFactory
         .select(post)
@@ -85,5 +91,4 @@ public class LoadPostAdapter implements LoadPostPort {
 
     return responses.isEmpty() ? new ArrayList<>() : responses;
   }
-
 }

@@ -14,7 +14,6 @@ import idorm.idormServer.calendar.application.port.in.dto.FindOfficialCalendarsR
 import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarResponse;
 import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarUpdateRequest;
 import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
-import idorm.idormServer.calendar.application.port.out.SaveOfficialCalendarPort;
 import idorm.idormServer.calendar.entity.OfficialCalendar;
 import lombok.RequiredArgsConstructor;
 
@@ -23,69 +22,53 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OfficialCalendarService implements OfficialCalendarUseCase {
 
-  private final LoadOfficialCalendarPort loadOfficialCalendarPort;
-  private final SaveOfficialCalendarPort saveOfficialCalendarPort;
+	private final LoadOfficialCalendarPort loadOfficialCalendarPort;
 
-  @Override
-  public OfficialCalendarResponse update(OfficialCalendarUpdateRequest request) {
-    OfficialCalendar officialCalendar = loadOfficialCalendarPort.findById(request.calendarId());
+	@Override
+	public OfficialCalendarResponse update(OfficialCalendarUpdateRequest request) {
+		OfficialCalendar officialCalendar = loadOfficialCalendarPort.findById(request.calendarId());
 
-    officialCalendar.update(request.isDorm1Yn(), request.isDorm2Yn(), request.isDorm3Yn(), request.startDate(),
-        request.endDate(), request.title());
-    saveOfficialCalendarPort.save(officialCalendar);
-    return OfficialCalendarResponse.from(officialCalendar);
-  }
+		officialCalendar.update(request.isDorm1Yn(), request.isDorm2Yn(), request.isDorm3Yn(), request.startDate(),
+			request.endDate(), request.title());
+		return OfficialCalendarResponse.from(officialCalendar);
+	}
 
-  @Override
-  public void delete(Long officialCalendarId) {
-    OfficialCalendar officialCalendar = loadOfficialCalendarPort.findById(officialCalendarId);
-    officialCalendar.delete();
-  }
+	@Override
+	public void delete(Long officialCalendarId) {
+		OfficialCalendar officialCalendar = loadOfficialCalendarPort.findById(officialCalendarId);
+		officialCalendar.delete();
+	}
 
-  @Override
-  public List<CrawledOfficialCalendarResponse> findByMonthByAdmin() {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
-    LocalDate now = LocalDate.now();
-    LocalDate lastWeek = now.minusDays(7);
-    List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByAdmin(
-        now.format(formatter) + "-%",
-        lastWeek.format(formatter) + "-%");
-    List<CrawledOfficialCalendarResponse> responses = officialCalendars.stream()
-        .map(CrawledOfficialCalendarResponse::from)
-        .toList();
-    return responses;
-  }
+	@Override
+	public List<CrawledOfficialCalendarResponse> findByMonthByAdmin() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+		LocalDate now = LocalDate.now();
+		LocalDate lastWeek = now.minusDays(7);
+		List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByAdmin(
+			now.format(formatter) + "-%",
+			lastWeek.format(formatter) + "-%");
+		List<CrawledOfficialCalendarResponse> responses = officialCalendars.stream()
+			.map(CrawledOfficialCalendarResponse::from)
+			.toList();
+		return responses;
+	}
 
-  @Override
-  public OfficialCalendarResponse findOneByAdmin(Long officialCalendarId) {
-    final OfficialCalendar officialCalendar = loadOfficialCalendarPort.findById(officialCalendarId);
-    return OfficialCalendarResponse.from(officialCalendar);
-  }
+	@Override
+	public OfficialCalendarResponse findOneByAdmin(Long officialCalendarId) {
+		final OfficialCalendar officialCalendar = loadOfficialCalendarPort.findById(officialCalendarId);
+		return OfficialCalendarResponse.from(officialCalendar);
+	}
 
-  @Override
-  public List<OfficialCalendarResponse> findByMonthByMember(AuthResponse authResponse,
-      FindOfficialCalendarsRequest request) {
-    final List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByMember(
-        request.yearMonth());
-    List<OfficialCalendarResponse> responses = officialCalendars.stream()
-        .map(OfficialCalendarResponse::from)
-        .toList();
-    return responses;
-  }
-
-  @Transactional
-  public OfficialCalendarResponse save(String inuPostId, String title, LocalDate inuPostCreatedAt,
-      String postUrl) {
-
-    OfficialCalendar officialCalendar = new OfficialCalendar(
-        inuPostId,
-        title,
-        postUrl,
-        inuPostCreatedAt);
-
-    saveOfficialCalendarPort.save(officialCalendar);
-    return OfficialCalendarResponse.from(officialCalendar);
-  }
+	@Override
+	public List<OfficialCalendarResponse> findByMonthByMember(AuthResponse authResponse,
+		FindOfficialCalendarsRequest request) {
+		final List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByMember(
+			request.yearMonth());
+		List<OfficialCalendarResponse> responses = officialCalendars.stream()
+			.map(OfficialCalendarResponse::from)
+			.toList();
+		return responses;
+	}
 }
 
 

@@ -16,5 +16,7 @@ public interface LoadPostPort {
 
 	List<Post> findTopPostsByDormCateogry(DormCategory dormCategory);
 
+	Post findTopPostByDormCategory(DormCategory dormCategory);
+
 	List<Post> findPostsByMemberId(Long memberId);
 }

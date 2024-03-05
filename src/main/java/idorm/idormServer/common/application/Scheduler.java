@@ -1,173 +1,200 @@
-// package idorm.idormServer.common.application;
-//
-// import com.google.firebase.messaging.Message;
-// import idorm.idormServer.calendar.domain.OfficialCalendar;
-// import idorm.idormServer.calendar.domain.TeamCalendar;
-// import idorm.idormServer.calendar.dto.CrawledOfficialCalendarResponse;
-// import idorm.idormServer.calendar.service.OfficialCalendarService;
-// import idorm.idormServer.calendar.service.RoomMateTeamCalendarService;
-// import idorm.idormServer.community.domain.Post;
-// import idorm.idormServer.community.service.PostService;
-// import idorm.idormServer.notification.dto.FcmRequest;
-// import idorm.idormServer.notification.domain.NotifyType;
-// import idorm.idormServer.notification.service.MemberFCMService;
-// import idorm.idormServer.matchingInfo.domain.DormCategory;
-// import idorm.idormServer.member.domain.Member;
-// import idorm.idormServer.member.service.MemberService;
-// import lombok.RequiredArgsConstructor;
-// import org.springframework.scheduling.annotation.Scheduled;
-// import org.springframework.stereotype.Component;
-// import org.springframework.transaction.annotation.Transactional;
-//
-// import java.time.LocalDate;
-// import java.util.ArrayList;
-// import java.util.List;
-//
-//
-// @Component
-// @RequiredArgsConstructor
-// public class Scheduler {
-//
-//     private final MemberFCMService fcmService;
-//     private final MemberService memberService;
-//     private final PostService postService;
-//     private final OfficialCalendarService calendarService;
-//     private final RoomMateTeamCalendarService teamCalendarService;
-//     private final OfficialCalendarCrawler officialCalendarCrawler;
-//
-//     @Transactional
-//     @Scheduled(cron = "0 49 23 ? * MON,TUE,WED,THU,SUN") // UTC 23:49 ASIA/SEOUL 8:49
-//     public void alertTopPostsAndCalendarOfDorm1() {
-//         List<Member> members = memberService.findAllOfDorm1();
-//
-//         Post topPost = postService.findTopPost(DormCategory.DORM1);
-//         List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendars(1);
-//
-//         if (topPost == null && todayCalendars == null)
-//             return;
-//
-//         List<FcmRequest> fcmMessages = createFcmMessages("1", topPost, todayCalendars);
-//         sendFcmMessage(members, fcmMessages);
-//     }
-//
-//     @Transactional
-//     @Scheduled(cron = "0 52 23 ? * MON,TUE,WED,THU,SUN") // UTC 23:52 ASIA/SEOUL 8:52
-//     public void alertTopPostsAndCalendarOfDorm2() {
-//         List<Member> members = memberService.findAllOfDorm2();
-//
-//         Post topPost = postService.findTopPost(DormCategory.DORM2);
-//         List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendars(2);
-//
-//         if (topPost == null && todayCalendars == null)
-//             return;
-//
-//         List<FcmRequest> fcmMessages = createFcmMessages("2", topPost, todayCalendars);
-//         sendFcmMessage(members, fcmMessages);
-//     }
-//
-//     @Transactional
-//     @Scheduled(cron = "0 55 23 ? * MON,TUE,WED,THU,SUN") // UTC 23:55 ASIA/SEOUL 8:55
-//     public void alertTopPostsAndCalendarOfDorm3() {
-//         List<Member> members = memberService.findAllOfDorm3();
-//
-//         Post topPost = postService.findTopPost(DormCategory.DORM3);
-//         List<OfficialCalendar> todayCalendars = calendarService.findTodayCalendars(3);
-//
-//         if (topPost == null && todayCalendars == null)
-//             return;
-//
-//         List<FcmRequest> fcmMessages = createFcmMessages("3", topPost, todayCalendars);
-//         sendFcmMessage(members, fcmMessages);
-//     }
-//
-//     @Transactional
-//     @Scheduled(cron = "0 0 0 ? * MON,TUE,WED,THU,SUN") // UTC 00:00 ASIA/SEOUL 9:00
-//     public void alertTeamCalendars() {
-//
-//         List<TeamCalendar> teamCalendars = teamCalendarService.findTeamCalendarsByStartDateIsToday();
-//
-//         // createFcmMessages
-//         List<FcmRequest> fcmRequestDtos = new ArrayList<>();
-//
-//         for (TeamCalendar teamCalendar : teamCalendars) {
-//
-//             List<Long> targets = teamCalendar.getTargets(); // 일정 대상자들
-//
-//             if (targets.isEmpty())
-//                 continue;
-//
-//             List<Member> teamTargetMembers = memberService.findTeamTargetMembers(targets);
-//
-//             for (Member member : teamTargetMembers) {
-//                 FcmRequest topPostFcmMessage = FcmRequest.builder()
-//                         .token(member.getFcmToken())
-//                         .notification(FcmRequest.Notification.builder()
-//                                 .notifyType(NotifyType.TEAMCALENDAR)
-//                                 .contentId(teamCalendar.getId())
-//                                 .title("오늘의 팀 일정 입니다.")
-//                                 .content(teamCalendar.getTitle())
-//                                 .build())
-//                         .build();
-//                 fcmRequestDtos.add(topPostFcmMessage);
-//             }
-//         }
-//
-//         // sendFcmMessages
-//         List<Message> messages = fcmService.createMessageOfTeamCalendar(fcmRequestDtos);
-//         fcmService.sendManyMessages(messages);
-//     }
-//
-//     private List<FcmRequest> createFcmMessages(String dormCategory, Post topPost, List<OfficialCalendar> todayCalendars) {
-//         List<FcmRequest> fcmMessages = new ArrayList<>();
-//
-//         if (topPost != null) {
-//             FcmRequest topPostFcmMessage = FcmRequest.builder()
-//                     .notification(FcmRequest.Notification.builder()
-//                             .notifyType(NotifyType.TOPPOST)
-//                             .contentId(topPost.getId())
-//                             .title("어제 " + dormCategory + " 기숙사의 인기 게시글 입니다.")
-//                             .content(topPost.getContent())
-//                             .build())
-//                     .build();
-//             fcmMessages.add(topPostFcmMessage);
-//         }
-//         if (todayCalendars != null) {
-//             for (OfficialCalendar calendar : todayCalendars) {
-//                 FcmRequest calendarFcmMessage = FcmRequest.builder()
-//                         .notification(FcmRequest.Notification.builder()
-//                                 .notifyType(NotifyType.CALENDAR)
-//                                 .contentId(calendar.getId())
-//                                 .title("오늘의 " + dormCategory + " 기숙사 일정 입니다.")
-//                                 .build())
-//                         .build();
-//                 fcmMessages.add(calendarFcmMessage);
-//             }
-//         }
-//         return fcmMessages;
-//     }
-//
-//     private void sendFcmMessage(List<Member> members, List<FcmRequest> fcmMessages) {
-//         List<Message> messages = new ArrayList<>();
-//
-//         for (Member member : members) {
-//             if (member.getFcmTokenUpdatedAt().isBefore(LocalDate.now().minusMonths(2))) {
-//                 memberService.deleteFcmToken(member);
-//                 continue;
-//             }
-//
-//             List<Message> messageList = fcmService.createMessage(member, fcmMessages);
-//             messages.addAll(messageList);
-//         }
-//
-//         fcmService.sendManyMessages(messages);
-//     }
-//
-//     @Transactional
-//     @Scheduled(cron = "0 0 14 ? * MON,TUE,WED,THU,FRI,SAT,SUN") // UTC 14:00 ASIA/SEOUL 23:00
-//     public void crawlingOfficialCalendars() {
-//
-//         List<CrawledOfficialCalendarResponse> responses = officialCalendarCrawler.crawlPosts();
-//
-//         // TODO: 관리자 푸시 알림 발송
-//     }
-// }
+package idorm.idormServer.common.application;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import idorm.idormServer.calendar.application.port.out.FindInuPost;
+import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
+import idorm.idormServer.calendar.application.port.out.LoadTeamCalendarPort;
+import idorm.idormServer.calendar.entity.OfficialCalendar;
+import idorm.idormServer.calendar.entity.Participant;
+import idorm.idormServer.calendar.entity.TeamCalendar;
+import idorm.idormServer.community.post.application.port.out.LoadPostPort;
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
+import idorm.idormServer.member.application.port.out.LoadMemberPort;
+import idorm.idormServer.member.entity.Member;
+import idorm.idormServer.notification.adapter.out.event.NotificationClient;
+import idorm.idormServer.notification.adapter.out.event.NotificationRequest;
+import idorm.idormServer.notification.application.port.out.LoadFcmTokenPort;
+import idorm.idormServer.notification.entity.FcmChannel;
+import idorm.idormServer.notification.entity.FcmToken;
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class Scheduler {
+
+	private final LoadFcmTokenPort loadFcmTokenPort;
+	private final NotificationClient notificationClient;
+
+	private final FindInuPost findInuPost;
+
+	private final LoadMemberPort loadMemberPort;
+	private final LoadPostPort loadPostPort;
+	private final LoadOfficialCalendarPort loadOfficialCalendarPort;
+	private final LoadTeamCalendarPort loadTeamCalendarPort;
+
+	@Transactional
+	@Scheduled(cron = "0 49 23 ? * MON,TUE,WED,THU,SUN") // UTC 23:49 ASIA/SEOUL 8:49
+	public void alertTopPostAndOfficialCalendarsOfDorm1() {
+		notificationClient.notify(notificationRequestsFrom(DormCategory.DORM1));
+	}
+
+	@Transactional
+	@Scheduled(cron = "0 52 23 ? * MON,TUE,WED,THU,SUN") // UTC 23:52 ASIA/SEOUL 8:52
+	public void alertTopPostAndOfficialCalendarsOfDorm2() {
+		notificationClient.notify(notificationRequestsFrom(DormCategory.DORM2));
+	}
+
+	@Transactional
+	@Scheduled(cron = "0 55 23 ? * MON,TUE,WED,THU,SUN") // UTC 23:55 ASIA/SEOUL 8:55
+	public void alertTopPostsAndCalendarOfDorm3() {
+		notificationClient.notify(notificationRequestsFrom(DormCategory.DORM3));
+	}
+
+	@Transactional
+	@Scheduled(cron = "0 0 0 ? * MON,TUE,WED,THU,SUN") // UTC 00:00 ASIA/SEOUL 9:00
+	public void alertTeamCalendars() {
+		List<TeamCalendar> teamCalendars = loadTeamCalendarPort.findByStartDateIsToday();
+		List<NotificationRequest> requests = teamCalendars.stream()
+			.map(this::teamCalendarNotificationOf)
+			.flatMap(List::stream)
+			.toList();
+
+		notificationClient.notify(requests);
+	}
+
+	@Transactional
+	@Scheduled(cron = "0 0 14 ? * MON,TUE,WED,THU,FRI,SAT,SUN") // UTC 14:00 ASIA/SEOUL 23:00
+	public void alertAdminOfOfficialCalendars() {
+		List<OfficialCalendar> newPosts = findInuPost.findNewPosts();
+		List<Member> admins = loadMemberPort.loadAdmins();
+
+		List<NotificationRequest> requests = newPosts.stream()
+			.map(calendar -> adminOfficialCalendarNotificationOf(calendar, admins))
+			.flatMap(List::stream)
+			.toList();
+		notificationClient.notify(requests);
+	}
+
+	private List<NotificationRequest> notificationRequestsFrom(DormCategory dormCategory) {
+		Post topPost = loadPostPort.findTopPostByDormCategory(dormCategory);
+		List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByToday(dormCategory);
+
+		if (topPost == null && (Objects.isNull(officialCalendars) || officialCalendars.isEmpty())) {
+			return null;
+		}
+
+		List<Member> members = loadMemberPort.loadMembersBy(dormCategory);
+		List<NotificationRequest> notificationRequests = new ArrayList<>();
+		if (topPost != null) {
+			List<NotificationRequest> topPostRequests = members.stream()
+				.map(member -> topPostNotificationOf(member, topPost))
+				.toList();
+			notificationRequests.addAll(topPostRequests);
+		}
+		if (Objects.isNull(officialCalendars) || officialCalendars.isEmpty()) {
+			List<NotificationRequest> officialCalendarRequests = members.stream()
+				.map(member -> officialCalnedarNotificationOf(member, officialCalendars))
+				.flatMap(List::stream)
+				.toList();
+			notificationRequests.addAll(officialCalendarRequests);
+		}
+		return notificationRequests;
+	}
+
+	private NotificationRequest topPostNotificationOf(Member target, Post post) {
+		Optional<FcmToken> fcmToken = loadFcmTokenPort.load(target.getId());
+		if (fcmToken.isEmpty()) {
+			return null;
+		}
+
+		NotificationRequest request = NotificationRequest.builder()
+			.token(fcmToken.get().getValue())
+			.message(NotificationRequest.NotificationMessage.builder()
+				.notifyType(FcmChannel.TOPPOST)
+				.contentId(post.getId())
+				.title(FcmChannel.TOPPOST.getTitle())
+				.content(post.getTitle())
+				.build())
+			.build();
+		return request;
+	}
+
+	private List<NotificationRequest> officialCalnedarNotificationOf(Member target, List<OfficialCalendar> calendars) {
+		Optional<FcmToken> fcmToken = loadFcmTokenPort.load(target.getId());
+		if (fcmToken.isEmpty()) {
+			return null;
+		}
+		String token = fcmToken.get().getValue();
+
+		List<NotificationRequest> requests = calendars.stream()
+			.map(calendar -> {
+				NotificationRequest request = NotificationRequest.builder()
+					.token(token)
+					.message(NotificationRequest.NotificationMessage.builder()
+						.notifyType(FcmChannel.CALENDAR)
+						.contentId(calendar.getId())
+						.title(FcmChannel.CALENDAR.getTitle())
+						.content(calendar.getTitle())
+						.build())
+					.build();
+				return request;
+			})
+			.toList();
+		return requests;
+	}
+
+	private List<NotificationRequest> teamCalendarNotificationOf(TeamCalendar teamCalendar) {
+		List<Participant> participants = teamCalendar.getParticipants();
+		List<NotificationRequest> requests = participants.stream()
+			.map(participant -> {
+				Optional<FcmToken> fcmToken = loadFcmTokenPort.load(participant.getMemberId());
+				if (fcmToken.isEmpty())
+					return null;
+
+				NotificationRequest request = NotificationRequest.builder()
+					.token(fcmToken.get().getValue())
+					.message(NotificationRequest.NotificationMessage.builder()
+						.notifyType(FcmChannel.TEAMCALENDAR)
+						.contentId(teamCalendar.getId())
+						.title(FcmChannel.TEAMCALENDAR.getTitle())
+						.content(teamCalendar.getTitle())
+						.build())
+					.build();
+				return request;
+			})
+			.toList();
+		return requests;
+	}
+
+	private List<NotificationRequest> adminOfficialCalendarNotificationOf(OfficialCalendar officialCalendar,
+		List<Member> members) {
+		List<NotificationRequest> requests = members.stream()
+			.map(member -> {
+				Optional<FcmToken> fcmToken = loadFcmTokenPort.load(member.getId());
+				if (fcmToken.isEmpty())
+					return null;
+
+				NotificationRequest request = NotificationRequest.builder()
+					.token(fcmToken.get().getValue())
+					.message(NotificationRequest.NotificationMessage.builder()
+						.notifyType(FcmChannel.CALENDAR)
+						.contentId(officialCalendar.getId())
+						.title(FcmChannel.CALENDAR.getTitle())
+						.content(officialCalendar.getTitle())
+						.build())
+					.build();
+				return request;
+			})
+			.toList();
+		return requests;
+	}
+}

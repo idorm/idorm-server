@@ -10,8 +10,8 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 
-import idorm.idormServer.calendar.adapter.out.exception.FieldTargetsRequiredException;
 import idorm.idormServer.calendar.adapter.out.exception.DuplicatedMemberException;
+import idorm.idormServer.calendar.adapter.out.exception.FieldTargetsRequiredException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -53,7 +53,7 @@ public class Participants {
 			throw new FieldTargetsRequiredException();
 	}
 
-	public List<Participant> getParticipants() {
+	List<Participant> getParticipants() {
 		List<Participant> responses = participants.stream()
 			.sorted()
 			.toList();

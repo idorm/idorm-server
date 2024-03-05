@@ -55,7 +55,9 @@ public enum CalendarResponseCode implements BaseResponseCode {
   DUPLICATED_SLEEPOVER_DATE(CONFLICT, "중복인 외박 일자가 존재합니다."),
   ALREADY_REGISTERED_TEAM(CONFLICT, "이미 등록된 팀이 있습니다."),
   CANNOT_EXPLODE_TEAM(CONFLICT, "다른 팀원 존재 시 팀을 삭제할 수 없습니다."),
-  CANNOT_REGISTER_TEAM_STATUS_FULL(CONFLICT, "등록하려는 팀이 정원 초과 입니다.");
+  CANNOT_REGISTER_TEAM_STATUS_FULL(CONFLICT, "등록하려는 팀이 정원 초과 입니다."),
+
+  CRAWLING_SERVER_ERROR(INTERNAL_SERVER_ERROR, "공식 일정 크롤링 중 서버 에러가 발생했습니다.");
 
   private final HttpStatus status;
   private final String message;

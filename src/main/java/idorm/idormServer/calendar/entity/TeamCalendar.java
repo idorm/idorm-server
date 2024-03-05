@@ -99,7 +99,11 @@ public class TeamCalendar {
 				.forEach(this.participants::delete);
 	}
 
-	public void validateAuthorization(final Team team) {
+	public List<Participant> getParticipants() {
+		return participants.getParticipants();
+	}
+
+	private void validateAuthorization(final Team team) {
 		if (!this.team.equals(team)) {
 			throw new AccessDeniedTeamCalendarException();
 		}

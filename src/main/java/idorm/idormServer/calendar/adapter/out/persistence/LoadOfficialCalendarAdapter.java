@@ -6,6 +6,8 @@ import idorm.idormServer.calendar.entity.OfficialCalendar;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+
+import idorm.idormServer.matchingInfo.entity.DormCategory;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,12 @@ public class LoadOfficialCalendarAdapter implements LoadOfficialCalendarPort {
     OfficialCalendar response = officialCalendarRepository.findById(officialCalendarId)
         .orElseThrow(NotFoundCalendarException::new);
     return response;
+  }
+
+  @Override
+  public List<OfficialCalendar> findByToday(DormCategory dormCategory) {
+    //TODO : 구현
+    return null;
   }
 
   @Override
