@@ -1,6 +1,10 @@
 package idorm.idormServer.community.comment.application;
 
+import static idorm.idormServer.notification.entity.FcmChannel.*;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,11 @@ import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
+import idorm.idormServer.notification.adapter.out.event.NotificationClient;
+import idorm.idormServer.notification.adapter.out.event.NotificationRequest;
+import idorm.idormServer.notification.application.port.out.LoadFcmTokenPort;
+import idorm.idormServer.notification.entity.FcmChannel;
+import idorm.idormServer.notification.entity.FcmToken;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,11 +33,14 @@ import lombok.RequiredArgsConstructor;
 public class CommentService implements CommentUseCase {
 
 	private final LoadMemberPort loadMemberPort;
+	private final LoadFcmTokenPort loadFcmTokenPort;
 
 	private final LoadPostPort loadPostPort;
 
 	private final SaveCommentPort saveCommentPort;
 	private final LoadCommentPort loadCommentPort;
+
+	private final NotificationClient notificationClient;
 
 	@Override
 	@Transactional
@@ -37,12 +49,27 @@ public class CommentService implements CommentUseCase {
 		final Post post = loadPostPort.findById(postId);
 
 		Comment comment = null;
+		List<NotificationRequest> notificationRequests = new ArrayList<>();
+
 		if (request.isParent()) {
 			comment = createParentComment(member, post, request);
+
+			if (comment.isNotOwner(post.getMember())) {
+				notificationRequests.add(notificationRequestOf(COMMENT, post.getMember(), comment));
+			}
 		} else {
-			comment = createChildComment(member, post, request);
+			final Comment parentComment = loadCommentPort.findById(request.parentCommentId());
+			comment = createChildComment(member, post, parentComment, request);
+
+			if (comment.isNotOwner(post.getMember())) {
+				notificationRequests.add(notificationRequestOf(SUBCOMMENT, post.getMember(), comment));
+			}
+			if (comment.isNotOwner(parentComment.getMember()) && parentComment.isNotOwner(post.getMember())) {
+				notificationRequests.add(notificationRequestOf(SUBCOMMENT, parentComment.getMember(), comment));
+			}
 		}
 		saveCommentPort.save(comment);
+		notificationClient.notify(notificationRequests);
 	}
 
 	@Override
@@ -64,9 +91,27 @@ public class CommentService implements CommentUseCase {
 		return Comment.parent(request.content(), request.isAnonymous(), post, member);
 	}
 
-	private Comment createChildComment(final Member member, final Post post, final CommentRequest request) {
-		final Comment comment = loadCommentPort.findById(request.parentCommentId());
+	private Comment createChildComment(final Member member, final Post post, final Comment parentComment,
+		final CommentRequest request) {
 
-		return Comment.child(request.isAnonymous(), request.content(), comment, post, member);
+		return Comment.child(request.isAnonymous(), request.content(), parentComment, post, member);
+	}
+
+	private NotificationRequest notificationRequestOf(FcmChannel fcmChannel, Member target, Comment comment) {
+		Optional<FcmToken> fcmToken = loadFcmTokenPort.load(target.getId());
+		if (fcmToken.isEmpty()) {
+			return null;
+		}
+
+		NotificationRequest request = NotificationRequest.builder()
+			.token(fcmToken.get().getValue())
+			.message(NotificationRequest.NotificationMessage.builder()
+				.notifyType(fcmChannel)
+				.contentId(comment.getId())
+				.title(fcmChannel.getTitle())
+				.content(comment.getContent())
+				.build())
+			.build();
+		return request;
 	}
 }

@@ -73,7 +73,8 @@ public class Email {
 	}
 
 	private static void validateConstructor(final String email, final String code) {
-		Validator.validateNotBlank(List.of(email, code));
+		Validator.validateNotBlank(email);
+		Validator.validateNotBlank(code);
 		Validator.validateFormat(email, EMAIL_REGEX, EmailResponseCode.INVALID_EMAIL_CHARACTER);
 	}
 

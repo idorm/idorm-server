@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import idorm.idormServer.common.response.SuccessResponse;
-import idorm.idormServer.notification.adapter.out.api.FcmNotificationClient;
-import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
+import idorm.idormServer.notification.adapter.out.event.NotificationClient;
+import idorm.idormServer.notification.adapter.out.event.NotificationRequest;
 import idorm.idormServer.notification.entity.FcmChannel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/test")
 public class DevelopController {
 
-	private final FcmNotificationClient fcmNotificationClient;
+	private final NotificationClient notificationClient;
 
 	@Operation(summary = "fcm 토큰 발송 테스트", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
 	@GetMapping("/fcm/{token}")
@@ -39,7 +39,7 @@ public class DevelopController {
 				.build())
 			.build();
 
-		fcmNotificationClient.notify(request);
+		notificationClient.notify(request);
 		return ResponseEntity.noContent().build();
 	}
 }
