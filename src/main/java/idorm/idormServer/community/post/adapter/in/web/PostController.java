@@ -12,6 +12,8 @@ import idorm.idormServer.auth.adapter.in.api.Auth;
 import idorm.idormServer.auth.adapter.in.api.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.response.SuccessResponse;
+import idorm.idormServer.community.comment.adapter.out.exception.InvalidCommentContentLengthException;
+import idorm.idormServer.community.post.adapter.out.exception.InvalidPostTitleLengthException;
 import idorm.idormServer.community.post.application.port.in.PostUseCase;
 import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostResponse;
@@ -25,6 +27,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +35,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -57,11 +61,11 @@ public class PostController {
           responseCode = "201", description = "POST_SAVED",
           content = @Content(schema = @Schema(implementation = PostResponse.class))),
       @ApiResponse(responseCode = "400",
-          description = "DORMCATEGORY_CHARACTER_INVALID / FIELD_REQUIRED / TITLE_LENGTH_INVALID / "
-              + "CONTENT_LENGTH_INVALID"),
+          description = "INVALID_DORMCATEGORY_CHARACTER / FIELD_REQUIRED / INVALID_TITLE_LENGTH / "
+              + "INVALID_CONTENT_LENGTH_"),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "413", description = "FILE_SIZE_EXCEED / FILE_COUNT_EXCEED"),
-      @ApiResponse(responseCode = "415", description = "FILE_TYPE_UNSUPPORTED"),
+      @ApiResponse(responseCode = "413", description = "EXCEED_FILE_SIZE / EXCEED_FILE_COUNT"),
+      @ApiResponse(responseCode = "415", description = "UNSUPPORTED_FILE_TYPE"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
   @ResponseStatus(value = HttpStatus.CREATED)
@@ -69,8 +73,9 @@ public class PostController {
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<SuccessResponse<Object>> savePost(
       @AuthInfo AuthResponse authResponse,
-      @ModelAttribute PostSaveRequest request
+      @ModelAttribute("request") @Valid PostSaveRequest request, BindingResult result
   ) {
+    validateModelAttribute(result);
     PostResponse response = postUseCase.save(authResponse, request);
     return ResponseEntity.ok().body(SuccessResponse.of(POST_SAVED, response));
   }
@@ -81,8 +86,9 @@ public class PostController {
       @ApiResponse(
           responseCode = "200", description = "POST_UPDATED",
           content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400", description = "FIELD_REQUIRED / INVALID_TITLE_LENGTH / INVALID_CONTENT_LENGTH / "
-          + "INVALID_*_LENGTH"),
+      @ApiResponse(responseCode = "400", description =
+          "FIELD_REQUIRED / INVALID_TITLE_LENGTH / INVALID_CONTENT_LENGTH / "
+              + "INVALID_*_LENGTH"),
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_POST"),
       @ApiResponse(responseCode = "404", description = "ALREADY_DELETED_POST / NOT_FOUND_POST / NOT_FOUND_POSTPHOTO"),
@@ -97,8 +103,9 @@ public class PostController {
       @PathVariable("post-id")
       @Positive(message = "게시글 식별자는 양수만 가능합니다.")
       Long postId,
-      @ModelAttribute PostUpdateRequest request
+      @ModelAttribute @Valid PostUpdateRequest request, BindingResult result
   ) {
+    validateModelAttribute(result);
     postUseCase.update(authResponse, postId, request);
     return ResponseEntity.ok().body(SuccessResponse.from(POST_UPDATED));
   }
@@ -201,5 +208,14 @@ public class PostController {
   ) {
     PostResponse response = postUseCase.findOneByPostId(authResponse, postId);
     return ResponseEntity.ok().body(SuccessResponse.of(POST_FOUND, response));
+  }
+
+  private void validateModelAttribute(BindingResult bindingResult) {
+    String message = bindingResult.getAllErrors().get(0).getDefaultMessage();
+    if (message.contains("title")) {
+      throw new InvalidPostTitleLengthException();
+    } else if (message.contains("content")) {
+      throw new InvalidCommentContentLengthException();
+    }
   }
 }

@@ -11,7 +11,7 @@ public record PreferenceMateRequest(
 	String preferenceType,
 
 	@NotNull(message = "대상 회원 식별자는 공백일 수 없습니다.")
-	@Positive(message = "대상 회원 식별자는 양수만 가능합니다.")
+	@Positive(message = "targetMemberId , 대상 회원 식별자는 양수만 가능합니다.")
 	Long targetMemberId
 ) {
 	public MatePreferenceType getPreferenceType() {

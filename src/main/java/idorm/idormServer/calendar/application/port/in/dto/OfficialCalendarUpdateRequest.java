@@ -6,9 +6,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import javax.validation.constraints.Positive;
 
 public record OfficialCalendarUpdateRequest(
 	@NotNull(message = "공식 일정 식별자를 입력해 주세요.")
+	@Positive(message = "calendarId , 공식 일정 식별자는 양수만 가능합니다.")
 	Long calendarId,
 	@NotNull(message = "1기숙사 대상 여부를 입력해 주세요.")
 	Boolean isDorm1Yn,

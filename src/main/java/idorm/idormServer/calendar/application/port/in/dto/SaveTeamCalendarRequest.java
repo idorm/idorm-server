@@ -14,10 +14,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public record SaveTeamCalendarRequest(
-    @NotBlank(message = "내용을 입력해 주세요.")
-    @Size(max = 15, message = "제목은 ~15자 이내여야 합니다.")
+    @NotBlank(message = "일정 제목은 공백일 수 없습니다.")
+    @Size(min =1, max = 30, message = "title , 제목은 1~30자 이내여야 합니다.")
     String title,
-    @Size(max = 100, message = "내용은 ~100자 이내여야 합니다.")
+    @NotBlank(message = "일정 내용은 공백일 수 없습니다.")
+    @Size(min =1, max = 100, message = "content , 내용은 1~100자 이내여야 합니다.")
     String content,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate startDate,

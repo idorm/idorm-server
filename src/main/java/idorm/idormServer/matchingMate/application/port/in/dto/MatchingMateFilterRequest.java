@@ -13,11 +13,11 @@ public record MatchingMateFilterRequest(
 	String joinPeriod,
 
 	@NotNull(message = "매칭을 원하는 룸메이트의 최소 나이 입력은 필수입니다.")
-	@Range(min = 20, max = 100, message = "나이는 20~100살 이내여야 합니다.")
+	@Range(min = 20, max = 100, message = "age, 나이는 20~100살 이내여야 합니다.")
 	Integer minAge,
 
 	@NotNull(message = "매칭을 원하는 룸메이트의 최대 나이 입력은 필수입니다.")
-	@Range(min = 20, max = 100, message = "나이는 20~100살 이내여야 합니다.")
+	@Range(min = 20, max = 100, message = "age, 나이는 20~100살 이내여야 합니다.")
 	Integer maxAge,
 
 	@NotNull(message = "코골이 여부 입력은 필수입니다.")

@@ -22,7 +22,7 @@ public record ReportRequest(
 
 	@Schema(required = true, description = "신고 회원 또는 신고 게시글 또는 신고 댓글 식별자", example = "1")
 	@NotNull(message = "모든 필수 항목을 입력해주세요.")
-	@Positive(message = "식별자는 양수만 가능합니다.")
+	@Positive(message = "targetId , 식별자는 양수만 가능합니다.")
 	Long targetId,
 
 	@Schema(required = true,
@@ -36,7 +36,7 @@ public record ReportRequest(
 	String reasonType,
 
 	@Schema(description = "사유", example = "사유")
-	@Size(max = 200, message = "사유는 0~200자 이내여야 합니다.")
+	@Size(max = 200, message = "reaseon , 사유는 0~200자 이내여야 합니다.")
 	String reason
 ) {
 

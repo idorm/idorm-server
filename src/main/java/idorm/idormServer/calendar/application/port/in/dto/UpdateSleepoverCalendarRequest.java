@@ -11,8 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import idorm.idormServer.calendar.entity.Period;
 
 public record UpdateSleepoverCalendarRequest(
-	@NotNull(message = "내용을 입력해 주세요.")
-	@Positive(message = "수정할 팀 일정 식별자는 양수만 가능합니다.")
+	@Positive(message = "sleepoverCalenarId , 수정할 외박 일정 식별자는 양수만 가능합니다.")
 	@JsonProperty("teamCalendarId")
 	Long teamCalendarId,
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

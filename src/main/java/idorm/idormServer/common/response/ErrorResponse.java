@@ -21,8 +21,8 @@ public record ErrorResponse(String responseCode, String responseMessage, @JsonIg
 			.build();
 	}
 
-	public static ErrorResponse of(BaseResponseCode code, String message) {
-		return ErrorResponse.builder().responseCode(code.getName())
-			.responseMessage(code.getMessage()).status(code.getStatus()).build();
+	public static ErrorResponse of(HttpStatus status, String responseMessage, String responseCode) {
+		return ErrorResponse.builder().responseCode(responseCode)
+			.responseMessage(responseMessage).status(status).build();
 	}
 }
