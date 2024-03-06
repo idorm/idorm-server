@@ -19,7 +19,7 @@ public class SwaggerConfig {
 	public OpenAPI openAPI() {
 
 		final Info info = new Info()
-			.title("아이돔 2.1.0 api")
+			.title("아이돔 2.1.1 api")
 			.description("idorm api description")
 			.version("2.1.0");
 
