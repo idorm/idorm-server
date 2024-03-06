@@ -12,6 +12,7 @@ public interface LoadMemberPort {
 	Member loadMember(String email, String password);
 
 	Member loadMember(String email);
+	Member loadMemberWithOptional(Long memberId);
 
 	List<Member> loadMembersBy(DormCategory dormCategory);
 
