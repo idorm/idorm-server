@@ -1,30 +1,25 @@
 package idorm.idormServer.calendar.application;
 
-import idorm.idormServer.calendar.application.port.out.DeleteTeamPort;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.TeamUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.TeamParticipantResponse;
 import idorm.idormServer.calendar.application.port.in.dto.TeamResponse;
-import idorm.idormServer.calendar.application.port.out.DeleteSleepoverCalendarPort;
-import idorm.idormServer.calendar.application.port.out.DeleteTeamCalendarPort;
+import idorm.idormServer.calendar.application.port.out.DeleteTeamPort;
 import idorm.idormServer.calendar.application.port.out.LoadSleepoverCalendarPort;
 import idorm.idormServer.calendar.application.port.out.LoadTeamCalendarPort;
 import idorm.idormServer.calendar.application.port.out.LoadTeamPort;
 import idorm.idormServer.calendar.application.port.out.SaveTeamPort;
 import idorm.idormServer.calendar.entity.SleepoverCalendar;
 import idorm.idormServer.calendar.entity.Team;
-import idorm.idormServer.calendar.entity.TeamCalendar;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,18 +40,18 @@ public class TeamService implements TeamUseCase {
 	@Override
 	@Transactional
 	public void addTeamMember(final AuthResponse authResponse, final Long registerMemberId) {
-		final Member loginMember = loadMemberPort.loadMember(authResponse.getId()); // 두 번째 팀원 (초대를 수락한 사람) : 팀이 없어야 함
-		final Member registerMember = loadMemberPort.loadMember(registerMemberId); // 첫 번째 팀원 (초대한 사람) :: 팀이 있거나(두번 째 팀원 초대), 없어야 함(팀이 생성).
+		final Member loginMember = loadMemberPort.loadMember(authResponse.getId());
+		final Member registerMember = loadMemberPort.loadMember(registerMemberId);
 		final Optional<Team> teamWithOptional = loadTeamPort.findByMemberIdWithOptional(registerMember.getId());
 
 		loginMember.validateExistTeam();
 
 		Team teamDomain = null;
-		if (teamWithOptional.isEmpty()) { // 팀 없는 경우
+		if (teamWithOptional.isEmpty()) {
 			teamDomain = new Team(registerMember);
 			teamDomain.addMember(loginMember);
 
-		} else { // 팀 존재하는 경우. (두 번째 팀원 초대)
+		} else {
 			registerMember.getTeam().addMember(loginMember);
 			teamDomain = registerMember.getTeam();
 		}
@@ -79,6 +74,7 @@ public class TeamService implements TeamUseCase {
 		final List<SleepoverCalendar> sleepoverCalendars = loadSleepoverCalendarPort.findByToday(team);
 
 		List<Member> members = team.getMembers().stream()
+				.filter(member -> member.getMemberStatus().equals("ACTIVE"))
 			.sorted(Comparator.comparing(Member::getId))
 			.toList();
 
@@ -92,8 +88,8 @@ public class TeamService implements TeamUseCase {
 		return TeamResponse.of(team, responses);
 	}
 
-	@Transactional
 	@Override
+	@Transactional
 	public void explodeTeam(final AuthResponse authResponse) {
 		final Member member = loadMemberPort.loadMember(authResponse.getId());
 		final Team team = loadTeamPort.findByMemberId(authResponse.getId());
