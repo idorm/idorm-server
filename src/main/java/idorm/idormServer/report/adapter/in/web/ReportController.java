@@ -19,6 +19,7 @@ import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.report.adapter.out.ReportResponseCode;
 import idorm.idormServer.report.application.port.in.ReportUseCase;
 import idorm.idormServer.report.application.port.in.dto.ReportRequest;
+import idorm.idormServer.report.entity.ReportType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -55,9 +56,9 @@ public class ReportController {
 
 		ReportResponseCode responseCode = MEMBER_REPORTED;
 
-		if (request.isMemberReport()) {
+		if (ReportType.isMemberReport(request.reportType())) {
 			reportUseCase.reportMember(auth, request);
-		} else if (request.isPostReport()) {
+		} else if (ReportType.isPostReport(request.reportType())) {
 			reportUseCase.reportPost(auth, request);
 			responseCode = POST_REPORTED;
 		} else {

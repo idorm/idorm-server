@@ -10,8 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import idorm.idormServer.common.entity.BaseTimeEntity;
 import idorm.idormServer.common.util.Validator;
 import lombok.AccessLevel;
@@ -57,7 +55,6 @@ public class OfficialCalendar extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String inuPostUrl;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@Column(nullable = false)
 	private LocalDate inuPostCreatedAt;
 

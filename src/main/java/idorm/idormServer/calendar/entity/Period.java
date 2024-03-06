@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import idorm.idormServer.calendar.adapter.out.exception.DuplicatedSleepoverDateException;
 import idorm.idormServer.calendar.adapter.out.exception.IllegalArgumentDateSetException;
 import idorm.idormServer.common.util.Validator;
@@ -21,11 +19,9 @@ import lombok.NoArgsConstructor;
 public class Period {
 
 	@Column(nullable = false)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
 
 	@Column(nullable = false)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate endDate;
 
 	public Period(final LocalDate startDate, final LocalDate endDate) {

@@ -1,21 +1,13 @@
 package idorm.idormServer.report.entity;
 
 import idorm.idormServer.report.adapter.out.exception.InvalidMemberReportTypeException;
-import lombok.Getter;
 
 public enum MemberReason {
 
-	NICKNAME('N'),
-	PROFILE_PHOTO('P'),
-	MATCHINGINFO('M'),
-	ETC('E');
-
-	@Getter
-	Character type;
-
-	MemberReason(Character type) {
-		this.type = type;
-	}
+	NICKNAME,
+	PROFILE_PHOTO,
+	MATCHINGINFO,
+	ETC;
 
 	public static MemberReason from(String memberReason) {
 		try {
@@ -23,24 +15,5 @@ public enum MemberReason {
 		} catch (IllegalArgumentException e) {
 			throw new InvalidMemberReportTypeException();
 		}
-	}
-
-	public static MemberReason valueOf(Character type) {
-		MemberReason memberReason = null;
-		switch (type) {
-			case 'N':
-				memberReason = MemberReason.NICKNAME;
-				break;
-			case 'P':
-				memberReason = MemberReason.PROFILE_PHOTO;
-				break;
-			case 'M':
-				memberReason = MemberReason.MATCHINGINFO;
-				break;
-			case 'E':
-				memberReason = MemberReason.ETC;
-				break;
-		}
-		return memberReason;
 	}
 }

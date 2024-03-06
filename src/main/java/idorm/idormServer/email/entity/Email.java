@@ -3,7 +3,6 @@ package idorm.idormServer.email.entity;
 import static idorm.idormServer.email.entity.EmailStatus.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,15 +12,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.email.adapter.out.EmailResponseCode;
 import idorm.idormServer.email.adapter.out.exception.DuplicatedEmailException;
 import idorm.idormServer.email.adapter.out.exception.ExpiredEmailVerificationCodeException;
 import idorm.idormServer.email.adapter.out.exception.InvalidVerificationCode;
-import idorm.idormServer.member.adapter.out.exception.UnAuthorizedEmailException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
+import idorm.idormServer.member.adapter.out.exception.UnAuthorizedEmailException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,7 +50,6 @@ public class Email {
 	private String code;
 
 	@Column(nullable = false)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime issuedAt;
 
 	@Column(nullable = false)

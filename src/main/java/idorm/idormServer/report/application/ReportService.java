@@ -4,7 +4,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.community.comment.application.port.out.LoadCommentPort;
 import idorm.idormServer.community.comment.entity.Comment;
+import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
@@ -18,11 +20,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReportService implements ReportUseCase {
 
-	private LoadMemberPort loadMemberPort;
-	private SaveReportPort saveReportPort;
+	private final LoadMemberPort loadMemberPort;
+	private final LoadPostPort loadPostPort;
+	private final LoadCommentPort loadCommentPort;
+	private final SaveReportPort saveReportPort;
 
-	// TODO: 커뮤니티 코드 반영 후 수정
-	// private LoadPostPort loadPostPort;
+	// TODO: 이미 신고된 건에 대한 검증
 
 	@Override
 	@Transactional
@@ -38,10 +41,9 @@ public class ReportService implements ReportUseCase {
 	@Transactional
 	public void reportPost(final AuthResponse auth, final ReportRequest request) {
 		final Member loginMember = loadMemberPort.loadMember(auth.getId());
-		// TODO: 커뮤니티 코드 반영 후 수정
-		final Post post = null;
-		Report postReport = request.toPostReportDomain(loginMember, post);
+		final Post post = loadPostPort.findById(request.targetId());
 
+		Report postReport = request.toPostReportDomain(loginMember, post);
 		saveReportPort.save(postReport);
 	}
 
@@ -49,10 +51,9 @@ public class ReportService implements ReportUseCase {
 	@Transactional
 	public void reportComment(final AuthResponse auth, final ReportRequest request) {
 		final Member loginMember = loadMemberPort.loadMember(auth.getId());
-		// TODO: 커뮤니티 코드 반영 후 수정
-		final Comment comment = null;
-		Report commentReport = request.toCommentReportDomain(loginMember, comment);
+		final Comment comment = loadCommentPort.findById(request.targetId());
 
+		Report commentReport = request.toCommentReportDomain(loginMember, comment);
 		saveReportPort.save(commentReport);
 	}
 }
