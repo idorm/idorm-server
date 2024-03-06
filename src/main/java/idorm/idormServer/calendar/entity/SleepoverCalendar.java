@@ -44,16 +44,11 @@ public class SleepoverCalendar {
 	}
 
 	public void update(Period period) {
-		validateUniqueDate(period);
-		this.period.updateSleepover(period);
+		this.period.update(period);
 	}
 
 	private void validateConstructor(Period period, Long memberId, Team team) {
 		Validator.validateNotNull(List.of(period, memberId, team));
-	}
-
-	private void validateUniqueDate(Period newPeriod) {
-		this.period.validateUniqueDate(newPeriod);
 	}
 
 }

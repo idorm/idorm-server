@@ -8,7 +8,6 @@ import javax.persistence.Embeddable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import idorm.idormServer.calendar.adapter.out.exception.DuplicatedSleepoverDateException;
 import idorm.idormServer.calendar.adapter.out.exception.IllegalArgumentDateSetException;
 import idorm.idormServer.common.util.Validator;
 import lombok.AccessLevel;
@@ -34,27 +33,14 @@ public class Period {
 		this.endDate = endDate;
 	}
 
-	void updateTeamCalendar(Period period) {
+	void update(Period period) {
 		validate(period.getStartDate(), period.getEndDate());
-		this.startDate = period.getStartDate();
-		this.endDate = period.getEndDate();
-	}
-
-	void updateSleepover(Period period) {
-		validate(period.getStartDate(), period.getEndDate());
-		validateUniqueDate(period);
 		this.startDate = period.getStartDate();
 		this.endDate = period.getEndDate();
 	}
 
 	boolean isSameDate() {
 		return startDate.equals(endDate);
-	}
-
-	void validateUniqueDate(Period otherPeriod) {
-		if (startDate.isBefore(otherPeriod.endDate) && endDate.isAfter(otherPeriod.startDate)) {
-			throw new DuplicatedSleepoverDateException();
-		}
 	}
 
 	void validate(LocalDate startDate, LocalDate endDate) {

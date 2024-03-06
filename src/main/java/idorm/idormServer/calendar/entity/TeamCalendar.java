@@ -61,6 +61,7 @@ public class TeamCalendar {
 		final Duration duration,
 		final Participants participants,
 		final Team team) {
+		validateConstructor(title, content);
 		this.period = period;
 		this.duration = duration;
 		this.title = title;
@@ -78,7 +79,7 @@ public class TeamCalendar {
 		newParticipates(ids);
 		this.title = title;
 		this.content = content;
-		this.period.updateTeamCalendar(period);
+		this.period.update(period);
 		this.duration.update(period, startTime, endTime);
 	}
 
@@ -97,6 +98,10 @@ public class TeamCalendar {
 		existingMembers.stream()
 				.filter(memberId -> !memberIds.contains(memberId))
 				.forEach(this.participants::delete);
+	}
+
+	public void deletePariticipant(Long memberId) {
+		this.participants.delete(memberId);
 	}
 
 	public List<Participant> getParticipants() {
