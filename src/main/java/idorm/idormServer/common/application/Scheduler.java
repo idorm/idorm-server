@@ -1,9 +1,8 @@
 package idorm.idormServer.common.application;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,13 +12,11 @@ import idorm.idormServer.calendar.application.port.out.FindInuPost;
 import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
 import idorm.idormServer.calendar.application.port.out.LoadTeamCalendarPort;
 import idorm.idormServer.calendar.entity.OfficialCalendar;
-import idorm.idormServer.calendar.entity.Participant;
 import idorm.idormServer.calendar.entity.TeamCalendar;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
-import idorm.idormServer.member.entity.Member;
 import idorm.idormServer.notification.adapter.out.event.NotificationClient;
 import idorm.idormServer.notification.adapter.out.event.NotificationRequest;
 import idorm.idormServer.notification.application.port.out.DeleteFcmTokenPort;
@@ -78,12 +75,23 @@ public class Scheduler {
 	@Scheduled(cron = "0 0 14 ? * MON,TUE,WED,THU,FRI,SAT,SUN") // UTC 14:00 ASIA/SEOUL 23:00
 	public void alertAdminOfOfficialCalendars() {
 		List<OfficialCalendar> newPosts = findInuPost.findNewPosts();
-		List<Member> admins = loadMemberPort.loadAdmins();
+		List<FcmToken> fcmTokens = loadFcmTokenPort.loadAllByAdmins();
 
 		List<NotificationRequest> requests = newPosts.stream()
-			.map(calendar -> adminOfficialCalendarNotificationOf(calendar, admins))
-			.flatMap(List::stream)
+			.flatMap(calendar -> fcmTokens.stream().map(fcmToken -> {
+				NotificationRequest request = NotificationRequest.builder()
+					.token(fcmToken.getValue())
+					.message(NotificationRequest.NotificationMessage.builder()
+						.notifyType(FcmChannel.CALENDAR)
+						.contentId(calendar.getId())
+						.title(FcmChannel.CALENDAR.getTitle())
+						.content(calendar.getTitle())
+						.build())
+					.build();
+				return request;
+			}))
 			.toList();
+
 		notificationClient.notify(requests);
 	}
 
@@ -94,60 +102,54 @@ public class Scheduler {
 	}
 
 	private List<NotificationRequest> notificationRequestsFrom(DormCategory dormCategory) {
-		Post topPost = loadPostPort.findTopPostByDormCategory(dormCategory);
-		List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByToday(dormCategory);
+		final Post topPost = loadPostPort.findTopPostByDormCategory(dormCategory);
+		final List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByToday(dormCategory);
 
-		if (topPost == null && (Objects.isNull(officialCalendars) || officialCalendars.isEmpty())) {
-			return null;
+		if (topPost == null && officialCalendars.isEmpty()) {
+			return Collections.emptyList();
 		}
 
-		List<Member> members = loadMemberPort.loadMembersBy(dormCategory);
+		List<FcmToken> fcmTokens = loadFcmTokenPort.loadAllByDormCategory(dormCategory);
 		List<NotificationRequest> notificationRequests = new ArrayList<>();
-		if (topPost != null) {
-			List<NotificationRequest> topPostRequests = members.stream()
-				.map(member -> topPostNotificationOf(member, topPost))
-				.toList();
-			notificationRequests.addAll(topPostRequests);
-		}
-		if (Objects.isNull(officialCalendars) || officialCalendars.isEmpty()) {
-			List<NotificationRequest> officialCalendarRequests = members.stream()
-				.map(member -> officialCalnedarNotificationOf(member, officialCalendars))
-				.flatMap(List::stream)
-				.toList();
-			notificationRequests.addAll(officialCalendarRequests);
-		}
+
+		notificationRequests.addAll(topPostNotificationOf(fcmTokens, topPost));
+		notificationRequests.addAll(todayOfficialCalendarNotificationOf(fcmTokens, officialCalendars));
+
 		return notificationRequests;
 	}
 
-	private NotificationRequest topPostNotificationOf(Member target, Post post) {
-		Optional<FcmToken> fcmToken = loadFcmTokenPort.load(target.getId());
-		if (fcmToken.isEmpty()) {
-			return null;
+	private List<NotificationRequest> topPostNotificationOf(List<FcmToken> fcmTokens, Post topPost) {
+		if (topPost == null) {
+			return Collections.emptyList();
 		}
 
-		NotificationRequest request = NotificationRequest.builder()
-			.token(fcmToken.get().getValue())
-			.message(NotificationRequest.NotificationMessage.builder()
-				.notifyType(FcmChannel.TOPPOST)
-				.contentId(post.getId())
-				.title(FcmChannel.TOPPOST.getTitle())
-				.content(post.getTitle())
-				.build())
-			.build();
-		return request;
+		List<NotificationRequest> topPostRequests = fcmTokens.stream()
+			.map(fcmToken -> {
+				NotificationRequest request = NotificationRequest.builder()
+					.token(fcmToken.getValue())
+					.message(NotificationRequest.NotificationMessage.builder()
+						.notifyType(FcmChannel.TOPPOST)
+						.contentId(topPost.getId())
+						.title(FcmChannel.TOPPOST.getTitle())
+						.content(topPost.getTitle())
+						.build())
+					.build();
+				return request;
+			})
+			.toList();
+		return topPostRequests;
 	}
 
-	private List<NotificationRequest> officialCalnedarNotificationOf(Member target, List<OfficialCalendar> calendars) {
-		Optional<FcmToken> fcmToken = loadFcmTokenPort.load(target.getId());
-		if (fcmToken.isEmpty()) {
-			return null;
+	private List<NotificationRequest> todayOfficialCalendarNotificationOf(List<FcmToken> fcmTokens,
+		List<OfficialCalendar> officialCalendars) {
+		if (officialCalendars.isEmpty()) {
+			return Collections.emptyList();
 		}
-		String token = fcmToken.get().getValue();
 
-		List<NotificationRequest> requests = calendars.stream()
-			.map(calendar -> {
+		List<NotificationRequest> officialCalendarRequests = fcmTokens.stream()
+			.flatMap(fcmToken -> officialCalendars.stream().map(calendar -> {
 				NotificationRequest request = NotificationRequest.builder()
-					.token(token)
+					.token(fcmToken.getValue())
 					.message(NotificationRequest.NotificationMessage.builder()
 						.notifyType(FcmChannel.CALENDAR)
 						.contentId(calendar.getId())
@@ -156,49 +158,23 @@ public class Scheduler {
 						.build())
 					.build();
 				return request;
-			})
+			}))
 			.toList();
-		return requests;
+		return officialCalendarRequests;
 	}
 
 	private List<NotificationRequest> teamCalendarNotificationOf(TeamCalendar teamCalendar) {
-		List<Participant> participants = teamCalendar.getParticipants();
-		List<NotificationRequest> requests = participants.stream()
-			.map(participant -> {
-				Optional<FcmToken> fcmToken = loadFcmTokenPort.load(participant.getMemberId());
-				if (fcmToken.isEmpty())
-					return null;
+		List<FcmToken> fcmTokens = loadFcmTokenPort.loadAllByMemberIds(teamCalendar.getParticipantMemberIds());
 
+		List<NotificationRequest> requests = fcmTokens.stream()
+			.map(fcmToken -> {
 				NotificationRequest request = NotificationRequest.builder()
-					.token(fcmToken.get().getValue())
+					.token(fcmToken.getValue())
 					.message(NotificationRequest.NotificationMessage.builder()
 						.notifyType(FcmChannel.TEAMCALENDAR)
 						.contentId(teamCalendar.getId())
 						.title(FcmChannel.TEAMCALENDAR.getTitle())
 						.content(teamCalendar.getTitle())
-						.build())
-					.build();
-				return request;
-			})
-			.toList();
-		return requests;
-	}
-
-	private List<NotificationRequest> adminOfficialCalendarNotificationOf(OfficialCalendar officialCalendar,
-		List<Member> members) {
-		List<NotificationRequest> requests = members.stream()
-			.map(member -> {
-				Optional<FcmToken> fcmToken = loadFcmTokenPort.load(member.getId());
-				if (fcmToken.isEmpty())
-					return null;
-
-				NotificationRequest request = NotificationRequest.builder()
-					.token(fcmToken.get().getValue())
-					.message(NotificationRequest.NotificationMessage.builder()
-						.notifyType(FcmChannel.CALENDAR)
-						.contentId(officialCalendar.getId())
-						.title(FcmChannel.CALENDAR.getTitle())
-						.content(officialCalendar.getTitle())
 						.build())
 					.build();
 				return request;

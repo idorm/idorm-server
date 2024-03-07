@@ -1,6 +1,5 @@
 package idorm.idormServer.master.develop;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,8 +10,8 @@ import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.notification.adapter.out.event.NotificationClient;
 import idorm.idormServer.notification.adapter.out.event.NotificationRequest;
 import idorm.idormServer.notification.entity.FcmChannel;
+import io.sentry.Sentry;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +23,7 @@ public class DevelopController {
 
 	private final NotificationClient notificationClient;
 
-	@Operation(summary = "fcm 토큰 발송 테스트", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+	@Operation(summary = "fcm 토큰 발송 테스트")
 	@GetMapping("/fcm/{token}")
 	public ResponseEntity<SuccessResponse<Object>> sendFcmMessage(
 		@PathVariable(name = "token") String token
@@ -40,6 +39,17 @@ public class DevelopController {
 			.build();
 
 		notificationClient.notify(request);
+		return ResponseEntity.noContent().build();
+	}
+
+	@Operation(summary = "sentry 테스트")
+	@GetMapping("/sentry")
+	public ResponseEntity<Object> testSentry() {
+		try {
+			throw new Exception("This is a test.");
+		} catch (Exception e) {
+			Sentry.captureException(e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 }

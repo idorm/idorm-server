@@ -21,7 +21,7 @@ import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.community.comment.adapter.out.exception.AccessDeniedCommentException;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.member.entity.Member;
-import idorm.idormServer.report.entity.Report;
+import idorm.idormServer.report.entity.CommentReport;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,7 +64,7 @@ public class Comment extends BaseTimeEntity {
 	private Boolean isBlocked;
 
 	@OneToMany(mappedBy = "reportedComment")
-	private List<Report> reports = new ArrayList<>();
+	private List<CommentReport> reports = new ArrayList<>();
 
 	public Comment(final String content, final Comment parent, final Post post, final Member member,
 		final Boolean isAnonymous) {
@@ -97,7 +97,7 @@ public class Comment extends BaseTimeEntity {
 		return this.content;
 	}
 
-	public void addReport(final Report report) {
+	public void addReport(final CommentReport report) {
 		this.reports.add(report);
 	}
 

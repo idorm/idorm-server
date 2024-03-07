@@ -5,14 +5,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import idorm.idormServer.common.exception.InvalidTargetSelfException;
 import idorm.idormServer.community.comment.entity.Comment;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.member.entity.Member;
+import idorm.idormServer.report.entity.CommentReport;
 import idorm.idormServer.report.entity.CommunityReason;
 import idorm.idormServer.report.entity.MemberReason;
+import idorm.idormServer.report.entity.MemberReport;
+import idorm.idormServer.report.entity.PostReport;
 import idorm.idormServer.report.entity.Report;
-import idorm.idormServer.report.entity.ReportType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record ReportRequest(
@@ -40,37 +41,17 @@ public record ReportRequest(
 	String reason
 ) {
 
-	public boolean isMemberReport() {
-		return ReportType.isMemberReport(reportType);
-	}
-
-	public boolean isPostReport() {
-		return ReportType.isPostReport(reportType);
-	}
-
 	public Report toMemberReportDomain(final Member reporterMember, final Member reportedMember) {
-		validateTargetNotSelf(reporterMember, reportedMember);
-
-		return Report.memberReport(reporterMember, reportedMember, MemberReason.from(this.reasonType), reason);
+		return new MemberReport(reporterMember, reportedMember, MemberReason.from(this.reasonType), reason);
 	}
 
 	public Report toPostReportDomain(final Member reporterMember, final Post reportedPost) {
-		validateTargetNotSelf(reporterMember, reportedPost.getMember());
-
-		return Report.postReport(reporterMember, reportedPost.getMember(), reportedPost,
-			CommunityReason.from(reasonType), reason);
+		return new PostReport(reporterMember, reportedPost.getMember(), reportedPost, CommunityReason.from(reasonType),
+			reason);
 	}
 
 	public Report toCommentReportDomain(final Member reporterMember, final Comment reportedComment) {
-		validateTargetNotSelf(reporterMember, reportedComment.getMember());
-
-		return Report.commentReport(reporterMember, reportedComment.getMember(), reportedComment,
+		return new CommentReport(reporterMember, reportedComment.getMember(), reportedComment,
 			CommunityReason.from(reasonType), reason);
-	}
-
-	private void validateTargetNotSelf(Member reporterMember, Member reportedMember) {
-		if (reporterMember.equals(reportedMember)) {
-			throw new InvalidTargetSelfException();
-		}
 	}
 }

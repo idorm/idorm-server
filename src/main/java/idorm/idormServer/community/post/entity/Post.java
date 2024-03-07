@@ -28,7 +28,7 @@ import idorm.idormServer.community.postPhoto.entity.PostPhoto;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.member.entity.Member;
 import idorm.idormServer.photo.adapter.out.exception.ExceedFileCountException;
-import idorm.idormServer.report.entity.Report;
+import idorm.idormServer.report.entity.PostReport;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -79,14 +79,16 @@ public class Post extends BaseTimeEntity {
 	@OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<PostPhoto> postPhotos = new ArrayList<>();
 
-	@OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST,
+		CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<PostLike> postLikes = new ArrayList<>();
 
-	@OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST,
+		CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<>();
 
 	@OneToMany(mappedBy = "reportedPost", orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<Report> reports = new ArrayList<>();
+	private List<PostReport> reports = new ArrayList<>();
 
 	public Post(final Member member,
 		final DormCategory dormCategory,
@@ -121,7 +123,7 @@ public class Post extends BaseTimeEntity {
 		this.postPhotos.addAll(postPhotos);
 	}
 
-	public void addReport(final Report report){
+	public void addReport(final PostReport report) {
 		this.reports.add(report);
 	}
 
@@ -170,7 +172,6 @@ public class Post extends BaseTimeEntity {
 			throw new ExceedFileCountException();
 		}
 	}
-
 
 	private void validatePostAuthorization(final Member member) {
 		if (this.getMember() == null || !this.getMember().equals(member)) {

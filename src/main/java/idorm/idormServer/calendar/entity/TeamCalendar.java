@@ -3,8 +3,8 @@ package idorm.idormServer.calendar.entity;
 import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.*;
 
 import java.time.LocalTime;
-
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -70,9 +70,8 @@ public class TeamCalendar {
 		this.team = team;
 	}
 
-
 	public void update(Team team, String title, String content, Period period, LocalTime startTime, LocalTime endTime,
-			List<Long> ids) {
+		List<Long> ids) {
 		validateAuthorization(team);
 		validateConstructor(title, content);
 		removePariticipants(ids);
@@ -85,19 +84,19 @@ public class TeamCalendar {
 
 	public void newParticipates(List<Long> memberIds) {
 		memberIds.stream()
-				.filter(memberId -> !this.participants.contains(memberId))
-				.forEach(this.participants::participate);
+			.filter(memberId -> !this.participants.contains(memberId))
+			.forEach(this.participants::participate);
 	}
 
 	public void removePariticipants(List<Long> memberIds) {
 		List<Long> existingMembers = this.participants.getParticipants().stream()
-				.map(Participant::getMemberId)
-				.distinct()
-				.toList();
+			.map(Participant::getMemberId)
+			.distinct()
+			.toList();
 
 		existingMembers.stream()
-				.filter(memberId -> !memberIds.contains(memberId))
-				.forEach(this.participants::delete);
+			.filter(memberId -> !memberIds.contains(memberId))
+			.forEach(this.participants::delete);
 	}
 
 	public void deletePariticipant(Long memberId) {
@@ -106,6 +105,12 @@ public class TeamCalendar {
 
 	public List<Participant> getParticipants() {
 		return participants.getParticipants();
+	}
+
+	public List<Long> getParticipantMemberIds() {
+		return participants.getParticipants().stream()
+			.map(Participant::getMemberId)
+			.toList();
 	}
 
 	private void validateAuthorization(final Team team) {

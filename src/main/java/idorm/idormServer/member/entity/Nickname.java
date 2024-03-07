@@ -7,9 +7,6 @@ import javax.persistence.Embeddable;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import idorm.idormServer.common.util.Validator;
 import idorm.idormServer.member.adapter.out.MemberResponseCode;
 import idorm.idormServer.member.adapter.out.exception.CannotUpdateNicknameException;
@@ -30,8 +27,6 @@ public class Nickname {
 
 	@CreatedDate
 	@Column(name = "nickname_updated_at")
-	@JsonIgnore
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime updatedAt;
 
 	private Nickname(final String value) {

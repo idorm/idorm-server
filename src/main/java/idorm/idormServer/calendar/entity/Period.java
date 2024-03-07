@@ -19,38 +19,38 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Period {
 
-	@Column(nullable = false)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	private LocalDate startDate;
+  @Column(nullable = false)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  private LocalDate startDate;
 
-	@Column(nullable = false)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	private LocalDate endDate;
+  @Column(nullable = false)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  private LocalDate endDate;
 
-	public Period(final LocalDate startDate, final LocalDate endDate) {
-		validate(startDate, endDate);
-		this.startDate = startDate;
-		this.endDate = endDate;
-	}
+  public Period(final LocalDate startDate, final LocalDate endDate) {
+    validate(startDate, endDate);
+    this.startDate = startDate;
+    this.endDate = endDate;
+  }
 
-	void update(Period period) {
-		validate(period.getStartDate(), period.getEndDate());
-		this.startDate = period.getStartDate();
-		this.endDate = period.getEndDate();
-	}
+  void update(Period period) {
+    validate(period.getStartDate(), period.getEndDate());
+    this.startDate = period.getStartDate();
+    this.endDate = period.getEndDate();
+  }
 
-	boolean isSameDate() {
-		return startDate.equals(endDate);
-	}
+  boolean isSameDate() {
+    return startDate.equals(endDate);
+  }
 
-	void validate(LocalDate startDate, LocalDate endDate) {
-		Validator.validateNotNull(List.of(startDate, endDate));
-		validateValidDate(startDate, endDate);
-	}
+  void validate(LocalDate startDate, LocalDate endDate) {
+    Validator.validateNotNull(List.of(startDate, endDate));
+    validateValidDate(startDate, endDate);
+  }
 
-	private void validateValidDate(LocalDate startDate, LocalDate endDate) {
-		if (endDate.isBefore(startDate)) {
-			throw new IllegalArgumentDateSetException();
-		}
-	}
+  private void validateValidDate(LocalDate startDate, LocalDate endDate) {
+    if (endDate.isBefore(startDate)) {
+      throw new IllegalArgumentDateSetException();
+    }
+  }
 }

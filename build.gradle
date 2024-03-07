@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'idorm'
-version = '2.0.1-SNAPSHOT'
+version = '2.1.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
@@ -46,7 +46,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
     // sentry
-    implementation 'io.sentry:sentry-spring-boot-starter:6.2.1'
+    implementation 'io.sentry:sentry-spring-boot-starter:7.5.0'
 
     // crawling
     implementation 'org.jsoup:jsoup:1.15.3'
