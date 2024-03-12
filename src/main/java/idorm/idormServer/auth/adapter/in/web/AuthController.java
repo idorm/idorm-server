@@ -69,7 +69,6 @@ public class AuthController {
 			.body(SuccessResponse.from(AuthResponseCode.MEMBER_LOGIN));
 	}
 
-	@Auth
 	@Operation(summary = "Access Token 재발급", security = {@SecurityRequirement(name = AUTHORIZATION),
 		@SecurityRequirement(name = "Refresh-Token")})
 	@ApiResponses(value = {

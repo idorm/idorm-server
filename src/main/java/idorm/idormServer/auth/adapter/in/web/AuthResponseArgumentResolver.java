@@ -11,8 +11,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedAccessTokenException;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
-import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -33,7 +33,7 @@ public class AuthResponseArgumentResolver implements HandlerMethodArgumentResolv
 		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 		String token = AuthorizationExtractor.extractAccessToken(Objects.requireNonNull(request));
 		if (token == null) {
-			return new AuthResponse(null, null, null);
+			throw new UnAuthorizedAccessTokenException();
 		}
 		return jwtTokenUseCase.getParsedClaims(token);
 	}

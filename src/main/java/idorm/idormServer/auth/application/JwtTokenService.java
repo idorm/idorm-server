@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedAccessTokenException;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import io.jsonwebtoken.Claims;
@@ -80,6 +81,8 @@ public class JwtTokenService implements JwtTokenUseCase {
 			String role = (String)e.getClaims().get("role");
 			String nickname = (String)e.getClaims().get("nickname");
 			return new AuthResponse(id, role, nickname);
+		} catch (JwtException e) {
+			throw new UnAuthorizedAccessTokenException();
 		}
 
 		Long id = (long)(int)claims.get("id");
