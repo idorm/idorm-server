@@ -4,8 +4,8 @@ import static idorm.idormServer.community.comment.adapter.out.CommentResponseCod
 import static idorm.idormServer.community.comment.adapter.out.CommentResponseCode.COMMENT_MANY_FOUND;
 import static idorm.idormServer.community.comment.adapter.out.CommentResponseCode.COMMENT_SAVED;
 
-import idorm.idormServer.auth.adapter.in.api.Auth;
-import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.adapter.in.web.Auth;
+import idorm.idormServer.auth.adapter.in.web.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.community.comment.application.port.in.CommentUseCase;

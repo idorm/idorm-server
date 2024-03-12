@@ -14,7 +14,7 @@ public enum RoleType {
 		return name;
 	}
 
-	public boolean isNot(String roleType) {
-		return !this.name.equals(roleType);
+	public static boolean isNotAdmin(String roleType) {
+		return !ADMIN.equals(roleType);
 	}
 }

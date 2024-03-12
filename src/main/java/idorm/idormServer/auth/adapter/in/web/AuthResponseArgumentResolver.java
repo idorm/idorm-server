@@ -1,4 +1,4 @@
-package idorm.idormServer.auth.adapter.in.api;
+package idorm.idormServer.auth.adapter.in.web;
 
 import java.util.Objects;
 
@@ -14,12 +14,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
-public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArgumentResolver {
+public class AuthResponseArgumentResolver implements HandlerMethodArgumentResolver {
 
 	private final JwtTokenUseCase jwtTokenUseCase;
 

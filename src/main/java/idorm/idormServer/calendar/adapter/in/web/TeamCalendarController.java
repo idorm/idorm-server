@@ -5,8 +5,8 @@ import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_C
 import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_CALENDER_FOUND;
 import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_CALENDER_UPDATED;
 
-import idorm.idormServer.auth.adapter.in.api.Auth;
-import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.adapter.in.web.Auth;
+import idorm.idormServer.auth.adapter.in.web.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.TeamCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;

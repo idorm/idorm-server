@@ -8,8 +8,8 @@ import static idorm.idormServer.community.post.adapter.out.PostResponseCode.POST
 import static idorm.idormServer.community.post.adapter.out.PostResponseCode.POST_UPDATED;
 import static idorm.idormServer.community.post.adapter.out.PostResponseCode.TOP_POST_MANY_FOUND;
 
-import idorm.idormServer.auth.adapter.in.api.Auth;
-import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.adapter.in.web.Auth;
+import idorm.idormServer.auth.adapter.in.web.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.community.comment.adapter.out.exception.InvalidCommentContentLengthException;
