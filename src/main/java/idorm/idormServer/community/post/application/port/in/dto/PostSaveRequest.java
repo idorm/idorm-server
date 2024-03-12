@@ -1,5 +1,8 @@
 package idorm.idormServer.community.post.application.port.in.dto;
 
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
+import idorm.idormServer.member.entity.Member;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -27,5 +30,9 @@ public record PostSaveRequest(
 
 	List<MultipartFile> files
 ) {
+
+	public Post toEntity(final Member member){
+		return new Post(member, DormCategory.valueOf(dormCategory), title, content, isAnonymous);
+	}
 
 }

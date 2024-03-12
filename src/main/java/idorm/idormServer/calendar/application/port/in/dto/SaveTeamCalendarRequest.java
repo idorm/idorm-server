@@ -33,7 +33,6 @@ public record SaveTeamCalendarRequest(
 
   public TeamCalendar toEntity(final Team team) {
     return new TeamCalendar(title, content, new Period(startDate, endDate), new Duration(startTime, endTime),
-        new Participants(participants), team
-    );
+        new Participants(participants), team);
   }
 }

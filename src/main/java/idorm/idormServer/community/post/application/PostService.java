@@ -49,21 +49,17 @@ public class PostService implements PostUseCase {
   @Transactional
   public PostResponse save(final AuthResponse authResponse, final PostSaveRequest request) {
     final Member member = loadMemberPort.loadMember(authResponse.getId());
-
-    Post post = new Post(member, DormCategory.valueOf(
-        request.dormCategory()),
-        request.title(),
-        request.content(),
-        request.isAnonymous());
-    savePostPort.save(post);
-
+    Post post = request.toEntity(member);
     if (request.files() != null) {
+      post.validatePostPhotoSize(request.files().size());
+      savePostPort.save(post);
       List<String> photoUrl = saveFilePort.addPostPhotoFiles(post, request.files());
       postPhotoUseCase.save(post, photoUrl);
 
       final List<PostPhoto> postPhotos = postPhotoUseCase.findAllByPost(post);
       post.addPostPhoto(postPhotos);
     }
+    savePostPort.save(post);
     return PostResponse.of(post, postPhotoUseCase.findAllByPost(post));
   }
 
@@ -71,7 +67,7 @@ public class PostService implements PostUseCase {
   @Transactional
   public void update(final AuthResponse authResponse, final Long postId, final PostUpdateRequest request) {
     final Member member = loadMemberPort.loadMember(authResponse.getId());
-    final Post post = loadPostPort.findById(postId);
+    final Post post = loadPostPort.findByIdAndMemberId(postId, member.getId());
 
     if (request.deletePostPhotoIds() != null) {
       handleDeletePostPhotos(post, request);
@@ -86,7 +82,7 @@ public class PostService implements PostUseCase {
   @Transactional
   public void delete(final AuthResponse authResponse, final Long postId) {
     final Member member = loadMemberPort.loadMember(authResponse.getId());
-    final Post post = loadPostPort.findById(postId);
+    final Post post = loadPostPort.findByIdAndMemberId(postId, member.getId());
 
     List<String> deletePhotoUrls = getPhotoUrls(post);
 

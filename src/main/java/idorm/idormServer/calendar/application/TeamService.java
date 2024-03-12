@@ -33,8 +33,6 @@ public class TeamService implements TeamUseCase {
 
 	private final LoadSleepoverCalendarPort loadSleepoverCalendarPort;
 
-	private final LoadTeamCalendarPort loadTeamCalendarPort;
-
 	private final DeleteTeamPort deleteTeamPort;
 
 	@Override

@@ -14,7 +14,7 @@ public record SaveSleepoverCalendarRequest(
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	LocalDate endDate
 ) {
-	public SleepoverCalendar from(final Long memberId, final Team teamDomain) {
+	public SleepoverCalendar toEntity(final Long memberId, final Team teamDomain) {
 		return new SleepoverCalendar(new Period(startDate, endDate), memberId, teamDomain);
 	}
 
