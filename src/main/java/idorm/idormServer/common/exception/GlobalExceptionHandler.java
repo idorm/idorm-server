@@ -19,9 +19,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import idorm.idormServer.auth.adapter.out.AuthResponseCode;
-import idorm.idormServer.auth.adapter.out.exception.AccessDeniedAdminException;
-import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedAccessTokenException;
 import idorm.idormServer.common.response.ErrorResponse;
 import idorm.idormServer.photo.adapter.out.PhotoResponseCode;
 import lombok.extern.slf4j.Slf4j;
@@ -39,19 +36,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorResponse> handleException(Exception exception) {
 		ErrorResponse error = ErrorResponse.of(GlobalResponseCode.SERVER_ERROR);
-		return ResponseEntity.status(error.status()).body(error);
-	}
-
-	@ExceptionHandler(UnAuthorizedAccessTokenException.class)
-	protected ResponseEntity<ErrorResponse> handleAuthenticationException(
-		final UnAuthorizedAccessTokenException exception) {
-		ErrorResponse error = ErrorResponse.of(AuthResponseCode.UNAUTHORIZED_ACCESS_TOKEN);
-		return ResponseEntity.status(error.status()).body(error);
-	}
-
-	@ExceptionHandler(AccessDeniedAdminException.class)
-	protected ResponseEntity<ErrorResponse> handleAuthorizationException(final AccessDeniedAdminException exception) {
-		ErrorResponse error = ErrorResponse.of(AuthResponseCode.ACCESS_DENIED_ADMIN);
 		return ResponseEntity.status(error.status()).body(error);
 	}
 
