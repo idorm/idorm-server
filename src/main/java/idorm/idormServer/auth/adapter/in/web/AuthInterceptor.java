@@ -1,39 +1,33 @@
-package idorm.idormServer.auth.adapter.in.api;
+package idorm.idormServer.auth.adapter.in.web;
 
-import static idorm.idormServer.auth.adapter.out.AuthResponseCode.*;
+import static idorm.idormServer.auth.entity.RoleType.*;
 
-import java.io.IOException;
 import java.util.Objects;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import idorm.idormServer.auth.adapter.out.AuthResponseCode;
+import idorm.idormServer.auth.adapter.out.exception.AccessDeniedAdminException;
+import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedAccessTokenException;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.auth.entity.RoleType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuthInterceptor implements HandlerInterceptor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AuthInterceptor.class);
-
 	private final JwtTokenUseCase jwtTokenUseCase;
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
-		ServletException, IOException {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
 		if (!(handler instanceof HandlerMethod)) {
 			return true;
@@ -41,35 +35,28 @@ public class AuthInterceptor implements HandlerInterceptor {
 		HandlerMethod handlerMethod = (HandlerMethod)handler;
 		Auth auth = handlerMethod.getMethodAnnotation(Auth.class);
 		if (auth == null) {
-			LOGGER.info("미인증 사용자 요청");
 			return true;
 		}
 
 		if (notExistHeader(request)) {
-			LOGGER.info("no header" + request.getRequestURI());
-			request.setAttribute("exception", UNAUTHORIZED_ACCESS_TOKEN.name());
-			request.getRequestDispatcher("/api/error").forward(request, response);
-			return false;
+			response.setStatus(AuthResponseCode.UNAUTHORIZED_ACCESS_TOKEN.getStatus().value());
+			throw new UnAuthorizedAccessTokenException();
 		}
 
 		String token = AuthorizationExtractor.extractAccessToken(request);
 
 		if (isInvalidToken(token)) {
-			LOGGER.info("no token" + request.getRequestURI());
-			request.setAttribute("exception", UNAUTHORIZED_ACCESS_TOKEN.name());
-			request.getRequestDispatcher("/api/error").forward(request, response);
-			return false;
+			response.setStatus(AuthResponseCode.UNAUTHORIZED_ACCESS_TOKEN.getStatus().value());
+			throw new UnAuthorizedAccessTokenException();
 		}
 
 		AuthResponse authInfo = jwtTokenUseCase.getParsedClaims(token);
 		if (isAdminOnly(auth)) {
-			if (isNotAdmin(authInfo)) {
-				request.setAttribute("exception", ACCESS_DENIED_ADMIN.name());
-				request.getRequestDispatcher("/api/error").forward(request, response);
+			if (isNotAdmin(authInfo.getRole())) {
+				response.setStatus(AuthResponseCode.ACCESS_DENIED_ADMIN.getStatus().value());
+				throw new AccessDeniedAdminException();
 			}
 		}
-
-		request.setAttribute("authInfo", authInfo);
 		return true;
 	}
 
@@ -84,12 +71,5 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 	private boolean isAdminOnly(Auth auth) {
 		return auth.role().compareTo(RoleType.ADMIN) == 0;
-	}
-
-	private boolean isNotAdmin(AuthResponse authInfo) {
-		if (RoleType.ADMIN.isNot(authInfo.getRole())) {
-			return true;
-		}
-		return false;
 	}
 }
