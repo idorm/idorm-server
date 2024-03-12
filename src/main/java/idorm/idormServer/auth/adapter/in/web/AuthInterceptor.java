@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import idorm.idormServer.auth.adapter.out.AuthResponseCode;
 import idorm.idormServer.auth.adapter.out.exception.AccessDeniedAdminException;
 import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedAccessTokenException;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
@@ -39,21 +38,18 @@ public class AuthInterceptor implements HandlerInterceptor {
 		}
 
 		if (notExistHeader(request)) {
-			response.setStatus(AuthResponseCode.UNAUTHORIZED_ACCESS_TOKEN.getStatus().value());
 			throw new UnAuthorizedAccessTokenException();
 		}
 
 		String token = AuthorizationExtractor.extractAccessToken(request);
 
 		if (isInvalidToken(token)) {
-			response.setStatus(AuthResponseCode.UNAUTHORIZED_ACCESS_TOKEN.getStatus().value());
 			throw new UnAuthorizedAccessTokenException();
 		}
 
 		AuthResponse authInfo = jwtTokenUseCase.getParsedClaims(token);
 		if (isAdminOnly(auth)) {
 			if (isNotAdmin(authInfo.getRole())) {
-				response.setStatus(AuthResponseCode.ACCESS_DENIED_ADMIN.getStatus().value());
 				throw new AccessDeniedAdminException();
 			}
 		}
