@@ -6,8 +6,8 @@ import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_C
 import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_CALENDER_UPDATED;
 import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_SLEEPOVER_CALENDERS_FOUND;
 
-import idorm.idormServer.auth.adapter.in.api.Auth;
-import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.adapter.in.web.Auth;
+import idorm.idormServer.auth.adapter.in.web.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.SleepoverCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.CalendarsResponse;

@@ -6,9 +6,10 @@ import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.CALEND
 import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.OFFICIAL_CALENDARS_FOUND;
 import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.OFFICIAL_CALENDAR_DELETED;
 
-import idorm.idormServer.auth.adapter.in.api.Auth;
-import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.adapter.in.web.Auth;
+import idorm.idormServer.auth.adapter.in.web.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
+import idorm.idormServer.auth.entity.RoleType;
 import idorm.idormServer.calendar.application.port.in.OfficialCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.CrawledOfficialCalendarResponse;
 import idorm.idormServer.calendar.application.port.in.dto.FindCalendarsRequest;
@@ -47,7 +48,7 @@ public class OfficialCalendarController {
 
   private final OfficialCalendarUseCase officialCalendarUseCase;
 
-  @Auth
+  @Auth(role = RoleType.ADMIN)
   @Operation(summary = "[관리자 용] 공식 일정 저장 및 수정", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -69,7 +70,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(CALENDAR_UPDATED, response));
   }
 
-  @Auth
+  @Auth(role = RoleType.ADMIN)
   @Operation(summary = "[관리자 용] 일정 삭제", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -90,7 +91,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.from(OFFICIAL_CALENDAR_DELETED));
   }
 
-  @Auth
+  @Auth(role = RoleType.ADMIN)
   @Operation(summary = "[관리자 용] 공식 일정 전체 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {
@@ -108,7 +109,7 @@ public class OfficialCalendarController {
     return ResponseEntity.ok().body(SuccessResponse.of(OFFICIAL_CALENDARS_FOUND, responses));
   }
 
-  @Auth
+  @Auth(role = RoleType.ADMIN)
   @Operation(summary = "[관리자 용] 공식 일정 단건 조회", security = {
       @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
   @ApiResponses(value = {

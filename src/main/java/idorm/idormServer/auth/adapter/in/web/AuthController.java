@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import idorm.idormServer.auth.adapter.in.api.Auth;
-import idorm.idormServer.auth.adapter.in.api.AuthInfo;
-import idorm.idormServer.auth.adapter.in.api.AuthorizationExtractor;
 import idorm.idormServer.auth.adapter.out.AuthResponseCode;
 import idorm.idormServer.auth.adapter.out.exception.UnAuthorizedRefreshTokenException;
 import idorm.idormServer.auth.application.port.in.AuthUseCase;

@@ -4,8 +4,8 @@ import static idorm.idormServer.community.postLike.adapter.out.PostLikeResponseC
 import static idorm.idormServer.community.postLike.adapter.out.PostLikeResponseCode.MEMBER_LIKED_POST;
 import static idorm.idormServer.community.postLike.adapter.out.PostLikeResponseCode.MEMBER_LIKED_POST_CANCELED;
 
-import idorm.idormServer.auth.adapter.in.api.Auth;
-import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.adapter.in.web.Auth;
+import idorm.idormServer.auth.adapter.in.web.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;

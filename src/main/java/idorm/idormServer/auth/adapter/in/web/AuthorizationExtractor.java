@@ -1,4 +1,4 @@
-package idorm.idormServer.auth.adapter.in.api;
+package idorm.idormServer.auth.adapter.in.web;
 
 import static org.springframework.http.HttpHeaders.*;
 

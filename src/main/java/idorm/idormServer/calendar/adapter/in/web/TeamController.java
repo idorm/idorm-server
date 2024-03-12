@@ -5,8 +5,8 @@ import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_M
 import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_MEMBER_CREATED;
 import static idorm.idormServer.calendar.adapter.out.CalendarResponseCode.TEAM_MEMBER_DELETED;
 
-import idorm.idormServer.auth.adapter.in.api.Auth;
-import idorm.idormServer.auth.adapter.in.api.AuthInfo;
+import idorm.idormServer.auth.adapter.in.web.Auth;
+import idorm.idormServer.auth.adapter.in.web.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.TeamUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.TeamResponse;

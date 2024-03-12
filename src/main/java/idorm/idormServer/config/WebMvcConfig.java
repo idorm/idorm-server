@@ -7,8 +7,8 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import idorm.idormServer.auth.adapter.in.api.AuthInterceptor;
-import idorm.idormServer.auth.adapter.in.api.AuthenticationPrincipalArgumentResolver;
+import idorm.idormServer.auth.adapter.in.web.AuthInterceptor;
+import idorm.idormServer.auth.adapter.in.web.AuthResponseArgumentResolver;
 import idorm.idormServer.auth.application.port.in.JwtTokenUseCase;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +30,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-		resolvers.add(new AuthenticationPrincipalArgumentResolver(jwtTokenUseCase));
+		resolvers.add(new AuthResponseArgumentResolver(jwtTokenUseCase));
 	}
 }
