@@ -12,11 +12,13 @@ import idorm.idormServer.matchingInfo.entity.DormCategory;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.LockModeType;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,6 +48,12 @@ public class LoadPostAdapter implements LoadPostPort {
     }
 
     return response;
+  }
+
+  @Override
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  public Post findByIdWithPessimisticWrite(Long postId) {
+    return postRepository.findById(postId).orElseThrow(() -> new NotFoundPostException());
   }
 
   @Override

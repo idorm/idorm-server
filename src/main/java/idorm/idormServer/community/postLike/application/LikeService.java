@@ -33,7 +33,7 @@ public class LikeService implements LikeUseCase {
   @Transactional
   public void save(final AuthResponse authResponse, final Long postId) {
     final Member member = loadMemberPort.loadMember(authResponse.getId());
-    final Post post = loadPostPort.findById(postId);
+    final Post post = loadPostPort.findByIdWithPessimisticWrite(postId);
 
     post.validateNotWriter(member);
     loadPostLikePort.validateExists(member, post);
@@ -45,7 +45,7 @@ public class LikeService implements LikeUseCase {
   @Override
   @Transactional
   public void delete(final AuthResponse authResponse, final Long postId) {
-    final Post post = loadPostPort.findById(postId);
+    final Post post = loadPostPort.findByIdWithPessimisticWrite(postId);
     final PostLike postLike = loadPostLikePort.findByMemberIdAndPostId(authResponse.getId(), postId);
 
     post.deletePostLike(postLike);
