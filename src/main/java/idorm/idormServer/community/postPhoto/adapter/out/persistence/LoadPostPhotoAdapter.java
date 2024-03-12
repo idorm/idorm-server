@@ -18,8 +18,7 @@ public class LoadPostPhotoAdapter implements LoadPostPhotoPort {
 
   @Override
   public List<PostPhoto> findByPostId(Long postId) {
-    List<PostPhoto> responses = postPhotoRepository.findAllByPostId(
-        postId);
+    List<PostPhoto> responses = postPhotoRepository.findAllByPostId(postId);
     return responses;
   }
 

@@ -3,12 +3,15 @@ package idorm.idormServer.calendar.adapter.out.persistence;
 import static idorm.idormServer.calendar.entity.QParticipant.participant;
 import static idorm.idormServer.calendar.entity.QTeam.team;
 import static idorm.idormServer.calendar.entity.QTeamCalendar.teamCalendar;
+import static idorm.idormServer.member.entity.QMember.member;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import idorm.idormServer.calendar.adapter.out.exception.NotFoundTeamCalendarException;
 import idorm.idormServer.calendar.application.port.out.LoadTeamCalendarPort;
 import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.calendar.entity.TeamCalendar;
+import idorm.idormServer.member.entity.QMember;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +82,12 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
 
   @Override
   public List<TeamCalendar> findByStartDateIsToday() {
-    //TODO: 구현
-    return null;
+    List<TeamCalendar> responses = queryFactory
+        .select(teamCalendar)
+        .from(teamCalendar)
+        .where(teamCalendar.period.startDate.eq(LocalDate.now())
+            .and(teamCalendar.participants.participants.isNotEmpty()))
+        .fetch();
+    return responses;
   }
 }

@@ -28,7 +28,23 @@ public class LoadPostAdapter implements LoadPostPort {
 
   @Override
   public Post findById(Long postId) {
-    Post response = postRepository.findById(postId).orElseThrow(() -> new NotFoundPostException());
+    return postRepository.findById(postId).orElseThrow(() -> new NotFoundPostException());
+  }
+
+  @Override
+  public Post findByIdAndMemberId(Long postId, Long memberId) {
+    Post response = queryFactory
+        .select(post)
+        .from(post)
+        .join(post.member, member)
+        .where(post.id.eq(postId)
+            .and(member.id.eq(memberId)))
+        .fetchOne();
+
+    if(post == null){
+      throw new NotFoundPostException();
+    }
+
     return response;
   }
 
@@ -75,7 +91,17 @@ public class LoadPostAdapter implements LoadPostPort {
   @Override
   public Post findTopPostByDormCategory(DormCategory dormCategory) {
     // TODO: 구현
-    return null;
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime oneWeekAgo = now.minusWeeks(1);
+
+    return queryFactory
+        .selectFrom(post)
+        .where(post.createdAt.between(
+                oneWeekAgo.plusHours(9),
+                now.plusHours(9))
+            .and(post.dormCategory.eq(dormCategory)))
+        .limit(1)
+        .fetchOne();
   }
 
   @Override

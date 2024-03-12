@@ -11,6 +11,7 @@ import idorm.idormServer.matchingInfo.entity.DormCategory;
 public interface LoadPostPort {
 
 	Post findById(Long postId);
+	Post findByIdAndMemberId(Long postId, Long memberId);
 
 	Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
 
