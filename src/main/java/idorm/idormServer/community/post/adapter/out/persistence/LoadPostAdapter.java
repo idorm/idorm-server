@@ -98,7 +98,6 @@ public class LoadPostAdapter implements LoadPostPort {
 
   @Override
   public Post findTopPostByDormCategory(DormCategory dormCategory) {
-    // TODO: 구현
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime oneWeekAgo = now.minusWeeks(1);
 
