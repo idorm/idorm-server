@@ -19,10 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class LikeService implements LikeUseCase {
+public class PostLikeService implements LikeUseCase {
 
   private final SavePostLikePort savePostLikePort;
-  private final DeletePostLikePort deletePostLikePort;
   private final LoadPostLikePort loadPostLikePort;
 
   private final LoadPostPort loadPostPort;
@@ -49,7 +48,6 @@ public class LikeService implements LikeUseCase {
     final PostLike postLike = loadPostLikePort.findByMemberIdAndPostId(authResponse.getId(), postId);
 
     post.deletePostLike(postLike);
-    deletePostLikePort.delete(postLike);
   }
 
   @Override
