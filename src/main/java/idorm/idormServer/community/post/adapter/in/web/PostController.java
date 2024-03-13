@@ -160,7 +160,7 @@ public class PostController {
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
-  @GetMapping("/posts/{dormitory-category}")
+  @GetMapping("/posts/dorm/{dormitory-category}")
   public ResponseEntity<SuccessResponse<Object>> findPostsByDormCategory(
       @PathVariable(value = "dormitory-category") String dormCategoryRequest,
       @RequestParam(value = "page") int pageNum
@@ -180,7 +180,7 @@ public class PostController {
       @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
       @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
   })
-  @GetMapping("/posts/{dormitory-category}/top")
+  @GetMapping("/posts/dorm/{dormitory-category}/top")
   public ResponseEntity<SuccessResponse<Object>> findTopPostsFilteredByCategory(
       @PathVariable("dormitory-category") String dormCategoryRequest
   ) {
