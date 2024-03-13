@@ -81,7 +81,7 @@ public class JwtTokenService implements JwtTokenUseCase {
 			String role = (String)e.getClaims().get("role");
 			String nickname = (String)e.getClaims().get("nickname");
 			return new AuthResponse(id, role, nickname);
-		} catch (JwtException e) {
+		} catch (JwtException | IllegalArgumentException e) {
 			throw new UnAuthorizedAccessTokenException();
 		}
 

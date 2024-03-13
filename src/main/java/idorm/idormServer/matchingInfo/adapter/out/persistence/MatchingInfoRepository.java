@@ -6,12 +6,14 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.matchingInfo.entity.Gender;
 import idorm.idormServer.matchingInfo.entity.JoinPeriod;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 
+@Repository
 public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long> {
 
 	Optional<MatchingInfo> findByMemberId(Long memberId);

@@ -8,11 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import idorm.idormServer.auth.entity.RoleType;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.notification.entity.FcmToken;
 
+@Repository
 public interface FcmTokenRepository extends JpaRepository<FcmToken, Long> {
 
 	Optional<FcmToken> findByMemberId(Long memberId);
