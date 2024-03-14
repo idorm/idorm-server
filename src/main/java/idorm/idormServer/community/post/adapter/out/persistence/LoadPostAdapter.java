@@ -51,9 +51,8 @@ public class LoadPostAdapter implements LoadPostPort {
   }
 
   @Override
-  @Lock(LockModeType.PESSIMISTIC_WRITE)
-  public Post findByIdWithPessimisticWrite(Long postId) {
-    return postRepository.findById(postId).orElseThrow(() -> new NotFoundPostException());
+  public Post findByPostIdWithLock(Long postId) {
+    return postRepository.findByPostIdWithLock(postId).orElseThrow(() -> new NotFoundPostException());
   }
 
   @Override
