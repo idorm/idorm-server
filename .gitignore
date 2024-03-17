@@ -36,15 +36,15 @@ out/
 ### VS Code ###
 .vscode/
 
-### Firebase Key ###
-src/main/resources/serviceAccountKey.json
+### yml Config ###
+/src/main/resources/application-local.yml
+/src/main/resources/application-develop.yml
 
-### Config ###
-src/main/resources/application-local.yml
-src/main/resources/application-develop.yml
-
-### Local Loggin Files ###
+### Local Logging Files ###
 logs
 
 ### Database Migration ###
-src/main/resources/db/*
+/src/main/resources/migration/
+
+### Querydsl ###
+/src/main/generated
