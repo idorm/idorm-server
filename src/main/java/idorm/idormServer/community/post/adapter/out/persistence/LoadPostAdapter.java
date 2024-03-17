@@ -5,11 +5,8 @@ import static idorm.idormServer.community.post.entity.QPost.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.LockModeType;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
 
 import idorm.idormServer.community.post.adapter.out.exception.NotFoundPostException;
@@ -41,9 +38,8 @@ public class LoadPostAdapter implements LoadPostPort {
 	}
 
 	@Override
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	public Post findByIdWithPessimisticWrite(Long postId) {
-		return postRepository.findById(postId).orElseThrow(() -> new NotFoundPostException());
+	public Post findByPostIdWithLock(Long postId) {
+		return postRepository.findByPostIdWithLock(postId).orElseThrow(() -> new NotFoundPostException());
 	}
 
 	@Override
