@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import idorm.idormServer.community.post.entity.Post;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
 
 	Post findByIdAndIsDeletedIsFalse(Long id);
 }
