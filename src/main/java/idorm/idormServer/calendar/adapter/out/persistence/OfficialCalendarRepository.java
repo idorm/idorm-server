@@ -11,7 +11,8 @@ import org.springframework.stereotype.Repository;
 import idorm.idormServer.calendar.entity.OfficialCalendar;
 
 @Repository
-public interface OfficialCalendarRepository extends JpaRepository<OfficialCalendar, Long> {
+public interface OfficialCalendarRepository
+	extends JpaRepository<OfficialCalendar, Long>, OfficialCalendarCustomRepository {
 
 	boolean existsByInuPostIdAndIsDeletedIsFalse(String inuPostId);
 

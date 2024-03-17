@@ -1,8 +1,14 @@
+profiles:
+  active: prod
+
 server:
   shutdown: graceful
 
-spring:
-  datasource:
-    name: classpath:application.yml, /home/ec2-user/idorm-test/application-develop.yml
-  profiles:
-    active: develop
+# https://bepoz-study-diary.tistory.com/371
+#  config:
+#    import: classpath:application.yml, /home/ec2-user/idorm-test/application-develop.yml
+
+# 기존
+#spring:
+#  datasource:
+#    name: classpath:application.yml, /home/ec2-user/idorm-test/application-develop.yml

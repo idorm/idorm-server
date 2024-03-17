@@ -23,11 +23,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of = {"id", "email", "code", "issuedAt", "registered", "emailStatus"})
 public class Email {
 
 	public static final int MAX_EMAIL_LENGTH = 20;
