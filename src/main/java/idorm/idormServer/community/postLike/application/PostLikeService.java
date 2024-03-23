@@ -1,12 +1,12 @@
 package idorm.idormServer.community.postLike.application;
 
+import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.community.postLike.application.port.in.LikeUseCase;
@@ -57,7 +57,7 @@ public class PostLikeService implements LikeUseCase {
 		final List<PostLike> postPhotos = loadPostLikePort.findByMemberId(member.getId());
 
 		List<PostListResponse> responses = postPhotos.stream()
-			.map(postPhoto -> PostListResponse.of(postPhoto.getPost()))
+			.map(postPhoto -> new PostListResponse(postPhoto.getPost()))
 			.toList();
 
 		return responses;
