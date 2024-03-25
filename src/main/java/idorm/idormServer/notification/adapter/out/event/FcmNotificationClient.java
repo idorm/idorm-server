@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-// @Profile("prod")
 @Component
 @RequiredArgsConstructor
 public class FcmNotificationClient implements NotificationClient {
