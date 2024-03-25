@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.calendar.adapter.out.exception.CrawlingServerError;
-import idorm.idormServer.calendar.application.port.out.FindInuPost;
+import idorm.idormServer.calendar.application.port.out.LoadOfficialPost;
 import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
 import idorm.idormServer.calendar.application.port.out.SaveOfficialCalendarPort;
 import idorm.idormServer.calendar.entity.OfficialCalendar;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class CrawlingInuPost implements FindInuPost {
+public class CrawlingOfficialPostClient implements LoadOfficialPost {
 
 	private final LoadOfficialCalendarPort loadOfficialCalendarPort;
 	private final SaveOfficialCalendarPort saveOfficialCalendarPort;
