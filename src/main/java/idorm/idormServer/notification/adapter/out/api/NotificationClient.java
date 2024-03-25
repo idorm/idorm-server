@@ -1,4 +1,4 @@
-package idorm.idormServer.notification.adapter.out.event;
+package idorm.idormServer.notification.adapter.out.api;
 
 import java.util.List;
 

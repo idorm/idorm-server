@@ -17,7 +17,7 @@ import idorm.idormServer.calendar.entity.TeamCalendar;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
-import idorm.idormServer.notification.adapter.out.event.NotificationRequest;
+import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
 import idorm.idormServer.notification.application.port.in.NotificationUseCase;
 import idorm.idormServer.notification.application.port.out.LoadFcmTokenPort;
 import idorm.idormServer.notification.entity.FcmChannel;

@@ -1,10 +1,11 @@
-package idorm.idormServer.notification.adapter.out.event;
+package idorm.idormServer.notification.application;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.matchingInfo.entity.DormCategory;
+import idorm.idormServer.notification.adapter.out.api.NotificationClient;
 import idorm.idormServer.notification.application.port.in.FcmTokenUseCase;
 import idorm.idormServer.notification.application.port.in.NotificationUseCase;
 import lombok.RequiredArgsConstructor;
