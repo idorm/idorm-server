@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeletePostLikeAdapter implements DeletePostLikePort {
 
-  private final PostLikeRepository postLikeMemberRepository;
+  private final PostLikeMemberRepository postLikeMemberRepository;
 
   @Override
   public void delete(PostLike postLike) {

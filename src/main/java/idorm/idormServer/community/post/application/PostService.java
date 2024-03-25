@@ -3,9 +3,9 @@ package idorm.idormServer.community.post.application;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.community.comment.application.port.out.LoadCommentPort;
 import idorm.idormServer.community.post.application.port.in.PostUseCase;
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostSaveRequest;
+import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostUpdateRequest;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.application.port.out.SavePostPort;
@@ -93,30 +93,30 @@ public class PostService implements PostUseCase {
 
   @Override
   public List<PostListResponse> findPostsByMember(final AuthResponse authResponse) {
-    final List<Post> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
-    return PostListResponse.of(posts);
+    final List<PostListResponse> responses = loadPostPort.findPostsByMemberId(authResponse.getId());
+    return responses;
   }
 
   @Override
   public Page<PostListResponse> findPostsByDormCategory(final String dormCategory, final int pageNum) {
-    final Page<Post> posts = loadPostPort.findPostsByDormCategoryAndIsDeletedFalse(
+    final Page<PostListResponse> responses = loadPostPort.findPostsByDormCategoryAndIsDeletedFalse(
         DormCategory.from(dormCategory), PageRequest.of(pageNum, 10));
 
-    Page<PostListResponse> responses = posts.map(PostListResponse::of);
+//    Page<PostListResponse> responses = posts.map(PostListResponse::of);
     return responses;
   }
 
   @Override
   public List<PostListResponse> findTopPostsByDormCategory(final String dormCategory) {
-    final List<Post> posts = loadPostPort.findTopPostsByDormCateogry(DormCategory.from(dormCategory));
-    return PostListResponse.of(posts);
+    final List<PostListResponse> responses = loadPostPort.findTopPostsByDormCateogry(
+        DormCategory.from(dormCategory));
+    return responses;
   }
 
   @Override
   public PostResponse findOneByPostId(final AuthResponse authResponse, final Long postId) {
     final Post post = loadPostPort.findById(postId);
 
-    System.out.println(post.getComments());
     return PostResponse.of(post,
         postPhotoUseCase.findAllByPost(post),
         loadCommentPort.findAllByPostId(postId),

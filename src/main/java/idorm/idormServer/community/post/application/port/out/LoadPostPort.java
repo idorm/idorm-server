@@ -1,5 +1,6 @@
 package idorm.idormServer.community.post.application.port.out;
 
+import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 import java.util.List;
@@ -14,11 +15,11 @@ public interface LoadPostPort {
 
   Post findByPostIdWithLock(Long postId);
 
-  Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
+  Page<PostListResponse> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
 
-  List<Post> findTopPostsByDormCateogry(DormCategory dormCategory);
+  List<PostListResponse> findTopPostsByDormCateogry(DormCategory dormCategory);
 
   Post findTopPostByDormCategory(DormCategory dormCategory);
 
-  List<Post> findPostsByMemberId(Long memberId);
+  List<PostListResponse> findPostsByMemberId(Long memberId);
 }

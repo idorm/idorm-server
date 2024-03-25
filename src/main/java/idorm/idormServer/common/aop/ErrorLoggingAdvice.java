@@ -16,7 +16,7 @@ import idorm.idormServer.common.exception.BaseException;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 
-@Profile("dev")
+@Profile("develop")
 @Slf4j
 @Aspect
 @Component

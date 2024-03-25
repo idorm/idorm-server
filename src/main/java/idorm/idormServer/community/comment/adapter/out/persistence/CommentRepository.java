@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import idorm.idormServer.community.comment.entity.Comment;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 
 	Optional<Comment> findByIdAndIsDeletedIsFalse(Long id);
 
