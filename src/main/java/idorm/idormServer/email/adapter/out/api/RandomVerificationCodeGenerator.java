@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class GenerateVerificationCodeAdapter implements GenerateVerificationCodePort {
+public class RandomVerificationCodeGenerator implements GenerateVerificationCodePort {
 
 	@Override
 	public String generate() {
