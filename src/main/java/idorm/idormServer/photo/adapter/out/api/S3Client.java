@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -21,12 +22,13 @@ import idorm.idormServer.member.entity.Member;
 import idorm.idormServer.photo.adapter.out.exception.NotFoundFileException;
 import idorm.idormServer.photo.adapter.out.exception.S3ClientException;
 import idorm.idormServer.photo.adapter.out.exception.UnsupportedFileTypeException;
+import idorm.idormServer.photo.application.port.out.DeleteFilePort;
 import idorm.idormServer.photo.application.port.out.SaveFilePort;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class SaveFileAdaptor implements SaveFilePort {
+public class S3Client implements SaveFilePort, DeleteFilePort {
 
 	private static final Set<String> VALID_FILE_TYPES = Set.of("jpg", "jpeg", "png");
 
@@ -49,6 +51,16 @@ public class SaveFileAdaptor implements SaveFilePort {
 	public List<String> addPostPhotoFiles(final Post post, final List<MultipartFile> multipartFiles) {
 		validateFileExistence(multipartFiles);
 		return insertPostPhotosFileToS3(post.getId(), multipartFiles);
+	}
+
+	@Override
+	public void deleteMemberPhotoFile(final String fileUrl) {
+		deleteFileFromS3(memberPhotoBucketName, fileUrl);
+	}
+
+	@Override
+	public void deletePostPhotoFiles(List<String> fileUrls) {
+		fileUrls.forEach(fileUrl -> deleteFileFromS3(postPhotoBucketName, fileUrl));
 	}
 
 	private String insertFileToS3(String bucketName, String fileName, File file) {
@@ -79,6 +91,17 @@ public class SaveFileAdaptor implements SaveFilePort {
 
 			return file;
 		} catch (IOException exception) {
+			throw new S3ClientException();
+		}
+	}
+
+	private void deleteFileFromS3(String bucketname, String fileUrl) {
+		String[] splitUrl = fileUrl.split("/");
+		String fileName = splitUrl[splitUrl.length - 2] + "/" + splitUrl[splitUrl.length - 1];
+
+		try {
+			amazonS3Client.deleteObject(bucketname, fileName);
+		} catch (SdkClientException e) {
 			throw new S3ClientException();
 		}
 	}
