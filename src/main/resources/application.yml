@@ -2,7 +2,7 @@ server:
   shutdown: graceful
 
 spring:
-  datasource:
-    name: classpath:application.yml, /home/ec2-user/idorm-test/application-develop.yml
   profiles:
     active: develop
+#  datasource:
+#    name: classpath:application.yml, /home/ec2-user/idorm-test/application-develop.yml

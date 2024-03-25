@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class SavePostLikeAdapter implements SavePostLikePort {
 
-  private final PostLikeMemberRepository postLikeMemberRepository;
+	private final PostLikeRepository postLikeRepository;
 
-  @Override
-  public void save(PostLike postLike) {
-    postLikeMemberRepository.save(postLike);
-  }
+	@Override
+	public void save(PostLike postLike) {
+		postLikeRepository.save(postLike);
+	}
 }

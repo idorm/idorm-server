@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.0'
+    id 'org.springframework.boot' version '2.7.18'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
@@ -71,7 +71,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
 
     // mysql
-    runtimeOnly 'mysql:mysql-connector-java'
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
     // querydsl
     implementation "com.querydsl:querydsl-jpa"
@@ -85,17 +85,35 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:8.4.4'
     implementation 'org.flywaydb:flyway-mysql:8.4.4'
 
+    // TODO: dev, prod 환경 반영 시 제거
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
+
     // monitoring
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
     // spring test
+    runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// Querydsl 설정 시작
+def generated = 'src/main/generated'
+
+tasks.withType(JavaCompile) {
+    options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+sourceSets {
+    main.java.srcDirs += [ generated ]
+}
+clean {
+    delete file(generated)
+}
+// Querydsl 설정 끝
 
 /**
  * 커맨드라인으로 주어진 파라미터로 도커 이미지 빌드 및 레지스트리 업로드를 설정합니다.

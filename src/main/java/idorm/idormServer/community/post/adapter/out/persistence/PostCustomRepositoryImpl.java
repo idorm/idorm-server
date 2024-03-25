@@ -1,23 +1,21 @@
 package idorm.idormServer.community.post.adapter.out.persistence;
 
-import static idorm.idormServer.community.comment.entity.QComment.comment;
-import static idorm.idormServer.community.post.entity.QPost.post;
-import static idorm.idormServer.member.entity.QMember.member;
+import static idorm.idormServer.community.comment.entity.QComment.*;
+import static idorm.idormServer.community.post.entity.QPost.*;
+import static idorm.idormServer.member.entity.QMember.*;
 
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
-import idorm.idormServer.community.post.entity.Post;
-import idorm.idormServer.matchingInfo.entity.DormCategory;
-import idorm.idormServer.member.entity.MemberStatus;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class PostCustomRepositoryImpl implements PostCustomRepository {
@@ -36,27 +34,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
   }
 
   @Override
-  public Page<PostListResponse> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
-    List<PostListResponse> responses = queryFactory
-        .select(Projections.constructor(
-                PostListResponse.class,
-                post.id.as("postId"),
-                post.member.id.as("memberId"),
-                post.dormCategory.stringValue().as("dormCategory"),
-                post.title,
-                post.content,
-                new CaseBuilder()
-                    .when(post.member.memberStatus.eq(MemberStatus.DELETED)).then("-999")
-                    .when(post.isAnonymous.eq(true)).then("익명")
-                    .otherwise(post.member.nickname.value).as("nickname"),
-                post.isAnonymous,
-                post.likeCount,
-                post.comments.size(),
-                post.postPhotos.size().as("imagesCount"),
-                post.createdAt,
-                post.updatedAt
-            )
-        )
+  public Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
+    List<Post> posts = queryFactory
+        .select(post)
         .from(post)
         .join(post.comments, comment).on(comment.isDeleted.eq(false))
         .where(post.dormCategory.eq(dormCategory)
@@ -74,35 +54,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             .and(post.isDeleted.eq(false)))
         .fetchCount();
 
-    return new PageImpl<>(responses, pageable, total);
+    return new PageImpl<>(posts, pageable, total);
   }
 
   @Override
-  public List<PostListResponse> findTopPostsByDormCateogry(DormCategory dormCategory) {
+  public List<Post> findTopPostsByDormCateogry(DormCategory dormCategory) {
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime oneWeekAgo = now.minusWeeks(1);
 
     return queryFactory
-        .select(Projections.constructor(
-                PostListResponse.class,
-                post.id.as("postId"),
-                post.member.id.as("memberId"),
-                post.dormCategory.stringValue().as("dormCategory"),
-                post.title,
-                post.content,
-                new CaseBuilder()
-                    .when(post.member.memberStatus.eq(MemberStatus.DELETED)).then("-999")
-                    .when(post.isAnonymous.eq(true)).then("익명")
-                    .otherwise(post.member.nickname.value).as("nickname"),
-                post.isAnonymous,
-                post.likeCount,
-                post.comments.size(),
-                post.postPhotos.size().as("imagesCount"),
-                post.createdAt,
-                post.updatedAt
-            )
-        )
-        .from(post)
+        .selectFrom(post)
         .where(post.createdAt.between(
                 oneWeekAgo.plusHours(9),
                 now.plusHours(9))
@@ -126,29 +87,14 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
   }
 
   @Override
-  public List<PostListResponse> findPostsByMemberId(Long memberId) {
+  public List<Post> findPostsByMemberId(Long memberId) {
     return queryFactory
-        .select(Projections.constructor(
-                PostListResponse.class,
-                post.id.as("postId"),
-                post.member.id.as("memberId"),
-                post.dormCategory.stringValue().as("dormCategory"),
-                post.title,
-                post.content,
-                new CaseBuilder()
-                    .when(post.member.memberStatus.eq(MemberStatus.DELETED)).then("-999")
-                    .when(post.isAnonymous.eq(true)).then("익명")
-                    .otherwise(post.member.nickname.value).as("nickname"),
-                post.isAnonymous,
-                post.likeCount,
-                post.comments.size(),
-                post.postPhotos.size().as("imagesCount"),
-                post.createdAt,
-                post.updatedAt
-            )
-        )
+        .select(post)
         .from(post)
-        .where(post.member.id.eq(memberId))
+        .join(post.member, member)
+        .where(member.id.eq(memberId)
+            .and(post.isDeleted.eq(false)))
+        .orderBy(post.updatedAt.desc())
         .fetch();
   }
 }

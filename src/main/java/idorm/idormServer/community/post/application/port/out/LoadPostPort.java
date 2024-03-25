@@ -1,25 +1,26 @@
 package idorm.idormServer.community.post.application.port.out;
 
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
-import idorm.idormServer.community.post.entity.Post;
-import idorm.idormServer.matchingInfo.entity.DormCategory;
 import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
+
 public interface LoadPostPort {
 
-  Post findById(Long postId);
+	Post findById(Long postId);
 
-  Post findByIdAndMemberId(Long postId, Long memberId);
+	Post findByIdAndMemberId(Long postId, Long memberId);
 
-  Post findByPostIdWithLock(Long postId);
+	Post findByPostIdWithLock(Long postId);
 
-  Page<PostListResponse> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
+	Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
 
-  List<PostListResponse> findTopPostsByDormCateogry(DormCategory dormCategory);
+	List<Post> findTopPostsByDormCateogry(DormCategory dormCategory);
 
-  Post findTopPostByDormCategory(DormCategory dormCategory);
+	Post findTopPostByDormCategory(DormCategory dormCategory);
 
-  List<PostListResponse> findPostsByMemberId(Long memberId);
+	List<Post> findPostsByMemberId(Long memberId);
 }

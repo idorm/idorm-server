@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import idorm.idormServer.calendar.entity.Team;
 
 @Repository
-public interface TeamRepository extends JpaRepository<Team, Long> {
+public interface TeamRepository extends JpaRepository<Team, Long>, TeamCustomRepository {
 
 	Optional<Team> findByMembersId(Long memberId);
 }

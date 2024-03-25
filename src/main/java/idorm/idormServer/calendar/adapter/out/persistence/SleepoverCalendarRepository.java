@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 import idorm.idormServer.calendar.entity.SleepoverCalendar;
 
 @Repository
-public interface SleepoverCalendarRepository extends JpaRepository<SleepoverCalendar, Long> {
+public interface SleepoverCalendarRepository
+	extends JpaRepository<SleepoverCalendar, Long>, SleepoverCalendarCustomRepository {
 
 	List<SleepoverCalendar> findByMemberId(Long memberId);
 

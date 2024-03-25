@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.notification.adapter.out.api.NotificationClient;
 import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
+import idorm.idormServer.notification.application.port.in.FcmTokenUseCase;
+import idorm.idormServer.notification.application.port.in.NotificationUseCase;
 import idorm.idormServer.notification.entity.FcmChannel;
 import io.sentry.Sentry;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class DevelopController {
 
 	private final NotificationClient notificationClient;
+	private final NotificationUseCase notificationUseCase;
+	private final FcmTokenUseCase fcmTokenUseCase;
 
 	@Operation(summary = "fcm 토큰 발송 테스트")
 	@GetMapping("/fcm/{token}")
@@ -50,6 +54,13 @@ public class DevelopController {
 		} catch (Exception e) {
 			Sentry.captureException(e);
 		}
+		return ResponseEntity.noContent().build();
+	}
+
+	@Operation(summary = "scheduler 테스트")
+	@GetMapping("/scheduler")
+	public ResponseEntity<Object> testNotification() {
+
 		return ResponseEntity.noContent().build();
 	}
 }

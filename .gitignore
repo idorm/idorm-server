@@ -39,11 +39,11 @@ out/
 ### Firebase Key ###
 src/main/resources/serviceAccountKey.json
 
-### Config ###
+### YAML Config ###
 src/main/resources/application-local.yml
 src/main/resources/application-develop.yml
 
-### Local Loggin Files ###
+### Local Logging Files ###
 logs
 
 ### Database Migration ###

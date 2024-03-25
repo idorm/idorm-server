@@ -1,6 +1,5 @@
 package idorm.idormServer.community.post.adapter.out.persistence;
 
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -15,11 +14,11 @@ public interface PostCustomRepository {
 
 	Post findByIdAndMemberId(Long postId, Long memberId);
 
-	Page<PostListResponse> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
+	Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
 
-	List<PostListResponse> findTopPostsByDormCateogry(DormCategory dormCategory);
+	List<Post> findTopPostsByDormCateogry(DormCategory dormCategory);
 
 	Post findTopPostByDormCategory(DormCategory dormCategory);
 
-	List<PostListResponse> findPostsByMemberId(Long memberId);
+	List<Post> findPostsByMemberId(Long memberId);
 }

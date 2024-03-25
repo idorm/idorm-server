@@ -9,14 +9,7 @@ import org.springframework.stereotype.Repository;
 import idorm.idormServer.community.postLike.entity.PostLike;
 
 @Repository
-public interface PostLikeMemberRepository extends JpaRepository<PostLike, Long> {
-
-	// @Query(value = "SELECT post " +
-	//     "FROM post_like_member plm " +
-	//     "WHERE plm.member_id = :memberId AND " +
-	//     "plm.is_deleted = false " +
-	//     "ORDER BY plm.created_at DESC", nativeQuery = true)
-	// List<PostLikeDomain> findAllByMemberId(@Param("memberId") Long memberId);
+public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
 	List<PostLike> findByMemberId(Long memberId);
 

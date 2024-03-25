@@ -1,31 +1,23 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
-import static idorm.idormServer.calendar.entity.QParticipant.participant;
-import static idorm.idormServer.calendar.entity.QTeam.team;
-import static idorm.idormServer.calendar.entity.QTeamCalendar.teamCalendar;
-import static idorm.idormServer.member.entity.QMember.member;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.stereotype.Component;
+
 import idorm.idormServer.calendar.adapter.out.exception.NotFoundTeamCalendarException;
 import idorm.idormServer.calendar.application.port.out.LoadTeamCalendarPort;
 import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.calendar.entity.TeamCalendar;
-import idorm.idormServer.member.entity.QMember;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
 
-  private final JPAQueryFactory queryFactory;
   private final TeamCalendarRepository teamCalendarRepository;
-
 
   @Override
   public TeamCalendar findByIdAndTeamId(Long teamCalendarId, Long teamId) {
@@ -36,13 +28,7 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
 
   @Override
   public TeamCalendar findByIdAndMemberId(Long teamCalendarId, Long memberId) {
-    TeamCalendar response = queryFactory
-        .select(teamCalendar)
-        .from(teamCalendar)
-        .join(teamCalendar.participants.participants, participant)
-        .where(teamCalendar.id.eq(teamCalendarId)
-            .and(participant.memberId.eq(memberId)))
-        .fetchOne();
+    TeamCalendar response = teamCalendarRepository.findByIdAndMemberId(teamCalendarId, memberId);
 
     if (response == null) {
       throw new NotFoundTeamCalendarException();
@@ -52,12 +38,7 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
 
   @Override
   public List<TeamCalendar> findByMemberId(Long memberId) {
-    List<TeamCalendar> responses = queryFactory
-        .select(teamCalendar)
-        .from(teamCalendar)
-        .join(teamCalendar.team, team)
-        .where(teamCalendar.participants.participants.any().memberId.eq(memberId))
-        .fetch();
+    List<TeamCalendar> responses = findByMemberId(memberId);
     return responses.isEmpty() ? new ArrayList<>() : responses;
   }
 
@@ -68,26 +49,14 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
   }
 
   @Override
-  public List<TeamCalendar> findByYearMonth(Team teamDomain, YearMonth yearMonth) {
-    List<TeamCalendar> responses = queryFactory
-        .select(teamCalendar)
-        .from(teamCalendar)
-        .join(teamCalendar.team, team)
-        .where(team.eq(teamDomain)
-            .and(teamCalendar.period.startDate.month().eq(yearMonth.getMonthValue()))
-            .or(teamCalendar.period.endDate.month().eq(yearMonth.getMonthValue())))
-        .fetch();
+  public List<TeamCalendar> findByYearMonth(Team team, YearMonth yearMonth) {
+    List<TeamCalendar> responses = teamCalendarRepository.findByYearMonth(team, yearMonth);
     return responses.isEmpty() ? new ArrayList<>() : responses;
   }
 
   @Override
   public List<TeamCalendar> findByStartDateIsToday() {
-    List<TeamCalendar> responses = queryFactory
-        .select(teamCalendar)
-        .from(teamCalendar)
-        .where(teamCalendar.period.startDate.eq(LocalDate.now())
-            .and(teamCalendar.participants.participants.isNotEmpty()))
-        .fetch();
+    List<TeamCalendar> responses = teamCalendarRepository.findByStartDateIsToday();
     return responses;
   }
 }
