@@ -4,6 +4,6 @@ import java.util.List;
 
 import idorm.idormServer.calendar.entity.OfficialCalendar;
 
-public interface FindInuPost {
+public interface LoadOfficialPost {
 	List<OfficialCalendar> findNewPosts();
 }

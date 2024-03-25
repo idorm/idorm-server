@@ -1,4 +1,4 @@
-package idorm.idormServer.notification.adapter.out.event;
+package idorm.idormServer.notification.adapter.out.api;
 
 import idorm.idormServer.notification.entity.FcmChannel;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package idorm.idormServer.notification.adapter.out.event;
+package idorm.idormServer.notification.adapter.out.api;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-// @Profile("prod")
 @Component
 @RequiredArgsConstructor
 public class FcmNotificationClient implements NotificationClient {

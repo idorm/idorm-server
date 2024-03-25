@@ -7,4 +7,6 @@ public interface FcmTokenUseCase {
 	void save(RegisterTokenRequest event);
 
 	void expire(Long memberId);
+
+	void expireOfExpiredMembers();
 }

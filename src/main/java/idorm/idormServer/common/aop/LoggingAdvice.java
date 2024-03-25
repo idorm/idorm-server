@@ -4,14 +4,17 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import idorm.idormServer.common.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +29,28 @@ public class LoggingAdvice {
 	private void all() {
 	}
 
+	@Pointcut("@annotation(idorm.idormServer.common.aop.ExecutionTimer)")
+	private void executionTimer() {
+	}
+
+	@Around("executionTimer()")
+	public void logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+		StopWatch stopWatch = new StopWatch();
+
+		stopWatch.start();
+		joinPoint.proceed();
+		stopWatch.stop();
+
+		long totalTimeMillis = stopWatch.getTotalTimeMillis();
+
+		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
+		String methodName = signature.getMethod().getName();
+
+		log.info("실행 메서드: {}, 실행시간 = {}ms", methodName, totalTimeMillis);
+	}
+
 	@Before("all()")
-	public void beforeLogExceptRepository(JoinPoint joinPoint) {
+	public void preHandle(JoinPoint joinPoint) {
 		final MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 		final Class className = signature.getDeclaringType();
 		final Method method = signature.getMethod();
@@ -49,7 +72,7 @@ public class LoggingAdvice {
 	}
 
 	@AfterReturning(value = "all()", returning = "result")
-	public void logAfterSuccessAllMethodsExceptRepository(JoinPoint joinPoint, Object result) {
+	public void afterHandle(JoinPoint joinPoint, Object result) {
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 		Class className = signature.getDeclaringType();
 		Method method = signature.getMethod();
@@ -58,7 +81,7 @@ public class LoggingAdvice {
 	}
 
 	@AfterThrowing(value = "all()", throwing = "exception")
-	public void logAfterThrowing(JoinPoint joinPoint, BaseException exception) {
+	public void exceptionHandle(JoinPoint joinPoint, BaseException exception) {
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 
 		String className = signature.getDeclaringType().getSimpleName();

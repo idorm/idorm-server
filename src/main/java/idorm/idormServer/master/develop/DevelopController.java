@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import idorm.idormServer.common.response.SuccessResponse;
-import idorm.idormServer.notification.adapter.out.event.NotificationClient;
-import idorm.idormServer.notification.adapter.out.event.NotificationRequest;
+import idorm.idormServer.notification.adapter.out.api.NotificationClient;
+import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
 import idorm.idormServer.notification.entity.FcmChannel;
 import io.sentry.Sentry;
 import io.swagger.v3.oas.annotations.Operation;
