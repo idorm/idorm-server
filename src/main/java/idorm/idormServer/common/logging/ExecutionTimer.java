@@ -1,4 +1,4 @@
-package idorm.idormServer.common.aop;
+package idorm.idormServer.common.logging;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
