@@ -1,4 +1,4 @@
-package idorm.idormServer.common.aop;
+package idorm.idormServer.common.logging;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -26,10 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 public class LoggingAdvice {
 
 	@Pointcut("execution(* idorm.idormServer..*(..))")
-	private void all() {
+	private void allPointcut() {
 	}
 
-	@Pointcut("@annotation(idorm.idormServer.common.aop.ExecutionTimer)")
+	@Pointcut("@annotation(idorm.idormServer.common.logging.ExecutionTimer)")
 	private void executionTimer() {
 	}
 
@@ -49,7 +49,7 @@ public class LoggingAdvice {
 		log.info("실행 메서드: {}, 실행시간 = {}ms", methodName, totalTimeMillis);
 	}
 
-	@Before("all()")
+	@Before("allPointcut()")
 	public void preHandle(JoinPoint joinPoint) {
 		final MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 		final Class className = signature.getDeclaringType();
@@ -71,7 +71,7 @@ public class LoggingAdvice {
 		log.info("[START] {} | {} {}", className.getSimpleName(), method.getName(), returnArgs);
 	}
 
-	@AfterReturning(value = "all()", returning = "result")
+	@AfterReturning(value = "allPointcut()", returning = "result")
 	public void afterHandle(JoinPoint joinPoint, Object result) {
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 		Class className = signature.getDeclaringType();
@@ -80,7 +80,7 @@ public class LoggingAdvice {
 		log.info("[SUCCESS] {} | {} | return = {}", className.getSimpleName(), method.getName(), result);
 	}
 
-	@AfterThrowing(value = "all()", throwing = "exception")
+	@AfterThrowing(value = "allPointcut()", throwing = "exception")
 	public void exceptionHandle(JoinPoint joinPoint, BaseException exception) {
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 

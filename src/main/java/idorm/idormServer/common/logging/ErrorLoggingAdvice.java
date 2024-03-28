@@ -1,4 +1,4 @@
-package idorm.idormServer.common.aop;
+package idorm.idormServer.common.logging;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -23,10 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ErrorLoggingAdvice {
 
 	@Pointcut("execution(* idorm.idormServer..*(..))")
-	private void all() {
+	private void allPointcut() {
 	}
 
-	@AfterThrowing(value = "all()", throwing = "exception")
+	@AfterThrowing(value = "allPointcut()", throwing = "exception")
 	public void logAfterThrowing(JoinPoint joinPoint, BaseException exception) {
 		if (!exception.getCode().getStatus().equals(INTERNAL_SERVER_ERROR)) {
 			return;
