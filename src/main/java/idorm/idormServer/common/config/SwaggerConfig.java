@@ -1,4 +1,4 @@
-package idorm.idormServer.config;
+package idorm.idormServer.common.config;
 
 import org.apache.http.HttpHeaders;
 import org.springdoc.core.SpringDocUtils;

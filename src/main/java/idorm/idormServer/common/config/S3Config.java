@@ -1,4 +1,4 @@
-package idorm.idormServer.config;
+package idorm.idormServer.common.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

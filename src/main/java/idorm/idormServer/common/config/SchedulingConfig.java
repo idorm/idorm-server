@@ -1,4 +1,4 @@
-package idorm.idormServer.config;
+package idorm.idormServer.common.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
