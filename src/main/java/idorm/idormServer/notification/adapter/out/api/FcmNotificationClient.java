@@ -2,6 +2,7 @@ package idorm.idormServer.notification.adapter.out.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,10 @@ public class FcmNotificationClient implements NotificationClient {
 	@Async
 	@Override
 	public void notify(List<NotificationRequest> requests) {
+		if (requests.isEmpty() || Objects.isNull(requests)) {
+			return;
+		}
+
 		List<Message> messages = createMessages(requests);
 		try {
 			BatchResponse response = FirebaseMessaging.getInstance().sendAll(messages);
@@ -46,6 +51,10 @@ public class FcmNotificationClient implements NotificationClient {
 	@Async
 	@Override
 	public void notify(NotificationRequest request) {
+		if (request == null) {
+			return;
+		}
+
 		Message message = Message.builder()
 			.setToken(request.getToken())
 			.putAllData(objectMapper.convertValue(request.getMessage(), Map.class))

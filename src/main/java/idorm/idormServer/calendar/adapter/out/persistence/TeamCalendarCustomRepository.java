@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.calendar.entity.TeamCalendar;
+import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
 
 @Repository
 public interface TeamCalendarCustomRepository {
@@ -17,5 +18,5 @@ public interface TeamCalendarCustomRepository {
 
 	List<TeamCalendar> findByYearMonth(Team teamDomain, YearMonth yearMonth);
 
-	List<TeamCalendar> findByStartDateIsToday();
+	List<NotificationRequest> findByStartDateIsToday();
 }
