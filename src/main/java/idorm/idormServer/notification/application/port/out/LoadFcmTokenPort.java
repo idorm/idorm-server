@@ -12,7 +12,5 @@ public interface LoadFcmTokenPort {
 
 	List<FcmToken> loadAllByDormCategory(DormCategory dormCategory);
 
-	List<FcmToken> loadAllByMemberIds(List<Long> memberIds);
-
 	List<FcmToken> loadAllByAdmins();
 }

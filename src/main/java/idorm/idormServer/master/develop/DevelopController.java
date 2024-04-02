@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import idorm.idormServer.common.logging.ExecutionTimer;
 import idorm.idormServer.common.response.SuccessResponse;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.notification.adapter.out.api.NotificationClient;
 import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
 import idorm.idormServer.notification.application.port.in.FcmTokenUseCase;
@@ -57,10 +59,30 @@ public class DevelopController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@Operation(summary = "scheduler 테스트")
-	@GetMapping("/scheduler")
-	public ResponseEntity<Object> testNotification() {
+	@Operation(summary = "scheduler 공유 캘린더 테스트")
+	@GetMapping("/notification/team")
+	@ExecutionTimer
+	public ResponseEntity<Object> testTeamNotification() {
+		notificationClient.notify(notificationUseCase.teamCalendarsFrom());
+		return ResponseEntity.noContent().build();
+	}
 
+	@Operation(summary = "scheduler 인기 게시글 및 공식 일정 테스트")
+	@GetMapping("/notification/dorm")
+	@ExecutionTimer
+	public ResponseEntity<Object> testDormitoryNotification() {
+		notificationClient.notify(notificationUseCase.topPostAndOfficialCalendarsFrom(DormCategory.DORM1));
+		notificationClient.notify(notificationUseCase.topPostAndOfficialCalendarsFrom(DormCategory.DORM2));
+		notificationClient.notify(notificationUseCase.topPostAndOfficialCalendarsFrom(DormCategory.DORM3));
+
+		return ResponseEntity.noContent().build();
+	}
+
+	@Operation(summary = "scheduler 관리자 테스트")
+	@GetMapping("/notification/admin")
+	@ExecutionTimer
+	public ResponseEntity<Object> testAdminNotification() {
+		notificationClient.notify(notificationUseCase.adminOfficialCalendarsFrom());
 		return ResponseEntity.noContent().build();
 	}
 }

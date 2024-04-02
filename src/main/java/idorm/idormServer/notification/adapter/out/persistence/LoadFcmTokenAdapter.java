@@ -30,12 +30,6 @@ public class LoadFcmTokenAdapter implements LoadFcmTokenPort {
 	}
 
 	@Override
-	public List<FcmToken> loadAllByMemberIds(List<Long> memberIds) {
-		List<FcmToken> responses = fcmTokenRepository.findByMemberIds(memberIds);
-		return responses != null ? responses : Collections.emptyList();
-	}
-
-	@Override
 	public List<FcmToken> loadAllByAdmins() {
 		List<FcmToken> responses = fcmTokenRepository.findByAdmins(RoleType.ADMIN);
 		return responses != null ? responses : Collections.emptyList();
