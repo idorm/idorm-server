@@ -13,7 +13,6 @@ import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
 import idorm.idormServer.calendar.application.port.out.LoadOfficialPost;
 import idorm.idormServer.calendar.application.port.out.LoadTeamCalendarPort;
 import idorm.idormServer.calendar.entity.OfficialCalendar;
-import idorm.idormServer.calendar.entity.TeamCalendar;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
@@ -55,11 +54,7 @@ public class NotificationService implements NotificationUseCase {
 
 	@Override
 	public List<NotificationRequest> teamCalendarsFrom() {
-		List<TeamCalendar> teamCalendars = loadTeamCalendarPort.findByStartDateIsToday();
-		return teamCalendars.stream()
-			.map(this::teamCalendarNotificationOf)
-			.flatMap(List::stream)
-			.toList();
+		return loadTeamCalendarPort.findByStartDateIsToday();
 	}
 
 	@Override
@@ -126,25 +121,5 @@ public class NotificationService implements NotificationUseCase {
 			}))
 			.toList();
 		return officialCalendarRequests;
-	}
-
-	private List<NotificationRequest> teamCalendarNotificationOf(TeamCalendar teamCalendar) {
-		List<FcmToken> fcmTokens = loadFcmTokenPort.loadAllByMemberIds(teamCalendar.getParticipantMemberIds());
-
-		List<NotificationRequest> requests = fcmTokens.stream()
-			.map(fcmToken -> {
-				NotificationRequest request = NotificationRequest.builder()
-					.token(fcmToken.getValue())
-					.message(NotificationRequest.NotificationMessage.builder()
-						.notifyType(FcmChannel.TEAMCALENDAR)
-						.contentId(teamCalendar.getId())
-						.title(FcmChannel.TEAMCALENDAR.getTitle())
-						.content(teamCalendar.getTitle())
-						.build())
-					.build();
-				return request;
-			})
-			.toList();
-		return requests;
 	}
 }
