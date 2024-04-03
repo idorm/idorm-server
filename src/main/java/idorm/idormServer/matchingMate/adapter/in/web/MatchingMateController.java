@@ -4,6 +4,7 @@ import static idorm.idormServer.matchingMate.adapter.out.MatchingMateResponseCod
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,10 +52,10 @@ public class MatchingMateController {
 	})
 	@GetMapping("/favorite")
 	public ResponseEntity<SuccessResponse<Object>> findFavoriteMates(
-		@AuthInfo AuthResponse auth
+		@AuthInfo AuthResponse auth, Pageable pageable
 	) {
 		return ResponseEntity.ok()
-			.body(SuccessResponse.of(LIKEDMEMBERS_FOUND, matchingMateUseCase.findFavoriteMates(auth)));
+			.body(SuccessResponse.of(LIKEDMEMBERS_FOUND, matchingMateUseCase.findFavoriteMates(auth, pageable)));
 	}
 
 	@Auth
@@ -70,10 +71,10 @@ public class MatchingMateController {
 	})
 	@GetMapping("/nonfavorite")
 	public ResponseEntity<SuccessResponse<Object>> findNonFavoriteMates(
-		@AuthInfo AuthResponse auth
+		@AuthInfo AuthResponse auth, Pageable pageable
 	) {
 		return ResponseEntity.ok().body(SuccessResponse.of(DISLIKEDMEMBERS_FOUND,
-			matchingMateUseCase.findNonFavoriteMates(auth)));
+			matchingMateUseCase.findNonFavoriteMates(auth, pageable)));
 	}
 
 	@Auth
@@ -145,10 +146,10 @@ public class MatchingMateController {
 	})
 	@GetMapping
 	public ResponseEntity<SuccessResponse<Object>> findMates(
-		@AuthInfo AuthResponse auth
+		@AuthInfo AuthResponse auth, Pageable pageable
 	) {
 		return ResponseEntity.ok().body(SuccessResponse.of(MATCHING_MEMBERS_FOUND,
-			matchingMateUseCase.findMates(auth)));
+			matchingMateUseCase.findMates(auth, pageable)));
 	}
 
 	@Auth
@@ -167,9 +168,10 @@ public class MatchingMateController {
 	@PostMapping("/filter")
 	public ResponseEntity<SuccessResponse<Object>> findFilteredMates(
 		@AuthInfo AuthResponse auth,
-		@RequestBody @Valid MatchingMateFilterRequest request
+		@RequestBody @Valid MatchingMateFilterRequest request,
+		Pageable pageable
 	) {
 		return ResponseEntity.ok().body(SuccessResponse.of(FILTERED_MATCHING_MEMBERS_FOUND,
-			matchingMateUseCase.findFilteredMates(auth, request)));
+			matchingMateUseCase.findFilteredMates(auth, request, pageable)));
 	}
 }

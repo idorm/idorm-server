@@ -1,14 +1,13 @@
 package idorm.idormServer.matchingMate.application;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.exception.InvalidTargetSelfException;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
-import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.MatchingMateUseCase;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
@@ -32,15 +31,15 @@ public class MatchingMateService implements MatchingMateUseCase {
 	private final SaveMatchingMatePort saveMatchingMatePort;
 
 	@Override
-	public List<MatchingMateResponse> findFavoriteMates(final AuthResponse auth) {
+	public Page<MatchingMateResponse> findFavoriteMates(final AuthResponse auth, final Pageable pageable) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		return convertMateResponses(member.getFavoriteMates());
+		return loadMatchingInfoPort.loadByMatePreference(member, MatePreferenceType.FAVORITE, pageable);
 	}
 
 	@Override
-	public List<MatchingMateResponse> findNonFavoriteMates(final AuthResponse auth) {
+	public Page<MatchingMateResponse> findNonFavoriteMates(final AuthResponse auth, final Pageable pageable) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		return convertMateResponses(member.getNonFavoriteMates());
+		return loadMatchingInfoPort.loadByMatePreference(member, MatePreferenceType.NONFAVORITE, pageable);
 	}
 
 	@Override
@@ -60,61 +59,34 @@ public class MatchingMateService implements MatchingMateUseCase {
 		saveMatchingMatePort.save(mate);
 	}
 
+	@Override
+	@Transactional
+	public void deleteMate(final AuthResponse auth, final PreferenceMateRequest request) {
+		Member member = loadMemberPort.loadMember(auth.getId());
+		Member targetMember = loadMemberPort.loadMember(request.targetMemberId());
+
+		member.deleteMate(targetMember.getMatchingInfo(), request.getPreferenceType());
+	}
+
+	@Override
+	public Page<MatchingMateResponse> findMates(final AuthResponse auth, final Pageable pageable) {
+		Member member = loadMemberPort.loadMember(auth.getId());
+		return loadMatchingInfoPort.loadByBasicConditions(member, pageable);
+	}
+
+	@Override
+	public Page<MatchingMateResponse> findFilteredMates(final AuthResponse auth,
+		final MatchingMateFilterRequest request, final Pageable pageable) {
+
+		Member member = loadMemberPort.loadMember(auth.getId());
+		return loadMatchingInfoPort.loadBySpecialConditions(member, request, pageable);
+	}
+
 	private void validateMatchingStatement(final Member owner, final Member target) {
 		if (owner.equals(target)) {
 			throw new InvalidTargetSelfException();
 		}
 		owner.validateMatchingStatement();
 		target.validateMatchingStatement();
-	}
-
-	@Override
-	@Transactional
-	public void deleteMate(final AuthResponse auth, final PreferenceMateRequest request) {
-		MatePreferenceType preferenceType = request.getPreferenceType();
-
-		Member member = loadMemberPort.loadMember(auth.getId());
-		Member targetMember = loadMemberPort.loadMember(request.targetMemberId());
-
-		member.deleteMate(targetMember.getMatchingInfo(), preferenceType);
-	}
-
-	@Override
-	public List<MatchingMateResponse> findMates(final AuthResponse auth) {
-		Member member = loadMemberPort.loadMember(auth.getId());
-		MatchingInfo matchingInfo = loadMatchingInfoPort.load(member.getId());
-		matchingInfo.validateStatement();
-
-		List<MatchingInfo> matchingInfos = loadMatchingInfoPort.loadByBasicConditions(matchingInfo);
-		return removeNonFavoriteMates(member, matchingInfos);
-	}
-
-	@Override
-	public List<MatchingMateResponse> findFilteredMates(final AuthResponse auth,
-		final MatchingMateFilterRequest request) {
-
-		Member member = loadMemberPort.loadMember(auth.getId());
-		MatchingInfo matchingInfo = loadMatchingInfoPort.load(member.getId());
-		matchingInfo.validateStatement();
-
-		List<MatchingInfo> matchingInfos = loadMatchingInfoPort.loadBySpecialConditions(matchingInfo, request);
-		return removeNonFavoriteMates(member, matchingInfos);
-	}
-
-	private List<MatchingMateResponse> convertMateResponses(final List<MatchingMate> mates) {
-		List<MatchingMateResponse> responses = mates.stream()
-			.map(MatchingMate::getMatchingInfoForTarget)
-			.map(MatchingMateResponse::from)
-			.toList();
-		return responses;
-	}
-
-	private List<MatchingMateResponse> removeNonFavoriteMates(final Member loginMember,
-		final List<MatchingInfo> matchingInfos) {
-		List<MatchingMateResponse> responses = matchingInfos.stream()
-			.filter(loginMember::isNotNonFavoriteMate)
-			.map(MatchingMateResponse::from)
-			.toList();
-		return responses;
 	}
 }

@@ -1,18 +1,17 @@
 package idorm.idormServer.matchingInfo.adapter.out.persistence;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import idorm.idormServer.matchingInfo.adapter.out.exception.DuplicatedMatchingInfoException;
 import idorm.idormServer.matchingInfo.adapter.out.exception.NotFoundMatchingInfoException;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
-import idorm.idormServer.matchingInfo.entity.DormCategory;
-import idorm.idormServer.matchingInfo.entity.JoinPeriod;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
+import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
+import idorm.idormServer.matchingMate.entity.MatePreferenceType;
+import idorm.idormServer.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -23,8 +22,7 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 
 	@Override
 	public void validateNotExistence(final Long memberId) {
-		boolean exists = matchingInfoRepository.existsByMemberId(memberId);
-
+		final boolean exists = matchingInfoRepository.existsByMemberId(memberId);
 		if (exists) {
 			throw new DuplicatedMatchingInfoException();
 		}
@@ -37,39 +35,20 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 	}
 
 	@Override
-	public Optional<MatchingInfo> loadWithOptional(Long memberId) {
-		return matchingInfoRepository.findByMemberId(memberId);
+	public Page<MatchingMateResponse> loadByMatePreference(final Member member, final MatePreferenceType preferenceType,
+		final Pageable pageable) {
+		return matchingInfoRepository.findByMatePreference(member, preferenceType, pageable);
 	}
 
 	@Override
-	public List<MatchingInfo> loadByBasicConditions(final MatchingInfo matchingInfo) {
-
-		final List<MatchingInfo> results = matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
-			matchingInfo.getMember().getId(),
-			matchingInfo.getDormInfo().getDormCategory(),
-			matchingInfo.getDormInfo().getJoinPeriod(),
-			matchingInfo.getDormInfo().getGender());
-
-		return results.isEmpty() ? new ArrayList<>() : results;
+	public Page<MatchingMateResponse> loadByBasicConditions(final Member member, final Pageable pageable) {
+		return matchingInfoRepository.findByBasicConditions(member, pageable);
 	}
 
 	@Override
-	public List<MatchingInfo> loadBySpecialConditions(final MatchingInfo matchingInfo,
-		final MatchingMateFilterRequest request) {
+	public Page<MatchingMateResponse> loadBySpecialConditions(final Member member,
+		final MatchingMateFilterRequest request, final Pageable pageable) {
 
-		final List<MatchingInfo> results = matchingInfoRepository.findFilteredMates(
-			matchingInfo.getId(),
-			DormCategory.from(request.dormCategory()),
-			JoinPeriod.from(request.joinPeriod()),
-			matchingInfo.getDormInfo().getGender(),
-			!request.isSnoring(),
-			!request.isSmoking(),
-			!request.isGrinding(),
-			!request.isWearEarphones(),
-			!request.isAllowedFood(),
-			request.minAge(),
-			request.maxAge());
-
-		return results.isEmpty() ? new ArrayList<>() : results;
+		return matchingInfoRepository.findBySpecialConditions(member, request, pageable);
 	}
 }
