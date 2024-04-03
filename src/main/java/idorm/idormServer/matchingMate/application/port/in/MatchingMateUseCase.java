@@ -1,6 +1,7 @@
 package idorm.idormServer.matchingMate.application.port.in;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
@@ -9,15 +10,16 @@ import idorm.idormServer.matchingMate.application.port.in.dto.PreferenceMateRequ
 
 public interface MatchingMateUseCase {
 
-	List<MatchingMateResponse> findFavoriteMates(AuthResponse auth);
+	Page<MatchingMateResponse> findFavoriteMates(AuthResponse auth, Pageable pageable);
 
-	List<MatchingMateResponse> findNonFavoriteMates(AuthResponse auth);
+	Page<MatchingMateResponse> findNonFavoriteMates(AuthResponse auth, Pageable pageable);
 
 	void addMate(AuthResponse auth, PreferenceMateRequest request);
 
 	void deleteMate(AuthResponse auth, PreferenceMateRequest request);
 
-	List<MatchingMateResponse> findMates(AuthResponse auth);
+	Page<MatchingMateResponse> findMates(AuthResponse auth, Pageable pageable);
 
-	List<MatchingMateResponse> findFilteredMates(AuthResponse auth, MatchingMateFilterRequest request);
+	Page<MatchingMateResponse> findFilteredMates(AuthResponse auth, MatchingMateFilterRequest request,
+		Pageable pageable);
 }

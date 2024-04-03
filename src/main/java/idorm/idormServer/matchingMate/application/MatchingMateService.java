@@ -1,7 +1,7 @@
 package idorm.idormServer.matchingMate.application;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,15 +31,15 @@ public class MatchingMateService implements MatchingMateUseCase {
 	private final SaveMatchingMatePort saveMatchingMatePort;
 
 	@Override
-	public List<MatchingMateResponse> findFavoriteMates(final AuthResponse auth) {
+	public Page<MatchingMateResponse> findFavoriteMates(final AuthResponse auth, final Pageable pageable) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		return loadMatchingInfoPort.loadByMatePreference(member, MatePreferenceType.FAVORITE);
+		return loadMatchingInfoPort.loadByMatePreference(member, MatePreferenceType.FAVORITE, pageable);
 	}
 
 	@Override
-	public List<MatchingMateResponse> findNonFavoriteMates(final AuthResponse auth) {
+	public Page<MatchingMateResponse> findNonFavoriteMates(final AuthResponse auth, final Pageable pageable) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		return loadMatchingInfoPort.loadByMatePreference(member, MatePreferenceType.NONFAVORITE);
+		return loadMatchingInfoPort.loadByMatePreference(member, MatePreferenceType.NONFAVORITE, pageable);
 	}
 
 	@Override
@@ -69,17 +69,17 @@ public class MatchingMateService implements MatchingMateUseCase {
 	}
 
 	@Override
-	public List<MatchingMateResponse> findMates(final AuthResponse auth) {
+	public Page<MatchingMateResponse> findMates(final AuthResponse auth, final Pageable pageable) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		return loadMatchingInfoPort.loadByBasicConditions(member);
+		return loadMatchingInfoPort.loadByBasicConditions(member, pageable);
 	}
 
 	@Override
-	public List<MatchingMateResponse> findFilteredMates(final AuthResponse auth,
-		final MatchingMateFilterRequest request) {
+	public Page<MatchingMateResponse> findFilteredMates(final AuthResponse auth,
+		final MatchingMateFilterRequest request, final Pageable pageable) {
 
 		Member member = loadMemberPort.loadMember(auth.getId());
-		return loadMatchingInfoPort.loadBySpecialConditions(member, request);
+		return loadMatchingInfoPort.loadBySpecialConditions(member, request, pageable);
 	}
 
 	private void validateMatchingStatement(final Member owner, final Member target) {

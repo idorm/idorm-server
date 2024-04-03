@@ -1,15 +1,12 @@
 package idorm.idormServer.matchingInfo.adapter.out.persistence;
 
-import java.util.Collections;
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import idorm.idormServer.matchingInfo.adapter.out.exception.DuplicatedMatchingInfoException;
 import idorm.idormServer.matchingInfo.adapter.out.exception.NotFoundMatchingInfoException;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
-import idorm.idormServer.matchingInfo.entity.DormCategory;
-import idorm.idormServer.matchingInfo.entity.JoinPeriod;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
@@ -38,22 +35,20 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 	}
 
 	@Override
-	public List<MatchingMateResponse> loadByMatePreference(Member member, MatePreferenceType preferenceType) {
-		List<MatchingMateResponse> responses = matchingInfoRepository.findByMatePreference(member, preferenceType);
-		return responses != null ? responses : Collections.emptyList();
+	public Page<MatchingMateResponse> loadByMatePreference(final Member member, final MatePreferenceType preferenceType,
+		final Pageable pageable) {
+		return matchingInfoRepository.findByMatePreference(member, preferenceType, pageable);
 	}
 
 	@Override
-	public List<MatchingMateResponse> loadByBasicConditions(final Member member) {
-		final List<MatchingMateResponse> responses = matchingInfoRepository.findByBasicConditions(member);
-		return responses != null ? responses : Collections.emptyList();
+	public Page<MatchingMateResponse> loadByBasicConditions(final Member member, final Pageable pageable) {
+		return matchingInfoRepository.findByBasicConditions(member, pageable);
 	}
 
 	@Override
-	public List<MatchingMateResponse> loadBySpecialConditions(final Member member,
-		final MatchingMateFilterRequest request) {
+	public Page<MatchingMateResponse> loadBySpecialConditions(final Member member,
+		final MatchingMateFilterRequest request, final Pageable pageable) {
 
-		final List<MatchingMateResponse> responses = matchingInfoRepository.findBySpecialConditions(member, request);
-		return responses != null ? responses : Collections.emptyList();
+		return matchingInfoRepository.findBySpecialConditions(member, request, pageable);
 	}
 }

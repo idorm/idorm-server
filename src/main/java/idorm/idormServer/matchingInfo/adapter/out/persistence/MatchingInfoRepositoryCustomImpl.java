@@ -7,8 +7,13 @@ import static org.springframework.util.StringUtils.*;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
+
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import idorm.idormServer.matchingInfo.entity.DormCategory;
@@ -17,6 +22,7 @@ import idorm.idormServer.matchingInfo.entity.JoinPeriod;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
+import idorm.idormServer.matchingMate.application.port.in.dto.QMatchingMateResponse;
 import idorm.idormServer.matchingMate.entity.MatePreferenceType;
 import idorm.idormServer.member.entity.Member;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +33,11 @@ public class MatchingInfoRepositoryCustomImpl implements MatchingInfoRepositoryC
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<MatchingMateResponse> findByMatePreference(final Member loginMember,
-		final MatePreferenceType preferenceType) {
+	public Page<MatchingMateResponse> findByMatePreference(final Member loginMember,
+		final MatePreferenceType preferenceType, Pageable pageable) {
 
-		return queryFactory
-			.select(Projections.constructor(MatchingMateResponse.class,
+		List<MatchingMateResponse> content = queryFactory
+			.select(new QMatchingMateResponse(
 				matchingInfo,
 				matchingInfo.member.id.as("memberId"))
 			)
@@ -40,12 +46,22 @@ public class MatchingInfoRepositoryCustomImpl implements MatchingInfoRepositoryC
 			.leftJoin(matchingMate).on(matchingInfo.eq(matchingMate.matchingInfoForTarget))
 			.where(matchingMate.preferenceType.eq(preferenceType),
 				matchingMate.owner.eq(loginMember))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
+
+		JPAQuery<MatchingInfo> countQuery = queryFactory
+			.selectFrom(matchingInfo)
+			.leftJoin(matchingMate).on(matchingInfo.eq(matchingMate.matchingInfoForTarget))
+			.where(matchingMate.preferenceType.eq(preferenceType),
+				matchingMate.owner.eq(loginMember));
+
+		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
 	}
 
 	@Override
-	public List<MatchingMateResponse> findByBasicConditions(final Member loginMember) {
-		return queryFactory
+	public Page<MatchingMateResponse> findByBasicConditions(final Member loginMember, final Pageable pageable) {
+		List<MatchingMateResponse> content = queryFactory
 			.select(Projections.constructor(MatchingMateResponse.class,
 				matchingInfo,
 				matchingInfo.member.id.as("memberId"))
@@ -53,14 +69,22 @@ public class MatchingInfoRepositoryCustomImpl implements MatchingInfoRepositoryC
 			.from(matchingInfo)
 			.leftJoin(matchingInfo.member, member).fetchJoin()
 			.where(basicCond(loginMember.getId(), loginMember.getMatchingInfo()))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
+
+		JPAQuery<MatchingInfo> countQuery = queryFactory
+			.selectFrom(matchingInfo)
+			.where(basicCond(loginMember.getId(), loginMember.getMatchingInfo()));
+
+		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
 	}
 
 	@Override
-	public List<MatchingMateResponse> findBySpecialConditions(final Member loginMember,
-		final MatchingMateFilterRequest request) {
+	public Page<MatchingMateResponse> findBySpecialConditions(final Member loginMember,
+		final MatchingMateFilterRequest request, final Pageable pageable) {
 
-		return queryFactory
+		List<MatchingMateResponse> content = queryFactory
 			.select(Projections.constructor(MatchingMateResponse.class,
 				matchingInfo,
 				matchingInfo.member.id.as("memberId"))
@@ -68,7 +92,15 @@ public class MatchingInfoRepositoryCustomImpl implements MatchingInfoRepositoryC
 			.from(matchingInfo)
 			.leftJoin(matchingInfo.member, member).fetchJoin()
 			.where(specialCond(loginMember.getId(), loginMember.getMatchingInfo(), request))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
+
+		JPAQuery<MatchingInfo> countQuery = queryFactory
+			.selectFrom(matchingInfo)
+			.where(specialCond(loginMember.getId(), loginMember.getMatchingInfo(), request));
+
+		return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
 	}
 
 	private BooleanExpression basicCond(Long memberId, MatchingInfo matchingInfo) {

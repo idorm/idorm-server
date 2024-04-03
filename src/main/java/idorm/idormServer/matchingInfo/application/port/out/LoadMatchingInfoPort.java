@@ -1,6 +1,7 @@
 package idorm.idormServer.matchingInfo.application.port.out;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
@@ -14,9 +15,11 @@ public interface LoadMatchingInfoPort {
 
 	MatchingInfo load(Long memberId);
 
-	List<MatchingMateResponse> loadByMatePreference(Member member, MatePreferenceType preferenceType);
+	Page<MatchingMateResponse> loadByMatePreference(Member member, MatePreferenceType preferenceType,
+		Pageable pageable);
 
-	List<MatchingMateResponse> loadByBasicConditions(Member member);
+	Page<MatchingMateResponse> loadByBasicConditions(Member member, Pageable pageable);
 
-	List<MatchingMateResponse> loadBySpecialConditions(Member member, MatchingMateFilterRequest request);
+	Page<MatchingMateResponse> loadBySpecialConditions(Member member, MatchingMateFilterRequest request,
+		Pageable pageable);
 }
