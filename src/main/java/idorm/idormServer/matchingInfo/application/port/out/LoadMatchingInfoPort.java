@@ -16,7 +16,7 @@ public interface LoadMatchingInfoPort {
 
 	List<MatchingMateResponse> loadByMatePreference(Member member, MatePreferenceType preferenceType);
 
-	List<MatchingInfo> loadByBasicConditions(MatchingInfo matchingInfo);
+	List<MatchingMateResponse> loadByBasicConditions(Member member);
 
-	List<MatchingInfo> loadBySpecialConditions(MatchingInfo matchingInfo, MatchingMateFilterRequest request);
+	List<MatchingMateResponse> loadBySpecialConditions(Member member, MatchingMateFilterRequest request);
 }

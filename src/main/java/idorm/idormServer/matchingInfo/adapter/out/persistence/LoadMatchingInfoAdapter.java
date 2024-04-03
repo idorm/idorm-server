@@ -44,31 +44,16 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 	}
 
 	@Override
-	public List<MatchingInfo> loadByBasicConditions(final MatchingInfo matchingInfo) {
-		final List<MatchingInfo> responses = matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
-			matchingInfo.getMember().getId(),
-			matchingInfo.getDormInfo().getDormCategory(),
-			matchingInfo.getDormInfo().getJoinPeriod(),
-			matchingInfo.getDormInfo().getGender());
+	public List<MatchingMateResponse> loadByBasicConditions(final Member member) {
+		final List<MatchingMateResponse> responses = matchingInfoRepository.findByBasicConditions(member);
 		return responses != null ? responses : Collections.emptyList();
 	}
 
 	@Override
-	public List<MatchingInfo> loadBySpecialConditions(final MatchingInfo matchingInfo,
+	public List<MatchingMateResponse> loadBySpecialConditions(final Member member,
 		final MatchingMateFilterRequest request) {
 
-		final List<MatchingInfo> responses = matchingInfoRepository.findFilteredMates(
-			matchingInfo.getId(),
-			DormCategory.from(request.dormCategory()),
-			JoinPeriod.from(request.joinPeriod()),
-			matchingInfo.getDormInfo().getGender(),
-			!request.isSnoring(),
-			!request.isSmoking(),
-			!request.isGrinding(),
-			!request.isWearEarphones(),
-			!request.isAllowedFood(),
-			request.minAge(),
-			request.maxAge());
+		final List<MatchingMateResponse> responses = matchingInfoRepository.findBySpecialConditions(member, request);
 		return responses != null ? responses : Collections.emptyList();
 	}
 }

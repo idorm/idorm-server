@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import idorm.idormServer.common.util.Validator;
-import idorm.idormServer.matchingMate.adapter.out.exception.IllegalStatementMatchingInfoNonPublicException;
 import idorm.idormServer.matchingMate.entity.MatchingMate;
 import idorm.idormServer.member.entity.Member;
 import lombok.AccessLevel;
@@ -95,11 +94,5 @@ public class MatchingInfo {
 
 	public void editVisibility(final Boolean isPublic) {
 		this.isPublic = isPublic;
-	}
-
-	public void validateStatement() {
-		if (!isPublic) {
-			throw new IllegalStatementMatchingInfoNonPublicException();
-		}
 	}
 }

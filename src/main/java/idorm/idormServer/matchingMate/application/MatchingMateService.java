@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.exception.InvalidTargetSelfException;
 import idorm.idormServer.matchingInfo.application.port.out.LoadMatchingInfoPort;
-import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.MatchingMateUseCase;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
@@ -63,23 +62,16 @@ public class MatchingMateService implements MatchingMateUseCase {
 	@Override
 	@Transactional
 	public void deleteMate(final AuthResponse auth, final PreferenceMateRequest request) {
-		MatePreferenceType preferenceType = request.getPreferenceType();
-
 		Member member = loadMemberPort.loadMember(auth.getId());
 		Member targetMember = loadMemberPort.loadMember(request.targetMemberId());
 
-		member.deleteMate(targetMember.getMatchingInfo(), preferenceType);
+		member.deleteMate(targetMember.getMatchingInfo(), request.getPreferenceType());
 	}
 
 	@Override
 	public List<MatchingMateResponse> findMates(final AuthResponse auth) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		MatchingInfo matchingInfo = loadMatchingInfoPort.load(member.getId());
-		matchingInfo.validateStatement();
-
-		List<MatchingInfo> matchingInfos = loadMatchingInfoPort.loadByBasicConditions(matchingInfo);
-		// return removeNonFavoriteMates(member, matchingInfos);
-		return null;
+		return loadMatchingInfoPort.loadByBasicConditions(member);
 	}
 
 	@Override
@@ -87,12 +79,7 @@ public class MatchingMateService implements MatchingMateUseCase {
 		final MatchingMateFilterRequest request) {
 
 		Member member = loadMemberPort.loadMember(auth.getId());
-		MatchingInfo matchingInfo = loadMatchingInfoPort.load(member.getId());
-		matchingInfo.validateStatement();
-
-		List<MatchingInfo> matchingInfos = loadMatchingInfoPort.loadBySpecialConditions(matchingInfo, request);
-		// return removeNonFavoriteMates(member, matchingInfos);
-		return null;
+		return loadMatchingInfoPort.loadBySpecialConditions(member, request);
 	}
 
 	private void validateMatchingStatement(final Member owner, final Member target) {
@@ -102,21 +89,4 @@ public class MatchingMateService implements MatchingMateUseCase {
 		owner.validateMatchingStatement();
 		target.validateMatchingStatement();
 	}
-
-	// private List<MatchingMateResponse> convertMateResponses(final List<MatchingMate> mates) {
-	// 	List<MatchingMateResponse> responses = mates.stream()
-	// 		.map(MatchingMate::getMatchingInfoForTarget)
-	// 		.map(MatchingMateResponse::from)
-	// 		.toList();
-	// 	return responses;
-	// }
-	//
-	// private List<MatchingMateResponse> removeNonFavoriteMates(final Member loginMember,
-	// 	final List<MatchingInfo> matchingInfos) {
-	// 	List<MatchingMateResponse> responses = matchingInfos.stream()
-	// 		.filter(loginMember::isNotNonFavoriteMate)
-	// 		.map(MatchingMateResponse::from)
-	// 		.toList();
-	// 	return responses;
-	// }
 }
