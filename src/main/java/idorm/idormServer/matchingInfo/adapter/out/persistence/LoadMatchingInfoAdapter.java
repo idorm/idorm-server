@@ -1,8 +1,7 @@
 package idorm.idormServer.matchingInfo.adapter.out.persistence;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -13,6 +12,9 @@ import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.matchingInfo.entity.JoinPeriod;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
+import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
+import idorm.idormServer.matchingMate.entity.MatePreferenceType;
+import idorm.idormServer.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -23,8 +25,7 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 
 	@Override
 	public void validateNotExistence(final Long memberId) {
-		boolean exists = matchingInfoRepository.existsByMemberId(memberId);
-
+		final boolean exists = matchingInfoRepository.existsByMemberId(memberId);
 		if (exists) {
 			throw new DuplicatedMatchingInfoException();
 		}
@@ -37,27 +38,26 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 	}
 
 	@Override
-	public Optional<MatchingInfo> loadWithOptional(Long memberId) {
-		return matchingInfoRepository.findByMemberId(memberId);
+	public List<MatchingMateResponse> loadByMatePreference(Member member, MatePreferenceType preferenceType) {
+		List<MatchingMateResponse> responses = matchingInfoRepository.findByMatePreference(member, preferenceType);
+		return responses != null ? responses : Collections.emptyList();
 	}
 
 	@Override
 	public List<MatchingInfo> loadByBasicConditions(final MatchingInfo matchingInfo) {
-
-		final List<MatchingInfo> results = matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
+		final List<MatchingInfo> responses = matchingInfoRepository.findAllByMemberIdNotAndDormCategoryAndJoinPeriodAndGenderAndIsMatchingInfoPublicTrue(
 			matchingInfo.getMember().getId(),
 			matchingInfo.getDormInfo().getDormCategory(),
 			matchingInfo.getDormInfo().getJoinPeriod(),
 			matchingInfo.getDormInfo().getGender());
-
-		return results.isEmpty() ? new ArrayList<>() : results;
+		return responses != null ? responses : Collections.emptyList();
 	}
 
 	@Override
 	public List<MatchingInfo> loadBySpecialConditions(final MatchingInfo matchingInfo,
 		final MatchingMateFilterRequest request) {
 
-		final List<MatchingInfo> results = matchingInfoRepository.findFilteredMates(
+		final List<MatchingInfo> responses = matchingInfoRepository.findFilteredMates(
 			matchingInfo.getId(),
 			DormCategory.from(request.dormCategory()),
 			JoinPeriod.from(request.joinPeriod()),
@@ -69,7 +69,6 @@ public class LoadMatchingInfoAdapter implements LoadMatchingInfoPort {
 			!request.isAllowedFood(),
 			request.minAge(),
 			request.maxAge());
-
-		return results.isEmpty() ? new ArrayList<>() : results;
+		return responses != null ? responses : Collections.emptyList();
 	}
 }

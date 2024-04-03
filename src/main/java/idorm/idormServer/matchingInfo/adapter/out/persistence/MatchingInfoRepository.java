@@ -14,7 +14,7 @@ import idorm.idormServer.matchingInfo.entity.JoinPeriod;
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 
 @Repository
-public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long> {
+public interface MatchingInfoRepository extends JpaRepository<MatchingInfo, Long>, MatchingInfoRepositoryCustom {
 
 	Optional<MatchingInfo> findByMemberId(Long memberId);
 

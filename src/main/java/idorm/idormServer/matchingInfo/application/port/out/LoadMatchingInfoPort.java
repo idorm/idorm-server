@@ -1,10 +1,12 @@
 package idorm.idormServer.matchingInfo.application.port.out;
 
 import java.util.List;
-import java.util.Optional;
 
 import idorm.idormServer.matchingInfo.entity.MatchingInfo;
 import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateFilterRequest;
+import idorm.idormServer.matchingMate.application.port.in.dto.MatchingMateResponse;
+import idorm.idormServer.matchingMate.entity.MatePreferenceType;
+import idorm.idormServer.member.entity.Member;
 
 public interface LoadMatchingInfoPort {
 
@@ -12,7 +14,7 @@ public interface LoadMatchingInfoPort {
 
 	MatchingInfo load(Long memberId);
 
-	Optional<MatchingInfo> loadWithOptional(Long memberId);
+	List<MatchingMateResponse> loadByMatePreference(Member member, MatePreferenceType preferenceType);
 
 	List<MatchingInfo> loadByBasicConditions(MatchingInfo matchingInfo);
 

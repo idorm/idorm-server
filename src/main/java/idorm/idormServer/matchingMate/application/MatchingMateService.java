@@ -34,13 +34,13 @@ public class MatchingMateService implements MatchingMateUseCase {
 	@Override
 	public List<MatchingMateResponse> findFavoriteMates(final AuthResponse auth) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		return convertMateResponses(member.getFavoriteMates());
+		return loadMatchingInfoPort.loadByMatePreference(member, MatePreferenceType.FAVORITE);
 	}
 
 	@Override
 	public List<MatchingMateResponse> findNonFavoriteMates(final AuthResponse auth) {
 		Member member = loadMemberPort.loadMember(auth.getId());
-		return convertMateResponses(member.getNonFavoriteMates());
+		return loadMatchingInfoPort.loadByMatePreference(member, MatePreferenceType.NONFAVORITE);
 	}
 
 	@Override
@@ -58,14 +58,6 @@ public class MatchingMateService implements MatchingMateUseCase {
 				MatchingMate.nonFavoriteFrom(member, targetMember.getMatchingInfo());
 
 		saveMatchingMatePort.save(mate);
-	}
-
-	private void validateMatchingStatement(final Member owner, final Member target) {
-		if (owner.equals(target)) {
-			throw new InvalidTargetSelfException();
-		}
-		owner.validateMatchingStatement();
-		target.validateMatchingStatement();
 	}
 
 	@Override
@@ -86,7 +78,8 @@ public class MatchingMateService implements MatchingMateUseCase {
 		matchingInfo.validateStatement();
 
 		List<MatchingInfo> matchingInfos = loadMatchingInfoPort.loadByBasicConditions(matchingInfo);
-		return removeNonFavoriteMates(member, matchingInfos);
+		// return removeNonFavoriteMates(member, matchingInfos);
+		return null;
 	}
 
 	@Override
@@ -98,23 +91,32 @@ public class MatchingMateService implements MatchingMateUseCase {
 		matchingInfo.validateStatement();
 
 		List<MatchingInfo> matchingInfos = loadMatchingInfoPort.loadBySpecialConditions(matchingInfo, request);
-		return removeNonFavoriteMates(member, matchingInfos);
+		// return removeNonFavoriteMates(member, matchingInfos);
+		return null;
 	}
 
-	private List<MatchingMateResponse> convertMateResponses(final List<MatchingMate> mates) {
-		List<MatchingMateResponse> responses = mates.stream()
-			.map(MatchingMate::getMatchingInfoForTarget)
-			.map(MatchingMateResponse::from)
-			.toList();
-		return responses;
+	private void validateMatchingStatement(final Member owner, final Member target) {
+		if (owner.equals(target)) {
+			throw new InvalidTargetSelfException();
+		}
+		owner.validateMatchingStatement();
+		target.validateMatchingStatement();
 	}
 
-	private List<MatchingMateResponse> removeNonFavoriteMates(final Member loginMember,
-		final List<MatchingInfo> matchingInfos) {
-		List<MatchingMateResponse> responses = matchingInfos.stream()
-			.filter(loginMember::isNotNonFavoriteMate)
-			.map(MatchingMateResponse::from)
-			.toList();
-		return responses;
-	}
+	// private List<MatchingMateResponse> convertMateResponses(final List<MatchingMate> mates) {
+	// 	List<MatchingMateResponse> responses = mates.stream()
+	// 		.map(MatchingMate::getMatchingInfoForTarget)
+	// 		.map(MatchingMateResponse::from)
+	// 		.toList();
+	// 	return responses;
+	// }
+	//
+	// private List<MatchingMateResponse> removeNonFavoriteMates(final Member loginMember,
+	// 	final List<MatchingInfo> matchingInfos) {
+	// 	List<MatchingMateResponse> responses = matchingInfos.stream()
+	// 		.filter(loginMember::isNotNonFavoriteMate)
+	// 		.map(MatchingMateResponse::from)
+	// 		.toList();
+	// 	return responses;
+	// }
 }
