@@ -29,7 +29,7 @@ public class FcmNotificationClient implements NotificationClient {
 	private final FirebaseMessaging fcm;
 
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-	@Async
+	@Async("asyncExecutor")
 	@Override
 	public void notify(List<NotificationRequest> requests) {
 		if (requests.isEmpty() || Objects.isNull(requests)) {
@@ -48,7 +48,7 @@ public class FcmNotificationClient implements NotificationClient {
 	}
 
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-	@Async
+	@Async("asyncExecutor")
 	@Override
 	public void notify(NotificationRequest request) {
 		if (request == null) {
