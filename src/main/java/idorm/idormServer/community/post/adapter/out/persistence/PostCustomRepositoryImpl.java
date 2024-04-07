@@ -1,21 +1,18 @@
 package idorm.idormServer.community.post.adapter.out.persistence;
 
-import static idorm.idormServer.community.comment.entity.QComment.*;
-import static idorm.idormServer.community.post.entity.QPost.*;
-import static idorm.idormServer.member.entity.QMember.*;
+import static idorm.idormServer.community.post.entity.QPost.post;
+import static idorm.idormServer.member.entity.QMember.member;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
 import java.time.LocalDateTime;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import idorm.idormServer.community.post.entity.Post;
-import idorm.idormServer.matchingInfo.entity.DormCategory;
-import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class PostCustomRepositoryImpl implements PostCustomRepository {
@@ -35,27 +32,24 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
   @Override
   public Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
-    List<Post> posts = queryFactory
-        .select(post)
+    List<Long> ids = queryFactory
+        .select(post.id)
         .from(post)
-        .join(post.comments, comment).on(comment.isDeleted.eq(false))
-        .where(post.dormCategory.eq(dormCategory)
-            .and(comment.isDeleted.eq(false))
+        .where(eqDorm(dormCategory)
             .and(post.isDeleted.eq(false)))
-        .offset(pageable.getOffset())
         .orderBy(post.createdAt.desc())
+        .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
         .fetch();
 
-    long total = queryFactory
-        .select(post)
-        .from(post)
-        .where(post.dormCategory.eq(dormCategory)
-            .and(post.isDeleted.eq(false)))
-        .fetchCount();
-
-    return new PageImpl<>(posts, pageable, total);
+    List<Post> posts = queryFactory
+        .selectFrom(post)
+        .where(post.id.in(ids))
+        .orderBy(post.createdAt.desc())
+        .fetch();
+    return new PageImpl<>(posts, pageable, ids.size());
   }
+
 
   @Override
   public List<Post> findTopPostsByDormCateogry(DormCategory dormCategory) {
@@ -67,7 +61,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         .where(post.createdAt.between(
                 oneWeekAgo.plusHours(9),
                 now.plusHours(9))
-            .and(post.dormCategory.eq(dormCategory)))
+            .and(eqDorm(dormCategory))
+            .and(post.isDeleted.eq(false)))
         .fetch();
   }
 
@@ -81,20 +76,32 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         .where(post.createdAt.between(
                 oneWeekAgo.plusHours(9),
                 now.plusHours(9))
-            .and(post.dormCategory.eq(dormCategory)))
+            .and(eqDorm(dormCategory))
+            .and(post.isDeleted.eq(false)))
         .limit(1)
         .fetchOne();
   }
 
   @Override
   public List<Post> findPostsByMemberId(Long memberId) {
-    return queryFactory
-        .select(post)
+    List<Long> ids = queryFactory
+        .select(post.id)
         .from(post)
         .join(post.member, member)
         .where(member.id.eq(memberId)
             .and(post.isDeleted.eq(false)))
         .orderBy(post.updatedAt.desc())
         .fetch();
+
+    return queryFactory
+        .select(post)
+        .from(post)
+        .where(post.id.in(ids))
+        .orderBy(post.updatedAt.desc())
+        .fetch();
+  }
+
+  private BooleanExpression eqDorm(DormCategory dorm) {
+    return dorm != null ? post.dormCategory.eq(dorm) : null;
   }
 }
