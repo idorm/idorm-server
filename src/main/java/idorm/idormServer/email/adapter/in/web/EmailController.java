@@ -41,9 +41,7 @@ public class EmailController {
     @PostMapping("/verify")
     public ResponseEntity<SuccessResponse<Object>> sendAuthenticationEmail(
             @RequestBody @Valid EmailSendRequest request) {
-
         emailUseCase.sendVerificationEmail(request);
-
         return ResponseEntity.ok().body(SuccessResponse.from(SEND_EMAIL));
     }
 
@@ -61,9 +59,7 @@ public class EmailController {
     @PostMapping("/verification")
     public ResponseEntity<SuccessResponse<Object>> verifyAuthenticationCode(
             @RequestBody @Valid EmailVerifyRequest request) {
-
         emailUseCase.verifyCode(request);
-
         return ResponseEntity.ok().body(SuccessResponse.from(EMAIL_VERIFIED));
     }
 
@@ -79,9 +75,7 @@ public class EmailController {
     @PostMapping("/reverify")
     public ResponseEntity<SuccessResponse<Object>> sendReAuthenticationEmail(
             @RequestBody @Valid EmailSendRequest request) {
-
         emailUseCase.sendReverificationEmail(request);
-
         return ResponseEntity.ok().body(SuccessResponse.from(SEND_REGISTERED_EMAIL));
     }
 
@@ -98,9 +92,7 @@ public class EmailController {
     @PostMapping("/reverification")
     public ResponseEntity<SuccessResponse<Object>> verifyReAuthenticationCode(
             @RequestBody EmailVerifyRequest request) {
-
         emailUseCase.reVerifyCode(request);
-
         return ResponseEntity.ok().body(SuccessResponse.from(REGISTERED_EMAIL_VERIFIED));
     }
 }

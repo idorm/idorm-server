@@ -17,7 +17,7 @@ public class RegisterTokenEventListener {
 	private final FcmTokenUseCase fcmTokenUseCase;
 
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-	@Async
+	@Async("asyncExecutor")
 	@Transactional
 	public void registerFcmToken(final RegisterTokenRequest request) {
 		fcmTokenUseCase.save(request);

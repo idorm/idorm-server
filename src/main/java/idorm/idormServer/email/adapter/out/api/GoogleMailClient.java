@@ -32,7 +32,7 @@ public class GoogleMailClient implements SendEmailPort {
 	}
 
 	@Override
-	@Async
+	@Async("asyncExecutor")
 	public void send(final Email email) {
 		MimeMessage message = mailSender.createMimeMessage();
 		try {
