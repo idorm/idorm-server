@@ -24,17 +24,17 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return queryFactory
             .selectFrom(post)
             .join(post.member, member)
-            .where(post.id.eq(postId)
-                .and(member.id.eq(memberId)))
+            .where(post.id.eq(postId),
+                member.id.eq(memberId))
             .fetchOne();
     }
 
     @Override
     public Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
-        List<Long> ids = queryFactory
+        List<Long> postIds = queryFactory
             .select(post.id)
             .from(post)
-            .where(getPostConditioinForDorm(dormCategory))
+            .where(weeklyTopPostCond(dormCategory))
             .orderBy(post.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -42,27 +42,26 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
         List<Post> posts = queryFactory
             .selectFrom(post)
-            .where(post.id.in(ids))
+            .where(post.id.in(postIds))
             .orderBy(post.createdAt.desc())
             .fetch();
-        return new PageImpl<>(posts, pageable, ids.size());
+        return new PageImpl<>(posts, pageable, postIds.size());
     }
 
 
     @Override
     public List<Post> findTopPostsByDormCateogry(DormCategory dormCategory) {
-        List<Long> ids = queryFactory
+        List<Long> postIds = queryFactory
             .select(post.id)
             .from(post)
-            .where(getWeeklyPopularPosts()
-                .and(getPostConditioinForDorm(dormCategory)))
+            .where(weeklyTopPostCond(dormCategory))
             .orderBy(post.likeCount.desc(), post.createdAt.desc())
             .limit(10)
             .fetch();
 
         return queryFactory
             .selectFrom(post)
-            .where(post.id.in(ids))
+            .where(post.id.in(postIds))
             .orderBy(post.likeCount.desc(), post.createdAt.desc())
             .fetch();
     }
@@ -71,8 +70,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     public Post findTopPostByDormCategory(DormCategory dormCategory) {
         return queryFactory
             .selectFrom(post)
-            .where(getWeeklyPopularPosts()
-                .and(getPostConditioinForDorm(dormCategory)))
+            .where(weeklyTopPostCond(dormCategory))
             .orderBy(post.likeCount.desc(), post.createdAt.desc())
             .limit(1)
             .fetchOne();
@@ -80,35 +78,37 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public List<Post> findPostsByMemberId(Long memberId) {
-        List<Long> ids = queryFactory
+        List<Long> postIds = queryFactory
             .select(post.id)
             .from(post)
             .join(post.member, member)
-            .where(member.id.eq(memberId)
-                .and(isDeletedEq(false)))
+            .where(member.id.eq(memberId),
+                isDeletedEq(false))
             .orderBy(post.createdAt.desc())
             .fetch();
 
         return queryFactory
             .selectFrom(post)
-            .where(post.id.in(ids))
+            .where(post.id.in(postIds))
             .orderBy(post.createdAt.desc())
             .fetch();
     }
 
-    private BooleanExpression getPostConditioinForDorm(DormCategory dormCategory) {
-        return post.dormCategory.eq(dormCategory).and(isDeletedEq(false));
-    }
-
-    private BooleanExpression isDeletedEq(Boolean isDeleted) {
-        return post.isDeleted.eq(isDeleted);
-    }
-
-    private BooleanExpression getWeeklyPopularPosts() {
+    private BooleanExpression weeklyTopPostCond(DormCategory dormCategory) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneWeekAgo = now.minusWeeks(1);
         LocalDateTime start = oneWeekAgo.plusHours(9);
         LocalDateTime end = now.plusHours(9);
-        return post.createdAt.between(start, end);
+        return post.createdAt.between(start, end)
+            .and(dormitoryPostCond(dormCategory));
+    }
+
+    private BooleanExpression dormitoryPostCond(DormCategory dormCategory) {
+        return post.dormCategory.eq(dormCategory)
+            .and(isDeletedEq(false));
+    }
+
+    private BooleanExpression isDeletedEq(Boolean isDeleted) {
+        return post.isDeleted.eq(isDeleted);
     }
 }

@@ -15,62 +15,62 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 
-  private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
-  @Override
-  public Comment findOneByCommentIdAndPostId(Long commentId, Long postId) {
-    Comment response = queryFactory
-        .select(comment)
-        .from(comment)
-        .join(comment.post, post)
-        .where(post.id.eq(postId)
-            .and(comment.id.eq(commentId)))
-        .fetchOne();
+    @Override
+    public Comment findOneByCommentIdAndPostId(Long commentId, Long postId) {
+        Comment response = queryFactory
+            .select(comment)
+            .from(comment)
+            .join(comment.post, post)
+            .where(post.id.eq(postId)
+                .and(comment.id.eq(commentId)))
+            .fetchOne();
 
-		if (response == null) {
-			throw new NotFoundPostLikeException();
-		}
+        if (response == null) {
+            throw new NotFoundPostLikeException();
+        }
 
-    return response;
-  }
+        return response;
+    }
 
-  @Override
-  public List<Comment> findAllByPostId(Long postId) {
-    List<Long> ids = queryFactory
-        .select(comment.id)
-        .from(comment)
-        .join(comment.post, post)
-        .where(post.id.eq(postId)
-            .and(comment.isDeleted.eq(false)))
-        .orderBy(comment.createdAt.desc())
-        .fetch();
+    @Override
+    public List<Comment> findAllByPostId(Long postId) {
+        List<Long> commentIds = queryFactory
+            .select(comment.id)
+            .from(comment)
+            .join(comment.post, post)
+            .where(post.id.eq(postId)
+                .and(comment.isDeleted.eq(false)))
+            .orderBy(comment.createdAt.desc())
+            .fetch();
 
-    return queryFactory
-        .select(comment)
-        .from(comment)
-        .join(comment.post, post)
-        .where(post.id.in(ids))
-        .orderBy(comment.createdAt.desc())
-        .fetch();
-  }
+        return queryFactory
+            .select(comment)
+            .from(comment)
+            .join(comment.post, post)
+            .where(post.id.in(commentIds))
+            .orderBy(comment.createdAt.desc())
+            .fetch();
+    }
 
-  @Override
-  public List<Comment> findAllByMemberId(Long memberId) {
-    List<Long> ids = queryFactory
-        .select(comment.id)
-        .from(comment)
-        .join(comment.member, member)
-        .where(member.id.eq(memberId)
-            .and(comment.isDeleted.eq(false)))
-        .orderBy(comment.createdAt.desc())
-        .fetch();
+    @Override
+    public List<Comment> findAllByMemberId(Long memberId) {
+        List<Long> commentIds = queryFactory
+            .select(comment.id)
+            .from(comment)
+            .join(comment.member, member)
+            .where(member.id.eq(memberId)
+                .and(comment.isDeleted.eq(false)))
+            .orderBy(comment.createdAt.desc())
+            .fetch();
 
-    return queryFactory
-        .select(comment)
-        .from(comment)
-        .join(comment.member, member)
-        .where(comment.id.in(ids))
-        .orderBy(comment.createdAt.desc())
-        .fetch();
-  }
+        return queryFactory
+            .select(comment)
+            .from(comment)
+            .join(comment.member, member)
+            .where(comment.id.in(commentIds))
+            .orderBy(comment.createdAt.desc())
+            .fetch();
+    }
 }
