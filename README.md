@@ -154,7 +154,7 @@
 ```
 
 <div align="center">
-    <img src="https://github.com/idorm/idorm-server/assets/69833665/8ac9d242-70ec-47d3-a8c2-ee2e2e063d74" width="100%" />
+    <img src="https://github.com/idorm/idorm-server/assets/69833665/8ac9d242-70ec-47d3-a8c2-ee2e2e063d74" width="70%" height="60%" />
 </div>
 
 ---
