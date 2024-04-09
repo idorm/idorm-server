@@ -1,4 +1,4 @@
-package idorm.idormServer.email.adapter.out.api;
+package idorm.idormServer.email.application;
 
 import static idorm.idormServer.email.entity.Email.*;
 import static java.util.stream.Collectors.*;

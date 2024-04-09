@@ -9,8 +9,9 @@ import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import idorm.idormServer.common.exception.CustomAsyncUncaughtExceptionHandler;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
 @EnableAsync
 public class AsyncConfig extends AsyncConfigurerSupport {
@@ -35,6 +36,7 @@ public class AsyncConfig extends AsyncConfigurerSupport {
 
 	@Override
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-		return new CustomAsyncUncaughtExceptionHandler();
+		return (ex, method, params) -> log.error("Method name : {}, param Count : {}\n\nException Cause -{}",
+			method.getName(), params.length, ex.getMessage());
 	}
 }
