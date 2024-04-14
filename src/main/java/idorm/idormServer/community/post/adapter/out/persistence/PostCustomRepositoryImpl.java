@@ -1,20 +1,32 @@
 package idorm.idormServer.community.post.adapter.out.persistence;
 
+import static idorm.idormServer.community.comment.entity.QComment.comment;
 import static idorm.idormServer.community.post.entity.QPost.post;
 import static idorm.idormServer.member.entity.QMember.member;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import idorm.idormServer.community.post.application.port.in.dto.PostListData;
+import idorm.idormServer.community.post.application.port.in.dto.QPostListData;
 import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.community.post.entity.QPost;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
+import idorm.idormServer.member.entity.MemberStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
+@Slf4j
 public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     private final JPAQueryFactory queryFactory;
@@ -30,54 +42,67 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     @Override
-    public Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
+    public Page<PostListData> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
         List<Long> postIds = queryFactory
             .select(post.id)
             .from(post)
-            .where(weeklyTopPostCond(dormCategory))
+            .where(dormitoryPostCond(dormCategory))
             .orderBy(post.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
-        List<Post> posts = queryFactory
-            .selectFrom(post)
+        List<PostListData> posts = queryFactory
+            .select(postListData())
+            .from(post)
             .where(post.id.in(postIds))
             .orderBy(post.createdAt.desc())
             .fetch();
-        return new PageImpl<>(posts, pageable, postIds.size());
+
+        List<Long> total = queryFactory
+            .select(post.id)
+            .from(post)
+            .where(weeklyTopPostCond(dormCategory))
+            .fetch();
+        return new PageImpl<>(posts, pageable, total.size());
     }
 
 
     @Override
-    public List<Post> findTopPostsByDormCateogry(DormCategory dormCategory) {
+    public List<PostListData> findTopPostsByDormCateogry(DormCategory dormCategory) {
         List<Long> postIds = queryFactory
             .select(post.id)
             .from(post)
             .where(weeklyTopPostCond(dormCategory))
-            .orderBy(post.likeCount.desc(), post.createdAt.desc())
+            .orderBy(post.likeCount.desc(),
+                post.createdAt.desc())
             .limit(10)
             .fetch();
 
         return queryFactory
-            .selectFrom(post)
+            .select(postListData())
+            .from(post)
             .where(post.id.in(postIds))
-            .orderBy(post.likeCount.desc(), post.createdAt.desc())
+            .orderBy(post.likeCount.desc(),
+                post.createdAt.desc())
+            .limit(10)
             .fetch();
     }
 
     @Override
-    public Post findTopPostByDormCategory(DormCategory dormCategory) {
+    public PostListData findTopPostByDormCategory(DormCategory dormCategory) {
         return queryFactory
-            .selectFrom(post)
+            .select(postListData())
+            .from(post)
             .where(weeklyTopPostCond(dormCategory))
-            .orderBy(post.likeCount.desc(), post.createdAt.desc())
+            .orderBy(post.likeCount.desc(),
+                post.createdAt.desc())
             .limit(1)
             .fetchOne();
     }
 
     @Override
-    public List<Post> findPostsByMemberId(Long memberId) {
+    public List<PostListData> findPostsByMemberId(Long memberId) {
         List<Long> postIds = queryFactory
             .select(post.id)
             .from(post)
@@ -88,7 +113,27 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             .fetch();
 
         return queryFactory
-            .selectFrom(post)
+            .select(Projections.constructor(
+                    PostListData.class,
+                    post.id.as("postId"),
+                    Expressions.asNumber(memberId).as("memberId"),
+                    post.dormCategory.stringValue().as("dormCategory"),
+                    post.title,
+                    post.content,
+                    nicknameExpression(post),
+                    post.isAnonymous,
+                    post.likeCount,
+                    Expressions.as(JPAExpressions
+                        .select(comment.count())
+                        .from(comment)
+                        .where(comment.post.eq(post),
+                            comment.isDeleted.eq(false)), "commentsCount"),
+                    post.postPhotos.size().as("imagesCount"),
+                    post.createdAt,
+                    post.updatedAt
+                )
+            )
+            .from(post)
             .where(post.id.in(postIds))
             .orderBy(post.createdAt.desc())
             .fetch();
@@ -110,5 +155,34 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     private BooleanExpression isDeletedEq(Boolean isDeleted) {
         return post.isDeleted.eq(isDeleted);
+    }
+
+    private QPostListData postListData() {
+        return new QPostListData(
+            post.id,
+            post.member.id,
+            post.dormCategory.stringValue(),
+            post.title,
+            post.content,
+            nicknameExpression(post),
+            post.isAnonymous,
+            Expressions.as(JPAExpressions
+                .select(comment.count())
+                .from(comment)
+                .where(comment.post.eq(post),
+                    comment.isDeleted.eq(false)), "commentsCount"),
+            post.likeCount,
+            post.postPhotos.size(),
+            post.createdAt,
+            post.updatedAt
+        );
+    }
+
+    private StringExpression nicknameExpression(QPost post) {
+        return new CaseBuilder()
+            .when(post.member.memberStatus.eq(MemberStatus.DELETED)).then("-999")
+            .when(post.isAnonymous.eq(true)).then("익명")
+            .otherwise(post.member.nickname.value)
+            .as("nickname");
     }
 }

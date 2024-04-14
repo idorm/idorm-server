@@ -1,24 +1,23 @@
 package idorm.idormServer.community.post.adapter.out.persistence;
 
+import idorm.idormServer.community.post.application.port.in.dto.PostListData;
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
 import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import idorm.idormServer.community.post.entity.Post;
-import idorm.idormServer.matchingInfo.entity.DormCategory;
-
 @Repository
 public interface PostCustomRepository {
 
-	Post findByIdAndMemberId(Long postId, Long memberId);
+    Post findByIdAndMemberId(Long postId, Long memberId);
 
-	Page<Post> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
+    Page<PostListData> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
 
-	List<Post> findTopPostsByDormCateogry(DormCategory dormCategory);
+    List<PostListData> findTopPostsByDormCateogry(DormCategory dormCategory);
 
-	Post findTopPostByDormCategory(DormCategory dormCategory);
+    PostListData findTopPostByDormCategory(DormCategory dormCategory);
 
-	List<Post> findPostsByMemberId(Long memberId);
+    List<PostListData> findPostsByMemberId(Long memberId);
 }

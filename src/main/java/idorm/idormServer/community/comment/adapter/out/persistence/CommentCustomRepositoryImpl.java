@@ -23,8 +23,8 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
             .select(comment)
             .from(comment)
             .join(comment.post, post)
-            .where(post.id.eq(postId)
-                .and(comment.id.eq(commentId)))
+            .where(post.id.eq(postId),
+                comment.id.eq(commentId))
             .fetchOne();
 
         if (response == null) {
@@ -40,16 +40,15 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
             .select(comment.id)
             .from(comment)
             .join(comment.post, post)
-            .where(post.id.eq(postId)
-                .and(comment.isDeleted.eq(false)))
+            .where(post.id.eq(postId),
+                comment.isDeleted.eq(false))
             .orderBy(comment.createdAt.desc())
             .fetch();
 
         return queryFactory
             .select(comment)
             .from(comment)
-            .join(comment.post, post)
-            .where(post.id.in(commentIds))
+            .where(comment.id.in(commentIds))
             .orderBy(comment.createdAt.desc())
             .fetch();
     }
@@ -60,8 +59,8 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
             .select(comment.id)
             .from(comment)
             .join(comment.member, member)
-            .where(member.id.eq(memberId)
-                .and(comment.isDeleted.eq(false)))
+            .where(member.id.eq(memberId),
+                comment.isDeleted.eq(false))
             .orderBy(comment.createdAt.desc())
             .fetch();
 
