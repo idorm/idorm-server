@@ -12,11 +12,11 @@ import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
 @Repository
 public interface TeamCalendarCustomRepository {
 
-	TeamCalendar findByIdAndMemberId(Long teamCalendarId, Long memberId);
+    TeamCalendar findByIdAndMemberId(Long teamCalendarId, Long memberId);
 
-	List<TeamCalendar> findByMemberId(Long memberId);
+    List<TeamCalendar> findByMemberId(Long memberId);
 
-	List<TeamCalendar> findByYearMonth(Team teamDomain, YearMonth yearMonth);
+    List<TeamCalendar> findByYearMonth(Team teamDomain, YearMonth yearMonth);
 
-	List<NotificationRequest> findByStartDateIsToday();
+    List<NotificationRequest> findByStartDateIsToday();
 }

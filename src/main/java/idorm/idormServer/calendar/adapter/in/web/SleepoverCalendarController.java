@@ -49,129 +49,129 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class SleepoverCalendarController {
 
-  private final SleepoverCalendarUseCase sleepoverCalendarUseCase;
+    private final SleepoverCalendarUseCase sleepoverCalendarUseCase;
 
-  @Auth
-  @Operation(summary = "[외박] 일정 생성", security = {
-      @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "201", description = "SLEEPOVER_CALENDAR_CREATED",
-          content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400",
-          description = "- ILLEGAL_STATEMENT_EXPLODEDTEAM / ILLEGAL_ARGUMENT_DATE_SET /" +
-              "  FILED_DATE_REQUIRED"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "404", description = "- NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
-      @ApiResponse(responseCode = "409", description = "DUPLICATE_SLEEPOVER_DATE"),
-      @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
-  })
-  @PostMapping("/calendar/sleepover")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<SuccessResponse<Object>> createSleepoverCalender(
-      @AuthInfo AuthResponse authResponse,
-      @RequestBody @Valid SaveSleepoverCalendarRequest request
-  ) {
-    SleepoverCalendarResponse response = sleepoverCalendarUseCase.save(authResponse, request);
-    return ResponseEntity.ok().body(SuccessResponse.of(SLEEPOVER_CALENDAR_CREATED, response));
-  }
+    @Auth
+    @Operation(summary = "[외박] 일정 생성", security = {
+        @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201", description = "SLEEPOVER_CALENDAR_CREATED",
+            content = @Content(schema = @Schema(implementation = Object.class))),
+        @ApiResponse(responseCode = "400",
+            description = "- ILLEGAL_STATEMENT_EXPLODEDTEAM / ILLEGAL_ARGUMENT_DATE_SET /" +
+                "  FILED_DATE_REQUIRED"),
+        @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+        @ApiResponse(responseCode = "404", description = "- NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
+        @ApiResponse(responseCode = "409", description = "DUPLICATE_SLEEPOVER_DATE"),
+        @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
+    })
+    @PostMapping("/calendar/sleepover")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<SuccessResponse<Object>> createSleepoverCalender(
+        @AuthInfo AuthResponse authResponse,
+        @RequestBody @Valid SaveSleepoverCalendarRequest request
+    ) {
+        SleepoverCalendarResponse response = sleepoverCalendarUseCase.save(authResponse, request);
+        return ResponseEntity.ok().body(SuccessResponse.of(SLEEPOVER_CALENDAR_CREATED, response));
+    }
 
-  @Auth
-  @Operation(summary = "[외박] 일정 수정", security = {
-      @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "200", description = "SLEEPOVER_CALENDAR_UPDATED",
-          content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
-      @ApiResponse(responseCode = "400",
-          description = "- ILLEGAL_STATEMENT_EXPLODEDTEAM / TEAMCALENDARID_FIELD_REQUIRED /" +
-              "- TEAMCALENDARID_NEGATIVEORZERO_INVALID / ILLEGAL_ARGUMENT_DATE_SET /" +
-              "- FILED_DATE_REQUIRED"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_SLEEPOVER_CALENDAR"),
-      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_CALENDAR"),
-      @ApiResponse(responseCode = "409", description = "DUPLICATE_SLEEPOVER_DATE"),
-      @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
-  })
-  @PutMapping("/calendar/sleepover")
-  public ResponseEntity<SuccessResponse<Object>> updateSleepoverCalender(
-      @AuthInfo AuthResponse authResponse,
-      @RequestBody @Valid UpdateSleepoverCalendarRequest request
-  ) {
-    SleepoverCalendarResponse response = sleepoverCalendarUseCase.update(authResponse, request);
-    return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_UPDATED, response));
-  }
+    @Auth
+    @Operation(summary = "[외박] 일정 수정", security = {
+        @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", description = "SLEEPOVER_CALENDAR_UPDATED",
+            content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
+        @ApiResponse(responseCode = "400",
+            description = "- ILLEGAL_STATEMENT_EXPLODEDTEAM / TEAMCALENDARID_FIELD_REQUIRED /" +
+                "- TEAMCALENDARID_NEGATIVEORZERO_INVALID / ILLEGAL_ARGUMENT_DATE_SET /" +
+                "- FILED_DATE_REQUIRED"),
+        @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+        @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_SLEEPOVER_CALENDAR"),
+        @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_CALENDAR"),
+        @ApiResponse(responseCode = "409", description = "DUPLICATE_SLEEPOVER_DATE"),
+        @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
+    })
+    @PutMapping("/calendar/sleepover")
+    public ResponseEntity<SuccessResponse<Object>> updateSleepoverCalender(
+        @AuthInfo AuthResponse authResponse,
+        @RequestBody @Valid UpdateSleepoverCalendarRequest request
+    ) {
+        SleepoverCalendarResponse response = sleepoverCalendarUseCase.update(authResponse, request);
+        return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_UPDATED, response));
+    }
 
-  @Auth
-  @Operation(summary = "[외박] 일정 삭제", security = {
-      @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "200", description = "TEAM_CALENDER_DELETED",
-          content = @Content(schema = @Schema(implementation = Object.class))),
-      @ApiResponse(responseCode = "400", description = ""
-          + "TEAMCALENDARID_NEGATIVEORZERO_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_SLEEPOVER_CALENDAR"),
-      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_CALENDAR"),
-      @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-  })
-  @DeleteMapping("/calendar/sleepover")
-  public ResponseEntity<SuccessResponse<Object>> deleteTeamCalender(
-      @AuthInfo AuthResponse authResponse,
-      @RequestParam(value = "teamCalendarId")
-      @Positive(message = "삭제할 팀일정 식별자는 양수만 가능합니다.")
-      Long sleepoverCalendarId
-  ) {
-    sleepoverCalendarUseCase.delete(authResponse, sleepoverCalendarId);
-    return ResponseEntity.ok().body(SuccessResponse.from(TEAM_CALENDER_DELETED));
-  }
+    @Auth
+    @Operation(summary = "[외박] 일정 삭제", security = {
+        @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", description = "TEAM_CALENDER_DELETED",
+            content = @Content(schema = @Schema(implementation = Object.class))),
+        @ApiResponse(responseCode = "400", description = ""
+            + "TEAMCALENDARID_NEGATIVEORZERO_INVALID / ILLEGAL_STATEMENT_EXPLODEDTEAM"),
+        @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+        @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_SLEEPOVER_CALENDAR"),
+        @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAM_CALENDAR"),
+        @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
+    })
+    @DeleteMapping("/calendar/sleepover")
+    public ResponseEntity<SuccessResponse<Object>> deleteTeamCalender(
+        @AuthInfo AuthResponse authResponse,
+        @RequestParam(value = "teamCalendarId")
+        @Positive(message = "삭제할 팀일정 식별자는 양수만 가능합니다.")
+        Long sleepoverCalendarId
+    ) {
+        sleepoverCalendarUseCase.delete(authResponse, sleepoverCalendarId);
+        return ResponseEntity.ok().body(SuccessResponse.from(TEAM_CALENDER_DELETED));
+    }
 
-  @Auth
-  @Operation(summary = "[외박] 일정 단건 조회", security = {
-      @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "200", description = "TEAM_CALENDER_FOUND",
-          content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_SLEEPOVER_CALENDAR"),
-      @ApiResponse(responseCode = "404",
-          description = " NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAMCALENDAR"),
-      @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-  })
-  @GetMapping("/calendar/sleepover")
-  public ResponseEntity<SuccessResponse<Object>> findTeamCalender(
-      @AuthInfo AuthResponse authResponse,
-      @RequestParam(value = "teamCalendarId")
-      @Positive(message = "조회할 팀일정 식별자는 양수만 가능합니다.")
-      Long sleepoverCalendarId
-  ) {
-    SleepoverCalendarResponse response = sleepoverCalendarUseCase.findById(authResponse,
-        sleepoverCalendarId);
-    return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_FOUND, response));
-  }
+    @Auth
+    @Operation(summary = "[외박] 일정 단건 조회", security = {
+        @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", description = "TEAM_CALENDER_FOUND",
+            content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
+        @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+        @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_SLEEPOVER_CALENDAR"),
+        @ApiResponse(responseCode = "404",
+            description = " NOT_FOUND_MEMBER / NOT_FOUND_TEAM / NOT_FOUND_TEAMCALENDAR"),
+        @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
+    })
+    @GetMapping("/calendar/sleepover")
+    public ResponseEntity<SuccessResponse<Object>> findTeamCalender(
+        @AuthInfo AuthResponse authResponse,
+        @RequestParam(value = "teamCalendarId")
+        @Positive(message = "조회할 팀일정 식별자는 양수만 가능합니다.")
+        Long sleepoverCalendarId
+    ) {
+        SleepoverCalendarResponse response = sleepoverCalendarUseCase.findById(authResponse,
+            sleepoverCalendarId);
+        return ResponseEntity.ok().body(SuccessResponse.of(TEAM_CALENDER_FOUND, response));
+    }
 
-  @Auth
-  @Operation(summary = "[외박] 일정 월별 조회", security = {
-      @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "200", description = "TEAM_SLEEPOVER_CALENDERS_FOUND",
-          content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
-      @ApiResponse(responseCode = "400", description = "REQUIRED_YEARMONTH_FIELD"),
-      @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-      @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM / ACCESS_DENIED_SLEEPOVER_CALENDAR"),
-      @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
-      @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-  })
-  @PostMapping("/calendar/sleepover/monthly")
-  public ResponseEntity<SuccessResponse<Object>> findTeamSleepoverCalenders(
-      @AuthInfo AuthResponse authResponse,
-      @RequestBody @Valid FindCalendarsRequest request
-  ) {
-    List<SleepoverCalendarResponse> responses = sleepoverCalendarUseCase.findSleepoverCalendarsByMonth(
-        authResponse, request);
-    return ResponseEntity.ok().body(SuccessResponse.of(TEAM_SLEEPOVER_CALENDERS_FOUND, responses));
-  }
+    @Auth
+    @Operation(summary = "[외박] 일정 월별 조회", security = {
+        @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", description = "TEAM_SLEEPOVER_CALENDERS_FOUND",
+            content = @Content(schema = @Schema(implementation = CalendarsResponse.class))),
+        @ApiResponse(responseCode = "400", description = "REQUIRED_YEARMONTH_FIELD"),
+        @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+        @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM / ACCESS_DENIED_SLEEPOVER_CALENDAR"),
+        @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
+        @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
+    })
+    @PostMapping("/calendar/sleepover/monthly")
+    public ResponseEntity<SuccessResponse<Object>> findTeamSleepoverCalenders(
+        @AuthInfo AuthResponse authResponse,
+        @RequestBody @Valid FindCalendarsRequest request
+    ) {
+        List<SleepoverCalendarResponse> responses = sleepoverCalendarUseCase.findSleepoverCalendarsByMonth(
+            authResponse, request);
+        return ResponseEntity.ok().body(SuccessResponse.of(TEAM_SLEEPOVER_CALENDERS_FOUND, responses));
+    }
 }

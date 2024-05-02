@@ -23,16 +23,16 @@ public record TeamCalendarResponse(
     List<TeamCalendarParticipantResponse> targets
 ) {
 
-  public static TeamCalendarResponse of(final TeamCalendar teamCalendar,
-      List<TeamCalendarParticipantResponse> targets) {
-    return new TeamCalendarResponse(
-        teamCalendar.getId(),
-        teamCalendar.getTitle(),
-        teamCalendar.getContent(),
-        teamCalendar.getPeriod().getStartDate(),
-        teamCalendar.getPeriod().getEndDate(),
-        teamCalendar.getDuration().getStartTime(),
-        teamCalendar.getDuration().getEndTime(),
-        targets);
-  }
+    public static TeamCalendarResponse of(final TeamCalendar teamCalendar,
+        List<TeamCalendarParticipantResponse> targets) {
+        return new TeamCalendarResponse(
+            teamCalendar.getId(),
+            teamCalendar.getTitle(),
+            teamCalendar.getContent(),
+            teamCalendar.getPeriod().getStartDate(),
+            teamCalendar.getPeriod().getEndDate(),
+            teamCalendar.getDuration().getStartTime(),
+            teamCalendar.getDuration().getEndTime(),
+            targets);
+    }
 }

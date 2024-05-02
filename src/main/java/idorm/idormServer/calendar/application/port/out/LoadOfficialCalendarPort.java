@@ -8,14 +8,13 @@ import idorm.idormServer.matchingInfo.entity.DormCategory;
 
 public interface LoadOfficialCalendarPort {
 
-  OfficialCalendar findById(Long officialCalendarId);
+    OfficialCalendar findById(Long officialCalendarId);
 
-  List<OfficialCalendar> findByToday(DormCategory dormCategory);
+    List<OfficialCalendar> findByToday(DormCategory dormCategory);
 
-  List<OfficialCalendar> findByMonthByAdmin(String now, String lastWeek);
+    List<OfficialCalendar> findByMonthByAdmin(String now, String lastWeek);
 
-  List<OfficialCalendar> findByMonthByMember(YearMonth yearMonth);
+    List<OfficialCalendar> findByMonthByMember(YearMonth yearMonth);
 
-  Boolean findByInuPostId(String inuPostId);
-
+    Boolean findByInuPostId(String inuPostId);
 }

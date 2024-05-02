@@ -30,6 +30,8 @@ import org.springframework.data.domain.Pageable;
 public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final String DELETED_MEMBER_ID = "-999";
+    private final String ANONYMOUS_MEMBER = "익명";
 
     @Override
     public Post findByIdAndMemberId(Long postId, Long memberId) {
@@ -53,7 +55,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             .fetch();
 
         List<PostListData> posts = queryFactory
-            .select(postListData())
+            .select(postListDataFrom())
             .from(post)
             .where(post.id.in(postIds))
             .orderBy(post.createdAt.desc())
@@ -62,7 +64,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         List<Long> total = queryFactory
             .select(post.id)
             .from(post)
-            .where(weeklyTopPostCond(dormCategory))
+            .where(dormitoryPostCond(dormCategory))
             .fetch();
         return new PageImpl<>(posts, pageable, total.size());
     }
@@ -80,7 +82,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             .fetch();
 
         return queryFactory
-            .select(postListData())
+            .select(postListDataFrom())
             .from(post)
             .where(post.id.in(postIds))
             .orderBy(post.likeCount.desc(),
@@ -92,7 +94,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     @Override
     public PostListData findTopPostByDormCategory(DormCategory dormCategory) {
         return queryFactory
-            .select(postListData())
+            .select(postListDataFrom())
             .from(post)
             .where(weeklyTopPostCond(dormCategory))
             .orderBy(post.likeCount.desc(),
@@ -120,7 +122,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                     post.dormCategory.stringValue().as("dormCategory"),
                     post.title,
                     post.content,
-                    nicknameExpression(post),
+                    determineNickname(post),
                     post.isAnonymous,
                     post.likeCount,
                     Expressions.as(JPAExpressions
@@ -157,14 +159,14 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return post.isDeleted.eq(isDeleted);
     }
 
-    private QPostListData postListData() {
+    private QPostListData postListDataFrom() {
         return new QPostListData(
             post.id,
             post.member.id,
             post.dormCategory.stringValue(),
             post.title,
             post.content,
-            nicknameExpression(post),
+            determineNickname(post),
             post.isAnonymous,
             Expressions.as(JPAExpressions
                 .select(comment.count())
@@ -178,10 +180,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         );
     }
 
-    private StringExpression nicknameExpression(QPost post) {
+    private StringExpression determineNickname(QPost post) {
         return new CaseBuilder()
-            .when(post.member.memberStatus.eq(MemberStatus.DELETED)).then("-999")
-            .when(post.isAnonymous.eq(true)).then("익명")
+            .when(post.member.memberStatus.eq(MemberStatus.DELETED)).then(DELETED_MEMBER_ID)
+            .when(post.isAnonymous.eq(true)).then(ANONYMOUS_MEMBER)
             .otherwise(post.member.nickname.value)
             .as("nickname");
     }

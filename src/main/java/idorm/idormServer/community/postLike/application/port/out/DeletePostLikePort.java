@@ -4,5 +4,5 @@ import idorm.idormServer.community.postLike.entity.PostLike;
 
 public interface DeletePostLikePort {
 
-  void delete(PostLike postLike);
+    void delete(PostLike postLike);
 }

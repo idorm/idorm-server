@@ -5,7 +5,7 @@ import idorm.idormServer.community.comment.adapter.out.CommentResponseCode;
 
 public class NotFoundCommentException extends BaseException {
 
-	public NotFoundCommentException() {
-		super(CommentResponseCode.NOT_FOUND_COMMENT);
-	}
+    public NotFoundCommentException() {
+        super(CommentResponseCode.NOT_FOUND_COMMENT);
+    }
 }

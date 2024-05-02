@@ -5,7 +5,7 @@ import idorm.idormServer.common.exception.BaseException;
 
 public class DuplicatedMemberException extends BaseException {
 
-	public DuplicatedMemberException() {
-		super(CalendarResponseCode.DUPLICATED_MEMBER);
-	}
+    public DuplicatedMemberException() {
+        super(CalendarResponseCode.DUPLICATED_MEMBER);
+    }
 }

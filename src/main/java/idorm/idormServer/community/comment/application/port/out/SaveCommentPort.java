@@ -5,5 +5,5 @@ import idorm.idormServer.community.comment.entity.Comment;
 
 public interface SaveCommentPort {
 
-  void save(Comment comment);
+    void save(Comment comment);
 }

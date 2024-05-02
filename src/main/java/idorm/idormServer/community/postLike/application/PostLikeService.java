@@ -55,10 +55,8 @@ public class PostLikeService implements LikeUseCase {
         final List<Long> postIds = loadPostLikePort.findPostIdsByMemberId(authResponse.getId());
         final List<PostListData> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
 
-        List<PostListResponse> responses = posts.stream()
-            .filter(post -> postIds.contains(post.postId()))
-            .map(PostListResponse::new)
-            .toList();
+        List<PostListResponse> responses = posts.stream().filter(post -> postIds.contains(post.postId()))
+            .map(PostListResponse::new).toList();
 
         return responses;
     }

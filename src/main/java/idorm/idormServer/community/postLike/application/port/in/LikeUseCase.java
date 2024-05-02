@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface LikeUseCase {
 
-  void save(AuthResponse authResponse, Long postId);
+    void save(AuthResponse authResponse, Long postId);
 
-  void delete(AuthResponse authResponse, Long postId);
+    void delete(AuthResponse authResponse, Long postId);
 
-  List<PostListResponse> findLikedPostsByMember(AuthResponse authResponse);
+    List<PostListResponse> findLikedPostsByMember(AuthResponse authResponse);
 }

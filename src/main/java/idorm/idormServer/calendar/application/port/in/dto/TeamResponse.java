@@ -11,9 +11,9 @@ public record TeamResponse(
     List<TeamParticipantResponse> members
 ) {
 
-  public static TeamResponse of(final Team team, final List<TeamParticipantResponse> responses) {
-    return new TeamResponse(team.getId(),
-        TeamStatus.isAlone(team.getTeamStatus()),
-        responses);
-  }
+    public static TeamResponse of(final Team team, final List<TeamParticipantResponse> responses) {
+        return new TeamResponse(team.getId(),
+            TeamStatus.isAlone(team.getTeamStatus()),
+            responses);
+    }
 }

@@ -4,5 +4,5 @@ import idorm.idormServer.community.postPhoto.entity.PostPhoto;
 
 public interface SavePostPhotoPort {
 
-  void save(PostPhoto postPhoto);
+    void save(PostPhoto postPhoto);
 }

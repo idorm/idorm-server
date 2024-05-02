@@ -36,7 +36,7 @@ public record UpdateTeamCalendarRequest(
     List<Long> targets
 ) {
 
-  public Period getPeriod() {
-    return new Period(startDate, endDate);
-  }
+    public Period getPeriod() {
+        return new Period(startDate, endDate);
+    }
 }

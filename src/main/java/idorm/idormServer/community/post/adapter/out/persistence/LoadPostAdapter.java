@@ -7,7 +7,7 @@ import idorm.idormServer.community.post.application.port.in.dto.PostListData;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +23,13 @@ public class LoadPostAdapter implements LoadPostPort {
 
     @Override
     public Post findById(Long postId) {
-        return postRepository.findById(postId).orElseThrow(() -> new NotFoundPostException());
+        return postRepository.findById(postId)
+            .orElseThrow(() -> new NotFoundPostException());
     }
 
     @Override
     public Post findByIdAndMemberId(Long postId, Long memberId) {
         Post response = postRepository.findByIdAndMemberId(postId, memberId);
-
         if (post == null) {
             throw new NotFoundPostException();
         }
@@ -38,7 +38,8 @@ public class LoadPostAdapter implements LoadPostPort {
 
     @Override
     public Post findByPostIdWithLock(Long postId) {
-        return postRepository.findByPostIdWithLock(postId).orElseThrow(() -> new NotFoundPostException());
+        return postRepository.findByPostIdWithLock(postId)
+            .orElseThrow(() -> new NotFoundPostException());
     }
 
     @Override
@@ -49,7 +50,7 @@ public class LoadPostAdapter implements LoadPostPort {
     @Override
     public List<PostListData> findTopPostsByDormCateogry(DormCategory dormCategory) {
         List<PostListData> responses = postRepository.findTopPostsByDormCateogry(dormCategory);
-        return responses.isEmpty() ? new ArrayList<>() : responses;
+        return responses != null ? responses : Collections.emptyList();
     }
 
     @Override
@@ -60,6 +61,6 @@ public class LoadPostAdapter implements LoadPostPort {
     @Override
     public List<PostListData> findPostsByMemberId(Long memberId) {
         List<PostListData> responses = postRepository.findPostsByMemberId(memberId);
-        return responses.isEmpty() ? new ArrayList<>() : responses;
+        return responses != null ? responses : Collections.emptyList();
     }
 }

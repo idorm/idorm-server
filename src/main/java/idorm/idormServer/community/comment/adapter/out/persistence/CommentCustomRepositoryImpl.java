@@ -6,7 +6,6 @@ import static idorm.idormServer.member.entity.QMember.member;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import idorm.idormServer.community.comment.entity.Comment;
-import idorm.idormServer.community.postLike.adapter.out.exception.NotFoundPostLikeException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,19 +18,13 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 
     @Override
     public Comment findOneByCommentIdAndPostId(Long commentId, Long postId) {
-        Comment response = queryFactory
+        return queryFactory
             .select(comment)
             .from(comment)
             .join(comment.post, post)
             .where(post.id.eq(postId),
                 comment.id.eq(commentId))
             .fetchOne();
-
-        if (response == null) {
-            throw new NotFoundPostLikeException();
-        }
-
-        return response;
     }
 
     @Override

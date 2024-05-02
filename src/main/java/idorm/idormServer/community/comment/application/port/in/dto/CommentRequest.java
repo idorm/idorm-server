@@ -15,7 +15,7 @@ public record CommentRequest(
     Long parentCommentId
 ) {
 
-  public boolean isParent() {
-    return parentCommentId == null;
-  }
+    public boolean isParent() {
+        return parentCommentId == null;
+    }
 }

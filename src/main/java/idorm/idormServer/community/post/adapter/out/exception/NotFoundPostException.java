@@ -5,7 +5,7 @@ import idorm.idormServer.community.post.adapter.out.PostResponseCode;
 
 public class NotFoundPostException extends BaseException {
 
-	public NotFoundPostException() {
-		super(PostResponseCode.NOT_FOUND_POST);
-	}
+    public NotFoundPostException() {
+        super(PostResponseCode.NOT_FOUND_POST);
+    }
 }

@@ -4,6 +4,5 @@ import idorm.idormServer.calendar.entity.Team;
 
 public interface DeleteTeamPort {
 
-  void deleteTeam(Team team);
-
+    void delete(Team team);
 }

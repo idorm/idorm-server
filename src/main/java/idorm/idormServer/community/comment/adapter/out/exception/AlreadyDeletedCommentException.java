@@ -5,7 +5,7 @@ import idorm.idormServer.community.comment.adapter.out.CommentResponseCode;
 
 public class AlreadyDeletedCommentException extends BaseException {
 
-	public AlreadyDeletedCommentException() {
-		super(CommentResponseCode.ALREADY_DELETED_COMMENT);
-	}
+    public AlreadyDeletedCommentException() {
+        super(CommentResponseCode.ALREADY_DELETED_COMMENT);
+    }
 }

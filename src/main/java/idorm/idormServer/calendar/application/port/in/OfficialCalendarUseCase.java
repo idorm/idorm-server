@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface OfficialCalendarUseCase {
 
-  OfficialCalendarResponse update(OfficialCalendarUpdateRequest request);
+    OfficialCalendarResponse update(OfficialCalendarUpdateRequest request);
 
-  void delete(Long officialCalendarId);
+    void delete(Long officialCalendarId);
 
-  List<CrawledOfficialCalendarResponse> findByMonthByAdmin();
+    List<CrawledOfficialCalendarResponse> findByMonthByAdmin();
 
-  OfficialCalendarResponse findOneByAdmin(Long officialCalendarId);
+    OfficialCalendarResponse findOneByAdmin(Long officialCalendarId);
 
-  List<OfficialCalendarResponse> findByMonthByMember(AuthResponse authResponse, FindCalendarsRequest request);
+    List<OfficialCalendarResponse> findByMonthByMember(AuthResponse authResponse, FindCalendarsRequest request);
 }

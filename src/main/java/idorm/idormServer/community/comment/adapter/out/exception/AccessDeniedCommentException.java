@@ -5,7 +5,7 @@ import idorm.idormServer.community.comment.adapter.out.CommentResponseCode;
 
 public class AccessDeniedCommentException extends BaseException {
 
-	public AccessDeniedCommentException() {
-		super(CommentResponseCode.ACCESS_DENIED_COMMENT);
-	}
+    public AccessDeniedCommentException() {
+        super(CommentResponseCode.ACCESS_DENIED_COMMENT);
+    }
 }

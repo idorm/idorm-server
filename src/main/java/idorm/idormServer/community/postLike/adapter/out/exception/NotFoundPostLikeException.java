@@ -5,7 +5,7 @@ import idorm.idormServer.community.postLike.adapter.out.PostLikeResponseCode;
 
 public class NotFoundPostLikeException extends BaseException {
 
-	public NotFoundPostLikeException() {
-		super(PostLikeResponseCode.NOT_FOUND_POSTLIKE);
-	}
+    public NotFoundPostLikeException() {
+        super(PostLikeResponseCode.NOT_FOUND_POSTLIKE);
+    }
 }
