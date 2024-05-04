@@ -40,7 +40,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseTimeEntity {
 
+	public static final String DELETED_MEMBER_ID = "-999";
+	public static final String ANONYMOUS_MEMBER_NICKNAME = "익명";
 	private static final String BLIND_POST_MESSAGE = "블라인드 처리된 게시글입니다.";
+
 	private static final int BLOCKED_CONDITION = 5;
 	private static final int MIN_LENGTH = 1;
 	private static final int MAX_LENGTH_FOR_CONTENT = 300;

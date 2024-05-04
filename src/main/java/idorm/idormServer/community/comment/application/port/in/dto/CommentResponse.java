@@ -1,5 +1,7 @@
 package idorm.idormServer.community.comment.application.port.in.dto;
 
+import static idorm.idormServer.community.post.entity.Post.*;
+
 import idorm.idormServer.community.comment.entity.Comment;
 
 import java.time.LocalDateTime;
@@ -41,10 +43,11 @@ public record CommentResponse(Long commentId,
 	}
 
 	private static String isAnonymous(Comment comment, Map<Long, Integer> memberAnonymousCountMap) {
-		if (comment.getMember().getMemberStatus().equals("DELETED")) {
-			return "-999";
+		if (comment.getMember().getMemberStatus().isDeleted()) {
+			return DELETED_MEMBER_ID;
 		} else if (comment.getIsAnonymous()) {
-			return "익명" + ParentCommentResponse.memberAnonymousCountMap.get(comment.getMember().getId());
+			return ANONYMOUS_MEMBER_NICKNAME + ParentCommentResponse.memberAnonymousCountMap.get(
+				comment.getMember().getId());
 		} else {
 			return comment.getMember().getNickname().getValue();
 		}

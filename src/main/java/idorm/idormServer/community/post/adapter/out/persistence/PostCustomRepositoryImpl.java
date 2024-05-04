@@ -1,6 +1,7 @@
 package idorm.idormServer.community.post.adapter.out.persistence;
 
 import static idorm.idormServer.community.comment.entity.QComment.comment;
+import static idorm.idormServer.community.post.entity.Post.*;
 import static idorm.idormServer.community.post.entity.QPost.post;
 import static idorm.idormServer.member.entity.QMember.member;
 
@@ -34,8 +35,6 @@ import org.springframework.data.domain.Pageable;
 public class PostCustomRepositoryImpl implements PostCustomRepository {
 
 	private final JPAQueryFactory queryFactory;
-	private final String DELETED_MEMBER_ID = "-999";
-	private final String ANONYMOUS_MEMBER = "익명";
 
 	@Override
 	public Post findByIdAndMemberId(Long postId, Long memberId) {
@@ -186,7 +185,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 	private StringExpression determineNickname(QPost post) {
 		return new CaseBuilder()
 			.when(post.member.memberStatus.eq(MemberStatus.DELETED)).then(DELETED_MEMBER_ID)
-			.when(post.isAnonymous.eq(true)).then(ANONYMOUS_MEMBER)
+			.when(post.isAnonymous.eq(true)).then(ANONYMOUS_MEMBER_NICKNAME)
 			.otherwise(post.member.nickname.value)
 			.as("nickname");
 	}
