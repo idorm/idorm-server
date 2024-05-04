@@ -4,16 +4,17 @@ import idorm.idormServer.calendar.application.port.out.DeleteSleepoverCalendarPo
 import idorm.idormServer.calendar.entity.SleepoverCalendar;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeleteSleepoverCalendarAdapter implements DeleteSleepoverCalendarPort {
 
-    private final SleepoverCalendarRepository sleepoverCalendarRepository;
+	private final SleepoverCalendarRepository sleepoverCalendarRepository;
 
-    @Override
-    public void delete(SleepoverCalendar sleepoverCalendar) {
-        sleepoverCalendarRepository.delete(sleepoverCalendar);
-    }
+	@Override
+	public void delete(SleepoverCalendar sleepoverCalendar) {
+		sleepoverCalendarRepository.delete(sleepoverCalendar);
+	}
 }

@@ -4,5 +4,5 @@ import idorm.idormServer.calendar.entity.OfficialCalendar;
 
 public interface SaveOfficialCalendarPort {
 
-    void save(OfficialCalendar officialCalendar);
+	void save(OfficialCalendar officialCalendar);
 }

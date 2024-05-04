@@ -9,17 +9,17 @@ import idorm.idormServer.calendar.entity.SleepoverCalendar;
 import idorm.idormServer.calendar.entity.Team;
 
 public record SaveSleepoverCalendarRequest(
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    LocalDate startDate,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    LocalDate endDate
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	LocalDate startDate,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	LocalDate endDate
 ) {
 
-    public SleepoverCalendar toEntity(final Long memberId, final Team teamDomain) {
-        return new SleepoverCalendar(new Period(startDate, endDate), memberId, teamDomain);
-    }
+	public SleepoverCalendar toEntity(final Long memberId, final Team teamDomain) {
+		return new SleepoverCalendar(new Period(startDate, endDate), memberId, teamDomain);
+	}
 
-    public Period period() {
-        return new Period(startDate, endDate);
-    }
+	public Period period() {
+		return new Period(startDate, endDate);
+	}
 }
