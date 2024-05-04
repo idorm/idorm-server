@@ -20,13 +20,9 @@ public class LoadPostPhotoAdapter implements LoadPostPhotoPort {
 	@Override
 	public List<PostPhoto> findByPostId(Long postId) {
 		List<PostPhoto> responses = postPhotoRepository.findAllByPostId(postId);
+		if(responses == null) {
+			throw new NotFoundPostPhotoException();
+		}
 		return responses;
-	}
-
-	@Override
-	public PostPhoto findByIdAndPostId(Long photoId, Long postId) {
-		PostPhoto response = postPhotoRepository.findByIdAndPostId(photoId, postId)
-			.orElseThrow(NotFoundPostPhotoException::new);
-		return response;
 	}
 }

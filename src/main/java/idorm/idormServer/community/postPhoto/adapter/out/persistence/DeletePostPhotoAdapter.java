@@ -19,11 +19,6 @@ public class DeletePostPhotoAdapter implements DeletePostPhotoPort {
 	}
 
 	@Override
-	public void deleteAllByPostId(final Long postId) {
-		postPhotoRepository.deleteAllByPostId(postId);
-	}
-
-	@Override
 	public void deleteById(final Long postPhotoId) {
 		postPhotoRepository.deleteById(postPhotoId);
 	}

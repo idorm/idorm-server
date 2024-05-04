@@ -6,7 +6,5 @@ public interface DeletePostPhotoPort {
 
 	void delete(PostPhoto postPhoto);
 
-	void deleteAllByPostId(Long postId);
-
 	void deleteById(Long postPhotoId);
 }

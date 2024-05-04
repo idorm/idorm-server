@@ -43,10 +43,4 @@ public class PostPhoto {
 		Validator.validateNotNull(post);
 		Validator.validateNotBlank(postUrl);
 	}
-
-	public void validatePostPhotoAccessMember(final Long postId) {
-		if (this.getPost().getId() != postId) {
-			throw new AccessDeniedPostException();
-		}
-	}
 }
