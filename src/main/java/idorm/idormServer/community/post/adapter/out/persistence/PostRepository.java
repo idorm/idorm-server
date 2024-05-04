@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
+public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
 
 	@Query(value = "SELECT * FROM post WHERE post_id = :id FOR UPDATE", nativeQuery = true)
 	Optional<Post> findByPostIdWithLock(@Param("id") Long id);

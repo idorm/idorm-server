@@ -1,7 +1,7 @@
 package idorm.idormServer.community.post.application.port.in;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
+import idorm.idormServer.community.post.application.port.in.dto.PostOneSummaryResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostSaveRequest;
 import idorm.idormServer.community.post.application.port.in.dto.PostUpdateRequest;
@@ -18,11 +18,11 @@ public interface PostUseCase {
 
 	void delete(AuthResponse authResponse, Long postId);
 
-	Page<PostListResponse> findPostsByDormCategory(String dormCategory, int pageNum);
+	Page<PostOneSummaryResponse> findPostsByDormCategory(String dormCategory, int pageNum);
 
-	List<PostListResponse> findTopPostsByDormCategory(String dormCategory);
+	List<PostOneSummaryResponse> findTopPostsByDormCategory(String dormCategory);
 
 	PostResponse findOneByPostId(AuthResponse authResponse, Long postId);
 
-	List<PostListResponse> findPostsByMember(AuthResponse authResponse);
+	List<PostOneSummaryResponse> findPostsByMember(AuthResponse authResponse);
 }

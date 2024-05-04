@@ -3,7 +3,7 @@ package idorm.idormServer.community.post.adapter.out.persistence;
 import static idorm.idormServer.community.post.entity.QPost.post;
 
 import idorm.idormServer.community.post.adapter.out.exception.NotFoundPostException;
-import idorm.idormServer.community.post.application.port.in.dto.PostListData;
+import idorm.idormServer.community.post.application.port.in.dto.querydsl.PostSearchResponse;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
@@ -40,30 +40,30 @@ public class LoadPostAdapter implements LoadPostPort {
 	}
 
 	@Override
-	public Post findByPostIdWithLock(Long postId) {
+	public Post findByIdForLikeUpdate(Long postId) {
 		return postRepository.findByPostIdWithLock(postId)
 			.orElseThrow(() -> new NotFoundPostException());
 	}
 
 	@Override
-	public Page<PostListData> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
+	public Page<PostSearchResponse> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
 		return postRepository.findPostsByDormCategoryAndIsDeletedFalse(dormCategory, pageable);
 	}
 
 	@Override
-	public List<PostListData> findTopPostsByDormCateogry(DormCategory dormCategory) {
-		List<PostListData> responses = postRepository.findTopPostsByDormCateogry(dormCategory);
+	public List<PostSearchResponse> findTopPostsByDormCateogry(DormCategory dormCategory) {
+		List<PostSearchResponse> responses = postRepository.findTopPostsByDormCateogry(dormCategory);
 		return responses != null ? responses : Collections.emptyList();
 	}
 
 	@Override
-	public PostListData findTopPostByDormCategory(DormCategory dormCategory) {
+	public PostSearchResponse findTopPostByDormCategory(DormCategory dormCategory) {
 		return postRepository.findTopPostByDormCategory(dormCategory);
 	}
 
 	@Override
-	public List<PostListData> findPostsByMemberId(Long memberId) {
-		List<PostListData> responses = postRepository.findPostsByMemberId(memberId);
+	public List<PostSearchResponse> findPostsByMemberId(Long memberId) {
+		List<PostSearchResponse> responses = postRepository.findPostsByMemberId(memberId);
 		return responses != null ? responses : Collections.emptyList();
 	}
 }

@@ -6,7 +6,7 @@ import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
 import idorm.idormServer.calendar.application.port.out.LoadOfficialPost;
 import idorm.idormServer.calendar.application.port.out.LoadTeamCalendarPort;
 import idorm.idormServer.calendar.entity.OfficialCalendar;
-import idorm.idormServer.community.post.application.port.in.dto.PostListData;
+import idorm.idormServer.community.post.application.port.in.dto.querydsl.PostSearchResponse;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
@@ -34,7 +34,7 @@ public class NotificationService implements NotificationUseCase {
 
     @Override
     public List<NotificationRequest> topPostAndOfficialCalendarsFrom(DormCategory dormCategory) {
-        final PostListData topPost = loadPostPort.findTopPostByDormCategory(dormCategory);
+        final PostSearchResponse topPost = loadPostPort.findTopPostByDormCategory(dormCategory);
         final List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByToday(dormCategory);
 
         if (isEmpty(topPost) & officialCalendars.isEmpty()) {
@@ -76,7 +76,7 @@ public class NotificationService implements NotificationUseCase {
             .toList();
     }
 
-    private List<NotificationRequest> topPostOf(List<FcmToken> fcmTokens, PostListData topPost) {
+    private List<NotificationRequest> topPostOf(List<FcmToken> fcmTokens, PostSearchResponse topPost) {
         if (topPost == null) {
             return Collections.emptyList();
         }

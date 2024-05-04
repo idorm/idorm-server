@@ -1,6 +1,6 @@
 package idorm.idormServer.community.post.application.port.out;
 
-import idorm.idormServer.community.post.application.port.in.dto.PostListData;
+import idorm.idormServer.community.post.application.port.in.dto.querydsl.PostSearchResponse;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 
@@ -15,13 +15,13 @@ public interface LoadPostPort {
 
 	Post findByIdAndMemberId(Long postId, Long memberId);
 
-	Post findByPostIdWithLock(Long postId);
+	Post findByIdForLikeUpdate(Long postId);
 
-	Page<PostListData> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
+	Page<PostSearchResponse> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable);
 
-	List<PostListData> findTopPostsByDormCateogry(DormCategory dormCategory);
+	List<PostSearchResponse> findTopPostsByDormCateogry(DormCategory dormCategory);
 
-	PostListData findTopPostByDormCategory(DormCategory dormCategory);
+	PostSearchResponse findTopPostByDormCategory(DormCategory dormCategory);
 
-	List<PostListData> findPostsByMemberId(Long memberId);
+	List<PostSearchResponse> findPostsByMemberId(Long memberId);
 }

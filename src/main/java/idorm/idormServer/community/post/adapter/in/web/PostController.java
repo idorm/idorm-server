@@ -15,7 +15,7 @@ import idorm.idormServer.common.response.SuccessResponse;
 import idorm.idormServer.community.comment.adapter.out.exception.InvalidCommentContentLengthException;
 import idorm.idormServer.community.post.adapter.out.exception.InvalidPostTitleLengthException;
 import idorm.idormServer.community.post.application.port.in.PostUseCase;
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
+import idorm.idormServer.community.post.application.port.in.dto.PostOneSummaryResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostSaveRequest;
 import idorm.idormServer.community.post.application.port.in.dto.PostUpdateRequest;
@@ -141,7 +141,7 @@ public class PostController {
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200", description = "POST_MANY_FOUND",
-			content = @Content(schema = @Schema(implementation = PostListResponse.class))),
+			content = @Content(schema = @Schema(implementation = PostOneSummaryResponse.class))),
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
@@ -149,7 +149,7 @@ public class PostController {
 	public ResponseEntity<SuccessResponse<Object>> findPostsByMember(
 		@AuthInfo AuthResponse authResponse
 	) {
-		List<PostListResponse> responses = postUseCase.findPostsByMember(authResponse);
+		List<PostOneSummaryResponse> responses = postUseCase.findPostsByMember(authResponse);
 		return ResponseEntity.ok().body(SuccessResponse.of(MY_POST_MANY_FOUND, responses));
 	}
 
@@ -159,7 +159,7 @@ public class PostController {
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200", description = "POST_MANY_FOUND",
-			content = @Content(schema = @Schema(implementation = PostListResponse.class))),
+			content = @Content(schema = @Schema(implementation = PostOneSummaryResponse.class))),
 		@ApiResponse(responseCode = "400", description = "INVALID_DORMCATEGORY_CHARACTER"),
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
@@ -169,7 +169,7 @@ public class PostController {
 		@PathVariable(value = "dormitory-category") String dormCategoryRequest,
 		@RequestParam(value = "page") int pageNum
 	) {
-		Page<PostListResponse> responses = postUseCase.findPostsByDormCategory(dormCategoryRequest, pageNum);
+		Page<PostOneSummaryResponse> responses = postUseCase.findPostsByDormCategory(dormCategoryRequest, pageNum);
 		return ResponseEntity.ok().body(SuccessResponse.of(MAIN_POST_MANY_FOUND, responses));
 	}
 
@@ -179,7 +179,7 @@ public class PostController {
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200", description = "TOP_POST_MANY_FOUND",
-			content = @Content(schema = @Schema(implementation = PostListResponse.class))),
+			content = @Content(schema = @Schema(implementation = PostOneSummaryResponse.class))),
 		@ApiResponse(responseCode = "400", description = "INVALID_DORMCATEGORY_CHARACTER"),
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
@@ -188,7 +188,7 @@ public class PostController {
 	public ResponseEntity<SuccessResponse<Object>> findTopPostsFilteredByCategory(
 		@PathVariable("dormitory-category") String dormCategoryRequest
 	) {
-		List<PostListResponse> responses = postUseCase.findTopPostsByDormCategory(dormCategoryRequest);
+		List<PostOneSummaryResponse> responses = postUseCase.findTopPostsByDormCategory(dormCategoryRequest);
 		return ResponseEntity.ok().body(SuccessResponse.of(TOP_POST_MANY_FOUND, responses));
 	}
 

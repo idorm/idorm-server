@@ -3,8 +3,8 @@ package idorm.idormServer.community.post.application;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.community.comment.application.port.out.LoadCommentPort;
 import idorm.idormServer.community.post.application.port.in.PostUseCase;
-import idorm.idormServer.community.post.application.port.in.dto.PostListData;
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
+import idorm.idormServer.community.post.application.port.in.dto.querydsl.PostSearchResponse;
+import idorm.idormServer.community.post.application.port.in.dto.PostOneSummaryResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostSaveRequest;
 import idorm.idormServer.community.post.application.port.in.dto.PostUpdateRequest;
@@ -96,24 +96,24 @@ public class PostService implements PostUseCase {
 	}
 
 	@Override
-	public List<PostListResponse> findPostsByMember(final AuthResponse authResponse) {
-		List<PostListData> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
-		return PostListResponse.of(posts);
+	public List<PostOneSummaryResponse> findPostsByMember(final AuthResponse authResponse) {
+		List<PostSearchResponse> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
+		return PostOneSummaryResponse.of(posts);
 	}
 
 	@Override
-	public Page<PostListResponse> findPostsByDormCategory(final String dormCategory, final int pageNum) {
-		Page<PostListData> posts = loadPostPort.findPostsByDormCategoryAndIsDeletedFalse(
+	public Page<PostOneSummaryResponse> findPostsByDormCategory(final String dormCategory, final int pageNum) {
+		Page<PostSearchResponse> posts = loadPostPort.findPostsByDormCategoryAndIsDeletedFalse(
 			DormCategory.from(dormCategory), PageRequest.of(pageNum, 10));
 
-		return posts.map(PostListResponse::new);
+		return posts.map(PostOneSummaryResponse::new);
 	}
 
 	@Override
-	public List<PostListResponse> findTopPostsByDormCategory(final String dormCategory) {
-		List<PostListData> posts = loadPostPort.findTopPostsByDormCateogry(
+	public List<PostOneSummaryResponse> findTopPostsByDormCategory(final String dormCategory) {
+		List<PostSearchResponse> posts = loadPostPort.findTopPostsByDormCateogry(
 			DormCategory.from(dormCategory));
-		return PostListResponse.of(posts);
+		return PostOneSummaryResponse.of(posts);
 	}
 
 	@Override

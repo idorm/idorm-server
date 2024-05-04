@@ -1,8 +1,8 @@
 package idorm.idormServer.community.postLike.application;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
-import idorm.idormServer.community.post.application.port.in.dto.PostListData;
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
+import idorm.idormServer.community.post.application.port.in.dto.querydsl.PostSearchResponse;
+import idorm.idormServer.community.post.application.port.in.dto.PostOneSummaryResponse;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.community.postLike.application.port.in.LikeUseCase;
@@ -35,7 +35,7 @@ public class PostLikeService implements LikeUseCase {
 	@Transactional
 	public void save(final AuthResponse authResponse, final Long postId) {
 		final Member member = loadMemberPort.loadMember(authResponse.getId());
-		final Post post = loadPostPort.findByPostIdWithLock(postId);
+		final Post post = loadPostPort.findByIdForLikeUpdate(postId);
 
 		post.validateNotWriter(member);
 		loadPostLikePort.validateExists(member, post);
@@ -47,19 +47,19 @@ public class PostLikeService implements LikeUseCase {
 	@Override
 	@Transactional
 	public void delete(final AuthResponse authResponse, final Long postId) {
-		final Post post = loadPostPort.findByPostIdWithLock(postId);
+		final Post post = loadPostPort.findByIdForLikeUpdate(postId);
 		final PostLike postLike = loadPostLikePort.findByMemberIdAndPostId(authResponse.getId(), postId);
 
 		post.deletePostLike(postLike);
 	}
 
 	@Override
-	public List<PostListResponse> findLikedPostsByMember(final AuthResponse authResponse) {
+	public List<PostOneSummaryResponse> findLikedPostsByMember(final AuthResponse authResponse) {
 		final List<Long> postIds = loadPostLikePort.findPostIdsByMemberId(authResponse.getId());
-		final List<PostListData> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
+		final List<PostSearchResponse> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
 
-		List<PostListResponse> responses = posts.stream().filter(post -> postIds.contains(post.postId()))
-			.map(PostListResponse::new).toList();
+		List<PostOneSummaryResponse> responses = posts.stream().filter(post -> postIds.contains(post.postId()))
+			.map(PostOneSummaryResponse::new).toList();
 
 		return responses;
 	}

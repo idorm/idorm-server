@@ -13,8 +13,8 @@ import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import idorm.idormServer.community.post.application.port.in.dto.PostListData;
-import idorm.idormServer.community.post.application.port.in.dto.QPostListData;
+import idorm.idormServer.community.post.application.port.in.dto.querydsl.PostSearchResponse;
+import idorm.idormServer.community.post.application.port.in.dto.querydsl.QPostSearchResponse;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.community.post.entity.QPost;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
@@ -32,7 +32,7 @@ import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 @Slf4j
-public class PostCustomRepositoryImpl implements PostCustomRepository {
+public class PostRepositoryCustomImpl implements PostRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
 
@@ -47,17 +47,19 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 	}
 
 	@Override
-	public Page<PostListData> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
+	public Page<PostSearchResponse> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory,
+		Pageable pageable) {
 		List<Long> postIds = queryFactory
 			.select(post.id)
 			.from(post)
-			.where(dormitoryPostCond(dormCategory))
+			.where(dormCategoryEq(dormCategory),
+				isDeletedEq(false))
 			.orderBy(post.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
-		List<PostListData> posts = queryFactory
+		List<PostSearchResponse> posts = queryFactory
 			.select(postListDataFrom())
 			.from(post)
 			.where(post.id.in(postIds))
@@ -67,13 +69,14 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 		List<Long> total = queryFactory
 			.select(post.id)
 			.from(post)
-			.where(dormitoryPostCond(dormCategory))
+			.where(dormCategoryEq(dormCategory),
+				isDeletedEq(false))
 			.fetch();
 		return new PageImpl<>(posts, pageable, total.size());
 	}
 
 	@Override
-	public List<PostListData> findTopPostsByDormCateogry(DormCategory dormCategory) {
+	public List<PostSearchResponse> findTopPostsByDormCateogry(DormCategory dormCategory) {
 		List<Long> postIds = queryFactory
 			.select(post.id)
 			.from(post)
@@ -94,7 +97,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 	}
 
 	@Override
-	public PostListData findTopPostByDormCategory(DormCategory dormCategory) {
+	public PostSearchResponse findTopPostByDormCategory(DormCategory dormCategory) {
 		return queryFactory
 			.select(postListDataFrom())
 			.from(post)
@@ -106,7 +109,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 	}
 
 	@Override
-	public List<PostListData> findPostsByMemberId(Long memberId) {
+	public List<PostSearchResponse> findPostsByMemberId(Long memberId) {
 		List<Long> postIds = queryFactory
 			.select(post.id)
 			.from(post)
@@ -118,7 +121,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
 		return queryFactory
 			.select(Projections.constructor(
-					PostListData.class,
+					PostSearchResponse.class,
 					post.id.as("postId"),
 					Expressions.asNumber(memberId).as("memberId"),
 					post.dormCategory.stringValue().as("dormCategory"),
@@ -149,20 +152,20 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 		LocalDateTime start = oneWeekAgo.plusHours(9);
 		LocalDateTime end = now.plusHours(9);
 		return post.createdAt.between(start, end)
-			.and(dormitoryPostCond(dormCategory));
+			.and(dormCategoryEq(dormCategory))
+			.and(isDeletedEq(false));
 	}
 
-	private BooleanExpression dormitoryPostCond(DormCategory dormCategory) {
-		return post.dormCategory.eq(dormCategory)
-			.and(isDeletedEq(false));
+	private BooleanExpression dormCategoryEq(DormCategory dormCategory) {
+		return post.dormCategory.eq(dormCategory);
 	}
 
 	private BooleanExpression isDeletedEq(Boolean isDeleted) {
 		return post.isDeleted.eq(isDeleted);
 	}
 
-	private QPostListData postListDataFrom() {
-		return new QPostListData(
+	private QPostSearchResponse postListDataFrom() {
+		return new QPostSearchResponse(
 			post.id,
 			post.member.id,
 			post.dormCategory.stringValue(),

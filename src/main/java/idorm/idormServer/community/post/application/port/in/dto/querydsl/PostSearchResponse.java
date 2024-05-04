@@ -1,10 +1,10 @@
-package idorm.idormServer.community.post.application.port.in.dto;
+package idorm.idormServer.community.post.application.port.in.dto.querydsl;
 
 import com.querydsl.core.annotations.QueryProjection;
 
 import java.time.LocalDateTime;
 
-public record PostListData(
+public record PostSearchResponse(
 	Long postId,
 	Long memberId,
 	String dormCategory,
@@ -20,6 +20,6 @@ public record PostListData(
 ) {
 
 	@QueryProjection
-	public PostListData {
+	public PostSearchResponse {
 	}
 }

@@ -8,7 +8,7 @@ import idorm.idormServer.auth.adapter.in.web.Auth;
 import idorm.idormServer.auth.adapter.in.web.AuthInfo;
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.common.response.SuccessResponse;
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
+import idorm.idormServer.community.post.application.port.in.dto.PostOneSummaryResponse;
 import idorm.idormServer.community.postLike.application.port.in.LikeUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -90,7 +90,7 @@ public class PostLikeController {
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200", description = "LIKED_POST_MANY_FOUND",
-			content = @Content(schema = @Schema(implementation = PostListResponse.class))),
+			content = @Content(schema = @Schema(implementation = PostOneSummaryResponse.class))),
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
 		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
 	})
@@ -98,7 +98,7 @@ public class PostLikeController {
 	public ResponseEntity<SuccessResponse<Object>> findLikedPostsByMember(
 		@AuthInfo AuthResponse authResponse
 	) {
-		List<PostListResponse> responses = likeUseCase.findLikedPostsByMember(authResponse);
+		List<PostOneSummaryResponse> responses = likeUseCase.findLikedPostsByMember(authResponse);
 		return ResponseEntity.ok().body(SuccessResponse.of(LIKED_POST_MANY_FOUND, responses));
 	}
 }
