@@ -4,16 +4,17 @@ import idorm.idormServer.calendar.application.port.out.SaveOfficialCalendarPort;
 import idorm.idormServer.calendar.entity.OfficialCalendar;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class SaveOfficialCalendarAdapter implements SaveOfficialCalendarPort {
 
-    private final OfficialCalendarRepository officialCalendarRepository;
+	private final OfficialCalendarRepository officialCalendarRepository;
 
-    @Override
-    public void save(OfficialCalendar officialCalendar) {
-        officialCalendarRepository.save(officialCalendar);
-    }
+	@Override
+	public void save(OfficialCalendar officialCalendar) {
+		officialCalendarRepository.save(officialCalendar);
+	}
 }

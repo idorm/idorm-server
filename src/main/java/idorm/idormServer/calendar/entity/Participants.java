@@ -22,49 +22,49 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Participants {
 
-    @ElementCollection
-    @CollectionTable(name = "participant", joinColumns = @JoinColumn(name = "team_calendar_id"))
-    private Set<Participant> participants = new HashSet<>();
+	@ElementCollection
+	@CollectionTable(name = "participant", joinColumns = @JoinColumn(name = "team_calendar_id"))
+	private Set<Participant> participants = new HashSet<>();
 
-    public Participants(final Set<Participant> participants) {
-        this.participants = participants;
-    }
+	public Participants(final Set<Participant> participants) {
+		this.participants = participants;
+	}
 
-    void participate(Long memberId) {
-        if (contains(memberId)) {
-            throw new DuplicatedMemberException();
-        }
-        participants.add(new Participant(memberId));
-    }
+	void participate(Long memberId) {
+		if (contains(memberId)) {
+			throw new DuplicatedMemberException();
+		}
+		participants.add(new Participant(memberId));
+	}
 
-    void delete(Long memberId) {
-        if (!this.participants.contains(new Participant(memberId))) {
-            throw new NotFoundMemberException();
-        }
-        participants.remove(new Participant(memberId));
-    }
+	void delete(Long memberId) {
+		if (!this.participants.contains(new Participant(memberId))) {
+			throw new NotFoundMemberException();
+		}
+		participants.remove(new Participant(memberId));
+	}
 
-    boolean contains(final Long memberId) {
-        return participants.contains(new Participant(memberId));
-    }
+	boolean contains(final Long memberId) {
+		return participants.contains(new Participant(memberId));
+	}
 
-    public void validateTargetExistence(List<Long> participants) {
+	public void validateTargetExistence(List<Long> participants) {
 		if (participants.size() < 1) {
 			throw new FieldTargetsRequiredException();
 		}
-    }
+	}
 
-    List<Participant> getParticipants() {
-        List<Participant> responses = participants.stream()
-            .sorted()
-            .toList();
-        return responses;
-    }
+	List<Participant> getParticipants() {
+		List<Participant> responses = participants.stream()
+			.sorted()
+			.toList();
+		return responses;
+	}
 
-    public Set<Participant> getParticipantsSet() {
-        Set<Participant> responses = participants.stream()
-            .sorted()
-            .collect(Collectors.toSet());
-        return responses;
-    }
+	public Set<Participant> getParticipantsSet() {
+		Set<Participant> responses = participants.stream()
+			.sorted()
+			.collect(Collectors.toSet());
+		return responses;
+	}
 }

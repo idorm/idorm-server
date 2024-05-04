@@ -18,9 +18,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import javax.validation.constraints.Positive;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,90 +44,90 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamController {
 
-    private final TeamUseCase teamUseCase;
+	private final TeamUseCase teamUseCase;
 
-    @Auth
-    @Operation(summary = "룸메이트 초대 수락", security = {
-        @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "201", description = "TEAM_MEMBER_CREATED",
-            content = @Content(schema = @Schema(implementation = Object.class))),
-        @ApiResponse(responseCode = "400",
-            description = "ILLEGAL_STATEMENT_EXPLODEDTEAM / ACCESS_DENIED_ADMIN"),
-        @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-        @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
-        @ApiResponse(responseCode = "409", description = "ALREADY_REGISTERED_TEAM / CANNOT_REGISTER_TEAM_STATUS_FULL"),
-        @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
-    })
-    @PostMapping("/team")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<SuccessResponse<Object>> addTeamMember(
-        @AuthInfo AuthResponse authResponse,
-        @RequestParam(value = "registerMemberId")
-        @Positive(message = "회원 식별자는 양수만 가능합니다.")
-        Long registerMemberId
-    ) {
-        teamUseCase.addTeamMember(authResponse, registerMemberId);
-        return ResponseEntity.ok().body(SuccessResponse.from(TEAM_MEMBER_CREATED));
-    }
+	@Auth
+	@Operation(summary = "룸메이트 초대 수락", security = {
+		@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "201", description = "TEAM_MEMBER_CREATED",
+			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "400",
+			description = "ILLEGAL_STATEMENT_EXPLODEDTEAM / ACCESS_DENIED_ADMIN"),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
+		@ApiResponse(responseCode = "409", description = "ALREADY_REGISTERED_TEAM / CANNOT_REGISTER_TEAM_STATUS_FULL"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR")
+	})
+	@PostMapping("/team")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity<SuccessResponse<Object>> addTeamMember(
+		@AuthInfo AuthResponse authResponse,
+		@RequestParam(value = "registerMemberId")
+		@Positive(message = "회원 식별자는 양수만 가능합니다.")
+		Long registerMemberId
+	) {
+		teamUseCase.addTeamMember(authResponse, registerMemberId);
+		return ResponseEntity.ok().body(SuccessResponse.from(TEAM_MEMBER_CREATED));
+	}
 
-    @Auth
-    @Operation(summary = "팀원 삭제", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200", description = "TEAM_MEMBER_DELETED",
-            content = @Content(schema = @Schema(implementation = Object.class))),
-        @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-        @ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM"),
-        @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
-        @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
-    })
-    @DeleteMapping("/team")
-    public ResponseEntity<SuccessResponse<Object>> deleteTeamMember(
-        @AuthInfo AuthResponse authResponse,
-        @RequestParam(value = "memberId")
-        @Positive(message = "삭제할 회원 식별자는 양수만 가능합니다.")
-        Long memberId
-    ) {
-        teamUseCase.deleteMember(authResponse, memberId);
-        return ResponseEntity.ok().body(SuccessResponse.from(TEAM_MEMBER_DELETED));
-    }
+	@Auth
+	@Operation(summary = "팀원 삭제", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200", description = "TEAM_MEMBER_DELETED",
+			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+		@ApiResponse(responseCode = "403", description = "ACCESS_DENIED_TEAM"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER / NOT_FOUND_TEAM"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR")
+	})
+	@DeleteMapping("/team")
+	public ResponseEntity<SuccessResponse<Object>> deleteTeamMember(
+		@AuthInfo AuthResponse authResponse,
+		@RequestParam(value = "memberId")
+		@Positive(message = "삭제할 회원 식별자는 양수만 가능합니다.")
+		Long memberId
+	) {
+		teamUseCase.deleteMember(authResponse, memberId);
+		return ResponseEntity.ok().body(SuccessResponse.from(TEAM_MEMBER_DELETED));
+	}
 
-    @Auth
-    @Operation(summary = "팀원 전체 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200", description = "TEAM_MEMBERS_FOUND",
-            content = @Content(schema = @Schema(implementation = TeamResponse.class))),
-        @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-        @ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
-        @ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
-    })
-    @GetMapping("/team")
-    public ResponseEntity<SuccessResponse<Object>> findTeamMembers(
-        @AuthInfo AuthResponse authResponse
-    ) {
-        TeamResponse responses = teamUseCase.findTeam(authResponse);
-        return ResponseEntity.ok().body(SuccessResponse.of(TEAM_MEMBERS_FOUND, responses));
-    }
+	@Auth
+	@Operation(summary = "팀원 전체 조회", security = {@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200", description = "TEAM_MEMBERS_FOUND",
+			content = @Content(schema = @Schema(implementation = TeamResponse.class))),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+		@ApiResponse(responseCode = "404", description = "NOT_FOUND_MEMBER"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR"),
+	})
+	@GetMapping("/team")
+	public ResponseEntity<SuccessResponse<Object>> findTeamMembers(
+		@AuthInfo AuthResponse authResponse
+	) {
+		TeamResponse responses = teamUseCase.findTeam(authResponse);
+		return ResponseEntity.ok().body(SuccessResponse.of(TEAM_MEMBERS_FOUND, responses));
+	}
 
-    @Auth
-    @Operation(summary = "팀 폭발 확인 OK", security = {
-        @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200", description = "TEAM_EXPLODED_CHECKED",
-            content = @Content(schema = @Schema(implementation = Object.class))),
-        @ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
-        @ApiResponse(responseCode = "409", description = "CANNOT_EXPLODE_TEAM"),
-        @ApiResponse(responseCode = "500", description = "SERVER_ERROR")
-    })
-    @PatchMapping("/team/")
-    public ResponseEntity<SuccessResponse<Object>> isConfirmTeamExploded(
-        @AuthInfo AuthResponse authResponse
-    ) {
-        teamUseCase.explodeTeam(authResponse);
-        return ResponseEntity.ok().body(SuccessResponse.from(TEAM_EXPLODED_CHECKED));
-    }
+	@Auth
+	@Operation(summary = "팀 폭발 확인 OK", security = {
+		@SecurityRequirement(name = HttpHeaders.AUTHORIZATION)})
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200", description = "TEAM_EXPLODED_CHECKED",
+			content = @Content(schema = @Schema(implementation = Object.class))),
+		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN"),
+		@ApiResponse(responseCode = "409", description = "CANNOT_EXPLODE_TEAM"),
+		@ApiResponse(responseCode = "500", description = "SERVER_ERROR")
+	})
+	@PatchMapping("/team/")
+	public ResponseEntity<SuccessResponse<Object>> isConfirmTeamExploded(
+		@AuthInfo AuthResponse authResponse
+	) {
+		teamUseCase.explodeTeam(authResponse);
+		return ResponseEntity.ok().body(SuccessResponse.from(TEAM_EXPLODED_CHECKED));
+	}
 }

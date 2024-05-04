@@ -5,7 +5,7 @@ import idorm.idormServer.common.exception.BaseException;
 
 public class AccessDeniedTeamCalendarException extends BaseException {
 
-    public AccessDeniedTeamCalendarException() {
-        super(CalendarResponseCode.ACCESS_DENIED_TEAM_CALENDAR);
-    }
+	public AccessDeniedTeamCalendarException() {
+		super(CalendarResponseCode.ACCESS_DENIED_TEAM_CALENDAR);
+	}
 }

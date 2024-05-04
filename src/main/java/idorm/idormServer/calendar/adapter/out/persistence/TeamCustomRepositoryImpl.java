@@ -4,21 +4,22 @@ import static idorm.idormServer.calendar.entity.QTeam.team;
 import static idorm.idormServer.member.entity.QMember.member;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import idorm.idormServer.calendar.entity.Team;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class TeamCustomRepositoryImpl implements TeamCustomRepository {
 
-    JPAQueryFactory queryFactory;
+	JPAQueryFactory queryFactory;
 
-    @Override
-    public Team findByMemberId(final Long memberId) {
-        return queryFactory
-            .select(team)
-            .from(team)
-            .join(team.members, member)
-            .where(member.id.eq(memberId))
-            .fetchOne();
-    }
+	@Override
+	public Team findByMemberId(final Long memberId) {
+		return queryFactory
+			.select(team)
+			.from(team)
+			.join(team.members, member)
+			.where(member.id.eq(memberId))
+			.fetchOne();
+	}
 }

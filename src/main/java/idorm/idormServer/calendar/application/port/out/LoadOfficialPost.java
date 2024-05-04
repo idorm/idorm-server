@@ -6,5 +6,5 @@ import idorm.idormServer.calendar.entity.OfficialCalendar;
 
 public interface LoadOfficialPost {
 
-    List<OfficialCalendar> findNewPosts();
+	List<OfficialCalendar> findNewPosts();
 }
