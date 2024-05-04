@@ -44,12 +44,6 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
 	}
 
 	@Override
-	public List<TeamCalendar> findByTeamId(Long teamId) {
-		List<TeamCalendar> responses = teamCalendarRepository.findByTeamId(teamId);
-		return responses != null ? responses : Collections.emptyList();
-	}
-
-	@Override
 	public List<TeamCalendar> findByYearMonth(Team team, YearMonth yearMonth) {
 		List<TeamCalendar> responses = teamCalendarRepository.findByYearMonth(team, yearMonth);
 		return responses != null ? responses : Collections.emptyList();

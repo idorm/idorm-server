@@ -12,6 +12,4 @@ public interface SleepoverCalendarRepository
 	extends JpaRepository<SleepoverCalendar, Long>, SleepoverCalendarCustomRepository {
 
 	List<SleepoverCalendar> findByMemberId(Long memberId);
-
-	List<SleepoverCalendar> findByTeamId(Long teamId);
 }

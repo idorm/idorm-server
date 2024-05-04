@@ -1,6 +1,5 @@
 package idorm.idormServer.calendar.entity;
 
-import idorm.idormServer.calendar.adapter.out.exception.AccessDeniedTeamException;
 import idorm.idormServer.calendar.adapter.out.exception.CannotExplodeTeamException;
 import idorm.idormServer.calendar.adapter.out.exception.CannotRegisterTeamStatusFullException;
 import idorm.idormServer.calendar.adapter.out.exception.NotFoundTeamMemberException;
@@ -77,12 +76,6 @@ public class Team extends BaseTimeEntity {
 			throw new CannotExplodeTeamException();
 		}
 		member.removeTeam();
-	}
-
-	public void validateTeamAccessMember(Member member) {
-		if (!this.members.contains(member)) {
-			throw new AccessDeniedTeamException();
-		}
 	}
 
 	private void validateParticipationInTeam(Member member) {
