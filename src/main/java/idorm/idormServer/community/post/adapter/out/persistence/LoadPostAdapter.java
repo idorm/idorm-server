@@ -7,10 +7,13 @@ import idorm.idormServer.community.post.application.port.in.dto.PostListData;
 import idorm.idormServer.community.post.application.port.out.LoadPostPort;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
+
 import java.util.Collections;
 import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -19,48 +22,48 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoadPostAdapter implements LoadPostPort {
 
-    private final PostRepository postRepository;
+	private final PostRepository postRepository;
 
-    @Override
-    public Post findById(Long postId) {
-        return postRepository.findById(postId)
-            .orElseThrow(() -> new NotFoundPostException());
-    }
+	@Override
+	public Post findById(Long postId) {
+		return postRepository.findById(postId)
+			.orElseThrow(() -> new NotFoundPostException());
+	}
 
-    @Override
-    public Post findByIdAndMemberId(Long postId, Long memberId) {
-        Post response = postRepository.findByIdAndMemberId(postId, memberId);
-        if (post == null) {
-            throw new NotFoundPostException();
-        }
-        return response;
-    }
+	@Override
+	public Post findByIdAndMemberId(Long postId, Long memberId) {
+		Post response = postRepository.findByIdAndMemberId(postId, memberId);
+		if (post == null) {
+			throw new NotFoundPostException();
+		}
+		return response;
+	}
 
-    @Override
-    public Post findByPostIdWithLock(Long postId) {
-        return postRepository.findByPostIdWithLock(postId)
-            .orElseThrow(() -> new NotFoundPostException());
-    }
+	@Override
+	public Post findByPostIdWithLock(Long postId) {
+		return postRepository.findByPostIdWithLock(postId)
+			.orElseThrow(() -> new NotFoundPostException());
+	}
 
-    @Override
-    public Page<PostListData> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
-        return postRepository.findPostsByDormCategoryAndIsDeletedFalse(dormCategory, pageable);
-    }
+	@Override
+	public Page<PostListData> findPostsByDormCategoryAndIsDeletedFalse(DormCategory dormCategory, Pageable pageable) {
+		return postRepository.findPostsByDormCategoryAndIsDeletedFalse(dormCategory, pageable);
+	}
 
-    @Override
-    public List<PostListData> findTopPostsByDormCateogry(DormCategory dormCategory) {
-        List<PostListData> responses = postRepository.findTopPostsByDormCateogry(dormCategory);
-        return responses != null ? responses : Collections.emptyList();
-    }
+	@Override
+	public List<PostListData> findTopPostsByDormCateogry(DormCategory dormCategory) {
+		List<PostListData> responses = postRepository.findTopPostsByDormCateogry(dormCategory);
+		return responses != null ? responses : Collections.emptyList();
+	}
 
-    @Override
-    public PostListData findTopPostByDormCategory(DormCategory dormCategory) {
-        return postRepository.findTopPostByDormCategory(dormCategory);
-    }
+	@Override
+	public PostListData findTopPostByDormCategory(DormCategory dormCategory) {
+		return postRepository.findTopPostByDormCategory(dormCategory);
+	}
 
-    @Override
-    public List<PostListData> findPostsByMemberId(Long memberId) {
-        List<PostListData> responses = postRepository.findPostsByMemberId(memberId);
-        return responses != null ? responses : Collections.emptyList();
-    }
+	@Override
+	public List<PostListData> findPostsByMemberId(Long memberId) {
+		List<PostListData> responses = postRepository.findPostsByMemberId(memberId);
+		return responses != null ? responses : Collections.emptyList();
+	}
 }

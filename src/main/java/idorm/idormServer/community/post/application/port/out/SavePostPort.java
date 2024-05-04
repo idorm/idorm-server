@@ -4,5 +4,5 @@ import idorm.idormServer.community.post.entity.Post;
 
 public interface SavePostPort {
 
-    void save(Post post);
+	void save(Post post);
 }
