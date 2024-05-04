@@ -4,9 +4,9 @@ import idorm.idormServer.community.postPhoto.entity.PostPhoto;
 
 public interface DeletePostPhotoPort {
 
-    void delete(PostPhoto postPhoto);
+	void delete(PostPhoto postPhoto);
 
-    void deleteAllByPostId(Long postId);
+	void deleteAllByPostId(Long postId);
 
-    void deleteById(Long postPhotoId);
+	void deleteById(Long postPhotoId);
 }

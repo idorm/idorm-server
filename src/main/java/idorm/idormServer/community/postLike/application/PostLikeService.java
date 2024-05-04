@@ -11,8 +11,11 @@ import idorm.idormServer.community.postLike.application.port.out.SavePostLikePor
 import idorm.idormServer.community.postLike.entity.PostLike;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,43 +24,43 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PostLikeService implements LikeUseCase {
 
-    private final SavePostLikePort savePostLikePort;
-    private final LoadPostLikePort loadPostLikePort;
+	private final SavePostLikePort savePostLikePort;
+	private final LoadPostLikePort loadPostLikePort;
 
-    private final LoadPostPort loadPostPort;
+	private final LoadPostPort loadPostPort;
 
-    private final LoadMemberPort loadMemberPort;
+	private final LoadMemberPort loadMemberPort;
 
-    @Override
-    @Transactional
-    public void save(final AuthResponse authResponse, final Long postId) {
-        final Member member = loadMemberPort.loadMember(authResponse.getId());
-        final Post post = loadPostPort.findByPostIdWithLock(postId);
+	@Override
+	@Transactional
+	public void save(final AuthResponse authResponse, final Long postId) {
+		final Member member = loadMemberPort.loadMember(authResponse.getId());
+		final Post post = loadPostPort.findByPostIdWithLock(postId);
 
-        post.validateNotWriter(member);
-        loadPostLikePort.validateExists(member, post);
+		post.validateNotWriter(member);
+		loadPostLikePort.validateExists(member, post);
 
-        PostLike postLike = new PostLike(post, member.getId());
-        savePostLikePort.save(postLike);
-    }
+		PostLike postLike = new PostLike(post, member.getId());
+		savePostLikePort.save(postLike);
+	}
 
-    @Override
-    @Transactional
-    public void delete(final AuthResponse authResponse, final Long postId) {
-        final Post post = loadPostPort.findByPostIdWithLock(postId);
-        final PostLike postLike = loadPostLikePort.findByMemberIdAndPostId(authResponse.getId(), postId);
+	@Override
+	@Transactional
+	public void delete(final AuthResponse authResponse, final Long postId) {
+		final Post post = loadPostPort.findByPostIdWithLock(postId);
+		final PostLike postLike = loadPostLikePort.findByMemberIdAndPostId(authResponse.getId(), postId);
 
-        post.deletePostLike(postLike);
-    }
+		post.deletePostLike(postLike);
+	}
 
-    @Override
-    public List<PostListResponse> findLikedPostsByMember(final AuthResponse authResponse) {
-        final List<Long> postIds = loadPostLikePort.findPostIdsByMemberId(authResponse.getId());
-        final List<PostListData> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
+	@Override
+	public List<PostListResponse> findLikedPostsByMember(final AuthResponse authResponse) {
+		final List<Long> postIds = loadPostLikePort.findPostIdsByMemberId(authResponse.getId());
+		final List<PostListData> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
 
-        List<PostListResponse> responses = posts.stream().filter(post -> postIds.contains(post.postId()))
-            .map(PostListResponse::new).toList();
+		List<PostListResponse> responses = posts.stream().filter(post -> postIds.contains(post.postId()))
+			.map(PostListResponse::new).toList();
 
-        return responses;
-    }
+		return responses;
+	}
 }

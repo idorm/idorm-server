@@ -5,7 +5,7 @@ import idorm.idormServer.community.post.adapter.out.PostResponseCode;
 
 public class InvalidPostContentLengthException extends BaseException {
 
-    public InvalidPostContentLengthException() {
-        super(PostResponseCode.INVALID_CONTENT_LENGTH);
-    }
+	public InvalidPostContentLengthException() {
+		super(PostResponseCode.INVALID_CONTENT_LENGTH);
+	}
 }

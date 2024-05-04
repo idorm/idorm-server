@@ -5,7 +5,7 @@ import idorm.idormServer.community.postPhoto.adapter.out.PostPhotoResponseCode;
 
 public class NotFoundPostPhotoException extends BaseException {
 
-    public NotFoundPostPhotoException() {
-        super(PostPhotoResponseCode.NOT_FOUND_POSTPHOTO);
-    }
+	public NotFoundPostPhotoException() {
+		super(PostPhotoResponseCode.NOT_FOUND_POSTPHOTO);
+	}
 }
