@@ -1,13 +1,7 @@
 package idorm.idormServer.community.comment.application;
 
-import static idorm.idormServer.notification.entity.FcmChannel.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static idorm.idormServer.notification.entity.FcmChannel.COMMENT;
+import static idorm.idormServer.notification.entity.FcmChannel.SUBCOMMENT;
 
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.community.comment.application.port.in.CommentUseCase;
@@ -25,7 +19,15 @@ import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
 import idorm.idormServer.notification.application.port.out.LoadFcmTokenPort;
 import idorm.idormServer.notification.entity.FcmChannel;
 import idorm.idormServer.notification.entity.FcmToken;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)

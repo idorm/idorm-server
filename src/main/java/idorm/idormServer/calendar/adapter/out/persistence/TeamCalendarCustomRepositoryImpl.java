@@ -1,13 +1,9 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
-import static idorm.idormServer.calendar.entity.QParticipant.*;
-import static idorm.idormServer.calendar.entity.QTeam.*;
-import static idorm.idormServer.calendar.entity.QTeamCalendar.*;
-import static idorm.idormServer.notification.entity.QFcmToken.*;
-
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
+import static idorm.idormServer.calendar.entity.QParticipant.participant;
+import static idorm.idormServer.calendar.entity.QTeam.team;
+import static idorm.idormServer.calendar.entity.QTeamCalendar.teamCalendar;
+import static idorm.idormServer.notification.entity.QFcmToken.fcmToken;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,6 +12,11 @@ import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.calendar.entity.TeamCalendar;
 import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
 import idorm.idormServer.notification.entity.FcmChannel;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -6,18 +6,20 @@ import idorm.idormServer.calendar.application.port.in.dto.TeamParticipantRespons
 import idorm.idormServer.calendar.application.port.in.dto.TeamResponse;
 import idorm.idormServer.calendar.application.port.out.DeleteTeamPort;
 import idorm.idormServer.calendar.application.port.out.LoadSleepoverCalendarPort;
-import idorm.idormServer.calendar.application.port.out.LoadTeamCalendarPort;
 import idorm.idormServer.calendar.application.port.out.LoadTeamPort;
 import idorm.idormServer.calendar.application.port.out.SaveTeamPort;
 import idorm.idormServer.calendar.entity.SleepoverCalendar;
 import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,7 +74,7 @@ public class TeamService implements TeamUseCase {
 		final List<SleepoverCalendar> sleepoverCalendars = loadSleepoverCalendarPort.findByToday(team);
 
 		List<Member> members = team.getMembers().stream()
-				.filter(member -> member.getMemberStatus().equals("ACTIVE"))
+			.filter(member -> member.getMemberStatus().equals("ACTIVE"))
 			.sorted(Comparator.comparing(Member::getId))
 			.toList();
 
@@ -93,7 +95,7 @@ public class TeamService implements TeamUseCase {
 		final Team team = loadTeamPort.findByMemberId(authResponse.getId());
 
 		team.delete(member);
-		deleteTeamPort.deleteTeam(team);
+		deleteTeamPort.delete(team);
 	}
 
 	private boolean isTodaySleepover(Long memberId, List<SleepoverCalendar> sleepoverCalendars) {
@@ -105,5 +107,4 @@ public class TeamService implements TeamUseCase {
 	private boolean isParticipantInSleepover(Long memberId, SleepoverCalendar sleepoverCalendar) {
 		return sleepoverCalendar.getMemberId().equals(memberId);
 	}
-
 }

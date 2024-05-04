@@ -3,7 +3,6 @@ package idorm.idormServer.calendar.entity;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
@@ -11,7 +10,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 
 import idorm.idormServer.calendar.adapter.out.exception.DuplicatedMemberException;
-import idorm.idormServer.calendar.adapter.out.exception.FieldTargetsRequiredException;
 import idorm.idormServer.member.adapter.out.exception.NotFoundMemberException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -48,22 +46,10 @@ public class Participants {
 		return participants.contains(new Participant(memberId));
 	}
 
-	public void validateTargetExistence(List<Long> participants) {
-		if (participants.size() < 1)
-			throw new FieldTargetsRequiredException();
-	}
-
 	List<Participant> getParticipants() {
 		List<Participant> responses = participants.stream()
 			.sorted()
 			.toList();
-		return responses;
-	}
-
-	public Set<Participant> getParticipantsSet() {
-		Set<Participant> responses = participants.stream()
-			.sorted()
-			.collect(Collectors.toSet());
 		return responses;
 	}
 }

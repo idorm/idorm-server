@@ -1,14 +1,15 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
-import static idorm.idormServer.calendar.entity.QOfficialCalendar.*;
-
-import java.time.LocalDate;
-import java.util.List;
+import static idorm.idormServer.calendar.entity.QOfficialCalendar.officialCalendar;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import idorm.idormServer.calendar.entity.OfficialCalendar;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
+
+import java.time.LocalDate;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

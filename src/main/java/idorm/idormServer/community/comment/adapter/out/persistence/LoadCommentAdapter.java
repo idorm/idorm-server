@@ -1,15 +1,16 @@
 package idorm.idormServer.community.comment.adapter.out.persistence;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import idorm.idormServer.community.comment.adapter.out.exception.NotFoundCommentException;
 import idorm.idormServer.community.comment.application.port.out.LoadCommentPort;
 import idorm.idormServer.community.comment.entity.Comment;
+
+import java.util.Collections;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,18 +27,22 @@ public class LoadCommentAdapter implements LoadCommentPort {
 
 	@Override
 	public Comment findOneByCommentIdAndPostId(Long commentId, Long postId) {
-		return commentRepository.findOneByCommentIdAndPostId(commentId, postId);
+		Comment response = commentRepository.findOneByCommentIdAndPostId(commentId, postId);
+		if (response == null) {
+			throw new NotFoundCommentException();
+		}
+		return response;
 	}
 
 	@Override
 	public List<Comment> findAllByPostId(Long postId) {
 		List<Comment> responses = commentRepository.findAllByPostId(postId);
-		return responses.isEmpty() ? new ArrayList<>() : responses;
+		return responses != null ? responses : Collections.emptyList();
 	}
 
 	@Override
 	public List<Comment> findAllByMemberId(Long memberId) {
 		List<Comment> responses = commentRepository.findAllByMemberId(memberId);
-		return responses.isEmpty() ? new ArrayList<>() : responses;
+		return responses != null ? responses : Collections.emptyList();
 	}
 }

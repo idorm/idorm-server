@@ -5,7 +5,7 @@ import idorm.idormServer.community.post.adapter.out.PostResponseCode;
 
 public class AccessDeniedPostException extends BaseException {
 
-  public AccessDeniedPostException() {
-    super(PostResponseCode.ACCESS_DENIED_POST);
-  }
+	public AccessDeniedPostException() {
+		super(PostResponseCode.ACCESS_DENIED_POST);
+	}
 }

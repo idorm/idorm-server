@@ -1,19 +1,19 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import idorm.idormServer.calendar.adapter.out.exception.NotFoundTeamCalendarException;
 import idorm.idormServer.calendar.application.port.out.LoadTeamCalendarPort;
 import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.calendar.entity.TeamCalendar;
 import idorm.idormServer.notification.adapter.out.api.NotificationRequest;
+
+import java.time.YearMonth;
+import java.util.Collections;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,7 +31,6 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
 	@Override
 	public TeamCalendar findByIdAndMemberId(Long teamCalendarId, Long memberId) {
 		TeamCalendar response = teamCalendarRepository.findByIdAndMemberId(teamCalendarId, memberId);
-
 		if (response == null) {
 			throw new NotFoundTeamCalendarException();
 		}
@@ -41,12 +40,6 @@ public class LoadTeamCalendarAdapter implements LoadTeamCalendarPort {
 	@Override
 	public List<TeamCalendar> findByMemberId(Long memberId) {
 		List<TeamCalendar> responses = findByMemberId(memberId);
-		return responses != null ? responses : Collections.emptyList();
-	}
-
-	@Override
-	public List<TeamCalendar> findByTeamId(Long teamId) {
-		List<TeamCalendar> responses = teamCalendarRepository.findByTeamId(teamId);
 		return responses != null ? responses : Collections.emptyList();
 	}
 

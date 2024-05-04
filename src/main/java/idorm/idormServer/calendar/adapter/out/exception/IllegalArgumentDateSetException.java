@@ -5,8 +5,7 @@ import idorm.idormServer.common.exception.BaseException;
 
 public class IllegalArgumentDateSetException extends BaseException {
 
-  public IllegalArgumentDateSetException() {
-    super(CalendarResponseCode.ILLEGAL_ARGUMENT_DATE_SET);
-  }
-
+	public IllegalArgumentDateSetException() {
+		super(CalendarResponseCode.ILLEGAL_ARGUMENT_DATE_SET);
+	}
 }

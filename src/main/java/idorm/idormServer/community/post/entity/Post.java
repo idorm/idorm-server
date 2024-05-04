@@ -1,6 +1,19 @@
 package idorm.idormServer.community.post.entity;
 
-import static idorm.idormServer.community.post.adapter.out.PostResponseCode.*;
+import static idorm.idormServer.community.post.adapter.out.PostResponseCode.INVALID_CONTENT_LENGTH;
+import static idorm.idormServer.community.post.adapter.out.PostResponseCode.INVALID_TITLE_LENGTH;
+
+import idorm.idormServer.common.entity.BaseTimeEntity;
+import idorm.idormServer.common.util.Validator;
+import idorm.idormServer.community.comment.entity.Comment;
+import idorm.idormServer.community.post.adapter.out.exception.AccessDeniedPostException;
+import idorm.idormServer.community.postLike.adapter.out.exception.CannotLikedSelfException;
+import idorm.idormServer.community.postLike.entity.PostLike;
+import idorm.idormServer.community.postPhoto.entity.PostPhoto;
+import idorm.idormServer.matchingInfo.entity.DormCategory;
+import idorm.idormServer.member.entity.Member;
+import idorm.idormServer.photo.adapter.out.exception.ExceedFileCountException;
+import idorm.idormServer.report.entity.PostReport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +31,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import idorm.idormServer.common.entity.BaseTimeEntity;
-import idorm.idormServer.common.util.Validator;
-import idorm.idormServer.community.comment.entity.Comment;
-import idorm.idormServer.community.post.adapter.out.exception.AccessDeniedPostException;
-import idorm.idormServer.community.postLike.adapter.out.exception.CannotLikedSelfException;
-import idorm.idormServer.community.postLike.entity.PostLike;
-import idorm.idormServer.community.postPhoto.entity.PostPhoto;
-import idorm.idormServer.matchingInfo.entity.DormCategory;
-import idorm.idormServer.member.entity.Member;
-import idorm.idormServer.photo.adapter.out.exception.ExceedFileCountException;
-import idorm.idormServer.report.entity.PostReport;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,7 +40,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseTimeEntity {
 
+	public static final String DELETED_MEMBER_ID = "-999";
+	public static final String ANONYMOUS_MEMBER_NICKNAME = "익명";
 	private static final String BLIND_POST_MESSAGE = "블라인드 처리된 게시글입니다.";
+
 	private static final int BLOCKED_CONDITION = 5;
 	private static final int MIN_LENGTH = 1;
 	private static final int MAX_LENGTH_FOR_CONTENT = 300;

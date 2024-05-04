@@ -50,5 +50,4 @@ public class SleepoverCalendar {
 	private void validateConstructor(Period period, Long memberId, Team team) {
 		Validator.validateNotNull(List.of(period, memberId, team));
 	}
-
 }

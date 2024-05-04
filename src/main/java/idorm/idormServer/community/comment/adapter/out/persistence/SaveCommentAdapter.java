@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class SaveCommentAdapter implements SaveCommentPort {
 
-  private final CommentRepository commentRepository;
+	private final CommentRepository commentRepository;
 
-  @Override
-  public void save(Comment comment) {
-    commentRepository.save(comment);
-  }
+	@Override
+	public void save(Comment comment) {
+		commentRepository.save(comment);
+	}
 }

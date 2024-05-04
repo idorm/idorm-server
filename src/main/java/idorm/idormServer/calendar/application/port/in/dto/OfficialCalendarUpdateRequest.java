@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.validation.constraints.Positive;
 
 public record OfficialCalendarUpdateRequest(
@@ -25,6 +26,4 @@ public record OfficialCalendarUpdateRequest(
 	@NotBlank(message = "제목을 입력해 주세요.")
 	String title
 ) {
-
 }
-

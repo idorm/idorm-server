@@ -1,8 +1,8 @@
 package idorm.idormServer.community.postPhoto.application.port.in.dto;
 
-import java.util.List;
-
 import idorm.idormServer.community.postPhoto.entity.PostPhoto;
+
+import java.util.List;
 
 public record PostPhotoResponse(
 	Long photoId,

@@ -1,7 +1,7 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
-import static idorm.idormServer.calendar.entity.QTeam.*;
-import static idorm.idormServer.member.entity.QMember.*;
+import static idorm.idormServer.calendar.entity.QTeam.team;
+import static idorm.idormServer.member.entity.QMember.member;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 

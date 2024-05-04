@@ -5,17 +5,18 @@ import idorm.idormServer.calendar.application.port.in.dto.CrawledOfficialCalenda
 import idorm.idormServer.calendar.application.port.in.dto.FindCalendarsRequest;
 import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarResponse;
 import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarUpdateRequest;
+
 import java.util.List;
 
 public interface OfficialCalendarUseCase {
 
-  OfficialCalendarResponse update(OfficialCalendarUpdateRequest request);
+	OfficialCalendarResponse update(OfficialCalendarUpdateRequest request);
 
-  void delete(Long officialCalendarId);
+	void delete(Long officialCalendarId);
 
-  List<CrawledOfficialCalendarResponse> findByMonthByAdmin();
+	List<CrawledOfficialCalendarResponse> findByMonthByAdmin();
 
-  OfficialCalendarResponse findOneByAdmin(Long officialCalendarId);
+	OfficialCalendarResponse findOneByAdmin(Long officialCalendarId);
 
-  List<OfficialCalendarResponse> findByMonthByMember(AuthResponse authResponse, FindCalendarsRequest request);
+	List<OfficialCalendarResponse> findByMonthByMember(AuthResponse authResponse, FindCalendarsRequest request);
 }

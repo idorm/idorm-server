@@ -1,6 +1,13 @@
 package idorm.idormServer.community.comment.entity;
 
-import static idorm.idormServer.community.comment.adapter.out.CommentResponseCode.*;
+import static idorm.idormServer.community.comment.adapter.out.CommentResponseCode.INVALID_CONTENT_LENGTH;
+
+import idorm.idormServer.common.entity.BaseTimeEntity;
+import idorm.idormServer.common.util.Validator;
+import idorm.idormServer.community.comment.adapter.out.exception.AccessDeniedCommentException;
+import idorm.idormServer.community.post.entity.Post;
+import idorm.idormServer.member.entity.Member;
+import idorm.idormServer.report.entity.CommentReport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +23,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import idorm.idormServer.common.entity.BaseTimeEntity;
-import idorm.idormServer.common.util.Validator;
-import idorm.idormServer.community.comment.adapter.out.exception.AccessDeniedCommentException;
-import idorm.idormServer.community.post.entity.Post;
-import idorm.idormServer.member.entity.Member;
-import idorm.idormServer.report.entity.CommentReport;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,16 +1,10 @@
 package idorm.idormServer.community.post.application;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.community.comment.application.port.out.LoadCommentPort;
 import idorm.idormServer.community.post.application.port.in.PostUseCase;
-import idorm.idormServer.community.post.application.port.in.dto.PostListResponse;
+import idorm.idormServer.community.post.application.port.in.dto.querydsl.PostSearchResponse;
+import idorm.idormServer.community.post.application.port.in.dto.PostOneSummaryResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostResponse;
 import idorm.idormServer.community.post.application.port.in.dto.PostSaveRequest;
 import idorm.idormServer.community.post.application.port.in.dto.PostUpdateRequest;
@@ -26,7 +20,15 @@ import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
 import idorm.idormServer.photo.application.port.out.DeleteFilePort;
 import idorm.idormServer.photo.application.port.out.SaveFilePort;
+
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -94,24 +96,24 @@ public class PostService implements PostUseCase {
 	}
 
 	@Override
-	public List<PostListResponse> findPostsByMember(final AuthResponse authResponse) {
-		List<Post> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
-		return PostListResponse.of(posts);
+	public List<PostOneSummaryResponse> findPostsByMember(final AuthResponse authResponse) {
+		List<PostSearchResponse> posts = loadPostPort.findPostsByMemberId(authResponse.getId());
+		return PostOneSummaryResponse.of(posts);
 	}
 
 	@Override
-	public Page<PostListResponse> findPostsByDormCategory(final String dormCategory, final int pageNum) {
-		Page<Post> posts = loadPostPort.findPostsByDormCategoryAndIsDeletedFalse(
+	public Page<PostOneSummaryResponse> findPostsByDormCategory(final String dormCategory, final int pageNum) {
+		Page<PostSearchResponse> posts = loadPostPort.findPostsByDormCategoryAndIsDeletedFalse(
 			DormCategory.from(dormCategory), PageRequest.of(pageNum, 10));
 
-		return posts.map(PostListResponse::new);
+		return posts.map(PostOneSummaryResponse::new);
 	}
 
 	@Override
-	public List<PostListResponse> findTopPostsByDormCategory(final String dormCategory) {
-		List<Post> posts = loadPostPort.findTopPostsByDormCateogry(
+	public List<PostOneSummaryResponse> findTopPostsByDormCategory(final String dormCategory) {
+		List<PostSearchResponse> posts = loadPostPort.findTopPostsByDormCateogry(
 			DormCategory.from(dormCategory));
-		return PostListResponse.of(posts);
+		return PostOneSummaryResponse.of(posts);
 	}
 
 	@Override

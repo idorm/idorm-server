@@ -9,10 +9,13 @@ import idorm.idormServer.calendar.application.port.in.dto.OfficialCalendarUpdate
 import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
 import idorm.idormServer.calendar.application.port.out.SaveOfficialCalendarPort;
 import idorm.idormServer.calendar.entity.OfficialCalendar;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,11 +50,11 @@ public class OfficialCalendarService implements OfficialCalendarUseCase {
 		LocalDate now = LocalDate.now();
 		LocalDate lastWeek = now.minusDays(7);
 		List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByAdmin(
-				now.format(formatter) + "-%",
-				lastWeek.format(formatter) + "-%");
+			now.format(formatter) + "-%",
+			lastWeek.format(formatter) + "-%");
 		List<CrawledOfficialCalendarResponse> responses = officialCalendars.stream()
-				.map(CrawledOfficialCalendarResponse::from)
-				.toList();
+			.map(CrawledOfficialCalendarResponse::from)
+			.toList();
 		return responses;
 	}
 
@@ -63,20 +66,21 @@ public class OfficialCalendarService implements OfficialCalendarUseCase {
 
 	@Override
 	public List<OfficialCalendarResponse> findByMonthByMember(AuthResponse authResponse, FindCalendarsRequest request) {
-		final List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByMember(request.yearMonth());
+		final List<OfficialCalendar> officialCalendars = loadOfficialCalendarPort.findByMonthByMember(
+			request.yearMonth());
 		List<OfficialCalendarResponse> responses = officialCalendars.stream()
-				.map(OfficialCalendarResponse::from)
-				.toList();
+			.map(OfficialCalendarResponse::from)
+			.toList();
 		return responses;
 	}
 
 	@Transactional
 	public OfficialCalendarResponse save(String inuPostId, String title, LocalDate inuPostCreatedAt, String postUrl) {
 		OfficialCalendar officialCalendar = new OfficialCalendar(
-				inuPostId,
-				title,
-				postUrl,
-				inuPostCreatedAt);
+			inuPostId,
+			title,
+			postUrl,
+			inuPostCreatedAt);
 
 		saveOfficialCalendarPort.save(officialCalendar);
 		return OfficialCalendarResponse.from(officialCalendar);

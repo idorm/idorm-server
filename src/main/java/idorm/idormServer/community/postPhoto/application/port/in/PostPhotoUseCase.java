@@ -1,9 +1,9 @@
 package idorm.idormServer.community.postPhoto.application.port.in;
 
-import java.util.List;
-
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.community.postPhoto.entity.PostPhoto;
+
+import java.util.List;
 
 public interface PostPhotoUseCase {
 

@@ -3,15 +3,14 @@ package idorm.idormServer.community.post.application.port.in.dto;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.matchingInfo.entity.DormCategory;
 import idorm.idormServer.member.entity.Member;
+
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
 import javax.validation.constraints.Size;
-import org.springframework.web.multipart.MultipartFile;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.web.multipart.MultipartFile;
 
 public record PostSaveRequest(
 	@NotNull(message = "기숙사 카테고리는 공백일 수 없습니다.")
@@ -31,8 +30,7 @@ public record PostSaveRequest(
 	List<MultipartFile> files
 ) {
 
-	public Post toEntity(final Member member){
+	public Post toEntity(final Member member) {
 		return new Post(member, DormCategory.valueOf(dormCategory), title, content, isAnonymous);
 	}
-
 }

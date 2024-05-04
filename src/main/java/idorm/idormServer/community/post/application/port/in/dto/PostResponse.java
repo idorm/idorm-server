@@ -1,13 +1,13 @@
 package idorm.idormServer.community.post.application.port.in.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import idorm.idormServer.community.comment.application.port.in.dto.ParentCommentResponse;
 import idorm.idormServer.community.comment.entity.Comment;
 import idorm.idormServer.community.post.entity.Post;
 import idorm.idormServer.community.postPhoto.application.port.in.dto.PostPhotoResponse;
 import idorm.idormServer.community.postPhoto.entity.PostPhoto;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public record PostResponse(
 
@@ -48,18 +48,18 @@ public record PostResponse(
 	public static PostResponse of(Post post, List<PostPhoto> postPhotos) {
 
 		return new PostResponse(post.getId(),
-				post.getMember().getId(),
-				post.getDormCategory().toString(),
-				post.getTitle(),
-				post.getContent(),
-				post.getMember().getNickname().getValue(),
-				post.getMember().getProfilePhotoUrl(),
-				post.getLikeCount(),
-				false,
-				post.getCreatedAt(),
-				post.getUpdatedAt(),
-				post.getIsAnonymous(),
-				PostPhotoResponse.of(postPhotos),
-				null);
+			post.getMember().getId(),
+			post.getDormCategory().toString(),
+			post.getTitle(),
+			post.getContent(),
+			post.getMember().getNickname().getValue(),
+			post.getMember().getProfilePhotoUrl(),
+			post.getLikeCount(),
+			false,
+			post.getCreatedAt(),
+			post.getUpdatedAt(),
+			post.getIsAnonymous(),
+			PostPhotoResponse.of(postPhotos),
+			null);
 	}
 }

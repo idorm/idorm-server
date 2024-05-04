@@ -15,8 +15,6 @@ public interface LoadTeamCalendarPort {
 
 	List<TeamCalendar> findByMemberId(Long memberId);
 
-	List<TeamCalendar> findByTeamId(Long teamId);
-
 	List<TeamCalendar> findByYearMonth(Team team, YearMonth yearMonth);
 
 	List<NotificationRequest> findByStartDateIsToday();

@@ -18,5 +18,6 @@ public interface TeamCalendarUseCase {
 
 	TeamCalendarResponse findById(AuthResponse authResponse, Long teamCalendarId);
 
-	List<TeamCalendarResponse> findTeamCalendarsByMonth(AuthResponse authResponse, FindOfficialCalendarsRequest request);
+	List<TeamCalendarResponse> findTeamCalendarsByMonth(AuthResponse authResponse,
+		FindOfficialCalendarsRequest request);
 }

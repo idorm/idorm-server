@@ -1,12 +1,16 @@
 package idorm.idormServer.community.post.adapter.out;
 
-import static org.springframework.http.HttpStatus.*;
-
-import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
 import idorm.idormServer.common.exception.BaseResponseCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor

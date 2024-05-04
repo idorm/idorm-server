@@ -1,5 +1,7 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
+import idorm.idormServer.calendar.entity.OfficialCalendar;
+
 import java.time.YearMonth;
 import java.util.List;
 
@@ -7,8 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import idorm.idormServer.calendar.entity.OfficialCalendar;
 
 @Repository
 public interface OfficialCalendarRepository
@@ -30,6 +30,4 @@ public interface OfficialCalendarRepository
 		"AND c.is_deleted = 0 " +
 		"AND c.is_public = 1", nativeQuery = true)
 	List<OfficialCalendar> findByMonthByMember(@Param("yearMonth") YearMonth yearMonth);
-
 }
-

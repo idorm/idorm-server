@@ -1,10 +1,18 @@
 package idorm.idormServer.calendar.adapter.out.api;
 
+import idorm.idormServer.calendar.adapter.out.exception.CrawlingServerError;
+import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
+import idorm.idormServer.calendar.application.port.out.LoadOfficialPost;
+import idorm.idormServer.calendar.application.port.out.SaveOfficialCalendarPort;
+import idorm.idormServer.calendar.entity.OfficialCalendar;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,13 +20,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import idorm.idormServer.calendar.adapter.out.exception.CrawlingServerError;
-import idorm.idormServer.calendar.application.port.out.LoadOfficialPost;
-import idorm.idormServer.calendar.application.port.out.LoadOfficialCalendarPort;
-import idorm.idormServer.calendar.application.port.out.SaveOfficialCalendarPort;
-import idorm.idormServer.calendar.entity.OfficialCalendar;
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -43,17 +44,20 @@ public class CrawlingOfficialPostClient implements LoadOfficialPost {
 			int cnt = 0;
 
 			for (Element postElement : postElements) {
-				if (cnt >= 10)
+				if (cnt >= 10) {
 					break;
+				}
 
 				LocalDate date = LocalDate.parse(postElement.select("td.td-date").text(), formatter);
-				if (date.isBefore(today.minusDays(7)))
+				if (date.isBefore(today.minusDays(7))) {
 					continue;
+				}
 
 				String postUrl = "https://bioeng.inu.ac.kr/" + postElement.select("td.td-subject a").attr("href");
 				String postId = parseInuPostId(postUrl);
-				if (loadOfficialCalendarPort.findByInuPostId(postId))
+				if (loadOfficialCalendarPort.findByInuPostId(postId)) {
 					continue;
+				}
 
 				String postTitle = postElement.select("td.td-subject a strong").text();
 

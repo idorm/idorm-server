@@ -2,7 +2,6 @@ package idorm.idormServer.calendar.application.port.in.dto;
 
 import java.time.LocalDate;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -21,7 +20,8 @@ public record UpdateSleepoverCalendarRequest(
 	@JsonProperty("endDate")
 	LocalDate endDate
 ) {
-	public Period period(){
+
+	public Period period() {
 		return new Period(startDate, endDate);
 	}
 }
