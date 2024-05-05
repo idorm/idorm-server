@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TeamCustomRepositoryImpl implements TeamCustomRepository {
 
-	JPAQueryFactory queryFactory;
+	private final JPAQueryFactory queryFactory;
 
 	@Override
 	public Team findByMemberId(final Long memberId) {

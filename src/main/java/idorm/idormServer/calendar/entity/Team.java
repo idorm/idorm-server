@@ -1,12 +1,5 @@
 package idorm.idormServer.calendar.entity;
 
-import idorm.idormServer.calendar.adapter.out.exception.CannotExplodeTeamException;
-import idorm.idormServer.calendar.adapter.out.exception.CannotRegisterTeamStatusFullException;
-import idorm.idormServer.calendar.adapter.out.exception.NotFoundTeamMemberException;
-import idorm.idormServer.common.entity.BaseTimeEntity;
-import idorm.idormServer.calendar.adapter.out.exception.DuplicatedMemberException;
-import idorm.idormServer.member.entity.Member;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +13,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import idorm.idormServer.calendar.adapter.out.exception.CannotExplodeTeamException;
+import idorm.idormServer.calendar.adapter.out.exception.CannotRegisterTeamStatusFullException;
+import idorm.idormServer.calendar.adapter.out.exception.DuplicatedMemberException;
+import idorm.idormServer.calendar.adapter.out.exception.NotFoundTeamMemberException;
+import idorm.idormServer.common.entity.BaseTimeEntity;
+import idorm.idormServer.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -72,9 +71,8 @@ public class Team extends BaseTimeEntity {
 	}
 
 	public void delete(Member member) {
-		if (TeamStatus.isNotAlone(this.teamStatus)) {
+		if (teamStatus.isNotAlone())
 			throw new CannotExplodeTeamException();
-		}
 		member.removeTeam();
 	}
 

@@ -107,12 +107,6 @@ public class TeamCalendar {
 		return participants.getParticipants();
 	}
 
-	public List<Long> getParticipantMemberIds() {
-		return participants.getParticipants().stream()
-			.map(Participant::getMemberId)
-			.toList();
-	}
-
 	private void validateAuthorization(final Team team) {
 		if (!this.team.equals(team)) {
 			throw new AccessDeniedTeamCalendarException();
