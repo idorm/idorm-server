@@ -50,6 +50,10 @@ public class Nickname {
 		this.value = newNickname;
 	}
 
+	void delete() {
+		this.value = "";
+	}
+
 	private void validateValidUpdate() {
 		final LocalDateTime now = LocalDateTime.now();
 		if (now.isBefore(this.updatedAt.plusDays(VALID_UPDATE_DAY))) {

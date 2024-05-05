@@ -34,6 +34,10 @@ public class Password {
 		this.value = encryptPort.encrypt(newPassword);
 	}
 
+	void delete() {
+		this.value = "";
+	}
+
 	private static void validateConstructor(final String value) {
 		Validator.validateNotBlank(value);
 		Validator.validateFormat(value, PASSWORD_REGEX, MemberResponseCode.INVALID_PASSWORD_CHARACTER);

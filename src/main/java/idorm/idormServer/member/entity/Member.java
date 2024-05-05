@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -141,37 +140,12 @@ public class Member {
 
 	public void withdraw() {
 		memberStatus = MemberStatus.DELETED;
-		email = null;
-		nickname = null;
-		password = null;
+		nickname.delete();
+		password.delete();
+		email = "";
 		profilePhotoUrl = null;
-		roleType = null;
-		matchingMates = null;
-		team = null;
-		posts = null;
-		comments = null;
-	}
-
-	public List<MatchingMate> getFavoriteMates() {
-		List<MatchingMate> results = this.matchingMates.stream()
-			.filter(MatchingMate::isPublic)
-			.filter(MatchingMate::isFavorite)
-			.collect(Collectors.toUnmodifiableList());
-		return results;
-	}
-
-	public List<MatchingMate> getNonFavoriteMates() {
-		List<MatchingMate> results = this.matchingMates.stream()
-			.filter(MatchingMate::isPublic)
-			.filter(MatchingMate::isNonFavorite)
-			.collect(Collectors.toUnmodifiableList());
-		return results;
-	}
-
-	public boolean isNotNonFavoriteMate(final MatchingInfo matchingInfo) {
-		boolean result = matchingMates.stream()
-			.anyMatch(mate -> mate.isNonFavorite(matchingInfo));
-		return !result;
+		this.matchingInfo = null;
+		this.team = null;
 	}
 
 	public void addReport(final Report report) {
