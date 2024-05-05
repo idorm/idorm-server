@@ -21,8 +21,8 @@ public class EmailService implements EmailUseCase {
 
 	private final SaveEmailPort saveEmailPort;
 	private final LoadEmailPort loadEmailPort;
-	private final GenerateVerificationCodePort verificationCodePort;
 	private final SendEmailPort sendEmailPort;
+	private final GenerateVerificationCodePort verificationCodePort;
 
 	@Override
 	@Transactional

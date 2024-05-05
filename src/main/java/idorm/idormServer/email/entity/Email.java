@@ -31,8 +31,9 @@ import lombok.NoArgsConstructor;
 public class Email {
 
 	public static final int MAX_EMAIL_LENGTH = 20;
-	private static final String EMAIL_REGEX = "^([\\w-]+(?:\\.[\\w-]+)*)+@(inu.ac.kr)$";
 	public static final int CODE_LENGTH = 7;
+
+	private static final String EMAIL_REGEX = "^([\\w-]+(?:\\.[\\w-]+)*)+@(inu.ac.kr)$";
 	private static final String CODE_REGEX = "^\\d{3}-\\d{3}$";
 
 	private static final long VALID_VERIFY_MINUTE = 5L;
@@ -63,25 +64,25 @@ public class Email {
 		validateConstructor(email, code);
 		this.email = email;
 		this.code = code;
-		emailStatus = EmailStatus.SEND;
-		registered = false;
+		this.emailStatus = EmailStatus.SEND;
+		this.registered = false;
 		this.issuedAt = LocalDateTime.now();
 	}
 
-	private static void validateConstructor(final String email, final String code) {
+	private void validateConstructor(final String email, final String code) {
 		Validator.validateNotBlank(email);
 		Validator.validateNotBlank(code);
 		Validator.validateFormat(email, EMAIL_REGEX, EmailResponseCode.INVALID_EMAIL_CHARACTER);
 	}
 
-	public void updateVerificationCode(String code) {
+	public void updateVerificationCode(final String code) {
 		validateNotSignUp();
 		this.code = code;
 		this.issuedAt = LocalDateTime.now();
 		this.emailStatus = EmailStatus.SEND;
 	}
 
-	public void updateReVerificationCode(String code) {
+	public void updateReVerificationCode(final String code) {
 		validateSignUpEmail();
 		this.code = code;
 		this.issuedAt = LocalDateTime.now();
@@ -105,7 +106,7 @@ public class Email {
 	}
 
 	public void register() {
-		if (VERIFIED.isNot(emailStatus)) {
+		if (emailStatus.isNotVerified()) {
 			throw new UnAuthorizedEmailException();
 		}
 		this.registered = true;
@@ -113,7 +114,7 @@ public class Email {
 
 	public void validateReVerified() {
 		validateSignUpEmail();
-		if (RE_VERIFIED.isNot(emailStatus)) {
+		if (emailStatus.isNotReverified()) {
 			throw new UnAuthorizedEmailException();
 		}
 		validateValidTime();
@@ -129,13 +130,13 @@ public class Email {
 	}
 
 	private void validateNotSignUp() {
-		if (isRegistered()) {
+		if (registered) {
 			throw new DuplicatedEmailException();
 		}
 	}
 
 	private void validateSignUpEmail() {
-		if (!isRegistered()) {
+		if (!registered) {
 			throw new NotFoundMemberException();
 		}
 	}
