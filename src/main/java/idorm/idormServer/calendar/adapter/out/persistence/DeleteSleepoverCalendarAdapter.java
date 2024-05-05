@@ -17,4 +17,9 @@ public class DeleteSleepoverCalendarAdapter implements DeleteSleepoverCalendarPo
 	public void delete(SleepoverCalendar sleepoverCalendar) {
 		sleepoverCalendarRepository.delete(sleepoverCalendar);
 	}
+
+	@Override
+	public void deleteByMemberId(Long memberId) {
+		sleepoverCalendarRepository.deleteByMemberId(memberId);
+	}
 }
