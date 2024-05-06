@@ -65,6 +65,7 @@ public class Team extends BaseTimeEntity {
 			throw new NotFoundTeamMemberException();
 		}
 		member.removeTeam();
+		this.members.remove(member);
 		if (this.members.size() == 1) {
 			this.teamStatus = TeamStatus.ALONE;
 		}
@@ -74,6 +75,7 @@ public class Team extends BaseTimeEntity {
 		if (teamStatus.isNotAlone())
 			throw new CannotExplodeTeamException();
 		member.removeTeam();
+		this.members.remove(member);
 	}
 
 	private void validateParticipationInTeam(Member member) {

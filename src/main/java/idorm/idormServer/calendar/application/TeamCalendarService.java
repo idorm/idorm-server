@@ -52,9 +52,9 @@ public class TeamCalendarService implements TeamCalendarUseCase {
 	@Transactional
 	@Override
 	public TeamCalendarResponse update(final AuthResponse authResponse, final UpdateTeamCalendarRequest request) {
-		final TeamCalendar teamCalendar = loadTeamCalendarPort.findByIdAndMemberId(request.teamCalendarId(),
-			authResponse.getId());
 		final Team team = loadTeamPort.findByMemberId(authResponse.getId());
+		final TeamCalendar teamCalendar = loadTeamCalendarPort.findByIdAndTeamId(request.teamCalendarId(),
+			team.getId());
 
 		teamCalendar.update(team, request.title(), request.content(), request.getPeriod(), request.startTime(),
 			request.endTime(), request.targets());

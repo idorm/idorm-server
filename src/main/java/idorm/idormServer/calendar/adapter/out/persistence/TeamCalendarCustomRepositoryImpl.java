@@ -39,8 +39,8 @@ public class TeamCalendarCustomRepositoryImpl implements TeamCalendarCustomRepos
 		return queryFactory
 			.select(teamCalendar)
 			.from(teamCalendar)
-			.join(teamCalendar.team, team)
-			.where(teamCalendar.participants.participants.any().memberId.eq(memberId))
+			.join(teamCalendar.participants.participants, participant)
+			.where(participant.memberId.eq(memberId))
 			.fetch();
 	}
 
