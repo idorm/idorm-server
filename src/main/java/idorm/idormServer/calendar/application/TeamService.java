@@ -1,5 +1,7 @@
 package idorm.idormServer.calendar.application;
 
+import static idorm.idormServer.member.entity.MemberStatus.*;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +23,7 @@ import idorm.idormServer.calendar.entity.SleepoverCalendar;
 import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
+import idorm.idormServer.member.entity.MemberStatus;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -72,7 +75,7 @@ public class TeamService implements TeamUseCase {
 		final List<SleepoverCalendar> sleepoverCalendars = loadSleepoverCalendarPort.findByToday(team);
 
 		List<Member> members = team.getMembers().stream()
-			.filter(member -> member.getMemberStatus().equals("ACTIVE"))
+			.filter(member -> member.getMemberStatus().equals(ACTIVE))
 			.sorted(Comparator.comparing(Member::getId))
 			.toList();
 
