@@ -20,11 +20,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeleteTeamMemberAdapter implements DeleteTeamMemberPort {
 
-	private final LoadMemberPort loadMemberPort;
 	private final LoadTeamPort loadTeamPort;
-	private final LoadTeamCalendarPort loadTeamCalendarPort;
-	private final DeleteSleepoverCalendarPort deleteSleepoverCalendarPort;
 	private final DeleteTeamPort deleteTeamPort;
+
+	private final LoadMemberPort loadMemberPort;
+
+	private final LoadTeamCalendarPort loadTeamCalendarPort;
+
+	private final DeleteSleepoverCalendarPort deleteSleepoverCalendarPort;
 
 	@Override
 	public void deleteTeamMember(Long memberId) {
@@ -32,12 +35,13 @@ public class DeleteTeamMemberAdapter implements DeleteTeamMemberPort {
 		final Team team = loadTeamPort.findByMemberId(member.getId());
 		final List<TeamCalendar> teamCalendars = loadTeamCalendarPort.findByMemberId(member.getId());
 
-		deleteSleepoverCalendarPort.deleteByMemberId(memberId);
-		teamCalendars
-			.forEach(teamCalendar -> teamCalendar.deletePariticipant(member.getId()));
 		team.deleteMember(member);
 		if (team.getMembers().isEmpty()) {
 			deleteTeamPort.delete(team);
+		} else {
+			deleteSleepoverCalendarPort.deleteByMemberId(memberId);
+			teamCalendars
+				.forEach(teamCalendar -> teamCalendar.deletePariticipant(member.getId()));
 		}
 	}
 }
