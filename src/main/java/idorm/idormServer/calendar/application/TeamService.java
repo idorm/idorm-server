@@ -23,7 +23,6 @@ import idorm.idormServer.calendar.entity.SleepoverCalendar;
 import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
-import idorm.idormServer.member.entity.MemberStatus;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -64,9 +63,10 @@ public class TeamService implements TeamUseCase {
 
 	@Override
 	@Transactional
-	public void deleteMember(final Long targetId) {
+	public void deleteMember(final Long memberId) {
+		final Member member = loadMemberPort.loadMember(memberId);
 
-		deleteTeamMemberPort.deleteTeamMember(targetId);
+		deleteTeamMemberPort.deleteTeamMember(member);
 	}
 
 	@Override
