@@ -22,12 +22,4 @@ public class TeamCustomRepositoryImpl implements TeamCustomRepository {
 			.where(member.id.eq(memberId))
 			.fetchOne();
 	}
-
-	@Override
-	public void delete(Long teamId) {
-		queryFactory
-			.delete(team)
-			.where(team.id.eq(teamId))
-			.execute();
-	}
 }

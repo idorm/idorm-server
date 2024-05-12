@@ -35,6 +35,7 @@ public class DeleteTeamMemberAdapter implements DeleteTeamMemberPort {
 
 		team.deleteMember(member);
 		if (team.getMembers().isEmpty()) {
+			deleteSleepoverCalendarPort.deleteByMemberId(member.getId());
 			deleteTeamPort.delete(team);
 		} else {
 			deleteSleepoverCalendarPort.deleteByMemberId(member.getId());

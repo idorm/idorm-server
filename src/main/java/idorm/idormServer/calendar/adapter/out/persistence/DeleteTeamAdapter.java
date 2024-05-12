@@ -14,6 +14,6 @@ public class DeleteTeamAdapter implements DeleteTeamPort {
 
 	@Override
 	public void delete(Team team) {
-		teamRepository.delete(team.getId());
+		teamRepository.deleteById(team.getId());
 	}
 }

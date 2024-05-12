@@ -7,5 +7,5 @@ import idorm.idormServer.calendar.entity.Team;
 
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long>, TeamCustomRepository {
-
+	void deleteById(Long teamId);
 }

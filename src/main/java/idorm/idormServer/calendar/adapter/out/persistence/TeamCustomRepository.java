@@ -8,6 +8,4 @@ import idorm.idormServer.calendar.entity.Team;
 public interface TeamCustomRepository {
 
 	Team findByMemberId(Long memberId);
-
-	void delete(Long teamId);
 }
