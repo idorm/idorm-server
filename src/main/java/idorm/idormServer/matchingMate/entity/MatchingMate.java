@@ -66,22 +66,6 @@ public class MatchingMate {
 
 	}
 
-	public boolean isPublic() {
-		return matchingInfoForTarget.getIsPublic();
-	}
-
-	public boolean isFavorite() {
-		return preferenceType.equals(MatePreferenceType.FAVORITE);
-	}
-
-	public boolean isNonFavorite() {
-		return preferenceType.equals(MatePreferenceType.NONFAVORITE);
-	}
-
-	public boolean isNonFavorite(final MatchingInfo matchingInfo) {
-		return this.matchingInfoForTarget.equals(matchingInfo) && isNonFavorite();
-	}
-
 	@Override
 	public boolean equals(Object object) {
 		if (this == object)

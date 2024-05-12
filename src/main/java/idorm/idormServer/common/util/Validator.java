@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import org.springframework.util.StringUtils;
+
 import idorm.idormServer.common.exception.BaseException;
 import idorm.idormServer.common.exception.BaseResponseCode;
 import idorm.idormServer.common.exception.FieldRequiredException;
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
 public final class Validator {
 
 	public static void validateNotBlank(String value) {
-		if (value == null || value.isBlank()) {
+		if (!StringUtils.hasLength(value)) {
 			throw new FieldRequiredException();
 		}
 	}
@@ -24,7 +26,7 @@ public final class Validator {
 	}
 
 	public static void validateNotNull(Object object) {
-		if (object == null) {
+		if (Objects.isNull(object)) {
 			throw new FieldRequiredException();
 		}
 	}

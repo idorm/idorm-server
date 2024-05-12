@@ -7,7 +7,7 @@ public interface TeamUseCase {
 
 	void addTeamMember(AuthResponse authResponse, Long registerMemberId);
 
-	void deleteMember(AuthResponse authResponse, Long memberId);
+	void deleteMember(Long memberId);
 
 	void explodeTeam(AuthResponse authResponse);
 

@@ -90,7 +90,7 @@ public class TeamController {
 		@Positive(message = "삭제할 회원 식별자는 양수만 가능합니다.")
 		Long memberId
 	) {
-		teamUseCase.deleteMember(authResponse, memberId);
+		teamUseCase.deleteMember(memberId);
 		return ResponseEntity.ok().body(SuccessResponse.from(TEAM_MEMBER_DELETED));
 	}
 

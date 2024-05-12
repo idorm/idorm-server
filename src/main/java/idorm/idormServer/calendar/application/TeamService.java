@@ -1,9 +1,20 @@
 package idorm.idormServer.calendar.application;
 
+import static idorm.idormServer.member.entity.MemberStatus.*;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.TeamUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.TeamParticipantResponse;
 import idorm.idormServer.calendar.application.port.in.dto.TeamResponse;
+import idorm.idormServer.calendar.application.port.out.DeleteTeamMemberPort;
 import idorm.idormServer.calendar.application.port.out.DeleteTeamPort;
 import idorm.idormServer.calendar.application.port.out.LoadSleepoverCalendarPort;
 import idorm.idormServer.calendar.application.port.out.LoadTeamPort;
@@ -12,16 +23,7 @@ import idorm.idormServer.calendar.entity.SleepoverCalendar;
 import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
-
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,6 +38,7 @@ public class TeamService implements TeamUseCase {
 	private final LoadSleepoverCalendarPort loadSleepoverCalendarPort;
 
 	private final DeleteTeamPort deleteTeamPort;
+	private final DeleteTeamMemberPort deleteTeamMemberPort;
 
 	@Override
 	@Transactional
@@ -60,12 +63,10 @@ public class TeamService implements TeamUseCase {
 
 	@Override
 	@Transactional
-	public void deleteMember(final AuthResponse authResponse, final Long targetId) {
-		final Member loginMember = loadMemberPort.loadMember(authResponse.getId());
-		final Member deleteMember = loadMemberPort.loadMember(targetId);
-		final Team team = loadTeamPort.findByMemberId(loginMember.getId());
+	public void deleteMember(final Long memberId) {
+		final Member member = loadMemberPort.loadMember(memberId);
 
-		team.deleteMember(deleteMember);
+		deleteTeamMemberPort.deleteTeamMember(member);
 	}
 
 	@Override
@@ -74,7 +75,7 @@ public class TeamService implements TeamUseCase {
 		final List<SleepoverCalendar> sleepoverCalendars = loadSleepoverCalendarPort.findByToday(team);
 
 		List<Member> members = team.getMembers().stream()
-			.filter(member -> member.getMemberStatus().equals("ACTIVE"))
+			.filter(member -> member.getMemberStatus().equals(ACTIVE))
 			.sorted(Comparator.comparing(Member::getId))
 			.toList();
 

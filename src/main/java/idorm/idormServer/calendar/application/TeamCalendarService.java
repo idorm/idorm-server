@@ -1,5 +1,12 @@
 package idorm.idormServer.calendar.application;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import idorm.idormServer.auth.application.port.in.dto.AuthResponse;
 import idorm.idormServer.calendar.application.port.in.TeamCalendarUseCase;
 import idorm.idormServer.calendar.application.port.in.dto.FindOfficialCalendarsRequest;
@@ -16,15 +23,7 @@ import idorm.idormServer.calendar.entity.Team;
 import idorm.idormServer.calendar.entity.TeamCalendar;
 import idorm.idormServer.member.application.port.out.LoadMemberPort;
 import idorm.idormServer.member.entity.Member;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.IntStream;
-
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -53,9 +52,9 @@ public class TeamCalendarService implements TeamCalendarUseCase {
 	@Transactional
 	@Override
 	public TeamCalendarResponse update(final AuthResponse authResponse, final UpdateTeamCalendarRequest request) {
-		final TeamCalendar teamCalendar = loadTeamCalendarPort.findByIdAndMemberId(request.teamCalendarId(),
-			authResponse.getId());
 		final Team team = loadTeamPort.findByMemberId(authResponse.getId());
+		final TeamCalendar teamCalendar = loadTeamCalendarPort.findByIdAndTeamId(request.teamCalendarId(),
+			team.getId());
 
 		teamCalendar.update(team, request.title(), request.content(), request.getPeriod(), request.startTime(),
 			request.endTime(), request.targets());

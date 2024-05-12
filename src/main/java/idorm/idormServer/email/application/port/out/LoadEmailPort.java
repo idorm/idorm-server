@@ -5,7 +5,8 @@ import java.util.Optional;
 import idorm.idormServer.email.entity.Email;
 
 public interface LoadEmailPort {
-    Optional<Email> findByEmailWithOptional(String email);
 
-    Email findByEmail(String email);
+	Optional<Email> findByEmailWithOptional(String email);
+
+	Email findByEmail(String email);
 }

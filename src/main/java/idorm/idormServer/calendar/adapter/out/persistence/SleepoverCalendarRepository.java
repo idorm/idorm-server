@@ -1,15 +1,17 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
-import idorm.idormServer.calendar.entity.SleepoverCalendar;
-
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import idorm.idormServer.calendar.entity.SleepoverCalendar;
 
 @Repository
 public interface SleepoverCalendarRepository
 	extends JpaRepository<SleepoverCalendar, Long>, SleepoverCalendarCustomRepository {
 
 	List<SleepoverCalendar> findByMemberId(Long memberId);
+
+	void deleteByMemberId(Long memberId);
 }

@@ -69,8 +69,15 @@ public class AuthController {
 			.body(SuccessResponse.from(AuthResponseCode.MEMBER_LOGIN));
 	}
 
-	@Operation(summary = "Access Token 재발급", security = {@SecurityRequirement(name = AUTHORIZATION),
-		@SecurityRequirement(name = "Refresh-Token")})
+	@Auth
+	@Operation(summary = "Access Token 재발급",
+		description = "<b>해당 API 사용법</b>\n"
+			+ "1. 원래 보내려던 요청을 보내기 전, access token의 payload를 통해 만료 기한을 얻습니다.\n"
+			+ "2. 만료 기한이 지난 토큰이라면, 해당 API 요청을 보낸 후에 새로운 access token을 발급받습니다.\n"
+			+ "3. 그 후에 원래 하려던 요청을 보내주세요.\n"
+			+ "-> 목적 : 네트워크 요청 줄이기",
+		security = {@SecurityRequirement(name = AUTHORIZATION),
+			@SecurityRequirement(name = "Refresh-Token")})
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "MEMBER_REFRESH"),
 		@ApiResponse(responseCode = "401", description = "UNAUTHORIZED_ACCESS_TOKEN / UNAUTHORIZED_REFRESH_TOKEN"),
@@ -84,7 +91,10 @@ public class AuthController {
 		@AuthInfo AuthResponse auth
 	) {
 		validateExistHeader(servletRequest);
+		String accessToken = AuthorizationExtractor.extractAccessToken(servletRequest);
 		String refreshToken = AuthorizationExtractor.extractRefreshToken(servletRequest);
+
+		// TODO: 만료된 access token도 받도록 처리해야 한다.(BUG)
 
 		refreshTokenUseCase.matches(refreshToken, auth.getId());
 		String reissueAccessToken = jwtTokenUseCase.createAccessToken(auth);
@@ -114,9 +124,10 @@ public class AuthController {
 	}
 
 	private void validateExistHeader(HttpServletRequest request) {
+		String accessTokenHeader = request.getHeader(AUTHORIZATION);
 		String refreshTokenHeader = request.getHeader("Refresh-Token");
 
-		if (Objects.isNull(refreshTokenHeader)) {
+		if (Objects.isNull(accessTokenHeader) || Objects.isNull(refreshTokenHeader)) {
 			throw new UnAuthorizedRefreshTokenException();
 		}
 	}

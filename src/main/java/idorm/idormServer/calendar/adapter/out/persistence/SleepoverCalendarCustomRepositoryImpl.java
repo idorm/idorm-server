@@ -1,18 +1,17 @@
 package idorm.idormServer.calendar.adapter.out.persistence;
 
-import static idorm.idormServer.calendar.entity.QSleepoverCalendar.sleepoverCalendar;
-import static idorm.idormServer.calendar.entity.QTeam.team;
+import static idorm.idormServer.calendar.entity.QSleepoverCalendar.*;
+import static idorm.idormServer.calendar.entity.QTeam.*;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import idorm.idormServer.calendar.entity.Period;
 import idorm.idormServer.calendar.entity.SleepoverCalendar;
 import idorm.idormServer.calendar.entity.Team;
-
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -74,5 +73,13 @@ public class SleepoverCalendarCustomRepositoryImpl implements SleepoverCalendarC
 				sleepoverCalendar.period.startDate.loe(period.getEndDate())
 					.and(sleepoverCalendar.memberId.eq(memberId)))
 			.fetchCount();
+	}
+
+	@Override
+	public void deleteByMemberId(Long memberId) {
+		queryFactory
+			.delete(sleepoverCalendar)
+			.where(sleepoverCalendar.memberId.eq(memberId))
+			.execute();
 	}
 }
